@@ -1,0 +1,898 @@
+<title>The Labs and the Field Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 10</p>
+  <p class="rail-sub">The labs &amp; the field insights</p>
+  <span class="rail-vol">Practice</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · The labs</div>
+  <a href="#how"><span class="n">—</span>How to run one</a>
+  <a href="#l1"><span class="n">01</span>The 50-second query</a>
+  <a href="#l2"><span class="n">02</span>Six-stage pipeline</a>
+  <a href="#l3"><span class="n">03</span>Query-level RBAC</a>
+  <a href="#l4"><span class="n">04</span>Okta OIDC</a>
+  <a href="#l5"><span class="n">05</span>BullMQ with a DLQ</a>
+  <a href="#l6"><span class="n">06</span>Three services on K8s</a>
+  <a href="#l7"><span class="n">07</span>Playwright + Cucumber</a>
+  <a href="#l8"><span class="n">08</span>Server-side PDF</a>
+  <a href="#l9"><span class="n">09</span>XGBoost end to end</a>
+  <a href="#l10"><span class="n">10</span>LLM reports with evals</a>
+  <a href="#l11"><span class="n">11</span>OLTP to dashboard</a>
+  <a href="#l12"><span class="n">12</span>The full rebuild</a>
+
+  <div class="rail-group">II · Field insights</div>
+  <a href="#f1"><span class="n">F1</span>Hickey · simple made easy</a>
+  <a href="#f2"><span class="n">F2</span>Kleppmann · data-intensive</a>
+  <a href="#f3"><span class="n">F3</span>Winand · indexes</a>
+  <a href="#f4"><span class="n">F4</span>Majors · observability</a>
+  <a href="#f5"><span class="n">F5</span>Beck · tidy first</a>
+  <a href="#f6"><span class="n">F6</span>Hightower · pragmatism</a>
+  <a href="#f7"><span class="n">F7</span>Abramov · the boundary</a>
+  <a href="#f8"><span class="n">F8</span>Chen · XGBoost design</a>
+  <a href="#f9"><span class="n">F9</span>Osmani · distributions</a>
+  <a href="#f10"><span class="n">F10</span>Fournier · management</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#plan"><span class="n">—</span>The order to do them in</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 10 of 10 · labs &amp; field insights</p>
+  <h1>The labs and the field insights. <span class="thin">Where the reading becomes evidence.</span></h1>
+  <p class="lede">Twelve labs that build the things the other nine volumes describe — each one
+  producing an artefact you can point at in an interview — and ten practitioner insights, each
+  compressed to the one idea that changes how you work.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · 12 labs, 10 insights</span>
+    <span><b>Output</b> · artefacts, not notes</span>
+    <span><b>Lab 12</b> · the full rebuild</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<div class="vol here"><span class="vn">Vol 10 · here</span><b>Labs &amp; insights</b></div>
+</div>
+
+<header class="mod" id="how">
+  <span class="mn">The labs</span>
+  <h2>How to run one</h2>
+</header>
+
+<div class="proj">
+  <span class="tag">The rule that makes labs worth doing</span>
+  <p><strong>Produce the artefact.</strong> A lab you read and imagined solving has taught you
+  nothing you can defend — and the whole point of this curriculum is defensibility. The artefact is
+  the query plan, the running service, the passing suite, the memo.</p>
+  <p>And for each one, write down the same four things: <strong>what the before number was, what you
+  changed, what the after number was, and what you tried that did not work.</strong> That is the
+  narrative structure every deep-dive question wants, and it only exists if you record it while
+  doing the work.</p>
+</div>
+
+<header class="mod" id="l1">
+  <span class="mn">Lab 01 · foundational</span>
+  <h2>Reproduce and fix a 50-second query</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>Build a dataset large enough for a naive report query to take tens of seconds, then fix it —
+    and record the investigation properly, because <strong>this lab is what turns the CV's headline
+    number into a method you can narrate.</strong></p></div>
+  <div class="b"><span class="k">The order that teaches the most</span>
+    <ol>
+      <li><strong>Count the queries first.</strong> Query logging with a count, before reading any SQL. If one request issues 1,400 queries, that is the finding and no plan analysis is needed.</li>
+      <li>Then <code>EXPLAIN ANALYZE</code> the worst single query — sequential scan, estimated versus actual rows, join strategy, whether a sort spilled to disk.</li>
+      <li>Fix one thing. Re-measure under identical conditions. Repeat.</li>
+      <li>Add an index that is <em>not</em> used, deliberately, so you learn why: a function on the column, or a non-leftmost prefix.</li>
+    </ol></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>The before and after plans, saved. A committed benchmark script with its conditions in a
+    comment. And four sentences: the bottleneck, the method, the failed attempt, and how a regression
+    would be noticed.</p></div>
+</div>
+
+<header class="mod" id="l2">
+  <span class="mn">Lab 02 · intermediate</span>
+  <h2>Build a six-stage realtime pipeline</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>A long job that reports progress across six stages, survives a restart, and fails
+    informatively at stage four.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Progress state <strong>in the database, not in memory</strong> — the status endpoint must work with every worker down.</li>
+      <li>The database write first, the socket event second, so a missed event costs nothing.</li>
+      <li>Two client paths: subscribe for immediacy, poll on reconnect.</li>
+      <li>Checkpointed stages, so a retry resumes rather than restarting a metered call.</li>
+      <li><strong>Weighted progress</strong>, or stage names instead of a percentage — a bar stuck at 66% destroys trust faster than no bar.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The test that proves it</span>
+    <p>Kill the worker mid-run. The user should see a clear state, the job should resume or fail
+    honestly, and stage three's side effects must not duplicate.</p></div>
+</div>
+
+<header class="mod" id="l3">
+  <span class="mn">Lab 03 · advanced</span>
+  <h2>Query-level RBAC with Prisma extensions</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>Move the scope filter from "every service remembers it" to <strong>a layer every read passes
+    through</strong>, so a new endpoint written on a Friday is safe by construction.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>A client extension or scoped helper that injects the tenant and scope filter from the verified session.</li>
+      <li><strong>The aggregate case:</strong> a scoped list is easy; a <code>COUNT</code> or an average that silently includes invisible rows leaks information through a number.</li>
+      <li>Field-level shaping — the response type omits salary for callers who may not see it.</li>
+      <li>A test that writes a <em>new</em> endpoint without any explicit check and proves it is still scoped.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>That last test. It is the one that demonstrates the difference between a convention and a
+    mechanism, and it is the thing worth showing.</p></div>
+</div>
+
+<header class="mod" id="l4">
+  <span class="mn">Lab 04 · intermediate</span>
+  <h2>Okta OIDC integration</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>A full authorisation-code flow with PKCE against a real identity provider, ending in your own
+    session rather than the provider's token.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>The <code>state</code> check before anything else, and the <code>nonce</code> bound to the ID token.</li>
+      <li>All five validations on the ID token — signature against fetched JWKS, issuer, audience, expiry, nonce — <strong>via a library</strong>.</li>
+      <li>Your own session issued afterwards, because SSO gives identity and not a session model.</li>
+      <li><strong>The deprovisioning gap made concrete:</strong> disable the user in Okta and observe that your session still works. Then decide what to do about it, and write down the decision.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>A working flow, plus a one-paragraph note on the deprovisioning window and which mitigation you
+    chose. <strong>That note is worth more in an interview than the working flow.</strong></p></div>
+</div>
+
+<header class="mod" id="l5">
+  <span class="mn">Lab 05 · intermediate</span>
+  <h2>A BullMQ pipeline with retries and a dead-letter queue</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>A job pipeline that handles transient failure correctly and permanent failure visibly.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Exponential backoff with a cap <strong>and jitter</strong>, and a distinction between retryable and non-retryable failures.</li>
+      <li><strong>An idempotent handler</strong>, proven by running the same job twice and asserting the effect happened once.</li>
+      <li>A dead-letter path with an alert on its depth.</li>
+      <li>A concurrency cap chosen from the database pool size, not from a default — and the arithmetic written down.</li>
+      <li>An id in the payload rather than the payload itself.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The test that proves it</span>
+    <p>Force a stall, let the job be redelivered, and assert no duplicate side effect. That is the
+    only proof of idempotency that counts.</p></div>
+</div>
+
+<header class="mod" id="l6">
+  <span class="mn">Lab 06 · advanced</span>
+  <h2>Deploy three services to Kubernetes</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>The full topology on a local cluster: manifests, ingress, TLS, config and secrets, probes and
+    a rolling update.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Resource requests and limits on every deployment, with a stated reason.</li>
+      <li><strong>Liveness and readiness as separate probes</strong> — and readiness that checks the model is loaded for the AI service, but does <em>not</em> check the AI service from the backend.</li>
+      <li>A rolling update performed while a request is in flight, and a graceful shutdown that does not drop it.</li>
+      <li>Ingress with path routing, TLS, and a WebSocket upgrade that survives longer than sixty seconds.</li>
+      <li><strong>An HPA that does nothing useful on CPU</strong>, deliberately, then a note on what metric would work.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>The manifests, and a paragraph on why this project does not need Kubernetes in production.
+    <strong>Being able to argue against the tool you just demonstrated is the senior half.</strong></p></div>
+</div>
+
+<header class="mod" id="l7">
+  <span class="mn">Lab 07 · intermediate</span>
+  <h2>A Playwright and Cucumber suite from zero</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>An end-to-end suite covering one real journey, with the flakiness engineered out rather than
+    tolerated.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Role- and text-based locators, auto-waiting, and <strong>no explicit sleeps anywhere</strong>.</li>
+      <li>Storage state reused so login happens once.</li>
+      <li>Network interception to force the provider-down path — the otherwise untestable case.</li>
+      <li>State set up through the API, asserted through the UI.</li>
+      <li>Gherkin scenarios written in <strong>domain language, not UI language</strong> — and an honest note on whether anyone outside the team will read them.</li>
+      <li>A frozen clock and per-test data isolation, then the suite run in parallel to prove it.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>A trace from a deliberately failed run. Being able to show that you can diagnose a CI-only
+    failure is the point of the tool.</p></div>
+</div>
+
+<header class="mod" id="l8">
+  <span class="mn">Lab 08 · advanced</span>
+  <h2>Server-side PDF rendering</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>Generate a document server-side and deliver it safely — which is the export design problem
+    made concrete.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Headless rendering in a job, not in a request, because the size is outside your control.</li>
+      <li><strong>Streaming, not buffering</strong> — then test it with a large record and watch memory.</li>
+      <li>Content assembled <strong>per requester</strong>, so a caller who may not see salary gets a document without it.</li>
+      <li>Delivery through an authenticated endpoint, or a short-expiry presigned URL with an unguessable key delivered to the verified account.</li>
+      <li>A lifetime on the file, an audit row per generation, and provenance printed in the document itself.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>The delivery decision, written down with its alternatives. <strong>"A link is a credential" is
+    the sentence this lab exists to earn you.</strong></p></div>
+</div>
+
+<header class="mod" id="l9">
+  <span class="mn">Lab 09 · advanced</span>
+  <h2>An XGBoost attrition model end to end</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>From raw data to a served prediction, with the four things that actually get asked about done
+    properly.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>A baseline first — a rule — measured, so the model has something to beat.</li>
+      <li><strong>The point-in-time test applied to every feature</strong>, and at least one deliberate leak introduced and then caught by noticing absurd feature importance.</li>
+      <li>Split before fitting any transformation, and a time-based split rather than random.</li>
+      <li>PR-AUC and precision at k, not accuracy — and <strong>per-subgroup evaluation</strong>.</li>
+      <li>A threshold derived from a cost matrix, with the resulting numbers expressed in people.</li>
+      <li>The whole fitted pipeline saved with its data version, library versions and metrics; served from a plain <code>def</code> with the model loaded once.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>A one-page memo: the decision it changes, the baseline, the metric, the threshold reasoning, the
+    false-positive reality, and what could make it wrong.</p></div>
+</div>
+
+<header class="mod" id="l10">
+  <span class="mn">Lab 10 · advanced</span>
+  <h2>An LLM report generator with caching and evals</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>Generate a report where <strong>every number is computed elsewhere</strong>, with caching for
+    cost and an eval set for change safety.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>Numbers computed in SQL, passed into the prompt as data. The model narrates and never calculates.</li>
+      <li><strong>Prompt caching verified by reading the cache-read token count</strong>, not assumed — with a frozen system prompt and per-request values at the end.</li>
+      <li>Streaming, and a short-output instruction as a measured latency control.</li>
+      <li>A twenty-case eval set with programmatic checks, run before and after a prompt change so the score moves visibly.</li>
+      <li>An adapter interface, and a pinned model version.</li>
+      <li>A cost figure per report, and the monthly total at ten times current volume.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>The eval score before and after one prompt change, plus the cost number. <strong>Almost nobody
+    brings either to an interview.</strong></p></div>
+</div>
+
+<header class="mod" id="l11">
+  <span class="mn">Lab 11 · advanced</span>
+  <h2>An analytics layer from OLTP to dashboard</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The task</span>
+    <p>Take the application database and build a reporting layer on top, without the reporting
+    queries hurting the application.</p></div>
+  <div class="b"><span class="k">What it must demonstrate</span>
+    <ul>
+      <li>A layered shape — raw, staged, marts — with each layer having one job and <strong>the raw layer never modified</strong>.</li>
+      <li>A metric defined <em>once</em> in the intermediate layer: numerator, denominator, window, timezone, inclusions, grain. Then two dashboards built from it that cannot disagree.</li>
+      <li>A cohort and a funnel query, with the incomplete-period trap handled explicitly.</li>
+      <li><strong>Row-level security in the dashboard</strong>, and a minimum cell size on every aggregate.</li>
+      <li>An idempotent refresh, so re-running it changes nothing the second time.</li>
+      <li>A reconciliation against the application database, by count and by value.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The artefact</span>
+    <p>The metric definition document. It is the deliverable that prevents the most common analytics
+    failure — two numbers, no arbiter.</p></div>
+</div>
+
+<header class="mod" id="l12">
+  <span class="mn">Lab 12 · the capstone</span>
+  <h2>Rebuild the whole system from a blank folder</h2>
+</header>
+
+<div class="proj">
+  <span class="tag">The one that consolidates everything</span>
+  <p>Three services, a database, auth, realtime, a model, a report generator, tests and a deployment
+  — from nothing. <strong>Not to produce a better version of the product, but to find out which of
+  the previous nine volumes you actually absorbed</strong>, because every decision you cannot make
+  quickly is a gap.</p>
+  <p>Do it in thin vertical slices: one login, one employee list, one prediction, one report. Ship
+  each slice end to end before starting the next — the same discipline the design volumes argue for,
+  applied to yourself.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The decision log to keep while doing it — this is the real output</div>
+<pre><code>FOR EACH DECISION, ONE LINE:
+  what I chose · what I rejected · what it costs me
+
+⭐ AND THE DECISIONS YOU WILL BE ASKED ABOUT LATER:
+  □  monolith or services, and the one-sentence reason
+  □  where the authorisation check lives
+  □  what the audit log captures, including reads
+  □  batch or real-time for the model score
+  □  how the report's numbers are produced
+  □  what happens when the provider is down
+  □  which migrations are destructive and how they ship
+  □  what you deliberately did NOT build
+
+⭐ BY THE END YOU SHOULD HAVE A DIAGRAM YOU CAN DRAW FROM
+  MEMORY AND DEFEND BOUNDARY BY BOUNDARY — which is exactly
+  what Volume 01 asked for, and the reason this curriculum
+  starts and ends in the same place.</code></pre>
+</div>
+
+<header class="part" id="insights">
+  <span class="pn">Part II</span>
+  <h2>Field insights</h2>
+  <p class="lede">Ten practitioners, each compressed to the one idea that changes how you work — and
+  the specific place it applies in this stack.</p>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">F01 · Rich Hickey</span>
+  <h2>Simple made easy</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Simple and easy are different words.</strong> Simple means <em>not intertwined</em> —
+    one concept, one role. Easy means <em>familiar and near to hand</em>. Most complexity is chosen
+    because it was easy, and then it is permanent.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>A service that handles HTTP <em>and</em> business rules <em>and</em> data access is complected — easy to write, hard to change. The three cuts in the reasoning volumes are un-complecting moves.</li>
+      <li>An ORM is <em>easy</em>. Understanding what SQL it emits keeps it <em>simple</em>.</li>
+      <li><strong>The test:</strong> can you change one thing without understanding the others? If not, they are intertwined regardless of how tidy the code looks.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">F02 · Martin Kleppmann</span>
+  <h2>Data-intensive thinking</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Every data system is a set of trade-offs between reliability, scalability and
+    maintainability</strong> — and the interesting engineering is naming which one you traded.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>A read replica buys read capacity and costs read-your-writes. A cache buys speed and costs staleness. Neither is free, and saying so is the skill.</li>
+      <li><strong>"Exactly once" is not a thing</strong> you get; at-least-once plus idempotency is what you build. That single reframing fixes most queue designs.</li>
+      <li>Derived data — a search index, a cache, a mart — is a second copy with its own consistency problem, and it must be treated as such.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f3">
+  <span class="mn">F03 · Markus Winand</span>
+  <h2>Indexes are not a magic switch</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>An index is a sorted structure, and everything about its behaviour follows from
+    that.</strong> "We added an index and it did not help" is nearly always a consequence of sorted
+    order rather than a mystery.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>A composite index serves a <strong>left-to-right prefix</strong> — like a phone book sorted by surname then first name, which cannot find everyone called Alice.</li>
+      <li>A function on the column, or a leading wildcard, defeats it entirely.</li>
+      <li>An index can also serve <code>ORDER BY</code>, which is what turns a paged query from a sort of the whole table into a read of twenty rows.</li>
+      <li><strong>And the cost side:</strong> every write updates every index, so an unused index is pure overhead.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f4">
+  <span class="mn">F04 · Charity Majors</span>
+  <h2>Observability, not monitoring</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p>Monitoring answers questions you knew to ask. <strong>Observability is being able to answer
+    questions you did not anticipate</strong> — which is what a real incident consists of.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li><strong>High-cardinality context is the point:</strong> log the user id, the tenant, the request id, the version — so you can ask "what was different about the failures?" rather than only "how many were there?"</li>
+      <li>"Is it up?" is the least interesting question. <strong>"Which users are having a bad time, and what do they have in common?"</strong> is the one that resolves incidents.</li>
+      <li>And the discipline point: <strong>you cannot add this during an incident.</strong> The answer to "what happened at 02:14" exists only if it was being recorded at 02:14.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f5">
+  <span class="mn">F05 · Kent Beck</span>
+  <h2>Tidy first</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Separate structural change from behavioural change</strong>, and do the small tidying
+    first — in its own commit — so the behavioural change that follows is reviewable.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>A pull request mixing a rename with a bug fix is neither reviewable nor revertable. Two commits, and both become both.</li>
+      <li><strong>Tidy the area you are about to work in</strong>, not the whole codebase — which is also the only debt-repayment strategy that reliably works.</li>
+      <li>And the economic framing: tidying is an investment in the <em>next</em> change, so it is justified by how often that area changes — which is a measurable argument rather than an aesthetic one.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f6">
+  <span class="mn">F06 · Kelsey Hightower</span>
+  <h2>Kubernetes pragmatism</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Most teams do not need Kubernetes</strong>, and the person best placed to say so is
+    someone who understands it. It is a platform you operate, and its real cost is ongoing
+    expertise.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>Three services and one database do not justify it. A managed container platform gives you rolling deploys, TLS and scaling without a cluster to run.</li>
+      <li><strong>Learn the manifests anyway</strong>, because enterprises run it and you will be asked — and because being able to argue <em>against</em> a tool you understand is a stronger position than never having learned it.</li>
+      <li>The general form: <strong>adopt the property you need, not the platform's name.</strong></li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f7">
+  <span class="mn">F07 · Dan Abramov</span>
+  <h2>The server–client boundary</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>The boundary is a first-class design decision, not an implementation detail.</strong>
+    Deciding what runs where determines what ships to the browser, what can be trusted, and what the
+    user waits for.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>Server by default, <code>'use client'</code> at the leaves — and the directive applies to everything a component imports, so its placement is an architectural choice.</li>
+      <li><strong>A server action is a public endpoint.</strong> The boundary being invisible in the code does not make it absent.</li>
+      <li>Data fetched on the server never travels as an intermediate JSON payload, which is a security property as much as a performance one.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f8">
+  <span class="mn">F08 · Tianqi Chen</span>
+  <h2>Why XGBoost is designed the way it is</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Its success is systems engineering as much as statistics</strong> — regularisation in
+    the objective, cache-aware layout, sparsity-aware splitting, and a default direction learned for
+    missing values.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>It handles missing values natively — <strong>which does not mean you should ignore missingness</strong>, because if it is MNAR the model learns the bias faithfully.</li>
+      <li>It needs no feature scaling, so the absence of a scaler in the pipeline is correct rather than an oversight.</li>
+      <li><strong>Early stopping is the single most effective control</strong> against overfitting, and it is a design affordance rather than an afterthought.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f9">
+  <span class="mn">F09 · Addy Osmani</span>
+  <h2>Performance is a distribution</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>There is no single "performance" number.</strong> Your users are a distribution of
+    devices, networks and data sizes, and the average describes none of them.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>Measure on a throttled CPU and connection. <strong>An internal HR dashboard is used all day on five-year-old office machines</strong>, not on a developer laptop.</li>
+      <li>The tail is where the causes are — a p99 ten times the p50 usually means a distinct mechanism, often one customer with far more data.</li>
+      <li>And the corollary from the measurement volume: a percentile is per-request, so <strong>per-user experience is worse than it suggests</strong>, because a user makes many requests.</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="f10">
+  <span class="mn">F10 · Camille Fournier</span>
+  <h2>Management and engineering are different crafts</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The idea</span>
+    <p><strong>Management is a career change, not a promotion</strong> — a different craft whose daily
+    work has little overlap with engineering. And the tracks are parallel, so moving between them in
+    either direction is normal.</p></div>
+  <div class="b"><span class="k">Where it applies here</span>
+    <ul>
+      <li>A prior management role transfers <em>judgement, communication and decision discipline</em> — and not authority, because a tech lead argues rather than announces.</li>
+      <li><strong>What has to be rebuilt is hands-on depth</strong>, which is the reason the other nine volumes exist and the reason the labs matter more than the reading.</li>
+      <li>And the framing to use: not "I managed people and now I want to code", but where you want your judgement applied — <strong>with the technical evidence to make it credible.</strong></li>
+    </ul></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="plan">
+  <span class="mn">Reference</span>
+  <h2>The order to do them in</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:14%">If you have</th><th style="width:26%">Do these</th><th>Because</th></tr></thead>
+  <tbody>
+    <tr><td><strong>One weekend</strong></td><td>Lab 01, then Lab 03</td><td>The query investigation makes your headline claim defensible; the RBAC lab produces the artefact that demonstrates mechanism over convention.</td></tr>
+    <tr><td><strong>A week</strong></td><td>01 → 03 → 05 → 07</td><td>Adds idempotency proven by test, and a suite whose flakiness you engineered out. Four artefacts, four stories.</td></tr>
+    <tr><td><strong>Two weeks</strong></td><td>The above plus 09 and 10</td><td>The model and the report generator — with an eval score and a cost figure, which almost nobody brings.</td></tr>
+    <tr><td><strong>A month</strong></td><td>All eleven, then 12</td><td>The rebuild consolidates them, and the decision log is the output that matters.</td></tr>
+    <tr><td><strong>Interviewing next week</strong></td><td>01 and 09 only, plus the field insights</td><td>Two artefacts done properly beat eleven skimmed — and the insights give you ten borrowed sentences that land.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The whole curriculum in one line</span>
+  <p><strong>Volume 01 asked you to draw your architecture and defend a number. Lab 12 asks you to
+  rebuild it from nothing and log every decision.</strong> Everything between those two is the layer
+  underneath the things you already use — and the labs are what turn it from reading into evidence.</p>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The question banks</h4><p>Three graded banks — technical, data and AI, practice and career — for the recall side of preparation.</p></div>
+  <div class="card"><h4>The interview loop toolkit</h4><p>How each round is scored, four design scenarios, and why candidates actually get rejected.</p></div>
+  <div class="card"><h4>Volume 01 · Measurement</h4><p>Worth re-reading after Lab 12, because the architecture exercise means something different once you have rebuilt it.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/exercises/</code> — 12 files, 9,071 lines with full briefs — and <code>prep/field-insights/</code> — 10 files, 5,280 lines.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On the field insights.</strong> Each is compressed to the one idea that changes practice
+  plus where it applies in this stack. They are summaries of publicly-stated positions, not quotations
+  — the source files carry the fuller treatment, and the original talks and books are better than
+  either.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

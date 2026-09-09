@@ -1,0 +1,954 @@
+<title>The Interview Loop Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #8A5A1E;
+  --accent-soft: #F6EBDA;
+  --accent-deep: #5E3B0D;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #8A5A1E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #DFB472;
+    --accent-soft: #241A0B;
+    --accent-deep: #EDCA98;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #DFB472;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #DFB472;
+  --accent-soft: #241A0B;
+  --accent-deep: #EDCA98;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #DFB472;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">The Loop Toolkit</p>
+  <p class="rail-sub">Running the interview itself</p>
+  <span class="rail-vol">Loop 1 of 2</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · The shape of a loop</div>
+  <a href="#a1"><span class="n">01</span>The five stages</a>
+  <a href="#a2"><span class="n">02</span>The cheat sheet</a>
+
+  <div class="rail-group">II · The rounds</div>
+  <a href="#b1"><span class="n">03</span>The screen</a>
+  <a href="#b2"><span class="n">04</span>Coding challenges</a>
+  <a href="#b3"><span class="n">05</span>The take-home</a>
+  <a href="#b4"><span class="n">06</span>System design</a>
+  <a href="#b5"><span class="n">07</span>The deep dive</a>
+  <a href="#b6"><span class="n">08</span>Behavioural</a>
+
+  <div class="rail-group">III · Scenarios</div>
+  <a href="#c1"><span class="n">09</span>Design: the HR dashboard</a>
+  <a href="#c2"><span class="n">10</span>Design: notifications</a>
+  <a href="#c3"><span class="n">11</span>Design: the AI feature</a>
+  <a href="#c4"><span class="n">12</span>Design: the file export</a>
+
+  <div class="rail-group">IV · The mock</div>
+  <a href="#d1"><span class="n">13</span>A full transcript</a>
+  <a href="#d2"><span class="n">14</span>Where it turned</a>
+
+  <div class="rail-group">V · Their side</div>
+  <a href="#e1"><span class="n">15</span>Questions to ask</a>
+  <a href="#e2"><span class="n">16</span>Why people get rejected</a>
+  <a href="#e3"><span class="n">17</span>Negotiation, briefly</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#plan"><span class="n">—</span>The two-week plan</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Interview loop · I of II · the toolkit</p>
+  <h1>The interview loop toolkit. <span class="thin">Running the rounds, not just knowing the answers.</span></h1>
+  <p class="lede">What each stage is scored on, how to run a coding round and a take-home, four
+  worked design scenarios, an annotated mock transcript, the questions worth asking them, and the
+  reasons candidates are actually rejected — which are rarely the reasons they assume.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · 9 of the 13 source files</span>
+    <span><b>Companion</b> · the four deep dives</span>
+    <span><b>Use</b> · in the two weeks before a loop</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 34 documents</b><em>The index</em></a>
+<div class="vol here"><span class="vn">Loop I · here</span><b>The loop toolkit</b></div>
+<a class="vol" href="32-interview-deep-dives.html"><span class="vn">Loop II</span><b>The four deep dives</b></a>
+</div>
+
+<header class="part" id="shape">
+  <span class="pn">Part I</span>
+  <h2>The shape of a loop</h2>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Loop 01</span>
+  <h2>The five stages, and what each is really scored on</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Stage</th><th style="width:30%">Looks like it tests</th><th>Actually tests</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Recruiter screen</strong></td><td>Your background</td><td>Whether you can explain what you built in two minutes, and whether your expectations are compatible. <strong>Prepare the two-minute version.</strong></td></tr>
+    <tr><td><strong>Technical screen</strong></td><td>Whether you can code</td><td>Whether you clarify before solving, and whether you narrate. <strong>Silence is unscoreable.</strong></td></tr>
+    <tr><td><strong>Take-home or pairing</strong></td><td>The finished product</td><td>Your judgement about scope, and your README. What you chose <em>not</em> to do is read as carefully as what you did.</td></tr>
+    <tr><td><strong>System design</strong></td><td>Whether you know architectures</td><td>Whether you ask about scale before drawing, and whether you name what each choice costs.</td></tr>
+    <tr><td><strong>Deep dive / behavioural</strong></td><td>Your past work</td><td>Whether your stories contain a decision, a cost and a change afterwards — and whether "we" ever becomes "I".</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The one thing that runs through all five</span>
+  <p><strong>They are hiring the person they will have to work with on a bad Tuesday.</strong> Every
+  stage is partly a test of how you behave when you do not know something — which is why "I don't
+  know, here's how I'd find out" is a strong answer, and bluffing is fatal in a way that being wrong
+  is not.</p>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Loop 02</span>
+  <h2>The cheat sheet</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The whole toolkit, on one screen</div>
+<pre><code>BEFORE YOU ANSWER ANYTHING
+  ①  restate the question in your own words
+  ②  ask the clarifying question you already suspect
+  ③  say your approach in one sentence before executing it
+  ⭐ THREE MOVES, NINETY SECONDS, AND THEY CHANGE THE SCORE OF
+    EVERY ROUND.
+
+IN A CODING ROUND
+  · write two concrete input/output examples first
+  · name the constraint: how big, how often, called in a loop?
+  · say the edge cases you will handle: zero · one · many ·
+    null · twice · order · race · hostile · halfway
+  · ⭐ NARRATE. An interviewer cannot score thinking they cannot
+    hear.
+  · if you are stuck, say what you have ruled out
+
+IN A DESIGN ROUND
+  · requirements first, written where they can see them
+  · ⭐ ESTIMATE BEFORE YOU DRAW. The number chooses the design.
+  · start with three boxes and add under pressure
+  · the data model is the highest-signal part
+  · protect time for FAILURE — where seniority is most visible
+  · close with the trade-off and what you left out
+
+IN A BEHAVIOURAL ROUND
+  · situation · task · action · result · ⭐ AND WHAT YOU
+    CHANGED AFTERWARDS
+  · "I", not "we" · numbers, not adjectives · two minutes
+
+WHEN CHALLENGED
+  ⭐ HEAR IT, CHECK IT, ADJUST. Defending a wrong answer is
+    fatal; changing your mind on evidence is a positive signal.
+
+WHEN YOU DO NOT KNOW
+  "I haven't used that. Here's what I'd expect it to do, and
+  here's how I'd verify it." ⇒ complete, professional answer.</code></pre>
+</div>
+
+<header class="part" id="rounds">
+  <span class="pn">Part II</span>
+  <h2>The rounds</h2>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Loop 03</span>
+  <h2>The technical screen</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">45 minutes, and how the time should be spent</div>
+<pre><code>0–5    INTRODUCTIONS AND YOUR TWO-MINUTE STORY
+       ⭐ PREPARE THIS VERBATIM. What you built, the hard part,
+         the outcome with a number. Two minutes, not five.
+
+5–10   CLARIFYING THE PROBLEM
+       ⚠ THE MOST OFTEN SKIPPED AND HIGHEST-VALUE FIVE MINUTES
+         IN THE ENTIRE LOOP. Restate it, get one concrete
+         example, name the shape of the data, name the
+         constraint.
+
+10–35  SOLVING IT, OUT LOUD
+       · approach in one sentence first
+       · write the examples down where they can see them
+       · handle the happy path, then the edges you named
+       · say what you are doing as you do it
+
+35–42  QUESTIONS THEY ASK YOU
+       edge cases, complexity, what you would change at scale.
+       ⭐ "What would break if this got a hundred times bigger?"
+         is asked in almost every screen — have the answer.
+
+42–45  YOUR QUESTIONS
+       ⚠ "No questions" closes on a flat note. Have two.
+
+⭐ THE THREE THINGS THAT LOSE A SCREEN
+  ① SILENCE. Even a wrong direction narrated beats a correct
+    one produced in silence, because only one of them is
+    scoreable.
+  ② SOLVING THE WRONG PROBLEM CONFIDENTLY. Prevented entirely
+    by the 5–10 minute block.
+  ③ NOT FINISHING AND NOT SAYING SO. "I've handled the main
+    path; the two things missing are X and Y" beats a silent
+    unfinished screen every time.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Loop 04</span>
+  <h2>Coding challenges</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">The challenge type</th><th style="width:30%">What they are checking</th><th>The move that wins it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Transform a collection</strong><br><span class="mid">group, aggregate, reshape</span></td><td>Whether you reach for a map instead of nested loops</td><td>Build a lookup once. And say the complexity out loud — "this is O(n + m) rather than O(n × m)".</td></tr>
+    <tr><td><strong>Parse or validate input</strong></td><td>Edge-case discipline</td><td>Enumerate the malformed cases <em>before</em> writing: empty, wrong type, too long, duplicate keys, unexpected nesting.</td></tr>
+    <tr><td><strong>Implement pagination or filtering</strong></td><td>Whether you know the contract matters</td><td>Ask whether the underlying data changes between pages. That question is the whole point of the exercise.</td></tr>
+    <tr><td><strong>Fix a bug in given code</strong></td><td>Reading and hypothesis discipline</td><td>Reproduce it first, state what you expected versus what happened, change one thing. <strong>Do not start editing.</strong></td></tr>
+    <tr><td><strong>Async orchestration</strong></td><td>Whether you understand concurrency</td><td>Spot the sequential awaits that could be parallel, and the loop with an await inside it.</td></tr>
+    <tr><td><strong>A small API endpoint</strong></td><td>Whether security is a habit</td><td>Validate the input, check the id against the caller, and shape the response. Unprompted.</td></tr>
+    <tr><td><strong>SQL from a requirement</strong></td><td>Whether you know what joins do to counts</td><td>Say "this join will fan out and inflate the sum, so I'll aggregate first" before it happens.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">On live coding with an audience</span>
+  <p>You will be slower than usual and that is expected. <strong>What is not expected is a silent
+  screen.</strong> Two habits fix most of it: write the examples down first so you cannot drift onto
+  the wrong problem, and say "I'm going to do X because Y" before each step so that even a wrong turn
+  is legible.</p>
+  <p>And if you blank: say what you have ruled out. That is genuine information and it usually
+  unblocks you.</p>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Loop 05</span>
+  <h2>The take-home</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What is actually being read</div>
+<pre><code>⭐ THEY ARE NOT GRADING FEATURE COUNT. They are grading
+  JUDGEMENT ABOUT SCOPE, and the README is where that is
+  visible.
+
+THE README THAT WINS IT
+  □  HOW TO RUN IT — one command, and it must actually work on
+     a clean machine. ⚠ A take-home that does not start is
+     scored before it is read.
+  □  WHAT YOU BUILT, in three lines
+  □  ⭐ WHAT YOU DELIBERATELY DID NOT BUILD, AND WHY. This is
+     the single strongest paragraph available to you: "no
+     pagination because the dataset is fixed at 200 rows; I
+     would add cursor pagination before this saw real data."
+  □  THE TRADE-OFFS you took, with their costs
+  □  WHAT YOU WOULD DO WITH ANOTHER DAY
+  □  how long it took you, honestly
+
+WHAT TO SPEND THE TIME ON, IN ORDER
+  ①  IT RUNS. Cleanly, from the instructions, first try.
+  ②  THE CORE PATH WORKS and is correct at the edges.
+  ③  ONE OR TWO REAL TESTS — the permission boundary and one
+     edge case beat twenty trivial assertions.
+  ④  CLEAR STRUCTURE AND NAMES.
+  ⑤  the README above.
+  ⚠ NOT: extra features, a styling system, or an abstraction
+    for requirements that do not exist.
+
+⚠ THE FOUR THINGS THAT SINK A TAKE-HOME
+  · it does not run
+  · commented-out code and leftover console output
+  · no error handling anywhere
+  · a secret or a real credential committed
+⭐ AND ONE THAT IS INCREASINGLY CHECKED: code you cannot
+  explain. Expect a follow-up call walking through your own
+  submission line by line.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Loop 06</span>
+  <h2>The system design round</h2>
+</header>
+
+<div class="ascii">   THE 45-MINUTE ALLOCATION — and the discipline is the score
+
+   0–5    REQUIREMENTS, written where they can see them
+          functional: three to five things.
+          non-functional: how many users, how fast, how fresh,
+          how available, how private.
+          ⭐ AND WHAT IS OUT OF SCOPE. Cutting scope in the
+            first five minutes is the most senior move you will
+            make in the round.
+
+   5–8    ESTIMATE
+          users → requests per second → data per day → per year.
+          Round violently and say you are rounding.
+          ⭐ THE NUMBER CHOOSES THE DESIGN. Fifty requests a
+            second is one boring database — and knowing that is
+            what stops you over-building.
+
+   8–13   THE BOX DIAGRAM
+          client → api → store, plus only what is needed.
+          ⚠ eleven boxes in minute four, none of which you can
+            justify, reads as inexperience.
+
+   13–20  THE DATA MODEL          ⭐ the highest-signal part
+          entities, relationships, and the access patterns.
+          "we read this a thousand times per write" changes the
+          design more than any box.
+
+   20–27  ONE REQUEST, END TO END, IN WORDS
+          what is written, read, cached, queued — and what the
+          user sees at each moment.
+
+   27–33  FAILURE                 ⭐ where seniority shows most
+          what happens when each box is down or slow? which
+          parts must be correct and which may be stale?
+          ⚠ THIS IS ALSO WHERE PEOPLE RUN OUT OF TIME. Protect
+            it deliberately.
+
+   33–39  SCALE THE BOTTLENECK
+          the one thing that breaks first. Not everything —
+          scaling everything is a list of technologies, not a
+          design.
+
+   39–45  TRADE-OFFS AND WHAT'S NEXT
+          what you would build first, what you left out, what
+          breaks at 10× and what you would do then.
+
+   ⭐ THE STRUCTURE IS THE SCORE. Two candidates with identical
+     knowledge get different results because one followed this
+     order and one free-associated.</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Loop 07</span>
+  <h2>The deep dive on your own work</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The hardest round to fake, and the easiest to prepare</div>
+<pre><code>THEY PICK ONE THING FROM YOUR CV AND GO THREE LEVELS DOWN.
+
+  level 1  "Tell me about the attrition feature."
+  level 2  "Why XGBoost rather than logistic regression?"
+  level 3  ⭐ "What was the base rate, and what did that do to
+            your precision?"
+
+  ⚠ MOST CANDIDATES ARE FINE AT LEVEL 1, ADEQUATE AT LEVEL 2,
+    AND STOP AT LEVEL 3. Level 3 is where the round is decided.
+
+⭐ SO PREPARE BY GOING THREE LEVELS DOWN ON EVERY CV CLAIM
+  YOURSELF, BEFORE THE INTERVIEW. For each one:
+  □  what did I choose, and what was the alternative?
+  □  what did that choice COST?
+  □  what number can I attach to the outcome?
+  □  what would I do differently now?
+  □  ⭐ WHAT WENT WRONG, and what did I change afterwards?
+
+THE CLAIM MOST LIKELY TO BE PROBED
+  any performance number. "50 seconds to 6" invites: what was
+  the actual bottleneck, how did you find it, what did you try
+  that did not work, and how do you know it stayed fixed?
+  ⇒ IF YOU CANNOT ANSWER THOSE FOUR, DO NOT PUT THE NUMBER ON
+    THE CV — and if you can, that claim becomes your strongest
+    asset in the loop.
+
+⚠ AND THE TRAP: CLAIMING TEAM WORK AS YOURS. Interviewers probe
+  for it, and it collapses badly. "I owned the query
+  optimisation; a colleague did the caching layer" is stronger
+  than an unspecific "we".</code></pre>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Loop 08</span>
+  <h2>Behavioural answers</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">The question</th><th>What they are listening for</th></tr></thead>
+  <tbody>
+    <tr><td>"Tell me about a conflict with a colleague."</td><td>That you separate the person from the position, and that it ended in a decision rather than a grudge. <strong>Never blame the other person.</strong></td></tr>
+    <tr><td>"Tell me about a failure."</td><td>A <em>real</em> one, owned without excuses, with the specific change it caused. <span class="no">The most commonly deflected question and the strongest available answer.</span></td></tr>
+    <tr><td>"When did you disagree with a decision?"</td><td>Whether you can disagree and commit — argue with evidence, then execute properly anyway.</td></tr>
+    <tr><td>"Tell me about a time you missed a deadline."</td><td>Whether you flagged it early. That is the whole answer.</td></tr>
+    <tr><td>"How do you handle an unclear requirement?"</td><td>That you ask what the person will do with the result, rather than guessing or stalling.</td></tr>
+    <tr><td>"Tell me about mentoring someone."</td><td>Specificity. What they could not do before, what you did, what they can do now.</td></tr>
+    <tr><td>"Why are you leaving?"</td><td>Forward-looking, not grievance. <strong>Criticising your current employer reads as a preview.</strong></td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="scenarios">
+  <span class="pn">Part III</span>
+  <h2>Design scenarios</h2>
+  <p class="lede">Four worked briefs. For each: the questions to ask first, the shape of the answer,
+  and the trap.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Scenario 09</span>
+  <h2>Design a live HR metrics dashboard</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">Ask first</span>
+    <ul>
+      <li><strong>How live is live?</strong> To the second, or refreshed every few minutes? The second is dramatically cheaper and almost always sufficient — nobody makes a hiring decision on a five-second-old number.</li>
+      <li>How many viewers, and when? This is a working-day spike, not smooth traffic.</li>
+      <li><strong>Whose numbers?</strong> A regional manager's "total open roles" is not the company's.</li>
+    </ul></div>
+  <div class="b"><span class="k">The shape</span>
+    <p>Precompute the aggregates on a schedule, cache them, serve from the cache. The read-to-write ratio is thousands to one, so the "hard" problem largely evaporates once you stop treating it as real-time.</p>
+    <p>Show the timestamp. A dashboard that silently displays yesterday's figure as today's is worse than one that says it is behind.</p></div>
+  <div class="b junior"><span class="k">The trap</span>
+    <p><strong>Building for real-time because the word appeared in the brief.</strong> One question removes half the system. And the permission dimension is the one people miss entirely: if the aggregate is not computed per scope, the dashboard leaks headcount information sideways.</p></div>
+  <div class="b check"><span class="k">Strong close</span>
+    <p>"I'd build it batch-refreshed with a visible timestamp, per-scope aggregates, and a cache with jittered expiry so every viewer doesn't miss simultaneously. If they later need true real-time for one number, I'd add streaming for that number only."</p></div>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Scenario 10</span>
+  <h2>Design notifications</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">Ask first</span>
+    <ul>
+      <li>Which events, and who decides someone receives them?</li>
+      <li>Which channels — in-app, email, push? And is there a category that ignores preferences, such as a security alert?</li>
+      <li><strong>What is the worst-case volume?</strong> An approval flow with 300 items generates 300 notifications and one very angry user.</li>
+    </ul></div>
+  <div class="b"><span class="k">The shape</span>
+    <p>Two entities, not one: an <em>event</em> that happened, and a <em>delivery</em> per recipient per channel. Preferences per type and per channel. A queue, because delivery is slow and unreliable and must be retryable.</p>
+    <p>At-least-once delivery plus deduplication on the recipient's side — the alternative, at-most-once, silently loses the one that mattered.</p></div>
+  <div class="b junior"><span class="k">The trap</span>
+    <p><strong>Designing a bell icon rather than a system.</strong> And forgetting the leakage: preview text goes to a phone's lock screen and an email subject line. "Your termination letter is ready" on a lock screen is a design failure, not an edge case.</p></div>
+  <div class="b check"><span class="k">Strong close</span>
+    <p>"Batching and digests are core design here rather than an optimisation, and I'd send an id rather than the full record so the client fetches over HTTP where permissions are checked normally."</p></div>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Scenario 11</span>
+  <h2>Design an AI summary feature</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">Ask first</span>
+    <ul>
+      <li><strong>Is it advisory or decisive?</strong> The first question, before any box. If it filters, ranks or rejects, this is a decision about someone's employment with a completely different bar.</li>
+      <li>What goes into the prompt, and has that data left our boundary before?</li>
+      <li>How do we know it is any good — is there an eval set?</li>
+    </ul></div>
+  <div class="b"><span class="k">The shape</span>
+    <p><strong>The deterministic system computes; the model narrates.</strong> Calculate the score in SQL or the model service where it is reproducible and auditable, and let the LLM write the sentence around it. Then the worst hallucination is a clumsy sentence, not a wrong figure in an HR review.</p>
+    <p>Out of the request path: precompute when the record changes, or stream. Constrained output shape. A fallback when the provider is down — the page renders, the panel says what is missing.</p></div>
+  <div class="b junior"><span class="k">The trap</span>
+    <p><strong>Letting the model produce a number</strong>, and putting a multi-second provider call inside a page load. Also: treating prompt injection as a prompting problem — a CV or document in the context means its author is speaking to your model, and only a trust boundary in code defends that.</p></div>
+  <div class="b check"><span class="k">Strong close</span>
+    <p>"I'd log the prompt version, token counts, stop reason and latency, because without those four a quality regression is unexplainable — and I'd build the twenty-case eval set before tuning anything."</p></div>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Scenario 12</span>
+  <h2>Design an employee record export</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">Ask first</span>
+    <ul>
+      <li><strong>What is it for?</strong> A manager preparing a review, a legal subject-access request, and HR sending a file to an external lawyer are three different features that differ on how much data leaves the system.</li>
+      <li>What is in "complete"? Name the categories and watch the request change: contact details, salary, reviews, disciplinary history, sickness, medical accommodations.</li>
+      <li><strong>Is this requester entitled to all of it?</strong> Usually not — sickness and accommodations are frequently HR-only.</li>
+    </ul></div>
+  <div class="b"><span class="k">The shape</span>
+    <p>Assembled <em>per requester</em>, not once and filtered for display. A job rather than a request, because a twenty-year record with attachments is not a new joiner's. An audit row for every generation. A lifetime on the file, so it gets deleted.</p></div>
+  <div class="b junior"><span class="k">The trap</span>
+    <p><strong>Returning a link to a file in storage.</strong> A link is a credential: it carries no identity, works for anyone who has it, gets pasted into chat, and if the name is predictable the other records are reachable by editing the string. <strong>Say this unprompted and the round is effectively won.</strong></p></div>
+  <div class="b check"><span class="k">Strong close</span>
+    <p>"Best is no file at all — render it in the app behind the session. If it must be a file, serve it through an authenticated endpoint; if it must be a direct link, a short-expiry pre-signed URL with an unguessable name, delivered to the verified account rather than returned in the response."</p></div>
+</div>
+
+<header class="part" id="mock">
+  <span class="pn">Part IV</span>
+  <h2>The mock</h2>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Mock 13</span>
+  <h2>A full transcript, annotated</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Technical screen · the first eight minutes, where it is decided</div>
+<pre><code>INTERVIEWER  "Write a function that returns each employee's
+             average performance score."
+
+⚠ THE WEAK OPENING
+  CANDIDATE  "Sure —" [starts typing]
+  ⇒ four undefined decisions are now being guessed at silently.
+
+✅ THE STRONG OPENING
+  CANDIDATE  "Before I write it — a couple of things I'd want to
+             pin down. What should an employee with no reviews
+             return? Zero, null, or should they be omitted?"
+  INTERVIEWER "What would you suggest?"
+  CANDIDATE  "Null, or omit them. Zero reads as a bad review
+             rather than a missing one, and if this feeds a
+             ranking it would push them to the bottom
+             incorrectly."
+  ⭐ SCORED: has judgement, not just an answer.
+
+  CANDIDATE  "Second — a missing score versus a score of zero.
+             If some reviews have no score recorded, averaging
+             them as zero permanently drags that person down.
+             I'd exclude nulls from the average and count them
+             separately."
+  ⭐ SCORED: knows the null/zero distinction is a real bug.
+
+  CANDIDATE  "And the grain — average across all time, or per
+             cycle? 'Their average' quietly compares a ten-year
+             veteran with a new joiner."
+  INTERVIEWER "Good. All time is fine."
+  CANDIDATE  "Then my approach: I'll separate fetching the
+             scores from computing the average, so the rule is
+             testable with a plain list and no database. Let me
+             write two examples first."
+  ⭐ SCORED: names the seam, and pins the spec with examples.
+
+⇒ EIGHT MINUTES IN, NO CODE WRITTEN, AND THE ROUND IS ALREADY
+  GOING WELL. That is not a paradox — it is what the round is
+  for.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Mock 14</span>
+  <h2>Where interviews turn</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The clarifying question</h4><p>Asked in the first two minutes. It reframes you from "candidate solving a puzzle" to "colleague scoping work".</p></div>
+  <div class="card"><h4>The unprompted edge case</h4><p>Naming the empty list or the double-click before being asked. Both are certainties, not risks.</p></div>
+  <div class="card"><h4>The cost sentence</h4><p>"…and what that costs me is X." The most reliable marker of experience in any round.</p></div>
+  <div class="card"><h4>The graceful correction</h4><p>Being challenged, checking, and adjusting. Interviewers deliberately test this; digging in is fatal.</p></div>
+  <div class="card"><h4>The honest gap</h4><p>"I haven't used that — here's what I'd expect and how I'd verify it." Read as maturity, not weakness.</p></div>
+  <div class="card"><h4>The structural close</h4><p>Ending a bug story with what you changed so the class cannot recur. Turns "fixed a bug" into "owns a system".</p></div>
+</div>
+
+<header class="part" id="their">
+  <span class="pn">Part V</span>
+  <h2>Their side of the table</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Loop 15</span>
+  <h2>Questions worth asking them</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Ask</th><th>Because the answer tells you</th></tr></thead>
+  <tbody>
+    <tr><td>"What does the deploy process look like, and how often do you deploy?"</td><td>Engineering maturity, in one answer. Weekly with a pipeline is a different job from monthly by hand.</td></tr>
+    <tr><td>"What happened in your last incident, and what changed afterwards?"</td><td>Whether post-mortems are blameless and whether anything actually changes.</td></tr>
+    <tr><td>"How does work get prioritised, and who decides?"</td><td>Whether engineers have input, or receive a queue.</td></tr>
+    <tr><td>"What is the code review culture — who reviews whom?"</td><td>Knowledge flow, and whether seniors are reviewable.</td></tr>
+    <tr><td><strong>"What is the most frustrating part of working here?"</strong></td><td><span class="ok">The highest-signal question on this list.</span> Everyone has one. A candid answer is a good sign; "nothing really" is not.</td></tr>
+    <tr><td>"How much of the codebase is generated, and how do you review it?"</td><td>Whether they have thought about the thing every team is currently facing.</td></tr>
+    <tr><td>"What does success look like for me at three and twelve months?"</td><td>Whether the role is actually defined.</td></tr>
+    <tr><td>"Why is this role open?"</td><td>Growth, backfill, or churn — and how they answer matters as much as what they say.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Loop 16 · read this one twice</span>
+  <h2>Why candidates actually get rejected</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Rarely the reasons people assume</div>
+<pre><code>⭐ THE MOST COMMON REAL REASONS, IN ROUGH ORDER
+
+  ①  SOLVED THE WRONG PROBLEM. Confidently, and without asking
+     a single clarifying question.
+  ②  COULD NOT EXPLAIN THEIR OWN PAST WORK past level one.
+     Especially a number on the CV they could not stand behind.
+  ③  NO TRADE-OFFS IN ANY ANSWER. Every choice presented as
+     obviously correct, with no cost named.
+  ④  DEFENDED A WRONG ANSWER when challenged. This one is
+     close to fatal on its own.
+  ⑤  SILENCE IN A CODING ROUND. Nothing scoreable happened.
+  ⑥  "WE" WITH NO "I" in every story, so no individual
+     contribution could be identified.
+  ⑦  OVER-ENGINEERED EVERYTHING — microservices and Kubernetes
+     for fifty requests a second, with no estimate behind it.
+  ⑧  NO EDGE CASES, ever, unprompted.
+  ⑨  BLUFFING. Almost always detected, and it retroactively
+     devalues everything else you said.
+  ⑩  DISPARAGED A PREVIOUS EMPLOYER. Read as a preview.
+
+⚠ WHAT IS ALMOST NEVER THE REASON
+  · not knowing one specific library or syntax
+  · a suboptimal first solution that you improved
+  · asking for a hint after genuinely trying
+  · saying "I don't know" — ⭐ WHEN FOLLOWED BY HOW YOU WOULD
+    FIND OUT
+  · nerves
+
+⭐ SO THE PREPARATION THAT ACTUALLY MOVES THE OUTCOME IS NOT
+  MORE FACTS. It is: clarify before solving · narrate · name
+  the cost · prepare your own CV three levels deep · and
+  practise being wrong gracefully.</code></pre>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Loop 17</span>
+  <h2>Negotiation, briefly</h2>
+</header>
+
+<div class="note">
+  <span class="tag">Three things worth knowing</span>
+  <p><strong>Do not give the first number if you can avoid it.</strong> "What is the range budgeted
+  for this role?" is a normal, professional question and it usually gets an answer.</p>
+  <p><strong>Negotiate the whole package.</strong> Base, bonus, equity, start date, remote
+  arrangement, learning budget. Some of those are easier for them to move than base.</p>
+  <p><strong>Get it in writing before resigning.</strong> Pleasant verbal agreements are not offers,
+  and the gap between them is where problems happen.</p>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="plan">
+  <span class="mn">Reference</span>
+  <h2>The two-week plan</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Days</th><th style="width:30%">Do</th><th>Why this order</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1–2</strong></td><td>Go three levels down on every CV claim. Write the answers.</td><td><strong>Start here, not with algorithms.</strong> The deep dive is the round most decided by preparation and least helped by cramming.</td></tr>
+    <tr><td><strong>3–4</strong></td><td>Bank I — the technical questions. Answer out loud before reading.</td><td>Surfaces your actual gaps, which is what the remaining days should target.</td></tr>
+    <tr><td><strong>5–6</strong></td><td>Bank II or III, whichever matches the role.</td><td>Depth where it counts rather than breadth everywhere.</td></tr>
+    <tr><td><strong>7–8</strong></td><td>The four design scenarios here, out loud, on a whiteboard, timed.</td><td>Design is a performance. Reading about it does not transfer.</td></tr>
+    <tr><td><strong>9–10</strong></td><td>Two coding problems a day, narrating throughout. Record yourself once.</td><td>The narration is the skill being trained, not the problem.</td></tr>
+    <tr><td><strong>11–12</strong></td><td>Five behavioural stories written out, with numbers and the change afterwards.</td><td>They recombine to answer twenty questions.</td></tr>
+    <tr><td><strong>13</strong></td><td>The rejection-reasons list, and your questions for them.</td><td>Cheap, and it prevents the failures that have nothing to do with knowledge.</td></tr>
+    <tr><td><strong>14</strong></td><td>Rest. Re-read the cheat sheet only.</td><td>Cramming the day before degrades the performance you have already prepared.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The four deep dives</h4><p>The companion volume: Prisma and SQL, auth and security, testing, and design patterns with SOLID — the four topics the source treats at length because they are probed hardest.</p></div>
+  <div class="card"><h4>The three question banks</h4><p>Technical · data and AI · practice and career. Graded answers with follow-ups and red flags.</p></div>
+  <div class="card"><h4>Three Levels Down</h4><p>The CV-anchored playbook — 17 reasoning competencies, a claim-by-claim probe map, 35 graded questions and three annotated transcripts.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/interviews/outputs/</code> — this volume covers the cheat sheet, top-50, coding challenges, system-design scenarios, behavioural answers, the mock script, questions to ask, rejection reasons and the take-home template.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On coverage.</strong> This volume covers nine of the thirteen source files; the other
+  four — Prisma/SQL, auth and security, testing, and design patterns — are long enough to be their
+  own volume, and are. The source's 50-question list and 3,500-line challenge set are represented by
+  pattern and by worked example rather than reproduced item by item.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

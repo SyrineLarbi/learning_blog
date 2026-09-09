@@ -1,0 +1,806 @@
+<title>Measurement Before Claims</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 01</p>
+  <p class="rail-sub">Measurement before claims</p>
+  <span class="rail-vol">Phase 0</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">The premise</div>
+  <a href="#why"><span class="n">—</span>Why this comes first</a>
+  <a href="#rule"><span class="n">—</span>The §0 rule</a>
+
+  <div class="rail-group">I · Your own architecture</div>
+  <a href="#a1"><span class="n">01</span>Reconstructing it</a>
+  <a href="#a2"><span class="n">02</span>The eight questions</a>
+  <a href="#a3"><span class="n">03</span>Drawing it under pressure</a>
+
+  <div class="rail-group">II · Measurement</div>
+  <a href="#b1"><span class="n">04</span>What a number must carry</a>
+  <a href="#b2"><span class="n">05</span>Percentiles, properly</a>
+  <a href="#b3"><span class="n">06</span>Benchmarking fundamentals</a>
+  <a href="#b4"><span class="n">07</span>Before &amp; after honestly</a>
+
+  <div class="rail-group">III · The toolkit</div>
+  <a href="#c1"><span class="n">08</span>Database</a>
+  <a href="#c2"><span class="n">09</span>Backend</a>
+  <a href="#c3"><span class="n">10</span>Frontend</a>
+  <a href="#c4"><span class="n">11</span>Load &amp; capacity</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#claim"><span class="n">—</span>Turning a claim into evidence</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 01 of 10 · phase 0</p>
+  <h1>Measurement before claims. <span class="thin">The layer underneath every number you quote.</span></h1>
+  <p class="lede">Before any depth topic: reconstructing the architecture you actually built so you can
+  draw it from memory, and learning to measure properly — because every performance claim invites
+  four follow-up questions, and a number you cannot defend is worse than no number.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 0 files 02, 03, 04</span>
+    <span><b>Skipped</b> · the résumé claim audit</span>
+    <span><b>Read first</b> · everything else assumes it</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<div class="vol here"><span class="vn">Vol 01 · here</span><b>Measurement</b></div>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="mod" id="why">
+  <span class="mn">The premise</span>
+  <h2>Why this comes first</h2>
+</header>
+
+<div class="proj">
+  <span class="tag">What this curriculum is</span>
+  <p>The <code>prep/</code> folder exists for one purpose: <strong>to make each technology you
+  already claim survive forty-five minutes of pressure from someone who has shipped more than
+  you.</strong> It was built after measuring the existing 95,000 lines of documentation, so it
+  deliberately does not repeat what is already covered well — it adds the layer underneath.</p>
+  <p>This volume is the part that comes before any of the technology depth, because two things
+  determine whether the rest lands: whether you can <em>draw your own system</em> without notes, and
+  whether you can <em>defend a number</em>.</p>
+</div>
+
+<header class="mod" id="rule">
+  <span class="mn">The premise</span>
+  <h2>The §0 rule</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The rule every file in the source folder follows</div>
+<pre><code>⭐ IF THE EXISTING DOCS ALREADY TEACH IT WELL, YOU GET A LINK,
+  NOT A FILE. If they teach it shallowly, you get the layer
+  above. If they never mention it, you get the whole course.
+
+WHICH MEANS THE VALUE OF THIS SET IS CONCENTRATED IN THE
+TECHNOLOGIES THAT WERE AT LITERAL ZERO:
+
+  Cucumber / Gherkin / BDD     React Hook Form        Zod
+  Next.js server actions       revalidatePath/Tag     ISR
+  Anthropic SDK internals      prompt caching         headless PDF
+  MongoDB driver code          SAML                   Typesense
+  Okta · Traefik · BullMQ · TanStack Query · MariaDB/InnoDB ·
+  Passport strategies · Kubernetes HPA · WebSocket scaling ·
+  Turborepo · audit logging designed rather than asserted
+
+⇒ AND THE TOPICS ALREADY COVERED AT DEPTH ELSEWHERE — Postgres
+  internals, Docker, CI/CD, data structures, system design, RAG,
+  agents, TypeScript core, React fundamentals — ARE NOT
+  REPEATED HERE. Volumes 04 and 08 of the skill-upgrading
+  handbook and Volume II of the onboarding handbook hold those.
+
+⭐ SO WHEN A SECTION IN THIS SET SAYS "THE LAYER THIS ADDS",
+  THAT IS NOT A FLOURISH. It is the contract: you are getting
+  what sits underneath the thing you already use.</code></pre>
+</div>
+
+<header class="part" id="arch">
+  <span class="pn">Part I</span>
+  <h2>Reconstructing your own architecture</h2>
+  <p class="lede">Source file 02 — the exercise that makes every later round easier.</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Topic 01</span>
+  <h2>Reconstructing it</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>You built the system, so you know it works. What you probably cannot do from memory is state
+    <strong>why each boundary is where it is</strong> — and that is the entire deep-dive round.</p>
+    <p>The exercise: rebuild the architecture diagram from scratch, on paper, without opening the
+    repository. Then open the repository and find what you got wrong. <strong>What you got wrong is
+    your study list.</strong></p></div>
+  <div class="b"><span class="k">The method</span>
+    <ol>
+      <li><strong>List the deployable pieces</strong> and the protocol between each pair. Frontend, backend, AI service, database, cache, queue, storage.</li>
+      <li><strong>Mark every synchronous arrow.</strong> Each one is a dependency that can make you slow or down — and naming them is how you answer "what happens when the AI service is unavailable?"</li>
+      <li><strong>Mark the trust boundaries</strong> — where data crosses out of your control.</li>
+      <li><strong>Trace one request end to end in words.</strong> The report-generation path, because it touches every component.</li>
+      <li><strong>For each boundary, write one sentence on why it exists.</strong> If you cannot, that is a gap you will be asked about.</li>
+    </ol></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Drawing the diagram you <em>intended</em> rather than the one that shipped. The intended version has no retry logic and no manual step in it.</li>
+      <li>Omitting the pieces that fail — the queue, the third party, the cache.</li>
+      <li>Not knowing which calls are synchronous, which makes every failure question unanswerable.</li>
+    </ul></div>
+  <div class="b check"><span class="k">You must be able to answer</span>
+    <p>"Why three services rather than one?" — and the answer has to be a specific, stated reason
+    (Python has the ML ecosystem), not a preference. "Microservices are modern" fails this
+    question.</p></div>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Topic 02</span>
+  <h2>The eight questions to have answers to</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">The question</th><th>What a defensible answer contains</th></tr></thead>
+  <tbody>
+    <tr><td>"Why did you split the AI service out?"</td><td>One stated reason, plus the cost you accepted: a network call that can fail, no shared transaction, a second deployment.</td></tr>
+    <tr><td>"Where does truth live for each fact?"</td><td>One store per fact, and what you do about anything duplicated for read performance.</td></tr>
+    <tr><td>"What is the slowest path, and why?"</td><td>A measured number, not an impression — and which component owns the time.</td></tr>
+    <tr><td>"What happens if the database is unreachable?"</td><td>Which features degrade and which stop. If the answer is "everything stops", say so; that is a legitimate design choice made explicitly.</td></tr>
+    <tr><td>"How do you know it is healthy right now?"</td><td>The specific signals. If the honest answer is "we would hear from a user", say that — it is a better answer than an invented monitoring story.</td></tr>
+    <tr><td>"What would break at ten times the data?"</td><td>Name one specific thing and one specific fix. Vague scaling answers read worse than a narrow, correct one.</td></tr>
+    <tr><td>"What would you change if you rebuilt it?"</td><td>A real change with a reason. This is where they test whether you learned anything.</td></tr>
+    <tr><td>"What was the hardest decision?"</td><td>A trade-off with both sides named, and what it cost you.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Topic 03</span>
+  <h2>Drawing it under pressure</h2>
+</header>
+
+<div class="ascii">   PRACTISE THIS EXACT SEQUENCE ON A WHITEBOARD, TIMED.
+
+   ┌──────────┐   HTTP/JSON  ┌──────────┐   HTTP   ┌──────────┐
+   │ frontend │ ───sync────► │ backend  │ ──sync──►│ AI svc   │
+   │  :3001   │ ◄─────────── │  :3010   │ ◄────────│  :8000   │
+   └──────────┘   WebSocket  └────┬─────┘          └──────────┘
+                  ◄───async───    │ SQL
+                                  ▼
+                            ┌────────────┐
+                            │ PostgreSQL │  ⭐ trust boundary:
+                            │   (Neon)   │     the LLM provider
+                            └────────────┘     sits outside all
+                                               of this
+
+   ⭐ THE THREE ANNOTATIONS THAT MAKE IT A SENIOR DIAGRAM
+     ①  LABEL EACH ARROW with the protocol AND whether it is
+        synchronous. Two sync arrows in a row means your latency
+        is the sum and your availability is the product.
+     ②  MARK WHAT IS ABSENT: the frontend never reaches the AI
+        service; the AI service never reaches the database. Say
+        that out loud — restrictions are design decisions.
+     ③  MARK THE TRUST BOUNDARY. Anything crossing it is a
+        contractual and legal question, not just a technical one.
+
+   ⚠ AND THE THING PEOPLE DO WRONG: drawing eleven boxes. Start
+     with four, add under questioning. A diagram you can defend
+     completely beats a complete diagram you cannot.</div>
+
+<header class="part" id="measure">
+  <span class="pn">Part II</span>
+  <h2>Measurement</h2>
+  <p class="lede">Source file 03 — because every number on a CV invites four follow-ups.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Topic 04</span>
+  <h2>What a number must carry</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">The claim that gets probed hardest</span>
+  <p><strong>"50 seconds to 6 seconds."</strong> It is the strongest thing on a CV and the most
+  dangerous, because it invites exactly four questions — and if you cannot answer all four, the claim
+  damages you more than its absence would.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The four questions, and what each requires you to have recorded</div>
+<pre><code>①  "WHAT WAS THE ACTUAL BOTTLENECK?"
+   requires: a profile or trace from before the change, not a
+   memory. ⭐ "The report endpoint made one query per employee —
+   1,400 round trips" is an answer. "It was the database" is not.
+
+②  "HOW DID YOU FIND IT?"
+   requires: the tool and the method. `EXPLAIN ANALYZE`, a
+   trace, query logging with a count. ⇒ THE METHOD IS SCORED
+   MORE HEAVILY THAN THE RESULT, because the method generalises.
+
+③  "WHAT DID YOU TRY THAT DIDN'T WORK?"
+   requires: honesty, and it is a positive signal. "I added a
+   cache first and it hid the problem until it missed" is a
+   better answer than a clean narrative, because clean
+   narratives sound rehearsed and nobody's debugging is clean.
+
+④  "HOW DO YOU KNOW IT STAYED FIXED?"
+   requires: something ongoing — a logged duration, an alert, a
+   dashboard. ⚠ IF THE ANSWER IS "I MEASURED IT ONCE", SAY SO
+   PLAINLY. That is a real answer with a real limitation, and it
+   is far better than implying monitoring you do not have.
+
+⭐ AND THE MEASUREMENT DISCIPLINE THAT MAKES ALL FOUR POSSIBLE:
+  RECORD THE BEFORE NUMBER, WITH ITS CONDITIONS, BEFORE YOU
+  CHANGE ANYTHING. Data volume, concurrency, cache state,
+  environment. A before number with no conditions attached
+  cannot be compared to anything.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Topic 05</span>
+  <h2>Percentiles, properly</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Everyone knows "use p95 not the average". The layer underneath is <strong>why averages
+    mislead in a specific, predictable way</strong>, and what a percentile does and does not tell
+    you.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Latency distributions are right-skewed with a long tail.</strong> Most requests are fast; a few are very slow. The mean sits between them and describes neither.</li>
+      <li><strong>p95 means "95% were at least this fast".</strong> It does not mean 5% of <em>users</em> are unhappy — a user making twenty requests has a good chance of hitting the tail at least once, so <strong>per-user experience is worse than per-request percentiles suggest.</strong></li>
+      <li><strong>Percentiles do not average.</strong> You cannot take the p95 of two servers and average them to get the fleet p95. That requires the underlying distribution, which is why monitoring tools store histograms.</li>
+      <li><strong>The tail is where the causes are.</strong> A p99 that is ten times the p50 usually means a distinct mechanism — a cold cache, a lock, a retry, a specific customer with far more data.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Quoting a single number with no percentile at all.</li>
+      <li>Measuring at low concurrency, where queueing does not yet exist, then claiming the number holds under load.</li>
+      <li>Averaging percentiles across instances or time windows.</li>
+    </ul></div>
+  <div class="b check"><span class="k">You must be able to answer</span>
+    <p>"Your p50 is 200 ms and your p99 is 8 seconds — what is happening to that 1%?" A strong answer
+    names a mechanism and how you would confirm it, rather than describing it as noise.</p></div>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Topic 06</span>
+  <h2>Benchmarking fundamentals</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">How to produce a number somebody else could reproduce</div>
+<pre><code>⭐ THE FIVE CONDITIONS A BENCHMARK MUST STATE, OR IT IS AN
+  ANECDOTE:
+  ①  THE DATA VOLUME. 200 rows and 2,000,000 rows are different
+     systems, and most surprising results are a volume
+     difference in disguise.
+  ②  THE CONCURRENCY. One request at a time never reveals a
+     pool limit, a lock, or queueing.
+  ③  THE CACHE STATE. Cold or warm — a warm-cache number
+     compared to a cold-cache number is not a comparison.
+  ④  THE ENVIRONMENT. Your laptop, a container, production
+     hardware. And whether anything else was running.
+  ⑤  THE NUMBER OF RUNS AND THE SPREAD. ⭐ ONE RUN IS NOT A
+     MEASUREMENT. Run it enough times to see the variance, and
+     report the variance.
+
+⚠ THE FOUR WAYS BENCHMARKS LIE
+  · WARM-UP EFFECTS. JIT compilation, connection pools filling,
+    OS page cache. ⭐ DISCARD THE FIRST RUNS DELIBERATELY, and
+    say that you did.
+  · MEASURING THE WRONG THING. Timing a function that returns a
+    promise measures how long it took to create the promise.
+  · COORDINATED OMISSION. If your load generator waits for a
+    response before sending the next request, it stops sending
+    during a stall — so the slow period is under-represented and
+    your tail looks better than reality.
+  · OPTIMISING THE BENCHMARK. A query fast on the test dataset
+    because the test dataset fits in memory.
+
+⭐ THE HABIT THAT MAKES YOUR CLAIMS DEFENSIBLE: WRITE THE
+  BENCHMARK DOWN AS A SCRIPT, COMMITTED, WITH ITS CONDITIONS IN
+  A COMMENT. Then "how do you know" has an answer you can point
+  at rather than recall.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Topic 07</span>
+  <h2>Before and after, honestly</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Change one thing</h4><p>Two changes and one improvement teaches you nothing about which caused it — and you will be asked which.</p></div>
+  <div class="card"><h4>Same conditions both times</h4><p>Same data volume, same concurrency, same cache state. Otherwise you have measured the conditions, not the change.</p></div>
+  <div class="card"><h4>Report the distribution</h4><p>"p50 from 1.2s to 180ms, p99 from 50s to 6s" is far stronger than one number, and it is what actually happened.</p></div>
+  <div class="card"><h4>State what did not improve</h4><p>Volunteering "the write path is unchanged" pre-empts the follow-up and reads as rigour.</p></div>
+  <div class="card"><h4>Attribute honestly</h4><p>If a colleague did the caching layer, say so. Interviewers probe for over-claiming and it collapses badly.</p></div>
+  <div class="card"><h4>Keep the artefact</h4><p>The query plan, the trace, the script. A claim with an artefact behind it is a different class of claim.</p></div>
+</div>
+
+<header class="part" id="toolkit">
+  <span class="pn">Part III</span>
+  <h2>The toolkit</h2>
+  <p class="lede">Source file 04 — what to reach for, per layer.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Topic 08</span>
+  <h2>Database</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">In the order you should use them</div>
+<pre><code>①  QUERY LOGGING WITH A COUNT — ⭐ START HERE, ALWAYS.
+   the ORM hides the SQL, so the single most valuable thing is
+   seeing how many queries one request issues. An N+1 is
+   obvious the moment the count is visible, and invisible
+   otherwise.
+
+②  `EXPLAIN ANALYZE` on the slow query.
+   read: sequential scans on large tables · ⭐ ESTIMATED VS
+   ACTUAL ROWS, the most informative line · the join strategy ·
+   whether a sort spilled to disk.
+
+③  THE SLOW QUERY LOG, to find candidates you did not suspect.
+
+④  INDEX USAGE STATISTICS, to find indexes nobody uses — they
+   are pure write cost.
+
+⑤  CONNECTION POOL METRICS. ⭐ THE ONE PEOPLE FORGET: when
+   everything is slow at once including trivial endpoints,
+   suspect pool exhaustion rather than any individual query.
+
+⭐ AND THE INTERPRETATION HABIT: A PLAN IS A TREE, READ INSIDE
+  OUT, AND THE EXPENSIVE NODE IS USUALLY ONE NODE. Find it
+  before proposing anything.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Topic 09</span>
+  <h2>Backend</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Instrument</th><th style="width:28%">Answers</th><th>The detail that matters</th></tr></thead>
+  <tbody>
+    <tr><td><strong>A correlation id</strong></td><td>"Where did this request go?"</td><td><span class="ok">Twenty lines of middleware</span>, and it is the difference between debugging a three-service system and guessing at one.</td></tr>
+    <tr><td><strong>Duration logging per handler</strong></td><td>"Which endpoint is slow?"</td><td>Log the duration and the outcome. Aggregate later; you cannot reconstruct what you never recorded.</td></tr>
+    <tr><td><strong>A trace / waterfall</strong></td><td>"Which call took the time?"</td><td><strong>Routinely reveals the actual bug</strong> — three calls that could have run in parallel running in sequence, or one call made forty times.</td></tr>
+    <tr><td><strong>Event-loop lag</strong></td><td>"Is something blocking?"</td><td>Node-specific and rarely watched. A rising lag means CPU-bound work is stalling every other request.</td></tr>
+    <tr><td><strong>Heap snapshots</strong></td><td>"What is accumulating?"</td><td>Take two, minutes apart, and diff. The growth is the leak — usually an unbounded cache or listeners added per request.</td></tr>
+    <tr><td><strong>Saturation metrics</strong></td><td>"How full is it?"</td><td><span class="ok">The leading indicator.</span> Pool usage and queue depth rise <em>before</em> latency does.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Topic 10</span>
+  <h2>Frontend</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three questions, three tools</div>
+<pre><code>"WHY IS THE FIRST LOAD SLOW?"
+  ⇒ look at what is actually IN the bundle before guessing. It
+    is normally one heavy dependency — a date library, a chart
+    library, an icon set imported wholesale.
+  ⭐ AND CHECK WHETHER IT NEEDED TO BE CLIENT-SIDE AT ALL. A
+    `'use client'` high in the tree drags everything it imports
+    into the browser.
+
+"WHY DOES INTERACTION FEEL LAGGY?"
+  ⇒ a profiler recording, looking at what re-renders on a
+    keystroke. Almost always state lifted too high.
+  ⚠ AND THE PATTERN THAT LOOKS INNOCENT: writing a style then
+    reading a layout property in a loop — layout thrashing,
+    which forces a synchronous recalculation each iteration.
+
+"WHY DOES THE PAGE JUMP?"
+  ⇒ layout shift: images and tables with no reserved space, and
+    fonts swapping without a matched fallback.
+
+⭐ AND THE MEASUREMENT POINT THAT APPLIES TO ALL THREE: MEASURE
+  ON A THROTTLED CONNECTION AND A THROTTLED CPU. Your machine is
+  not your users' machine, and a dashboard that is fine on a
+  developer laptop can be unusable on a five-year-old office
+  computer — which is exactly who uses internal HR tools.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Topic 11</span>
+  <h2>Load and capacity</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>A load test does not answer "is it fast". It answers <strong>"where is the breaking point, and
+    which resource breaks"</strong> — and those are the two things a capacity claim needs.</p></div>
+  <div class="b"><span class="k">The method</span>
+    <ul>
+      <li><strong>Ramp, do not spike.</strong> Increase gradually and watch for the knee — the point where latency stops rising linearly. <strong>That knee is your capacity number</strong>, and it is the one worth writing down.</li>
+      <li><strong>Test a realistic mix.</strong> Hammering one cheap endpoint proves nothing; real traffic is mostly reads with occasional expensive writes, and the interaction is the point.</li>
+      <li><strong>Watch the dependencies, not the CPU.</strong> Under load you usually find the connection pool limit, a downstream rate limit, or a metered API bill — rarely CPU.</li>
+      <li><strong>Do the arithmetic first.</strong> A day is about 90,000 seconds, so a million actions a day is roughly 11 per second average and maybe 50 at peak — and that is a small number. Knowing this stops you over-building.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Load-testing a shared or production service without telling anyone.</li>
+      <li>Coordinated omission in the load generator, which hides the tail.</li>
+      <li>Reporting throughput with no latency, or latency with no concurrency.</li>
+    </ul></div>
+  <div class="b check"><span class="k">You must be able to answer</span>
+    <p>"How many concurrent users can it handle, and what breaks first?" Two numbers and one named
+    resource. That is a capacity answer; anything vaguer is a guess.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="claim">
+  <span class="mn">Reference</span>
+  <h2>Turning a claim into evidence</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Run this on every technical claim you make in writing</div>
+<pre><code>FOR EACH CLAIM:
+  □  what is the NUMBER, and what are its CONDITIONS?
+  □  what ARTEFACT backs it — a plan, a trace, a script, a
+     dashboard?
+  □  what was the METHOD I used to find the cause?
+  □  what did I TRY THAT FAILED?
+  □  how do I know it STAYED fixed?
+  □  ⭐ WHAT PART WAS SOMEONE ELSE'S WORK?
+  □  what is the HONEST LIMITATION — measured once, one
+     environment, one dataset?
+
+⭐ AND THE DECISION THAT FOLLOWS: IF YOU CANNOT ANSWER THE FIRST
+  FIVE, EITHER GO AND MEASURE IT PROPERLY OR TAKE THE NUMBER OFF
+  THE PAGE. An undefended number is the single most reliable way
+  to lose a deep-dive round — and a defended one is the single
+  strongest asset you can bring to it.
+
+⚠ AND THE LIMITATION THAT IS FINE TO STATE: "I measured this in
+  staging with production-shaped data; I have not measured it
+  under real concurrency." That is a professional answer. What
+  is not fine is implying rigour you did not apply.</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 02 · TypeScript &amp; NestJS depth</h4><p>The layer underneath the framework you use daily — the type system as design, Node runtime internals, advanced composition, and Passport's token lifecycle.</p></div>
+  <div class="card"><h4>Volume 05 · The data layer</h4><p>Where most measurement work lands: InnoDB internals, the optimisation case study, Redis, MongoDB and search.</p></div>
+  <div class="card"><h4>Volume 10 · The labs</h4><p>Lab 01 is "reproduce and fix a 50-second query" — this volume is what makes that lab a defensible story rather than an anecdote.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-0-orientation/</code> files 02, 03 and 04. File 01 is the résumé claim audit and is deliberately not covered here.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On scope.</strong> This set covers the technical curriculum in <code>prep/</code> — ten
+  volumes across phases 0 to 11, plus the labs and field insights. The résumé claim audit
+  (<code>phase-0/01</code>) is skipped by request; its method survives here as the "turning a claim
+  into evidence" checklist, which is the part that generalises beyond one CV.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

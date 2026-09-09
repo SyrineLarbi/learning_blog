@@ -1,0 +1,663 @@
+<title>The Data Layer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 05</p>
+  <p class="rail-sub">The data layer</p>
+  <span class="rail-vol">Phase 4</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Topics</div>
+  <a href="#t1"><span class="n">17</span>MariaDB &amp; InnoDB internals</a>
+  <a href="#t2"><span class="n">18</span>The optimisation case study</a>
+  <a href="#t3"><span class="n">19</span>Prisma transactions &amp; migrations</a>
+  <a href="#t4"><span class="n">20</span>Redis beyond caching</a>
+  <a href="#t5"><span class="n">21</span>MongoDB for the relational developer</a>
+  <a href="#t6"><span class="n">22</span>Typesense &amp; search engineering</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 05 of 10 · phase 4</p>
+  <h1>The data layer. <span class="thin">Five stores, and the case study that justifies the CV number.</span></h1>
+  <p class="lede">InnoDB's internals rather than SQL syntax, the 50-second query worked through end to
+  end, Prisma's transaction and migration semantics, Redis as more than a cache, MongoDB for someone
+  who thinks relationally, and search as its own engineering problem.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 4 files 17–22</span>
+    <span><b>Zero/near-zero</b> · InnoDB, MongoDB driver, Typesense</span>
+    <span><b>Not repeated</b> · Postgres internals, advanced SQL</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<div class="vol here"><span class="vn">Vol 05 · here</span><b>Data layer</b></div>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<div class="note">
+  <span class="tag">What is deliberately absent</span>
+  <p>PostgreSQL optimisation, <code>EXPLAIN ANALYZE</code>, index internals, MVCC and isolation
+  levels are already covered at depth — 2,300 lines across two existing files, carried into
+  <strong>skill-upgrading Volume IV</strong>. This volume does not repeat them. What it adds is
+  MariaDB/InnoDB specifically, the worked case study, and the four stores that had no coverage at
+  all.</p>
+</div>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 17 · three prior lines of coverage</span>
+  <h2>MariaDB and InnoDB internals</h2>
+</header>
+
+<div class="ascii">   ⭐ THE ONE FACT THAT EXPLAINS MOST INNODB BEHAVIOUR:
+     THE PRIMARY KEY *IS* THE TABLE.
+
+   InnoDB uses a CLUSTERED INDEX — rows are stored inside the
+   primary key's B-tree, in key order. There is no separate heap.
+
+     PRIMARY KEY B-TREE
+     ┌──────────────────────────────────────┐
+     │ leaf pages contain THE ENTIRE ROW    │
+     └──────────────────────────────────────┘
+
+     SECONDARY INDEX B-TREE
+     ┌──────────────────────────────────────┐
+     │ leaf pages contain the indexed value │
+     │ + THE PRIMARY KEY                    │
+     └──────────────────┬───────────────────┘
+                        │  ⭐ then a second lookup into the
+                        ▼     primary key tree to get the row
+                     the row
+
+   ⇒ FOUR CONSEQUENCES YOU CAN BE ASKED ABOUT
+
+     ① SECONDARY-INDEX LOOKUPS COST TWO TRAVERSALS unless the
+       index covers every column the query needs. ⭐ THAT IS WHY
+       A COVERING INDEX IS SO MUCH FASTER HERE — it skips the
+       second lookup entirely.
+
+     ② A LARGE PRIMARY KEY BLOATS EVERY SECONDARY INDEX,
+       because each one stores a copy of it. A UUID primary key
+       is measurably worse than an integer for this reason.
+
+     ③ RANDOM PRIMARY KEYS CAUSE PAGE SPLITS. Sequential
+       inserts append to the end of the tree; random ones insert
+       into the middle, splitting pages and fragmenting storage.
+       ⇒ AND THIS IS THE REAL ARGUMENT AGAINST RANDOM UUIDs AS
+         PRIMARY KEYS in MySQL/MariaDB — not aesthetics.
+
+     ④ RANGE QUERIES ON THE PRIMARY KEY ARE FAST because the
+       rows are physically adjacent.
+
+   THE OTHER INTERNALS WORTH KNOWING
+     BUFFER POOL     the in-memory cache of pages. ⭐ THE SINGLE
+                     MOST IMPORTANT CONFIGURATION VALUE — if the
+                     working set does not fit, everything is
+                     disk-bound and no query tuning saves you.
+     REDO LOG        writes go to the log first, then to pages
+                     lazily. Which is why a commit is fast and
+                     why a crash recovers.
+     UNDO LOG / MVCC readers see a consistent snapshot without
+                     blocking writers.
+     GAP LOCKS       ⚠ MariaDB/MySQL at REPEATABLE READ locks
+                     RANGES, not just rows — so two inserts into
+                     the same gap can deadlock where you would
+                     not expect it. This is a genuine difference
+                     from Postgres and a good senior question.
+
+   ⚠ AND THE MIGRATION TRAP: an `ALTER TABLE` on a large table
+     can hold a lock long enough to be an outage, even when the
+     change itself is trivial. ⭐ CHECK WHETHER IT IS AN ONLINE
+     OPERATION BEFORE RUNNING IT IN PRODUCTION.</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 18 · the CV claim</span>
+  <h2>The optimisation case study</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What this topic is for</span>
+    <p>This is the "50 seconds to 6 seconds" claim, worked end to end so it becomes
+    <strong>a method you can narrate rather than an outcome you assert.</strong> Volume 01 covered
+    what a number must carry; this is the shape of the investigation itself.</p></div>
+  <div class="b"><span class="k">The investigation, in order</span>
+    <ol>
+      <li><strong>Reproduce it with a real trace.</strong> Not a memory. And record the conditions — data volume, concurrency, cache state — because the before number is worthless without them.</li>
+      <li><strong>Count the queries first.</strong> Query logging with a count, before reading any SQL. If one request issues 1,400 queries, that is the answer and no plan analysis is needed.</li>
+      <li><strong>Then read the plan for the worst single query.</strong> Sequential scan on a large table; estimated versus actual rows; the join strategy; whether a sort spilled to disk.</li>
+      <li><strong>Fix one thing.</strong> Measure again under the same conditions. Repeat.</li>
+      <li><strong>Stop when it is fast enough</strong> — against a target defined before starting, not when it stops improving.</li>
+      <li><strong>Leave something behind that would notice a regression:</strong> a logged duration, an alert, or at minimum a committed benchmark script.</li>
+    </ol></div>
+  <div class="b junior"><span class="k">The four wrong turns worth admitting to</span>
+    <ul>
+      <li><strong>Adding a cache first.</strong> It hid the N+1 until the cache missed, and then there were two problems and one was invisible. <strong>Volunteering this is a positive signal</strong> — clean narratives sound rehearsed, and nobody's debugging is clean.</li>
+      <li><strong>Adding an index that was not used</strong>, because the query had a function on the column or the filter was not a left-most prefix.</li>
+      <li><strong>Optimising the wrong query</strong> — the one that felt expensive rather than the one the trace named.</li>
+      <li><strong>Measuring on development data</strong>, where the whole table fits in memory and no N+1 is visible.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The four questions this claim invites</span>
+    <p>What was the actual bottleneck · how did you find it · what did you try that failed · how do
+    you know it stayed fixed. <strong>Answer all four and the claim is your strongest asset; answer
+    two and it damages you more than its absence would.</strong></p></div>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 19</span>
+  <h2>Prisma transactions and migrations</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The semantics behind the convenient API</div>
+<pre><code>TRANSACTIONS — two forms, different guarantees
+  SEQUENTIAL ARRAY   `$transaction([...])`
+                     runs the operations in one transaction.
+                     Simple, and you cannot branch on an
+                     intermediate result.
+  INTERACTIVE        `$transaction(async tx =&gt; { ... })`
+                     you get a client scoped to the transaction
+                     and can make decisions inside it.
+                     ⚠ AND IT HOLDS A CONNECTION AND LOCKS FOR
+                       AS LONG AS THE CALLBACK RUNS.
+
+⭐ SO THE RULE: NEVER PUT A NETWORK CALL INSIDE AN INTERACTIVE
+  TRANSACTION. Waiting on the AI service while holding locks and
+  a pooled connection is how one slow dependency becomes a
+  database-wide outage. Compute first, then transact.
+
+⚠ AND WHAT A TRANSACTION DOES *NOT* FIX: the read-modify-write
+  race. Two transactions both read 100, both write 20, and one
+  update is lost — at Postgres's default isolation this is
+  permitted. ⭐ LET THE DATABASE DO THE ARITHMETIC
+  (`balance = balance - 80`), or use a version column, or
+  `SELECT … FOR UPDATE` briefly.
+
+MIGRATIONS — what the commands actually do
+  `migrate dev`     generates SQL from the schema diff, applies
+                    it locally, regenerates the client.
+                    ⚠ CAN PROMPT TO RESET, WHICH DROPS ALL DATA.
+  `migrate deploy`  applies pending migrations only. Never
+                    generates. ⭐ THIS IS THE ONLY ONE THAT
+                    TOUCHES PRODUCTION.
+  `migrate diff`    generates SQL without applying — useful for
+                    review, and for hand-editing a destructive
+                    change.
+  `db push`         syncs schema with no migration file.
+                    Prototyping only; it leaves no history.
+
+⭐ THE PRODUCTION SEQUENCE FOR ANYTHING DESTRUCTIVE:
+  EXPAND → MIGRATE → CONTRACT, across three deploys. During a
+  rolling deploy two code versions run against one database, so
+  a rename in one step breaks the instances not yet replaced.
+
+⚠ PRISMA 7 SPECIFICS THIS PROJECT HIT
+  · the connection `url` moved OUT of the datasource block into
+    `prisma.config.ts`
+  · the client requires a DRIVER ADAPTER — `new PrismaClient({
+    adapter })` with `@prisma/adapter-pg`
+  · seed config lives inside `migrations` as a string
+  · `dotenv` is a separate install for the config file
+  · ⭐ THE CLIENT IS GENERATED CODE — `prisma generate` after
+    every schema change and every fresh install
+
+AND THE PERFORMANCE FACTS
+  · `select` beats `include` — faster, and it is the mechanism
+    that keeps a salary out of a payload
+  · relation loading is often a second query, not a join —
+    which is why query logging matters more than reading the API
+  · `createMany` skips relations and returns a count, not rows</code></pre>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 20</span>
+  <h2>Redis beyond caching</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Most people describe Redis as a cache. It is <strong>a single-threaded server of data
+    structures</strong>, and that framing explains both what it is excellent at and where it hurts
+    you.</p></div>
+  <div class="b"><span class="k">What it is actually for, in this stack</span>
+    <ul>
+      <li><strong>The queue's backing store</strong> — BullMQ's lists and hashes, from Volume 03.</li>
+      <li><strong>The Socket.io adapter's pub/sub channel</strong>, which is what makes multi-instance realtime work at all.</li>
+      <li><strong>Rate-limit counters</strong> — <code>INCR</code> with an expiry is the canonical implementation, and it is atomic without a transaction because the server is single-threaded.</li>
+      <li><strong>Distributed locks</strong>, with the important caveat: a lock needs an expiry so a crashed holder releases it, and a token so you only delete your own. <strong>Getting this subtly wrong is common</strong>, which is why the safest use is "prevent duplicate work" rather than "guarantee mutual exclusion for correctness".</li>
+      <li><strong>Idempotency keys</strong> — store the key with the first result, return it on a repeat.</li>
+      <li><strong>Sessions and short-lived state</strong>, where losing it is inconvenient rather than incorrect.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Single-threaded means one slow command blocks everything.</strong> <code>KEYS *</code> on a large database is a stall for every other client — use <code>SCAN</code>. So is a big <code>Lua</code> script or a huge <code>DEL</code>.</li>
+      <li><strong>No eviction policy and no memory limit</strong>, so it fills and then fails. A cache with unbounded growth is a memory leak with a helpful name.</li>
+      <li><strong>Treating it as durable.</strong> Persistence is configurable and asynchronous; a crash can lose recent writes. <strong>Never make it the system of record.</strong></li>
+      <li><strong>A cache key that omits the user or scope</strong> — the dangerous one. One user's filtered data served to another, and in an HR system that is an incident rather than a bug.</li>
+      <li><strong>No stampede protection.</strong> A popular key expires and a thousand requests all miss and all recompute. Lock one refresh, or stagger expiries with jitter.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Redis restarts. What breaks, and what recovers?" — queued jobs may survive depending on
+    persistence, sockets reconnect but lose their gap, rate-limit counters reset, caches simply refill.
+    Naming which of those is a correctness problem and which is only a performance one is the
+    answer.</p></div>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 21 · zero prior coverage</span>
+  <h2>MongoDB for the relational developer</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Zero prior coverage of driver-level MongoDB. The shift that matters:
+    <strong>you model for the queries you will run, not for normalised truth</strong> — and
+    "schemaless" means the schema lives in your application code, unenforced.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Embed versus reference.</strong> Embed when the data is read together and bounded — an address inside a person. Reference when it is large, unbounded, or shared. <strong>The unbounded array is the classic mistake:</strong> a document grows until it hits the size limit, and it cannot be paged internally.</li>
+      <li><strong>Indexes work the same way as elsewhere</strong>, including compound-prefix rules. And the same trap: a query that cannot use an index does a collection scan.</li>
+      <li><strong>The aggregation pipeline</strong> is the real query language — <code>$match</code> early to reduce documents, then <code>$group</code>, <code>$lookup</code> for a join-like step, <code>$project</code> to shape. <strong><code>$match</code> before <code>$lookup</code> is the performance rule</strong>, and it is the same instinct as filtering before joining in SQL.</li>
+      <li><strong>Transactions exist</strong> across documents, and they are more expensive than a single-document write — which is atomic by default, and is the reason embedding can remove the need for one.</li>
+      <li><strong>Write concern and read preference</strong> are the durability and consistency dials: acknowledging from the primary only versus a majority, and reading from a secondary at the cost of staleness.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Modelling relationally — many small collections joined with <code>$lookup</code> — which gives you the costs of both models and the benefits of neither.</li>
+      <li>No schema validation at all, so three shapes of the same document accumulate and every reader must handle all three.</li>
+      <li>An unbounded embedded array.</li>
+      <li>Assuming a secondary read is current.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"When would you choose Mongo over Postgres for this project?" — the honest answer is
+    <strong>rarely</strong>: the data is relational, permissions are per-field, and reporting is
+    SQL-shaped. It earns a place for genuinely document-shaped, schema-varying data where you can name
+    the query pattern in advance.</p></div>
+</div>
+
+<header class="mod" id="t6">
+  <span class="mn">Topic 22 · zero prior coverage</span>
+  <h2>Typesense and search engineering</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The concept that matters is not the product: <strong>search is a second copy of your data with
+    its own consistency, ranking and permission problems.</strong> Adopting a search engine means
+    taking all three on.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Why not <code>LIKE '%term%'</code>:</strong> a leading wildcard cannot use a B-tree index, so it is a full scan. And it cannot do typo tolerance, relevance ranking, stemming or field weighting — which is what people actually mean by "search".</li>
+      <li><strong>An inverted index</strong> maps each token to the documents containing it, which is why a term lookup is fast and why the index must be built and maintained separately.</li>
+      <li><strong>Typo tolerance</strong> is edit-distance matching, and it is the feature that makes internal search feel usable — people misspell colleagues' names constantly.</li>
+      <li><strong>Ranking is configuration, not magic.</strong> Field weights, tie-breakers, and explicit rules. <strong>Relevance is a product decision</strong>, and "search is bad" almost always means the weights are wrong rather than the engine is.</li>
+      <li><strong>Faceting</strong> gives you the counts-per-category that make a filter UI usable.</li>
+      <li><strong>Indexing strategy:</strong> a full reindex is simple and idempotent; incremental is fast and has the same four failure modes as any incremental load — boundary, clock skew, silent updates, and <strong>deletes, which do not appear in "what changed" and so linger in the index forever.</strong></li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Permissions.</strong> The index is a second copy, so it must be filtered per requester too — otherwise search becomes the way to discover records you cannot open. <strong>In an HR system this is the whole risk of adopting search.</strong></li>
+      <li>Indexing sensitive fields that then appear in a highlighted snippet.</li>
+      <li>No reconciliation, so the index and the database silently diverge and nobody knows which is right.</li>
+      <li>Adopting a search engine for a dataset a well-indexed <code>WHERE</code> clause would serve.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"How do you stop search returning employees the searcher may not see?" — a scoped filter
+    applied server-side on every query, derived from the verified session, plus care about which
+    fields are indexed at all. If the answer is "we filter the results afterwards", the counts and the
+    paging are already wrong.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Fourteen one-sentence answers to have ready</div>
+<pre><code>□  ⭐ in InnoDB the primary key IS the table (clustered index)
+□  a secondary index lookup costs two traversals unless covering
+□  a big or random primary key bloats indexes and splits pages
+□  the buffer pool is the configuration value that matters most
+□  MariaDB's repeatable read takes GAP locks — unexpected
+   deadlocks
+□  count the queries before reading any plan
+□  never a network call inside an interactive transaction
+□  a transaction does not prevent a lost update
+□  `migrate deploy` in production; `migrate dev` can reset
+□  ⭐ expand → migrate → contract for anything destructive
+□  Redis is single-threaded — one slow command stalls everyone
+□  a cache key without the scope is a permissions leak
+□  in Mongo, model for the queries; `$match` before `$lookup`
+□  ⭐ a search index is a second copy that needs its own
+   permission filter</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 06 · Identity &amp; security</h4><p>Where the per-requester filtering from topics 20 and 22 becomes a designed authorisation layer rather than a per-query habit.</p></div>
+  <div class="card"><h4>Skill-upgrading Volume IV</h4><p>Postgres query plans, index internals, window functions and isolation levels — deliberately not repeated here.</p></div>
+  <div class="card"><h4>Volume 10 · Labs 01 and 03</h4><p>Reproduce and fix a 50-second query; query-level RBAC with Prisma extensions. And field insight F03, Markus Winand on indexes.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-4-data-layer/</code> — files 17–22, about 7,500 lines.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

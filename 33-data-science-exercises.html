@@ -1,0 +1,823 @@
+<title>The TechCorp Exercises</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #0F5C6E;
+  --accent-soft: #DEEDF1;
+  --accent-deep: #083C49;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #0F5C6E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #5FBFD4;
+    --accent-soft: #0B1A1E;
+    --accent-deep: #93D6E4;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #5FBFD4;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #5FBFD4;
+  --accent-soft: #0B1A1E;
+  --accent-deep: #93D6E4;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #5FBFD4;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">The TechCorp Exercises</p>
+  <p class="rail-sub">Corporate-level DS practice</p>
+  <span class="rail-vol">8 exercises</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Orientation</div>
+  <a href="#story"><span class="n">—</span>The TechCorp story</a>
+  <a href="#flow"><span class="n">—</span>How data flows</a>
+  <a href="#paths"><span class="n">—</span>Learning paths</a>
+
+  <div class="rail-group">Foundational</div>
+  <a href="#e1"><span class="n">01</span>Data cleaning</a>
+  <a href="#e2"><span class="n">02</span>EDA &amp; storytelling</a>
+
+  <div class="rail-group">Intermediate</div>
+  <a href="#e3"><span class="n">03</span>Feature engineering</a>
+  <a href="#e4"><span class="n">04</span>Model selection</a>
+  <a href="#e5"><span class="n">05</span>Segmentation</a>
+
+  <div class="rail-group">Advanced</div>
+  <a href="#e6"><span class="n">06</span>Evaluation &amp; decisions</a>
+  <a href="#e7"><span class="n">07</span>Production readiness</a>
+
+  <div class="rail-group">Capstone</div>
+  <a href="#e8"><span class="n">08</span>End-to-end project</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#traps"><span class="n">—</span>The traps, collected</a>
+  <a href="#assess"><span class="n">—</span>How to grade yourself</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Data science exercises · 8 briefs · 40–53 hours</p>
+  <h1>The TechCorp exercises. <span class="thin">Messy data, ambiguous requirements, real stakeholders.</span></h1>
+  <p class="lede">Not tutorials and not follow-along guides. Eight corporate tasks at a mid-size
+  company, each assigned by a different stakeholder, escalating from cleaning a dirty data dump to
+  presenting to the CEO — which is roughly how a data science career actually progresses.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · all 8 source exercises</span>
+    <span><b>Assumes</b> · the DS theory volumes</span>
+    <span><b>Format</b> · brief · traps · deliverable · grading</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 34 documents</b><em>The index</em></a>
+<div class="vol here"><span class="vn">Exercises · here</span><b>The TechCorp series</b></div>
+</div>
+
+<header class="mod" id="story">
+  <span class="mn">Orientation</span>
+  <h2>The TechCorp story</h2>
+</header>
+
+<div class="proj">
+  <span class="tag">The setup</span>
+  <p>You have just joined <strong>TechCorp</strong>, a mid-size tech company of about 4,000 employees,
+  as a data scientist. Each exercise is a real task from a different stakeholder — the IT director,
+  the CHRO, your manager, a recruiting director, a VP of marketing, the board, an engineering lead,
+  and finally the CEO.</p>
+  <p><strong>The data is messy. The requirements are ambiguous. The stakeholders are
+  non-technical.</strong> That is the point: the technical work in these exercises is not the hard
+  part, and treating it as the hard part is the most common way to fail them.</p>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:6%">#</th><th style="width:26%">Exercise</th><th style="width:14%">Level</th><th style="width:12%">Time</th><th style="width:16%">Stakeholder</th><th>What it practises</th></tr></thead>
+  <tbody>
+    <tr><td><strong>01</strong></td><td>Data cleaning</td><td>Foundational</td><td>4–5h</td><td>IT Director</td><td>Merging sources, MNAR missingness, outlier decisions</td></tr>
+    <tr><td><strong>02</strong></td><td>EDA &amp; storytelling</td><td>Foundational+</td><td>4–6h</td><td>CHRO</td><td>Distributions, Simpson's paradox, a stakeholder deliverable</td></tr>
+    <tr><td><strong>03</strong></td><td>Feature engineering</td><td>Intermediate</td><td>4–5h</td><td>Your manager</td><td>Temporal features, encoding, selection under constraints</td></tr>
+    <tr><td><strong>04</strong></td><td>Model selection</td><td>Intermediate</td><td>5–7h</td><td>Recruiting Director</td><td>Algorithm comparison, business-constrained tuning</td></tr>
+    <tr><td><strong>05</strong></td><td>Segmentation</td><td>Intermediate+</td><td>4–5h</td><td>VP Marketing</td><td>K-Means vs DBSCAN, PCA, naming and selling segments</td></tr>
+    <tr><td><strong>06</strong></td><td>Evaluation &amp; decisions</td><td>Advanced</td><td>5–6h</td><td>The Board</td><td>Metric choice, cost matrix, threshold, drift</td></tr>
+    <tr><td><strong>07</strong></td><td>Production readiness</td><td>Advanced</td><td>4–5h</td><td>Engineering Lead</td><td>Pipelines, FastAPI serving, integration tests, monitoring</td></tr>
+    <tr><td><strong>08</strong></td><td>End-to-end project</td><td><span class="no">Senior / interview</span></td><td>10–14h</td><td>The CEO</td><td>Ten phases: stakeholder meeting → deployment → monitoring</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="flow">
+  <span class="mn">Orientation</span>
+  <h2>How the data flows between them</h2>
+</header>
+
+<div class="ascii">   Ex 01 ─────► Ex 02 ─────► Ex 03
+   clean        EDA          features
+                                │
+                                ▼
+                             Ex 04
+                             modelling
+                                │
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+                 Ex 06                   Ex 05
+                 evaluation              segmentation
+                    │
+                    ▼
+                 Ex 07
+                 pipeline &amp; deploy
+                    │
+                    ▼
+                 Ex 08  ⭐ capstone — everything
+
+   ⭐ THE OUTPUT OF ONE IS THE INPUT OF THE NEXT, deliberately.
+     Which means a shortcut in exercise 01 — an undocumented
+     imputation, a dropped outlier you cannot justify — becomes
+     a defect you inherit four exercises later without knowing
+     where it came from.
+
+   ⇒ THAT IS THE LESSON THE SEQUENCE IS BUILT TO TEACH: in real
+     work nobody re-does your cleaning, and your decisions
+     propagate silently.</div>
+
+<header class="mod" id="paths">
+  <span class="mn">Orientation</span>
+  <h2>Learning paths</h2>
+</header>
+
+<div class="grid3">
+  <div class="card"><h4>Data analyst · ~20h</h4><p>01 → 02 → 03 → 05. Data understanding and communication, without the production layer.</p></div>
+  <div class="card"><h4>Data scientist · ~40h</h4><p>01 → 02 → 03 → 04 → 06 → 08. The full modelling and decision path.</p></div>
+  <div class="card"><h4>ML engineer · ~25h</h4><p>03 → 04 → 07 → 08. Features, models, and getting them served and monitored.</p></div>
+  <div class="card"><h4>Interview prep · ~20h</h4><p>02 → 06 → 08. Storytelling, metric judgement, and the capstone as a portfolio piece.</p></div>
+  <div class="card"><h4>If you only do one</h4><p><strong>Exercise 08.</strong> It contains a compressed version of all the others, and it is the one worth showing to an interviewer.</p></div>
+  <div class="card"><h4>If you have four hours</h4><p><strong>Exercise 06.</strong> Metric choice and threshold-setting change more real outcomes than any modelling skill.</p></div>
+</div>
+
+<header class="part" id="found">
+  <span class="pn">Foundational</span>
+  <h2>Exercises 01–02</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Exercise 01 · IT Director · 4–5h</span>
+  <h2>Data cleaning: corporate messy data</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Here are three exports — the HRIS, the payroll system and a survey tool. Nobody has ever
+    joined them. Give me one clean dataset we can actually use."</p>
+    <p>They are non-technical, they believe this is a small task, and they will not answer a follow-up
+    email for three days.</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>The join key does not exist.</strong> One source uses employee number, one uses email, one uses name. Matching on name produces false merges — and a wrong merge is worse than a missing row, because it silently attributes one person's data to another.</li>
+      <li><strong>Missingness has a mechanism.</strong> The unhappiest employees skip the satisfaction survey, so those values are MNAR. Imputing the mean biases every downstream analysis toward contentment.</li>
+      <li><strong>Outliers are not errors.</strong> A salary of 1 is an error; a salary of 400,000 is a real executive. <strong>Deleting the second deletes the finding.</strong></li>
+      <li><strong>Disguised nulls.</strong> <code>0</code>, <code>"N/A"</code>, <code>"unknown"</code>, <code>1970-01-01</code> — the epoch means someone cast a zero. None of them read as missing to a null check.</li>
+      <li><strong>Duplicates that are not identical.</strong> The same person twice with different spellings and a different id.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li>One dataset, plus <strong>a decision log</strong>: every rule applied, the row count it affected, and the value it affected. Quantify twice — by rows and by value.</li>
+      <li>A <code>was_missing</code> flag for every imputed column. An imputed value that looks measured is worse than a null.</li>
+      <li>A reconciliation: your headcount against a number the IT director can check independently.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Could someone else rebuild your dataset from your log alone? Can you defend every dropped
+    row? And did you keep the raw copies untouched — because <strong>a cleaning rule you cannot
+    reverse is a decision you cannot revisit.</strong></p></div>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Exercise 02 · CHRO · 4–6h</span>
+  <h2>EDA: investigation and storytelling</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Attrition is up. I have a board meeting in a week. Tell me what is going on."</p>
+    <p>That is the whole brief. No metric definition, no hypothesis, no time window.</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Simpson's paradox is planted in this data.</strong> Attrition rises overall while falling in every department — because the department <em>mix</em> changed. Report the aggregate alone and you will be wrong in front of a board.</li>
+      <li><strong>The cliff at the end.</strong> The final period looks catastrophic because it is incomplete. The most common false alarm in reporting.</li>
+      <li><strong>Slicing until something looks dramatic.</strong> Three thousand employees sliced by department, level and tenure gives cells of nine, where every big percentage is noise.</li>
+      <li><strong>Answering the question asked.</strong> "What is going on" is a symptom. The CHRO's decision is what to tell the board and what to do next quarter.</li>
+      <li><strong>A deliverable nobody can use.</strong> Twenty charts and no conclusion.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li><strong>A one-page memo, answer first.</strong> The conclusion in two sentences, then why it matters, then the evidence, then what you are <em>not</em> claiming.</li>
+      <li>Three charts at most, each annotated — a line on the chart saying "reorganisation" where the step change is explains more than any styling.</li>
+      <li>The decomposition that resolves the paradox: rate change versus mix change, quantified.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Can the CHRO read your first paragraph and act correctly? Is every number in units they use —
+    people and cost, not percentages of percentages? And did you state the effect size, not just that
+    something is significant?</p></div>
+</div>
+
+<header class="part" id="inter">
+  <span class="pn">Intermediate</span>
+  <h2>Exercises 03–05</h2>
+</header>
+
+<header class="mod" id="e3">
+  <span class="mn">Exercise 03 · Your manager · 4–5h</span>
+  <h2>Feature engineering from domain knowledge</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Build the feature set for the attrition model. Talk to HR about what actually predicts
+    leaving — do not just throw the columns in."</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Post-outcome features.</strong> <code>exit_interview_completed</code>, <code>handover_uploaded</code>, <code>access_revoked</code>. Perfect predictors, all known <em>after</em> the decision. This is the leak the exercise is built around.</li>
+      <li><strong>Aggregates that include the row itself.</strong> "Team attrition rate" computed over the whole period leaks the outcome of the very person you are predicting.</li>
+      <li><strong>Encoding that invents an order.</strong> Cities as 1..50, so the model learns that city 40 is more than city 4.</li>
+      <li><strong>High-cardinality one-hot.</strong> 400 job titles becomes 400 columns.</li>
+      <li><strong>Proxies you did not think about.</strong> Postcode, school, working pattern and career gaps all correlate with protected attributes — so removing the obvious column is not sufficient.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li>A feature table with, for each feature: what it means, how it is computed, <strong>and whether it would have been known at prediction time.</strong></li>
+      <li>Ratios and differences rather than raw values — salary relative to the department median beats salary; months since last promotion beats hire date.</li>
+      <li>An explicit exclusion list, with the reason for each.</li>
+      <li>The feature logic in <em>one module</em>, callable from both training and serving.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Apply the one test to every row of your table: <strong>would this value have existed, with this
+    value, at the moment I need the prediction?</strong> And can you explain each feature to an HR
+    business partner in one sentence?</p></div>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Exercise 04 · Recruiting Director · 5–7h</span>
+  <h2>Supervised learning: model selection</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Which candidates should my team prioritise? And explain it to me — I am not technical, and I
+    have to defend this to the people whose applications get deprioritised."</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Advisory or decisive?</strong> If this ranks and the bottom of the ranking is never contacted, it is a decision about employment — a different bar for fairness, explainability and records.</li>
+      <li><strong>No baseline.</strong> Without the current process measured, "83% accurate" means nothing.</li>
+      <li><strong>Reaching for the complicated model.</strong> Logistic regression first; on tabular data of this size gradient boosting usually wins and the gap tells you whether complexity buys anything.</li>
+      <li><strong>Tuning against the test set</strong>, then reporting that score.</li>
+      <li><strong>An unexplainable recommendation.</strong> The stakeholder must defend it, so a model whose reasoning cannot be stated is unusable regardless of accuracy.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li>A comparison table: baseline, logistic regression, boosting — same split, same metric named in advance, with the spread from cross-validation rather than a single number.</li>
+      <li><strong>Per-subgroup evaluation.</strong> An overall 0.72 can be 0.75 for one group and 0.51 for another.</li>
+      <li>A non-technical explanation of one specific prediction, with contributing factors.</li>
+      <li>A recommendation with the trade-off stated: what this buys, what it costs, what you would not use it for.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Could the recruiting director repeat your explanation to a rejected candidate? Did you name a
+    use you would refuse? And is your chosen model the simplest one that met the target — or the most
+    accurate one you could build?</p></div>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Exercise 05 · VP Marketing · 4–5h</span>
+  <h2>Unsupervised learning: segmentation</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Segment our employees so we can tailor retention programmes. Give the segments names I can
+    put in a deck."</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Clustering always returns clusters.</strong> Ask for four and you get four, whether or not the data has any group structure. There is no accuracy score to hide behind.</li>
+      <li><strong>Not scaling.</strong> Salary in tens of thousands and satisfaction between 0 and 1 are not comparable distances — salary will dominate every cluster purely because of its units.</li>
+      <li><strong>The elbow method as an oracle.</strong> It suggests; it does not decide. And DBSCAN needs no k but does need density parameters.</li>
+      <li><strong>Over-reading a t-SNE plot.</strong> Distances and cluster sizes in the picture are not meaningful. It is a visualisation, not evidence.</li>
+      <li><strong>Segments that are not actionable.</strong> "Cluster 3" is not a name, and a segment nobody can do anything differently for is a chart rather than a finding.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li>K-Means and DBSCAN compared, with your reason for choosing one — and an honest statement of whether the structure is real.</li>
+      <li>A profile per segment in business language: size, distinguishing characteristics, and <strong>the one intervention it suggests.</strong></li>
+      <li>Names a VP can use, derived from the profile rather than invented.</li>
+      <li>A minimum size floor — <strong>a segment of three people identifies three people.</strong></li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Would an HR business partner recognise these groups as real? That is the only validation
+    available, and it is the correct one. And could you defend the number of clusters without
+    appealing to a chart?</p></div>
+</div>
+
+<header class="part" id="adv">
+  <span class="pn">Advanced</span>
+  <h2>Exercises 06–07</h2>
+</header>
+
+<header class="mod" id="e6">
+  <span class="mn">Exercise 06 · The Board · 5–6h</span>
+  <h2>Model evaluation and business decisions</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"The board has approved a retention budget. Tell us where to spend it, and how confident you
+    are."</p>
+    <p>The highest-stakes audience in the series, and the one least interested in your method.</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Accuracy on imbalanced data.</strong> Predict "stays" for everyone and score 95%.</li>
+      <li><strong>ROC-AUC on a rare class</strong>, which looks flatteringly high because true negatives are abundant. PR-AUC is the honest one.</li>
+      <li><strong>The base rate.</strong> At 5% attrition a good model's flags are majority false-positive — about 32% precision for a model catching 90% of leavers with a 10% false-positive rate. <strong>Present that as "will leave" and you will be wrong two times in three, in front of a board.</strong></li>
+      <li><strong>Leaving the threshold at 0.5</strong> and calling it neutral. It is an unexamined choice, and the cost matrix should set it.</li>
+      <li><strong>Uncalibrated probabilities</strong> shown to humans as if they were probabilities.</li>
+      <li><strong>No drift plan.</strong> A model approved once and never re-examined.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li><strong>A cost matrix</strong> agreed with the business: what a false positive costs (a manager's time, an awkward conversation) versus a false negative (a lost employee, replacement cost).</li>
+      <li>A threshold derived from that matrix, with the resulting precision and recall stated in people rather than percentages.</li>
+      <li>A calibration check, because a number is being shown to humans.</li>
+      <li>The value chain, with every assumption named and a range rather than a point.</li>
+      <li>A monitoring plan: input drift, prediction drift, and when the model is next reviewed.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Is every figure in the board's units? Did you state the false-positive reality before being
+    asked? And is your confidence expressed as a range with its assumptions listed — because a precise
+    number you cannot defend is worse than an honest interval.</p></div>
+</div>
+
+<header class="mod" id="e7">
+  <span class="mn">Exercise 07 · Engineering Lead · 4–5h</span>
+  <h2>ML pipeline: production readiness</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The brief</span>
+    <p>"Your notebook is not deployable. Give me something my team can run, monitor and roll back."</p></div>
+  <div class="b junior"><span class="k">The traps</span>
+    <ul>
+      <li><strong>Preprocessing reimplemented in the serving code</strong> — training/serving skew, which degrades production quality for no visible reason and is very hard to diagnose.</li>
+      <li><strong>Saving the model rather than the pipeline.</strong> The preprocessing <em>is</em> part of the model.</li>
+      <li><strong>No data version.</strong> Without a snapshot identifier the model is not reproducible at any price.</li>
+      <li><strong>Inference in an <code>async def</code>.</strong> It is CPU-bound, so it blocks the event loop and the service stalls under any concurrency at all.</li>
+      <li><strong>Loading the model per request</strong> rather than once at startup.</li>
+      <li><strong>No rollback.</strong> Rolling back a model must be as fast as rolling back code.</li>
+    </ul></div>
+  <div class="b"><span class="k">What to produce</span>
+    <ul>
+      <li>A single fitted <strong>pipeline artefact</strong> — imputation, encoding, scaling, model — saved with its library versions, feature order, training date, data version and metrics.</li>
+      <li>A FastAPI service that loads it once at startup, validates input with a Pydantic model, and runs inference in a plain <code>def</code>.</li>
+      <li>An integration test that posts a realistic payload and asserts the response shape — plus one that asserts an invalid payload is rejected with a 422.</li>
+      <li>The four logs that make a regression reproducible: model version, inputs, prediction, latency.</li>
+      <li>A monitoring plan and a documented rollback.</li>
+    </ul></div>
+  <div class="b check"><span class="k">How to grade yourself</span>
+    <p>Could a backend engineer deploy this without asking you anything? Can you answer "which model
+    produced this prediction" for any row? And is the preprocessing the same <em>object</em> in
+    training and serving, not merely the same logic?</p></div>
+</div>
+
+<header class="part" id="capstone">
+  <span class="pn">Capstone</span>
+  <h2>Exercise 08</h2>
+</header>
+
+<header class="mod" id="e8">
+  <span class="mn">Exercise 08 · The CEO · 10–14h</span>
+  <h2>End-to-end corporate ML project</h2>
+</header>
+
+<div class="proj">
+  <span class="tag">The one to do if you do only one</span>
+  <p>Ten phases from a stakeholder meeting to a monitored deployment. It contains a compressed
+  version of every exercise above, and <strong>it is the piece worth showing an interviewer</strong> —
+  because it demonstrates the thing almost no portfolio does: judgement about scope, measurement, and
+  what you chose not to build.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The ten phases, and what each is graded on</div>
+<pre><code>①  THE STAKEHOLDER MEETING
+   the CEO says a sentence. Turn it into a decision, a
+   decision-maker, a cost asymmetry and a target.
+   ⭐ GRADED ON: whether you argued the scope DOWN, and whether
+     you asked what happens today without this.
+
+②  PROBLEM FRAMING AND SUCCESS CRITERIA
+   written down, agreed, before any data work.
+   ⭐ GRADED ON: a target agreed in advance. Without it every
+     result invites "can you make it better?"
+
+③  DATA ASSESSMENT
+   what exists, what is trustworthy, what is missing, what the
+   label actually means.
+   ⭐ GRADED ON: noticing that the label is subjective.
+
+④  CLEANING AND FEATURES
+   with a decision log and the point-in-time test applied.
+   ⭐ GRADED ON: no post-outcome features. This is where the
+     capstone is most often silently failed.
+
+⑤  BASELINE
+   the current process, or a rule, measured.
+   ⭐ GRADED ON: having one at all.
+
+⑥  MODELLING
+   simplest first, complexity justified by the gap.
+   ⭐ GRADED ON: restraint, and per-subgroup evaluation.
+
+⑦  EVALUATION AND THRESHOLD
+   the cost matrix, the threshold, calibration, and the value
+   chain with its assumptions.
+   ⭐ GRADED ON: honesty about the false-positive rate.
+
+⑧  THE INTERFACE
+   what the human sees, the evidence alongside the score, and an
+   override that records a reason.
+   ⭐ GRADED ON: framing it as a prompt, not a verdict.
+
+⑨  DEPLOYMENT
+   pipeline artefact, service, tests, logs, rollback.
+   ⭐ GRADED ON: reproducibility from recorded inputs.
+
+⑩  MONITORING AND THE LOOP
+   input drift, prediction drift, an owner, a review date — and
+   the feedback-loop problem: acting on predictions changes the
+   data you will train on next.
+   ⭐ GRADED ON: naming that problem unprompted.
+
+⭐ AND THE FINAL DELIVERABLE THAT MATTERS MOST: A ONE-PAGE MEMO
+  FOR THE CEO. Answer first, in money and people, with the
+  assumptions listed and one honest paragraph on what could
+  make this wrong. Everything above is the work; this is the
+  only part they will read.</code></pre>
+</div>
+
+<div class="warn">
+  <span class="tag">The question the capstone is really asking</span>
+  <p><strong>Would you be comfortable explaining this system, in detail, to the employees it
+  scores?</strong> If the answer is no, that discomfort is the finding — and saying so in the memo is
+  a stronger result than any metric.</p>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="traps">
+  <span class="mn">Reference</span>
+  <h2>The traps, collected</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Matching on names</h4><p>A false merge attributes one person's data to another. Silent, and worse than a missing row.</p></div>
+  <div class="card"><h4>Imputing MNAR data</h4><p>The unhappiest people skip the survey. Filling the mean biases everything toward contentment.</p></div>
+  <div class="card"><h4>Deleting real outliers</h4><p>Sometimes the outlier is the finding.</p></div>
+  <div class="card"><h4>The incomplete last period</h4><p>The cliff at the end of every time series. The most common false alarm in reporting.</p></div>
+  <div class="card"><h4>Simpson's paradox</h4><p>The aggregate moves one way while every subgroup moves the other. Mix, not rate.</p></div>
+  <div class="card"><h4>Post-outcome features</h4><p>Exit interview, handover, access revoked. Great scores, useless model.</p></div>
+  <div class="card"><h4>Self-referential aggregates</h4><p>A team rate that includes the row you are predicting.</p></div>
+  <div class="card"><h4>Accuracy on 5% base rate</h4><p>95% by predicting nothing happens.</p></div>
+  <div class="card"><h4>The default threshold</h4><p>0.5 is a choice, not a neutral position.</p></div>
+  <div class="card"><h4>Training/serving skew</h4><p>The feature computed twice, slightly differently. Quality drops for no visible reason.</p></div>
+  <div class="card"><h4>Clusters that mean nothing</h4><p>Clustering always returns clusters. A domain expert is the only validation.</p></div>
+  <div class="card"><h4>Cells of nine</h4><p>Slicing until something looks dramatic. And below a floor, an aggregate identifies people.</p></div>
+</div>
+
+<header class="mod" id="assess">
+  <span class="mn">Reference</span>
+  <h2>How to grade yourself</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The eight questions that apply to every exercise</div>
+<pre><code>□  ①  Can I state the DECISION this changes, and who makes it?
+□  ②  Did I establish a BASELINE before claiming anything?
+□  ③  For every feature: WOULD THIS HAVE BEEN KNOWN AT
+      PREDICTION TIME?
+□  ④  Is my metric right for the BASE RATE — and did I evaluate
+      PER SUBGROUP?
+□  ⑤  Is every number in the STAKEHOLDER'S UNITS: people,
+      money, days?
+□  ⑥  Did I write down what I DELIBERATELY DID NOT DO?
+□  ⑦  Could someone else REPRODUCE this from what I recorded?
+□  ⑧  Did I say what could make this WRONG?
+
+⭐ SEVEN OF THOSE EIGHT ARE NOT TECHNICAL. That is the
+  distribution the exercises are built to teach — and it is the
+  distribution of real corporate data science work.
+
+⚠ AND THE HONEST WARNING ABOUT SELF-STUDY: it is easy to read a
+  brief, imagine the solution, and move on. ⭐ THESE ONLY WORK
+  IF YOU PRODUCE THE DELIVERABLE — the memo, the decision log,
+  the feature table, the running service. The deliverable is
+  where the judgement actually gets exercised.</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The senior data science standard</h4><p>The discipline behind these exercises as an operating standard — framing, leakage, evaluation, MLOps, communication.</p></div>
+  <div class="card"><h4>Problems Before Models</h4><p>The translation method and eight domain playbooks, including HR people analytics — useful before exercise 08.</p></div>
+  <div class="card"><h4>The data-analyst bootcamp</h4><p>Dirty-data detection and cleaning technique at length, which exercises 01 and 02 assume.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/data-science-exercises/</code> — 8 files, 17,932 lines, with the full briefs, the datasets described, and worked solution notes.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A single-page edition of all eight exercises, carrying each
+  brief, its planted traps, the expected deliverable and a self-grading standard. The source files
+  hold the fuller narrative, the data descriptions and the solution notes — this is the version you
+  work <em>from</em>, and the originals are where you check yourself afterwards.</p>
+  <p><strong>On the data.</strong> TechCorp is fictional and so is its data. The traps are not: every
+  one is a failure that occurs repeatedly in real HR analytics work, which is why the exercises plant
+  them deliberately.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

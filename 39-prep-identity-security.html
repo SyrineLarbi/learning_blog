@@ -1,0 +1,590 @@
+<title>Identity, Security and Compliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 06</p>
+  <p class="rail-sub">Identity, security &amp; compliance</p>
+  <span class="rail-vol">Phase 5</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Topics</div>
+  <a href="#t1"><span class="n">23</span>OIDC, SAML &amp; Okta SSO</a>
+  <a href="#t2"><span class="n">24</span>Authorisation beyond roles</a>
+  <a href="#t3"><span class="n">25</span>Audit logging by design</a>
+  <a href="#t4"><span class="n">26</span>Document storage &amp; uploads</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 06 of 10 · phase 5</p>
+  <h1>Identity, security and compliance. <span class="thin">The volume that matters most in HR software.</span></h1>
+  <p class="lede">Federated login as a protocol rather than a button, authorisation past the role
+  check, audit logging designed rather than asserted, and file uploads and downloads where a link is
+  a credential. Every topic here had zero or near-zero prior coverage, and every one of them is a
+  compliance obligation in a system holding employee records.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 5 files 23–26</span>
+    <span><b>Zero prior coverage</b> · SAML, Okta, audit design</span>
+    <span><b>Highest stakes</b> · of the ten volumes</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<div class="vol here"><span class="vn">Vol 06 · here</span><b>Identity &amp; security</b></div>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 23 · SAML at zero, Okta at one line</span>
+  <h2>OIDC, SAML and Okta SSO</h2>
+</header>
+
+<div class="ascii">   ⭐ THE DISTINCTION TO GET RIGHT FIRST
+     OAuth 2.0  is AUTHORISATION — "this app may act on your
+                behalf". It says nothing about who you are.
+     OIDC       is AUTHENTICATION built on top of OAuth — it
+                adds the ID TOKEN, which is a JWT describing
+                the user.
+     SAML       is authentication too, but older: XML
+                assertions, browser POST redirects, no JSON.
+     ⇒ SO "WE USE OAUTH TO LOG IN" IS IMPRECISE, and being
+       precise here is a small, reliable senior signal.
+
+   THE OIDC AUTHORISATION-CODE FLOW, WHICH IS THE ONE YOU USE
+
+     browser ──1──► your app: "log in"
+             ◄─2─── redirect to Okta with client_id, scope,
+                    redirect_uri, state, PKCE challenge
+     browser ──3──► Okta: authenticates the user
+             ◄─4─── redirect back with a CODE (not a token)
+     your app ─5──► Okta token endpoint: code + client_secret
+                    + PKCE verifier
+             ◄─6─── ID token + access token (+ refresh token)
+     your app ──7─► VALIDATE the ID token, then issue YOUR OWN
+                    session
+
+   ⭐ THE FIVE VALIDATIONS PEOPLE SKIP AT STEP 7
+     · the SIGNATURE, against the provider's published keys
+       (fetched from JWKS and cached, not hardcoded)
+     · `iss` — the issuer is who you expect
+     · `aud` — the token was issued FOR your client
+     · `exp` / `iat` — not expired, not from the future
+     · `nonce` — matches the one you sent
+     ⚠ AND `state` IS CHECKED AT STEP 4, BEFORE ANY OF THIS —
+       it is the CSRF defence for the flow itself.
+     ⇒ A LIBRARY DOES ALL OF THIS. Writing it yourself is where
+       people introduce real vulnerabilities.
+
+   WHY PKCE, AND WHY IT IS NOW UNIVERSAL
+     it binds the code to the client that requested it, so an
+     intercepted code is useless. Originally for mobile apps
+     with no secret; ⭐ NOW RECOMMENDED EVERYWHERE.
+
+   SAML, IN THE DETAIL THAT MATTERS
+     · XML assertions signed by the identity provider, delivered
+       by a browser POST to your ACS endpoint
+     · you validate the signature, the audience, the recipient,
+       and the NotBefore/NotOnOrAfter window
+     · ⭐ XML SIGNATURE WRAPPING IS A REAL ATTACK CLASS — which
+       is the strongest possible argument for using a maintained
+       library rather than parsing it yourself
+     · ⇒ WHY IT STILL EXISTS: large enterprises standardised on
+       it, and enterprise HR buyers will ask for it. That is the
+       honest reason to know it.
+
+   ⚠ AND THE THREE THINGS SSO DOES NOT GIVE YOU
+     ①  AUTHORISATION. The provider says who they are; your app
+        still decides what they may do. ⭐ Group claims are a
+        convenience, not a permission model.
+     ②  DEPROVISIONING. Someone removed in Okta still holds your
+        session until it expires — unless you check status, use
+        short sessions, or implement SCIM.
+     ③  A SESSION MODEL. You still issue and manage your own.</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 24</span>
+  <h2>Authorisation beyond roles</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Four-role RBAC is the CV claim. The layer underneath is that <strong>roles cannot express
+    the rules an HR system actually needs</strong> — and the interesting engineering is where you put
+    the rules that roles cannot hold.</p></div>
+  <div class="b"><span class="k">The three layers, and why all three are needed</span>
+    <ul>
+      <li><strong>Role (RBAC).</strong> "Managers may generate reports." Coarse, declarative, readable on the endpoint. <strong>And insufficient alone</strong> — it does not say <em>whose</em> reports.</li>
+      <li><strong>Relationship / ownership (ReBAC).</strong> "…for their own team." This needs the resource, so it lives in the service. <strong>This is the check people forget, and its absence is the most common real vulnerability in business software.</strong></li>
+      <li><strong>Attribute (ABAC) and field-level.</strong> "…and not the salary column, unless they are HR." Salary, sickness and a disciplinary note have completely different audiences on one record.</li>
+    </ul>
+    <p><strong>Where to enforce it — in ascending strength:</strong> a repeated <code>if</code> in each handler (drifts) → a guard (one place, but no resource) → a service-layer check (has the resource) → <strong>a query-level filter every read passes through</strong> → a database policy. The fourth is the sweet spot for this stack: a Prisma extension or a scoped helper that injects the tenant and scope filter, so <em>forgetting</em> becomes impossible rather than merely discouraged.</p></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Trusting a group claim from the identity provider</strong> as the permission decision, so changing a group in Okta silently changes what your app permits.</li>
+      <li><strong>Authorising in the controller only</strong>, so a job, a socket handler or a script bypasses it entirely.</li>
+      <li><strong>Filtering in the UI</strong> — the payload still contains the field, and the network tab does not respect your table configuration.</li>
+      <li><strong>Row filters without the aggregate case:</strong> a scoped list is filtered, but a <code>COUNT</code> or an average silently includes rows the caller cannot see, leaking information through a number.</li>
+      <li><strong>No deny path or delegation model</strong>, so covering leave and temporary access get done by sharing accounts.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"A manager requests <code>/employees/4821</code>, who is not on their team. Walk me through
+    every layer that stops it — and tell me which layer would still stop it if a new endpoint were
+    written on a Friday afternoon." <strong>Only the query-level filter survives that second
+    question.</strong></p></div>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 25 · asserted but never designed</span>
+  <h2>Audit logging by design</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The existing docs assert that audit logging exists and never design it. In an HR system it is
+    <strong>a compliance requirement, an incident-response tool, and the answer to "who looked at my
+    record?"</strong> — and it has to be designed, because bolting it on later produces gaps you
+    cannot fill retrospectively.</p></div>
+  <div class="b"><span class="k">The design</span>
+    <ul>
+      <li><strong>Log reads, not just writes.</strong> The unusual and essential part. "Who viewed this employee's record" is the question an employee is entitled to ask, and most systems cannot answer it because they only logged mutations.</li>
+      <li><strong>One row per event, and the fields that make it useful:</strong> who (the authenticated user, not the display name), what action, which resource and id, when, from where, the outcome, <strong>and a correlation id</strong> so an audit entry joins to the request trace.</li>
+      <li><strong>Append-only.</strong> No updates, no deletes, enforced by permissions rather than convention — an audit log a compromised application account can rewrite is not an audit log.</li>
+      <li><strong>Separate from application logs.</strong> Different retention, different access, different purpose. Application logs are debugging; the audit log is evidence.</li>
+      <li><strong>Write it in the same transaction as the action</strong> where the action is a write, so you cannot have one without the other. For reads, write it on the read path — which is why an interceptor is the right home.</li>
+      <li><strong>Make it queryable by subject</strong> — by the employee whose data it was, not only by the actor. That is the shape a subject-access request needs.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Logging the payload.</strong> An audit entry containing the salary it recorded becomes a second copy of the sensitive data, with weaker access control. <strong>Log the fields that changed, not the values</strong> — or store values separately with the same protection as the source.</li>
+      <li><strong>Best-effort writes</strong> that fail silently, so the gaps are invisible.</li>
+      <li><strong>Unbounded retention with no policy</strong>, which is both a cost and a liability — and it collides with erasure obligations.</li>
+      <li><strong>An audit log nobody ever reads or tests.</strong> Query it during development, or you will discover at the worst moment that the field you need was never captured.</li>
+      <li><strong>Forgetting that erasure must reach it</strong> — or deciding deliberately that it must not, and being able to justify that.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"An employee asks who has viewed their record in the last year. Can you answer, and how long
+    would it take?" — if the answer is no, that is a designed limitation you should be able to state
+    rather than a surprise.</p></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 26</span>
+  <h2>Document storage and uploads</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Both directions, and the one that gets people</div>
+<pre><code>UPLOADS — the checks, in order
+  □  SIZE CAP, enforced before you buffer anything
+  □  CONTENT TYPE FROM THE BYTES, not the extension and not
+     the client-supplied header
+  □  ⭐ NEVER TRUST THE FILENAME. `../../etc/passwd` is path
+     traversal; generate your own storage key and keep the
+     original name as metadata only.
+  □  STORE OUTSIDE THE WEB ROOT — object storage, not a served
+     directory
+  □  SCAN, or at minimum never serve it back with a content
+     type that lets a browser execute it
+  □  ⭐ PRESIGNED DIRECT UPLOAD keeps large files out of your
+     application entirely — your backend authorises and issues
+     a short-lived URL, the browser uploads straight to
+     storage. Fewer bytes through your server, and no memory
+     spike.
+  □  STREAM, never buffer. Ignoring backpressure on a large
+     upload is an out-of-memory crash under concurrency.
+
+DOWNLOADS — ⭐ AND THIS IS THE ONE THAT MATTERS
+  A LINK IS A CREDENTIAL.
+  a URL carries no identity. Whoever holds the string holds the
+  file — and it will be pasted into chat, forwarded, and left
+  in a browser history, an email thread and a proxy log. If the
+  key is predictable, the other records are reachable by
+  editing it.
+  ⚠ AND YOUR PERMISSION SYSTEM IS NO LONGER INVOLVED IN ANY OF
+    THIS.
+
+  ⇒ IN ORDER OF PREFERENCE
+    ①  ⭐ DON'T PRODUCE A FILE. Render it in the app, behind the
+       session, where the check runs on every view. The
+       strongest answer, and the one nobody proposes.
+    ②  SERVE THROUGH AN AUTHENTICATED ENDPOINT — the request is
+       checked against the caller every time, and the object is
+       never publicly addressable.
+    ③  A PRESIGNED URL with a SHORT expiry, an UNGUESSABLE key,
+       single-use where the storage supports it, and delivered
+       to the verified account rather than returned in the page.
+
+  AND REGARDLESS
+    · the generated file has a LIFETIME and gets deleted. ⚠ A
+      bucket of HR PDFs with no expiry is a breach waiting for
+      an audit.
+    · every generation is AUDITED: who, which employee, which
+      fields, when.
+    · ⭐ THE FILE ITSELF SAYS WHO IT WAS GENERATED FOR AND WHEN,
+      so a copy found later is traceable.
+
+⚠ AND THE SIZE PROBLEM: a twenty-year employee record with
+  attachments is not a new joiner's. ⭐ BUILD IT AS A JOB FROM
+  THE START — not because it is slow today, but because what
+  decides its size is outside your control and only grows.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Fourteen one-sentence answers to have ready</div>
+<pre><code>□  OAuth is authorisation; OIDC adds authentication via an ID
+   token; SAML is the XML predecessor
+□  the authorisation-code flow returns a CODE, not a token
+□  `state` defends the flow; `nonce` binds the ID token
+□  PKCE binds the code to the requesting client — use it
+   everywhere
+□  validate signature, iss, aud, exp and nonce — via a library
+□  ⭐ SSO gives you identity, not authorisation, and not
+   deprovisioning
+□  a role says what; ownership says whose; attributes say
+   which fields
+□  ⭐ only a query-level filter survives a new endpoint written
+   on a Friday
+□  a scoped list with an unscoped COUNT leaks through a number
+□  audit logs must cover READS in an HR system
+□  append-only, separate store, correlation id, queryable by
+   subject
+□  log which fields changed, not their values
+□  never trust an uploaded filename; derive the type from bytes
+□  ⭐ A LINK IS A CREDENTIAL — prefer no file, then an
+   authenticated endpoint, then a short presigned URL</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 07 · Delivery, operations &amp; testing</h4><p>Where TLS, ingress and secrets are configured — and where the presigned-download flow gets tested end to end.</p></div>
+  <div class="card"><h4>Volume 10 · Labs 04 and 08</h4><p>The Okta OIDC integration lab, and the server-side PDF rendering lab — which is topic 26 built rather than read.</p></div>
+  <div class="card"><h4>The Senior Reflex, reflex 15</h4><p>The export feature worked through end to end as a design exercise, with the link-is-a-credential argument in full.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-5-identity-security-and-compliance/</code> — files 23–26, about 6,600 lines.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

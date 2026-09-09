@@ -1,0 +1,564 @@
+<title>Frontend Depth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 04</p>
+  <p class="rail-sub">Frontend depth</p>
+  <span class="rail-vol">Phase 3</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Topics</div>
+  <a href="#t1"><span class="n">12</span>App Router: the missing half</a>
+  <a href="#t2"><span class="n">13</span>Rendering &amp; memoisation</a>
+  <a href="#t3"><span class="n">14</span>TanStack Query</a>
+  <a href="#t4"><span class="n">15</span>React Hook Form &amp; Zod</a>
+  <a href="#t5"><span class="n">16</span>antd tables at scale</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 04 of 10 · phase 3</p>
+  <h1>Frontend depth. <span class="thin">Server actions, caches, forms and tables at real size.</span></h1>
+  <p class="lede">The App Router half that nobody reads — revalidation, server actions as public
+  endpoints, streaming. Then the three libraries with zero prior coverage: TanStack Query's cache,
+  React Hook Form with Zod, and Ant Design tables once the dataset stops being small.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 3 files 12–16</span>
+    <span><b>Zero prior coverage</b> · server actions, RHF, Zod, ISR</span>
+    <span><b>Assumes</b> · onboarding Vol II and III</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<div class="vol here"><span class="vn">Vol 04 · here</span><b>Frontend</b></div>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 12 · zero prior coverage</span>
+  <h2>App Router: the missing half</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The onboarding handbook covers routing, layouts and server versus client components. The
+    missing half is <strong>the cache and mutation model</strong> — revalidation, server actions, and
+    streaming — which is where the App Router's real behaviour lives and where its security surface
+    is.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Server actions are public endpoints.</strong> A function marked <code>'use server'</code> gets an id and is reachable by anyone who can craft the request. <strong>"It is only called from that form" is not a control</strong> — it needs authentication and an ownership check in its own body, exactly like a REST route.</li>
+      <li><strong>Revalidation is how the cache is invalidated after a mutation.</strong> By path, or by tag when several routes derive from the same data. The tag approach is what stops a mutation needing to know every page that displays it.</li>
+      <li><strong>ISR is static plus a timer.</strong> Rendered at build or first request, rebuilt after N seconds. Right for content that changes but is not per-user — <span class="no">wrong for anything showing one person's data.</span></li>
+      <li><strong>Rendering mode is inferred, not declared.</strong> Reading cookies, headers or the current user makes a route dynamic automatically. <strong>So an authenticated page can silently stay static</strong>, which is how one user's data gets served to another.</li>
+      <li><strong>Streaming and Suspense</strong> let the shell render while a slow part resolves — the correct answer to "the AI summary panel is slow", rather than blocking the page.</li>
+      <li><strong>Route handlers</strong> exist for the cases a server action does not fit: webhooks, file responses, and anything a non-browser client calls.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>A server action with no auth check, because the form is behind a login.</li>
+      <li>Relying on a caching default that changed between major versions. <strong>For per-user data, be explicit about no-cache</strong> rather than trusting inference.</li>
+      <li>Mutating and not revalidating, so the UI shows stale data until a hard refresh.</li>
+      <li><code>'use client'</code> placed high, dragging a whole subtree — and anything it imports — into the browser bundle.</li>
+      <li>Suppressing a hydration warning instead of fixing the cause: <code>new Date()</code>, <code>Math.random()</code>, <code>localStorage</code>, or a timezone difference in the first render.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"What stops someone calling your server action directly with a different employee id?" — only
+    a check inside the action. If your answer is the form, that is the vulnerability.</p></div>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 13</span>
+  <h2>Rendering and memoisation decisions</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">When memoisation helps, and when it is cost with no benefit</div>
+<pre><code>⭐ THE MODEL: A COMPONENT RE-RENDERS WHEN ITS STATE CHANGES, ITS
+  PARENT RE-RENDERS, OR ITS CONTEXT VALUE CHANGES. Re-rendering
+  is not itself expensive — it is cheap for most components. The
+  expense is a large subtree, or real work inside render.
+
+SO THE ORDER OF FIXES IS:
+  ①  MOVE STATE DOWN. If only one input cares about a value,
+     it should not live three levels up. ⭐ THIS FIXES MOST
+     "TYPING IS LAGGY" PROBLEMS AND COSTS NOTHING.
+  ②  SPLIT THE COMPONENT so the changing part is small.
+  ③  STABILISE VALUES that are recreated inline each render —
+     an object or array literal passed as a prop is a new
+     reference every time, which defeats any memoisation below
+     it.
+  ④  SPLIT WIDE CONTEXTS by change frequency. A rarely-changing
+     user context and a frequently-changing UI context should
+     not be the same provider, or every consumer re-renders on
+     every keystroke.
+  ⑤  ⭐ ONLY THEN MEMOISE, AND ONLY AFTER MEASURING.
+
+⚠ WHY `useMemo` EVERYWHERE IS A REAL COST
+  · it allocates and compares dependencies on every render
+  · a wrong dependency array produces a STALE VALUE — a
+    correctness bug traded for imagined speed
+  · it makes the code harder to read for no measured gain
+  ⇒ AND IT IS NOT FREE: the comparison itself runs every time.
+
+WHERE MEMOISATION GENUINELY PAYS
+  · a large list where each row would otherwise re-render
+  · an expensive derived computation over a big array
+  · a callback passed into a memoised child, where a new
+    function identity would defeat the memo
+  ⇒ ⭐ IN THIS PROJECT: THE TABLE. Rebuilding the columns array
+    inline on every render re-renders the whole table — define
+    it outside the component or memoise it. That one is real.
+
+⭐ AND THE MEASUREMENT POINT: PROFILE FIRST. React's profiler
+  tells you what re-rendered and why. Guessing produces
+  memoisation in the wrong places and leaves the actual cause.</code></pre>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 14 · three prior lines of coverage</span>
+  <h2>TanStack Query</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>It is usually described as "data fetching". It is not — <strong>it is a cache with a
+    lifecycle</strong>, and every question about it is really a question about that cache.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>The query key is the cache identity.</strong> Include every variable the result depends on — the filters, the page, the scope. <strong>A key that omits a filter serves one filter's data for another</strong>, which in an HR app can be a permissions leak rather than a cosmetic bug.</li>
+      <li><strong><code>staleTime</code> versus <code>gcTime</code>.</strong> Stale time is how long the data is considered fresh — while fresh, no refetch happens at all. Garbage-collection time is how long an unused cache entry is kept. <strong>Confusing these two is the most common source of "why is it refetching constantly".</strong></li>
+      <li><strong>Stale-while-revalidate is the default behaviour.</strong> You get cached data immediately and a background refetch — which is why the UI feels instant and why a "loading" flag is often the wrong thing to show.</li>
+      <li><strong>Invalidation after a mutation</strong> is the counterpart to revalidation on the server: mark the affected keys stale and let them refetch.</li>
+      <li><strong>Optimistic updates</strong> need a rollback path. Write the expected result, keep the previous value, restore it on error. Skipping the rollback is how a failed save leaves a UI claiming success.</li>
+      <li><strong>Deduplication.</strong> Three components asking for the same key produce one request — which is why it removes a class of waterfall without any coordination.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>An incomplete query key. The defect of record.</li>
+      <li>Copying query data into local state to edit it — the copy goes stale and the save overwrites someone else's change.</li>
+      <li>Using it in a server-component world where a plain <code>await</code> would do. <strong>It earns its place for client-side interactive data</strong>, not for the initial render of a server-rendered page.</li>
+      <li>No <code>staleTime</code> at all, so every mount refetches and the network tab looks alarming.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"A user changes the department filter and briefly sees the previous department's employees. What
+    happened?" — the query key did not include the filter, so both requests share a cache entry.</p></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 15 · zero prior coverage</span>
+  <h2>React Hook Form and Zod</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Both were at literal zero in the existing docs. The idea worth understanding:
+    <strong>RHF minimises re-renders by keeping form state out of React where it can, and Zod lets
+    one schema produce both the validation and the TypeScript type.</strong></p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Uncontrolled by default.</strong> RHF registers inputs and reads their values on submit rather than re-rendering on every keystroke — which is why a large form stays responsive. <code>watch</code> and <code>useWatch</code> opt into subscriptions where you actually need live values, and <code>useWatch</code> is the narrower one.</li>
+      <li><strong>One schema, two outputs.</strong> A Zod schema validates at runtime and <em>infers</em> the TypeScript type. <strong>That is the fix for the erased-types problem</strong>: instead of an annotation you hope is true, you have a validator and a type derived from the same definition.</li>
+      <li><strong>The resolver connects them</strong>, so field errors come from the schema rather than from hand-written rules — which means the rules exist in one place.</li>
+      <li><strong>Server errors mapped back onto fields.</strong> <code>setError</code> per field, so a 400 from the API appears next to the input rather than as a toast that has lost its context.</li>
+      <li><strong>Coercion and transformation belong in the schema</strong> — a date string to a Date, a numeric string to a number — so the parsed output is the shape your code expects.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Believing client validation protects anything.</strong> It is feedback. <strong>The API's DTO is what protects the system</strong>, and it must repeat every rule that matters — a request does not have to come from your form.</li>
+      <li>Mixing a controlled <code>value</code>/<code>onChange</code> onto an input inside a form library, giving two owners of one value.</li>
+      <li><code>watch()</code> on the whole form, which reintroduces the re-render-per-keystroke problem the library exists to avoid.</li>
+      <li>Clearing the form on a failed submit, which is a small cruelty and loses the user's work.</li>
+      <li>No disabled state while submitting, so a double-click creates two records.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Where does validation happen in your app, and why in more than one place?" — the browser for
+    feedback, the API for correctness, the database for invariants. Three layers, and only the middle
+    one is a control. That duplication is deliberate and correct.</p></div>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 16</span>
+  <h2>antd tables at scale, and accessibility</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The onboarding handbook covers the component. The layer underneath is <strong>the decision that
+    bites later — whether sorting, filtering and paging happen in the browser or in the
+    database</strong> — plus the accessibility obligations of an internal tool.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Client-side is the default and it is a trap past a few hundred rows.</strong> antd will sort and filter whatever array you passed — delightful for 200 rows, and for 50,000 it means downloading 50,000 rows to display ten. <strong>Retrofitting server-side paging changes every call site</strong>, so decide at the start.</li>
+      <li><strong>Server-side means passing <code>total</code> explicitly</strong> and handling sort and filter parameters in the API — which then needs a stable <code>ORDER BY</code> with a unique tie-breaker, or rows repeat and vanish between pages.</li>
+      <li><strong><code>rowKey</code> is not optional.</strong> Same rule as a React key: without a stable id, selection and expansion attach to the wrong rows after a sort or a delete.</li>
+      <li><strong>Columns are data, not markup</strong> — which is how you show a salary column to HR and omit it for a team lead. <strong>And the server must still omit the field:</strong> a column you did not render is still in the payload.</li>
+      <li><strong>Virtualisation</strong> for genuinely long lists, and the honest prior question: does anyone need 5,000 rows on one screen, or do they need a better filter?</li>
+      <li><strong>Accessibility is a real obligation here.</strong> Internal tools are used all day by people who may rely on keyboard navigation or a screen reader. antd gives you a great deal for free — but custom cell renderers, icon-only buttons and colour-only status indicators break it. <strong>Colour alone is never the signal</strong>; pair it with text or a shape.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Rebuilding the columns array inline every render, re-rendering the entire table.</li>
+      <li>Client-side paging over a growing dataset, discovered when a customer grows.</li>
+      <li>Icon-only action buttons with no accessible label.</li>
+      <li>A red/green risk indicator with no text, unreadable for a colour-blind user — and this is an HR risk score, so it matters.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"This table works for 200 employees. What changes at 50,000?" — server-side sort, filter and
+    paging with a stable tie-breaker, a considered page size, and the recognition that the payload
+    shape is a contract you are now committed to.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Twelve one-sentence answers to have ready</div>
+<pre><code>□  ⭐ a server action is a public endpoint and needs its own
+   auth check
+□  revalidate by tag when several routes share data
+□  rendering mode is inferred — be explicit for per-user pages
+□  ISR is for content that changes, not for per-user data
+□  fix re-renders by moving state down before memoising
+□  an inline object prop defeats memoisation below it
+□  ⭐ the query key IS the cache identity — omit a filter and
+   you serve the wrong data
+□  staleTime governs refetching; gcTime governs eviction
+□  an optimistic update needs a rollback path
+□  one Zod schema gives you validation AND the type
+□  client validation is feedback; the DTO is the control
+□  ⭐ past a few hundred rows, sorting and paging move to the
+   database</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 05 · The data layer</h4><p>The other half of the table question — indexes, stable ordering, and what a paged query actually costs.</p></div>
+  <div class="card"><h4>Volume 07 · Delivery &amp; testing</h4><p>Playwright, which is how these flows get tested, and Vercel's deployment topology.</p></div>
+  <div class="card"><h4>Volume 10 · Field insight F07</h4><p>Dan Abramov on the server–client boundary — the conceptual argument underneath topic 12.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-3-frontend-depth/</code> — files 12–16, about 9,400 lines, the largest phase.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

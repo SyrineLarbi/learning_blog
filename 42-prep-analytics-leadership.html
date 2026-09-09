@@ -1,0 +1,753 @@
+<title>Analytics, Legacy and Leadership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 09</p>
+  <p class="rail-sub">Analytics, legacy &amp; leadership</p>
+  <span class="rail-vol">Phases 10–11</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · Analytics</div>
+  <a href="#t1"><span class="n">43</span>SQL for analysis</a>
+  <a href="#t2"><span class="n">44</span>Statistics you'll be asked</a>
+  <a href="#t3"><span class="n">45</span>Metric definition</a>
+  <a href="#t4"><span class="n">46</span>Power BI for a SQL engineer</a>
+  <a href="#t5"><span class="n">47</span>Experiments &amp; causal claims</a>
+  <a href="#t6"><span class="n">48</span>The analyst interview</a>
+
+  <div class="rail-group">II · Legacy &amp; leadership</div>
+  <a href="#t7"><span class="n">40</span>Legacy migration playbook</a>
+  <a href="#t8"><span class="n">41</span>Capacity math</a>
+  <a href="#t9"><span class="n">42</span>Manager to tech lead</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 09 of 10 · phases 10–11</p>
+  <h1>Analytics, legacy and leadership. <span class="thin">Numbers, migrations, and the step up.</span></h1>
+  <p class="lede">SQL that answers business questions rather than fetching rows, the statistics an
+  analyst is actually asked about, metric definitions that stop two dashboards disagreeing — then the
+  legacy migration playbook, capacity arithmetic, and the move from managing to leading
+  technically.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 11 files 43–48, phase 10 files 40–42</span>
+    <span><b>Relevant to</b> · the analyst positioning track</span>
+    <span><b>Ends with</b> · manager → tech lead</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<div class="vol here"><span class="vn">Vol 09 · here</span><b>Analytics &amp; lead</b></div>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="part" id="analytics">
+  <span class="pn">Part I</span>
+  <h2>Analytics</h2>
+</header>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 43</span>
+  <h2>SQL for analysis: cohorts, funnels and time</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The three shapes that answer most business questions</div>
+<pre><code>⭐ THE DISTINCTION FROM APPLICATION SQL: application queries
+  FETCH ROWS; analytical queries RESHAPE THEM. Which is why
+  window functions and CTEs matter far more here than joins do.
+
+①  COHORTS — group by when they started, measure over time
+   the shape: assign each person a cohort (hire month), then
+   compute a metric per cohort per period since.
+     · retention by tenure month
+     · attrition by hire cohort — ⭐ which is how you separate
+       "we got worse" from "we hired differently"
+   ⚠ THE TRAP: an incomplete final cohort. The people hired
+     last month cannot have twelve-month retention, so the
+     latest cohort always looks different. Truncate or annotate.
+
+②  FUNNELS — ordered stages with drop-off
+   the shape: one row per person per stage reached, then count
+   distinct at each.
+   ⚠ THE TRAPS:
+     · ORDER MATTERS AND PEOPLE SKIP STAGES. Counting each
+       stage independently overstates completion.
+     · THE TIME WINDOW. Someone who applied yesterday has not
+       failed to be hired — ⭐ RIGHT-CENSORING is the most
+       common funnel error.
+
+③  TIME SERIES — change over periods
+   the shape: `LAG()` for period-over-period, a rolling window
+   for smoothing, a date spine so missing periods appear as zero
+   rather than vanishing.
+   ⚠ THE TRAPS:
+     · ⭐ THE CLIFF AT THE END — the incomplete current period,
+       the single most common false alarm in reporting
+     · timezone boundaries moving events across days
+     · comparing a 28-day month to a 31-day one without
+       normalising
+
+⭐ THE TOOLS THAT DO THE WORK, AND THE ONE GOTCHA
+  ROW_NUMBER() OVER (PARTITION BY … ORDER BY …) — the standard
+    way to take "the latest row per group", replacing a slow
+    correlated subquery.
+  LAG / LEAD — period-over-period without a self-join.
+  SUM() OVER — running totals.
+  ⚠ WINDOW FUNCTIONS RUN AFTER `WHERE`, so you cannot filter on
+    a window result in the same clause. Wrap it in a CTE and
+    filter outside. This catches everyone exactly once.
+
+⚠ AND THE ARITHMETIC ERROR THAT PRODUCES CONFIDENT WRONG
+  NUMBERS: FAN-OUT. Joining to a many-side multiplies rows, so
+  any sum afterwards is inflated. ⭐ AGGREGATE THE MANY-SIDE
+  FIRST, THEN JOIN — and sanity-check the row count before and
+  after every join.</code></pre>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 44</span>
+  <h2>The statistics an analyst is asked about</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>Not a statistics course — <strong>the six ideas that come up in analyst conversations</strong>,
+    and the phrasing that makes each defensible.</p></div>
+  <div class="b"><span class="k">The six</span>
+    <ul>
+      <li><strong>Signal versus noise.</strong> Every process varies. Before calling a move a change, plot enough history to know the normal range — <strong>you cannot answer "is this real" without knowing the ordinary variation.</strong></li>
+      <li><strong>Sample size and subgroup cells.</strong> Three points on 800 people is worth investigating; on 20 people it is two extra leavers. And slicing a few thousand employees three ways gives cells of nine, where every dramatic percentage is noise.</li>
+      <li><strong>Significant, material and stable are three questions.</strong> With enough data almost everything is significant; only some of it is worth acting on; less of it is still there next month.</li>
+      <li><strong>Effect size is what a decision uses.</strong> Three percentage points, eleven people, roughly £40,000 of replacement cost — not "significant at p&nbsp;&lt;&nbsp;0.01".</li>
+      <li><strong>Simpson's paradox.</strong> The aggregate moves one way while every subgroup moves the other, because the <em>mix</em> changed. <strong>Report the aggregate alone and you can be wrong in front of a board.</strong> The fix is a rate-versus-mix decomposition.</li>
+      <li><strong>Regression to the mean.</strong> Target the worst-performing teams, intervene, measure again — they improve, and so would they have. This is why a comparison group matters even when it feels unnecessary.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Reporting a mean alone on skewed data — salary, tenure, duration are all right-skewed, so the median and the distribution are the honest summary.</li>
+      <li>Describing a p-value as the probability the effect is real.</li>
+      <li>Averaging an ordinal satisfaction score and treating the result as a quantity.</li>
+      <li>Slicing until something looks dramatic, then presenting it.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Attrition is up three points. Is that a problem?" — the strong answer is three questions, not
+    a yes: is it outside normal variation, is the sample big enough, and is it material. Then the
+    honest offer: here is what I would look at to find out.</p></div>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 45</span>
+  <h2>Metric definition, and the numbers that disagree</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The most common analytics failure is not a wrong calculation. It is
+    <strong>two dashboards showing different numbers for the same thing</strong>, and nobody able to
+    say which is right — which destroys trust in the whole reporting layer.</p></div>
+  <div class="b"><span class="k">What a definition must pin down</span>
+    <ul>
+      <li><strong>The numerator and the denominator.</strong> Attrition rate over what — headcount at the start, the average over the period, or the end? All three are used, and they differ.</li>
+      <li><strong>The time window and the timezone.</strong> A leaver on the 31st at 23:00 in one timezone is next month's in another.</li>
+      <li><strong>The inclusions and exclusions.</strong> Contractors, interns, transfers, people who left in probation, regretted versus non-regretted. <strong>The regretted split is usually the whole point</strong> — total turnover and "people we wanted to keep" are different numbers with different actions.</li>
+      <li><strong>The grain.</strong> One row per what — per employee, per employment spell, per month?</li>
+      <li><strong>The as-at date.</strong> Whether the number is recomputed from current data or frozen when published. <strong>If it is recomputed, last quarter's report changes after a reorganisation</strong> — which is a data-integrity failure that presents as a reporting bug.</li>
+    </ul>
+    <p><strong>And then it lives in one place.</strong> Defined once in the modelling layer and built on, not re-implemented in four dashboards — because four implementations will eventually be four definitions.</p></div>
+  <div class="b junior"><span class="k">When two numbers disagree — the reconciliation order</span>
+    <ol>
+      <li><strong>Compare the definitions before the data.</strong> Most disagreements are definitional, and checking that first saves hours.</li>
+      <li>Compare the row counts, then the grain. A fan-out join explains a surprising number of inflated figures.</li>
+      <li>Compare the time windows and timezones.</li>
+      <li>Compare the filters — especially a soft-delete flag one query applied and the other did not.</li>
+      <li><strong>Reconcile to a source nobody in the argument controls</strong> — payroll, the HRIS itself. A number that matches an independent system is defensible; one that matches only your own pipeline is not.</li>
+    </ol></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Finance says headcount is 4,012 and your dashboard says 3,987. Who is right?" — the answer is
+    a process, not a number: compare definitions, then grain, then filters, then reconcile to the
+    system of record. <strong>And the outcome should be one agreed definition, not a winner.</strong></p></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 46</span>
+  <h2>Power BI for a SQL-fluent engineer</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The model that makes DAX comprehensible</div>
+<pre><code>⭐ THE ONE CONCEPT: EVERYTHING IN POWER BI IS ABOUT FILTER
+  CONTEXT. A measure is not a value — it is a calculation
+  evaluated against whatever filters apply at that point in the
+  visual. Once that clicks, DAX stops being arbitrary.
+
+THE MODEL, IN SQL TERMS
+  · TABLES with RELATIONSHIPS — a star schema, with fact tables
+    and dimension tables. ⭐ AND THE DEFAULT RELATIONSHIP IS
+    ONE-DIRECTIONAL, which is why a filter sometimes does not
+    propagate the way you expect.
+  · A DATE DIMENSION is not optional. Time intelligence
+    functions require one, and its absence is why
+    year-over-year comparisons behave oddly.
+  · CALCULATED COLUMN vs MEASURE: a column is computed per row
+    at refresh and stored; a measure is computed at query time
+    against the filter context. ⚠ CHOOSING A COLUMN WHERE YOU
+    NEEDED A MEASURE IS THE MOST COMMON MODELLING MISTAKE, and
+    it produces totals that do not aggregate correctly.
+
+THE FUNCTIONS THAT DO THE WORK
+  CALCULATE     ⭐ the central one: evaluate an expression with
+                a modified filter context. Almost every
+                non-trivial measure is a CALCULATE.
+  ALL / REMOVEFILTERS  ignore filters — how you compute a
+                percentage of total.
+  FILTER        row-by-row restriction; powerful and slower.
+  time intelligence — same period last year, year to date,
+                rolling periods. Needs the date dimension.
+
+IMPORT vs DIRECTQUERY
+  IMPORT        data copied into the model. Fast, and stale
+                until refresh.
+  DIRECTQUERY   queries the source live. Current, and every
+                interaction is a query — ⭐ SO YOUR INDEXES AND
+                YOUR QUERY SHAPES ARE NOW A DASHBOARD
+                PERFORMANCE PROBLEM.
+  ⇒ for HR reporting, import with a scheduled refresh is
+    usually right: the data changes daily at most.
+
+⚠ AND THE THING THAT MATTERS MOST IN AN HR CONTEXT:
+  ROW-LEVEL SECURITY. Defined in the model, so a regional
+  manager's report shows their scope and not the company's.
+  ⭐ WITHOUT IT, PUBLISHING A DASHBOARD IS PUBLISHING THE WHOLE
+    DATASET — and a filter is not a permission.
+  ⇒ and the minimum-cell-size rule applies here too: a
+    three-person team's engagement score identifies three
+    people.</code></pre>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 47</span>
+  <h2>Experiments and causal claims</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The line between "we observed" and "we caused" — and <strong>what you can honestly claim
+    without an experiment</strong>, which in HR analytics is usually where you are.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Randomisation is what buys causation.</strong> It makes the groups comparable on everything, including things you did not measure. Without it, any difference has three other explanations.</li>
+      <li><strong>The four alternatives to causation, always:</strong> reverse direction, a confounder, selection in the data, chance. Being able to rule them out — or admit you cannot — <em>is</em> causal honesty.</li>
+      <li><strong>Decide the analysis before looking.</strong> The metric, the duration, the stopping rule, the subgroups. <strong>Stopping as soon as it reaches significance biases the result upward</strong>, and testing twenty things guarantees roughly one false positive.</li>
+      <li><strong>A holdout group, even when it feels unnecessary.</strong> Without one you cannot claim the effect, and someone will eventually ask you to.</li>
+      <li><strong>When you cannot randomise</strong> — which is most HR interventions — the honest options are a difference-in-differences against a comparable group, or a before/after with the seasonality and the regression-to-the-mean risk explicitly stated. Both are weaker, and saying so is the point.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li>Targeting the worst performers, seeing improvement, and claiming the intervention worked.</li>
+      <li>Selection: surveying current employees to explain why people left — those people are gone.</li>
+      <li>Choosing the subgroup after seeing the results.</li>
+      <li>Claiming causation because the stakeholder wants a cause, which is the pressure that produces most overclaiming.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"We ran the retention programme and attrition fell. Did it work?" — the strong answer names
+    what else changed, asks whether there was a comparison group, and offers the honest phrasing:
+    "attrition fell by X in the treated group and Y in the untreated; that difference is what we can
+    attribute."</p></div>
+</div>
+
+<header class="mod" id="t6">
+  <span class="mn">Topic 48</span>
+  <h2>The analyst interview and positioning</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The positioning that works</h4><p><strong>An engineer who can do analysis is a rarer and more valuable profile than either alone</strong> — you can build the pipeline, define the metric and defend the number. Lead with the intersection, not with a weaker version of one side.</p></div>
+  <div class="card"><h4>The SQL round</h4><p>Cohorts, funnels, window functions. <strong>Say the fan-out risk before it happens</strong> and name the incomplete-period trap unprompted. Those two remarks do more than any query.</p></div>
+  <div class="card"><h4>The case round</h4><p>"Attrition is up — what do you do?" They want the process: define the metric, check the period is complete, decompose rate versus mix, size the effect, then a recommendation with its uncertainty stated.</p></div>
+  <div class="card"><h4>The communication round</h4><p>Answer first, in people and money. One annotated chart. What you are <em>not</em> claiming. And a recommendation, because options without one is abdication.</p></div>
+  <div class="card"><h4>The domain advantage</h4><p>Supply chain plus HR plus engineering is an unusual combination. <strong>The intersection is where you are hard to replace</strong>, and it is something you already have rather than something to acquire.</p></div>
+  <div class="card"><h4>The red flag to avoid</h4><p>Presenting the journey — the cleaning, the models tried — instead of the answer. And a confusion matrix on a slide for a non-technical audience.</p></div>
+</div>
+
+<header class="part" id="legacy">
+  <span class="pn">Part II</span>
+  <h2>Legacy and leadership</h2>
+</header>
+
+<header class="mod" id="t7">
+  <span class="mn">Topic 40</span>
+  <h2>The legacy migration playbook</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The Retool migration is the CV claim, and the question it invites is
+    <strong>how you replace a live system without a freeze and without a big-bang cutover</strong> —
+    because that is the only version of this that works.</p></div>
+  <div class="b"><span class="k">The playbook</span>
+    <ol>
+      <li><strong>Inventory what it actually does</strong>, including the undocumented behaviour people depend on. <strong>The ugliness of a legacy system is mostly accumulated knowledge</strong> — every strange conditional is a bug someone hit or a regulation.</li>
+      <li><strong>Find the seam.</strong> Route traffic through something you control — a proxy, a facade, a feature flag — so you can redirect one path at a time.</li>
+      <li><strong>Strangler fig, route by route.</strong> Move the least risky path first, verify, then the next. Incremental, and reversible per route.</li>
+      <li><strong>Run both and compare.</strong> Shadow the new implementation, log both outputs, diff them. <strong>This is the step that finds the undocumented behaviour</strong>, and it is the one people skip.</li>
+      <li><strong>Migrate data with a reconciliation</strong>, not a trust exercise: counts, sums, and spot checks against the old system.</li>
+      <li><strong>Decommission deliberately</strong>, with a date and a rollback path, and only after the old path has been unused for a while.</li>
+    </ol></div>
+  <div class="b junior"><span class="k">Why rewrites fail</span>
+    <ul>
+      <li><strong>You must maintain two systems</strong> while the new one catches up to a moving target — and the feature freeze that would prevent it is usually politically impossible.</li>
+      <li>The specification does not exist; the old system <em>is</em> the specification, and it is only readable by running it.</li>
+      <li>The last 10% of edge cases is more than half the work, and it is invisible at the start.</li>
+      <li>A big-bang cutover has no rollback that anyone would actually take.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"How did you know the new system behaved the same?" — the strong answer is the shadow-and-diff
+    step, and a specific example of a behaviour it caught that nobody had documented.</p></div>
+</div>
+
+<header class="mod" id="t8">
+  <span class="mn">Topic 41</span>
+  <h2>Capacity math and runnable trade-offs</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The arithmetic that stops you over-building</div>
+<pre><code>⭐ DO THE NUMBERS BEFORE THE ARCHITECTURE, EVERY TIME. The
+  number chooses the design, and most systems are far smaller
+  than they feel.
+
+THE FOUR CALCULATIONS
+  ①  REQUESTS PER SECOND AT PEAK
+     a day is ~90,000 seconds. 4,000 employees, most opening a
+     dashboard once a day, is single-digit requests per second
+     — with a working-day spike of maybe 5–10×, because
+     everyone opens it at 9 a.m.
+     ⇒ ⭐ THAT IS A SMALL NUMBER. One ordinary database handles
+       it, and knowing this is what stops you proposing
+       Kubernetes.
+
+  ②  DATA PER YEAR
+     rows × bytes. The point is the order of magnitude:
+     megabytes (irrelevant), gigabytes (fine), terabytes (now
+     storage layout matters).
+     ⇒ 4,000 employees with monthly history is thousands of
+       rows a year. It fits comfortably in Postgres.
+
+  ③  THE READ-TO-WRITE RATIO
+     ⭐ DETERMINES MORE OF THE ARCHITECTURE THAN ANY OTHER
+       NUMBER, and it is the one nobody asks for. Thousands of
+       reads per write means caching and precomputation are the
+       whole answer.
+
+  ④  COST PER OPERATION, FOR ANYTHING METERED
+     an LLM call over every employee has a price. ⭐ "$0.004
+     PER REQUEST, $240 A MONTH AT CURRENT VOLUME" IS REAL
+     ENGINEERING and almost nobody brings it.
+
+THE LATENCY INTUITIONS TO CARRY
+  memory                nanoseconds        free
+  local network hop     well under 1 ms    cheap
+  simple DB query       1–10 ms            counts
+  cross-region trip     50–150 ms          expensive
+  LLM call              1–5 s              ⭐ A DIFFERENT UNIT
+  ⇒ AND THE ONE THAT EXPLAINS MOST SLOWNESS: 50 sequential
+    queries at 5 ms is 250 ms of pure waiting. ROUND TRIPS,
+    NOT CPU, make ordinary software slow.
+
+⭐ THE SENTENCE THAT SCORES: "At our volume this is one
+  Postgres and one container. Here is the arithmetic. What
+  would change my mind is X." — a number, a design, and a
+  named condition for revisiting it.</code></pre>
+</div>
+
+<header class="mod" id="t9">
+  <span class="mn">Topic 42</span>
+  <h2>From manager to tech lead</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">Why this topic is here</span>
+    <p>A prior management role is an unusual asset and an easy thing to present badly.
+    <strong>The tech-lead role is not "manager who codes"</strong> — it is technical judgement
+    exercised through other people, and the transferable half of management experience is specific.</p></div>
+  <div class="b"><span class="k">What transfers, and what does not</span>
+    <ul>
+      <li><strong>Transfers well:</strong> running a decision to a conclusion rather than letting it drift · translating between a business need and a technical constraint · giving feedback without drama · noticing when someone is stuck before they say so · estimating with conditions attached · writing so people act.</li>
+      <li><strong>Does not transfer:</strong> authority. A tech lead has influence and technical credibility, not a reporting line — <strong>so every decision has to be argued rather than announced</strong>, and that is a genuinely different skill.</li>
+      <li><strong>Has to be rebuilt:</strong> hands-on depth. The credibility is technical, and it is why the other nine volumes exist.</li>
+      <li><strong>The two moves that define the role:</strong> making other people's work better through review and design conversations, and <strong>building the thing that makes everyone faster and safer</strong> — the shared eval harness, the one path every query goes through, the constraint that removes a bug family permanently.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">How it gets presented badly</span>
+    <ul>
+      <li><strong>Leading with the management title</strong> for an engineering role, which invites the question of whether you still build.</li>
+      <li>Describing team outcomes without your own contribution — "we" with no "I", which cannot be scored.</li>
+      <li>Treating the move as a step down, which it is not: <strong>individual contributor and management are parallel tracks, not a sequence</strong>, and moving between them is normal in both directions.</li>
+      <li>Not naming what you deliberately stopped doing to go deep technically.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"You managed people, and now you want a hands-on role. Why?" — a direct answer about where you
+    want your judgement applied, plus evidence of the technical depth rebuilt. <strong>The evidence is
+    the answer</strong>; the narrative alone is not.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Fifteen one-sentence answers to have ready</div>
+<pre><code>□  cohort analysis separates "we got worse" from "we hired
+   differently"
+□  ⭐ the incomplete final period is the most common false alarm
+□  window functions run after WHERE — wrap in a CTE to filter
+□  fan-out inflates every sum after the join
+□  significant, material and stable are three questions
+□  ⭐ Simpson's paradox: report the aggregate alone and be
+   wrong in front of a board
+□  regression to the mean manufactures fake intervention wins
+□  a metric definition pins numerator, denominator, window,
+   timezone, inclusions and grain
+□  ⭐ reconcile to a source nobody in the argument controls
+□  in Power BI everything is filter context; measure ≠ column
+□  row-level security, or publishing a dashboard publishes the
+   dataset
+□  randomisation is what buys causation; name the four
+   alternatives otherwise
+□  ⭐ strangler fig, route by route — and shadow-and-diff finds
+   the undocumented behaviour
+□  do the arithmetic before the architecture
+□  a tech lead has influence, not authority — every decision
+   is argued</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 10 · Labs &amp; field insights</h4><p>The twelve labs, the full rebuild-from-blank-folder project, and ten practitioner insights — the last volume.</p></div>
+  <div class="card"><h4>The data-analyst track</h4><p>The bootcamp for dirty-data detection and cleaning craft, and the project playbook for a full investigation worked end to end.</p></div>
+  <div class="card"><h4>Problems Before Models</h4><p>The translation method and the HR people-analytics domain playbook, which is this project's own domain.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-11-data-analytics/</code> (43–48) and <code>phase-10-legacy-and-leadership/</code> (40–42) — about 12,700 lines together.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

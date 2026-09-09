@@ -1,0 +1,591 @@
+<title>TypeScript and NestJS Depth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 02</p>
+  <p class="rail-sub">TypeScript &amp; NestJS depth</p>
+  <span class="rail-vol">Phase 1</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Topics</div>
+  <a href="#t1"><span class="n">04</span>TypeScript beyond the basics</a>
+  <a href="#t2"><span class="n">05</span>Node runtime internals</a>
+  <a href="#t3"><span class="n">06</span>NestJS advanced composition</a>
+  <a href="#t4"><span class="n">07</span>NestJS testing</a>
+  <a href="#t5"><span class="n">08</span>Passport &amp; token lifecycle</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 02 of 10 · phase 1</p>
+  <h1>TypeScript and NestJS depth. <span class="thin">The layer underneath what you use daily.</span></h1>
+  <p class="lede">Not an introduction — the onboarding handbook covers the building blocks. This is
+  the layer below: the type system as a design tool, what the Node runtime is actually doing,
+  composing NestJS beyond controllers and services, testing it properly, and the token lifecycle
+  Passport hides.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 1 files 04–08</span>
+    <span><b>Assumes</b> · onboarding Vol I and III</span>
+    <span><b>Zero-coverage gap</b> · Passport strategies</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<div class="vol here"><span class="vn">Vol 02 · here</span><b>TS &amp; NestJS</b></div>
+<a class="vol" href="36-prep-async-realtime.html"><span class="vn">Vol 03</span><b>Async &amp; realtime</b></a>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 04</span>
+  <h2>TypeScript beyond the deep dive</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The onboarding handbook covers narrowing, generics and utility types. What sits underneath is
+    <strong>using the type system to make wrong states unrepresentable</strong> — moving errors from
+    runtime to compile time by construction rather than by discipline.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Branded types.</strong> <code>UserId</code> and <code>OrgId</code> both being <code>string</code> means the compiler cannot catch a swapped argument. A brand — an intersection with a phantom property — makes them distinct without any runtime cost.</li>
+      <li><strong>Discriminated unions for state.</strong> A loading state modelled as <code>{ loading: boolean; data?: T; error?: E }</code> permits four impossible combinations. Modelled as a union on a <code>status</code> field, the impossible ones cannot be written.</li>
+      <li><strong>Exhaustiveness via <code>never</code>.</strong> Assign the value to <code>never</code> in the default branch, and adding a fifth role turns every switch that forgot it into a compile error. <strong>That is "make the mistake impossible" implemented in the type system.</strong></li>
+      <li><strong><code>satisfies</code> rather than a type annotation</strong> when you want the literal types preserved <em>and</em> checked against a shape.</li>
+      <li><strong>Derive, never duplicate.</strong> <code>Omit&lt;Employee,'salary'&gt;</code> as the public response type; <code>ReturnType&lt;typeof f&gt;</code> where the function is the truth.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><code>as</code> and <code>!</code> used as fixes. Both silence the compiler and keep the defect — and at a data boundary they convert a compile-time question into a runtime crash somewhere distant.</li>
+      <li>Trusting an annotation on anything that arrived over a network. <strong>Types are erased</strong>; validate with a schema and let the type describe what the validator guarantees.</li>
+      <li>Over-annotating internals, which adds noise and can hide a genuine mismatch. Annotate signatures; let inference handle the inside.</li>
+      <li>Reaching for conditional and mapped types where a plain union would do — clever types are read far more often than written.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"How would you make it impossible to pass a user id where an org id is expected?" — and the
+    strong answer connects it to the general principle: prefer a mechanism that holds for every
+    caller over a convention that holds for the ones who remembered.</p></div>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 05</span>
+  <h2>Node runtime internals</h2>
+</header>
+
+<div class="ascii">   THE EVENT LOOP, IN THE DETAIL THAT MATTERS
+
+     ┌─────────────────────────────────────────┐
+     │  timers          setTimeout, setInterval│
+     │  pending         some I/O callbacks     │
+     │  poll            ⭐ where I/O completes  │
+     │  check           setImmediate           │
+     │  close           close handlers         │
+     └─────────────────────────────────────────┘
+        and BETWEEN EVERY PHASE:
+        · process.nextTick queue  (drained first)
+        · microtask queue         (promises)
+
+   ⭐ THE THREE FACTS THAT CHANGE HOW YOU WRITE CODE
+
+     ① ONE THREAD RUNS YOUR JAVASCRIPT. `await` does not block
+       it — it yields. But any SYNCHRONOUS work blocks
+       everything: every other request, every timer, every
+       socket.
+       ⇒ SO CPU-BOUND WORK IS THE ONE THING YOU MUST MOVE OFF
+         THE LOOP. JSON.parse of a 50 MB payload, a synchronous
+         crypto call, a tight loop over a million rows.
+
+     ② PROMISES RESOLVE BEFORE TIMERS. Microtasks drain
+       completely between phases, so an await-heavy chain runs
+       ahead of a `setTimeout(…, 0)`. This is why ordering
+       surprises happen and why `setImmediate` exists.
+
+     ③ THE THREAD POOL IS SMALL AND SHARED. File I/O, DNS
+       lookups and some crypto go to a pool of four by default.
+       ⚠ SO A BURST OF FILE READS OR DNS CALLS CAN QUEUE BEHIND
+         EACH OTHER while the CPU is idle — a latency mystery
+         with no visible cause in your code.
+
+   BACKPRESSURE AND STREAMS
+     writing faster than the consumer can read buffers in
+     memory. ⭐ A STREAM'S RETURN VALUE TELLS YOU TO STOP —
+     ignoring it is how a PDF generator or a CSV export becomes
+     an out-of-memory crash under load.
+     ⇒ AND FOR THIS PROJECT'S EXPORT PATH THAT IS THE ACTUAL
+       RISK: a twenty-year employee record streamed correctly is
+       fine; the same record buffered is not.
+
+   ⚠ WORKER THREADS vs CLUSTER — know the difference
+     CLUSTER  several processes, one per core, sharing a port.
+              For throughput on a multi-core box.
+     WORKER   threads inside one process, for CPU-bound work
+     THREADS  without blocking the loop.
+     ⇒ AND NEITHER IS A FIX FOR A SLOW QUERY.</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 06</span>
+  <h2>NestJS advanced composition</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The onboarding handbook covers modules, controllers, services and the lifecycle order. The
+    layer below is <strong>the injector itself</strong> — custom providers, scopes, dynamic modules —
+    and it is what lets you build the reusable pieces rather than only consume them.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Provider forms.</strong> A class is only the common case. <code>useValue</code> for a constant or a test double, <code>useFactory</code> when construction needs configuration or async work, <code>useExisting</code> for an alias. <strong>Injection tokens</strong> — a string or symbol — are how you inject an interface, which TypeScript cannot do alone because interfaces do not exist at runtime.</li>
+      <li><strong>Scopes.</strong> Default is singleton. <code>REQUEST</code> scope creates an instance per request — useful for a per-request context, and <strong>expensive: it makes every consumer request-scoped too, up the whole chain.</strong> <code>TRANSIENT</code> gives each consumer its own copy.</li>
+      <li><strong>Dynamic modules.</strong> <code>forRoot</code> and <code>forRootAsync</code> are how a module takes configuration — the pattern behind every configurable Nest library, and the thing to build when you want one shared, configured concern.</li>
+      <li><strong>Where each cross-cutting concern belongs:</strong> a guard for "may I proceed", an interceptor for wrapping and shaping, a pipe for transforming and validating arguments, a filter for turning a throw into a response. The lifecycle order is fixed, so the placement decision is answerable rather than a matter of taste.</li>
+      <li><strong><code>OnModuleInit</code> and <code>OnApplicationShutdown</code></strong> — where you open a connection or load a model once, and where you drain it. <strong>Graceful shutdown is the one people skip</strong>, and it is why in-flight requests die during a deploy.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Circular dependencies</strong> "fixed" with <code>forwardRef</code> rather than by noticing that two modules want to be one, or that a third concept is missing.</li>
+      <li><code>@Global()</code> used to avoid thinking about imports, which hides the dependency graph.</li>
+      <li>Request scope applied casually, then a performance mystery as the whole chain becomes per-request.</li>
+      <li>Business logic in an interceptor, which makes it invisible to anyone reading the service.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Nest can't resolve dependencies of X (?)" — what does that mean and how do you fix it? Two
+    causes only: the provider was not exported, or this module did not import that module. And the
+    <code>?</code> marks which constructor position failed.</p></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 07</span>
+  <h2>NestJS testing</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The three levels, and what each is actually worth</div>
+<pre><code>①  UNIT — the service, with fakes in the constructor
+   ⭐ THIS IS WHERE DEPENDENCY INJECTION PAYS FOR ITSELF: a
+     service that asks for its dependencies can be tested with
+     no framework, no database and no HTTP, in milliseconds.
+   ⇒ worth it for genuine business rules — the risk
+     calculation, eligibility, the ownership rule.
+
+②  MODULE / INTEGRATION — `Test.createTestingModule`
+   builds a real injector, so guards, pipes, interceptors and
+   filters actually run.
+   ⭐ THIS IS THE HIGHEST-VALUE LEVEL IN A NEST APPLICATION,
+     because most defects live in the seams: a guard that did
+     not fire, a pipe that did not validate, a filter that
+     changed the status code.
+   ⇒ `overrideProvider` to swap the AI client for a fake, while
+     keeping a REAL test database.
+
+③  E2E — the HTTP surface, via supertest
+   the four assertions per endpoint that are worth more than
+   anything else:
+     · happy path returns the expected shape
+     · no token → 401
+     · ⭐ VALID TOKEN, SOMEONE ELSE'S RESOURCE → 403
+     · invalid body → 400
+   ⇒ THAT THIRD ONE IS THE TEST ALMOST NOBODY WRITES, and it is
+     the vulnerability most likely to ship.
+
+⚠ WHAT NOT TO DO
+  · MOCK PRISMA. Then the test asserts you called Prisma the
+    way you thought you should — a test of your assumptions,
+    not of the query. Wrong joins and constraint violations are
+    exactly what it cannot see.
+  · assert on the response of a mocked service and call it an
+    integration test
+  · share database state between tests — ⭐ reset per test, or
+    wrap each in a transaction that rolls back
+
+⭐ AND THE FIXTURE DISCIPLINE THAT PREVENTS FLAKES: build test
+  data with a factory function that takes overrides, so each
+  test states only what it cares about. A shared seed file that
+  every test depends on becomes untouchable within a month.</code></pre>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 08 · zero prior coverage</span>
+  <h2>Passport strategies and the token lifecycle</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>The existing docs mention Passport in two sentences. What is underneath: <strong>a strategy is
+    just a class with a <code>validate</code> method, and what it returns becomes
+    <code>request.user</code>.</strong> Once that is clear, the whole library stops being magic.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>The local strategy</strong> runs once, at login: it receives the credentials, verifies the password hash, and returns the user. Its <code>validate</code> return value is what gets signed into the token.</li>
+      <li><strong>The JWT strategy</strong> runs on every request: the library verifies the signature and expiry <em>before</em> calling your <code>validate</code>, which receives the decoded payload. <strong>So your <code>validate</code> is the place to check the user still exists and is still active</strong> — which is the only defence against a valid token for a disabled account.</li>
+      <li><strong>The guard is what invokes the strategy.</strong> <code>AuthGuard('jwt')</code> triggers it; a global guard plus a <code>@Public()</code> decorator is the pattern that makes "authenticated by default" the rule rather than the exception.</li>
+      <li><strong>The refresh flow.</strong> A short-lived access token plus a long-lived refresh token that is <em>stored</em> and therefore revocable. Rotation on use — issue a new refresh token each time and invalidate the old one — gives you detection: if an old one is presented, it has been stolen.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Believing logout invalidates a JWT.</strong> The server stores nothing; the token remains valid until it expires. Logout clears the client's copy and nothing more.</li>
+      <li><strong>The role is baked in at login.</strong> Promote or demote someone and their existing token still says what it said — which is a real design consideration, not a curiosity.</li>
+      <li>A refresh token stored with the same exposure as the access token, which removes the point of separating them.</li>
+      <li>Putting anything private in the payload. <strong>It is base64, not encryption</strong> — readable by anyone holding the token.</li>
+      <li>No revocation path at all, so a compromised account cannot be shut out until expiry.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"A user is fired at 14:00 and their token expires at 14:12. What can they do in those twelve
+    minutes?" — the honest answer is "everything their role allowed, unless we check status in
+    <code>validate</code> or maintain a denylist", and naming that trade-off is the whole point of
+    the question.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Twelve one-sentence answers to have ready</div>
+<pre><code>□  branded types make a swapped id a compile error
+□  discriminated unions make impossible states unwritable
+□  `never` in a default branch gives you exhaustiveness
+□  types are erased — validate at every boundary
+□  one thread runs your JS; sync work blocks everything
+□  microtasks drain before timers
+□  the thread pool is four by default and shared
+□  ignoring stream backpressure is how exports OOM
+□  injection tokens are how you inject an interface
+□  REQUEST scope propagates up the whole chain
+□  a Passport strategy's `validate` return becomes req.user
+□  ⭐ a JWT cannot be revoked — short expiry, or check status
+   in validate
+
+⭐ IF YOU CAN SAY THOSE TWELVE UNPROMPTED, THIS PHASE HAS DONE
+  ITS JOB — because each one is the second question, and the
+  second question is where the round is decided.</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 03 · Async, realtime &amp; jobs</h4><p>BullMQ, Socket.io at more than one instance, and the six-stage progress pipeline — all of which build directly on the event-loop section here.</p></div>
+  <div class="card"><h4>Volume 06 · Identity &amp; security</h4><p>Where the token lifecycle continues: OIDC, SAML, Okta, and authorisation beyond roles.</p></div>
+  <div class="card"><h4>Onboarding Volume III</h4><p>The NestJS building blocks and the six-stage request lifecycle this volume assumes.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-1-typescript-and-nestjs-depth/</code> — files 04–08, about 8,400 lines with fuller code and exercises.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

@@ -1,0 +1,520 @@
+<title>Async, Realtime and Jobs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Prep · Volume 03</p>
+  <p class="rail-sub">Async, realtime &amp; jobs</p>
+  <span class="rail-vol">Phase 2</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">Topics</div>
+  <a href="#t1"><span class="n">09</span>BullMQ &amp; background jobs</a>
+  <a href="#t2"><span class="n">10</span>Socket.io horizontal scaling</a>
+  <a href="#t3"><span class="n">11</span>Realtime progress pipelines</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#drill"><span class="n">—</span>The rapid drill</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Prep curriculum · Volume 03 of 10 · phase 2</p>
+  <h1>Async, realtime and jobs. <span class="thin">The three things that break at two instances.</span></h1>
+  <p class="lede">Background jobs with retries and a dead-letter path, WebSockets that survive more
+  than one server, and a multi-stage progress pipeline that reports honestly. All three work fine on
+  one machine and all three break in the same way the moment you scale — which is exactly what gets
+  asked about.</p>
+  <div class="hero-meta">
+    <span><b>Covers</b> · phase 2 files 09–11</span>
+    <span><b>Near-zero coverage</b> · BullMQ, WebSocket scaling</span>
+    <span><b>Assumes</b> · Volume 02's event loop</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 44 documents</b></a>
+<a class="vol" href="34-prep-measurement.html"><span class="vn">Vol 01</span><b>Measurement</b></a>
+<a class="vol" href="35-prep-typescript-nest.html"><span class="vn">Vol 02</span><b>TS &amp; NestJS</b></a>
+<div class="vol here"><span class="vn">Vol 03 · here</span><b>Async &amp; realtime</b></div>
+<a class="vol" href="37-prep-frontend.html"><span class="vn">Vol 04</span><b>Frontend</b></a>
+<a class="vol" href="38-prep-data-layer.html"><span class="vn">Vol 05</span><b>Data layer</b></a>
+<a class="vol" href="39-prep-identity-security.html"><span class="vn">Vol 06</span><b>Identity &amp; security</b></a>
+<a class="vol" href="40-prep-delivery-testing.html"><span class="vn">Vol 07</span><b>Delivery &amp; testing</b></a>
+<a class="vol" href="41-prep-python-ml-llm.html"><span class="vn">Vol 08</span><b>Python, ML, LLM</b></a>
+<a class="vol" href="42-prep-analytics-leadership.html"><span class="vn">Vol 09</span><b>Analytics &amp; lead</b></a>
+<a class="vol" href="43-prep-labs-and-insights.html"><span class="vn">Vol 10</span><b>Labs &amp; insights</b></a>
+</div>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 09 · four prior lines of coverage</span>
+  <h2>BullMQ and background jobs</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>"We use a queue" is the claim. The layer underneath is <strong>what the queue actually
+    guarantees, and what it makes you responsible for</strong> — because a queue does not remove
+    failure, it relocates it.</p></div>
+  <div class="b"><span class="k">The mechanism</span>
+    <ul>
+      <li><strong>Redis is the store.</strong> A job is a hash; the queue is a set of lists — waiting, active, delayed, completed, failed. Understanding that explains everything else: why jobs survive a restart, why a crashed worker leaves a job in <em>active</em>, and why the stalled-job check exists to recover it.</li>
+      <li><strong>Concurrency is per worker process.</strong> Set it to 5 and run three replicas and you have fifteen concurrent jobs hitting your database — <strong>which is how a queue drain becomes a self-inflicted outage.</strong> The database connection pool, not the worker, is the real limit.</li>
+      <li><strong>Retries need backoff and a cap.</strong> Exponential, capped, with jitter. Without jitter every retry from a burst fires simultaneously and you have built a thundering herd.</li>
+      <li><strong>The dead-letter path.</strong> A job that has exhausted its attempts must land somewhere a human sees. <strong>A failed queue nobody watches is a silent data-loss mechanism</strong> — so alert on its depth, not just on errors.</li>
+      <li><strong>Rate limiting and flow control.</strong> A limiter on the queue is how you protect a metered API — and for this project's LLM calls that is a cost control as much as a reliability one.</li>
+      <li><strong>Repeatable jobs</strong> for scheduled work, with the important caveat below.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>A non-idempotent consumer.</strong> BullMQ is at-least-once: a job can run twice after a worker crash or a stall. If the handler charges a card, sends an email or appends a row, it will do it twice. <strong>This is the single most important thing to get right.</strong></li>
+      <li><strong>Storing large payloads in the job.</strong> The whole payload lives in Redis. Pass an id; let the worker fetch.</li>
+      <li><strong>Repeatable jobs with several replicas</strong>, so the scheduled job runs three times — unless you use the built-in scheduler correctly or elect a single leader.</li>
+      <li><strong>No visibility.</strong> The user clicked a button and got "accepted", and now there is no way to tell them it finished — or failed.</li>
+      <li><strong>Unbounded completed/failed retention</strong>, so Redis memory grows until it does not.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Your worker crashes halfway through generating a report. What happens?" — the job returns to
+    the queue and runs again, so the answer must cover whether the half-written state is safe, whether
+    the retry duplicates anything, and how the user finds out. <strong>"It retries" alone is not an
+    answer.</strong></p></div>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 10 · three prior lines of coverage</span>
+  <h2>Socket.io horizontal scaling</h2>
+</header>
+
+<div class="ascii">   THE PROBLEM, STATED PRECISELY
+
+   ONE INSTANCE — works perfectly
+     client ──ws──► server ──► emit to room ──► every member
+                     (all sockets are in this process's memory)
+
+   TWO INSTANCES — silently broken
+     client A ──ws──► server 1        client B ──ws──► server 2
+                        │                                │
+              emit to `team:5` ─────► only A gets it. B does
+                                      not, because server 1 has
+                                      never heard of B's socket.
+
+   ⭐ AND IT FAILS SILENTLY AND INTERMITTENTLY, depending on
+     which instance each client happened to connect to. Which is
+     why it is fine in development and mysterious in production.
+
+   THE FIX: AN ADAPTER
+     a Redis (or equivalent) adapter makes every emit a pub/sub
+     message that all instances receive and fan out to their own
+     local sockets.
+     ⇒ one line of configuration, and the whole class of bug
+       disappears.
+
+   ⚠ BUT THREE THINGS THE ADAPTER DOES NOT FIX
+
+     ① THE HANDSHAKE AND FALLBACK. Socket.io may start on HTTP
+       long-polling before upgrading to WebSocket, and polling
+       requires the SAME instance for consecutive requests.
+       ⇒ SO YOU NEED STICKY SESSIONS AT THE LOAD BALANCER, or
+         you must force the WebSocket transport only. ⭐ THIS IS
+         THE DETAIL PEOPLE MISS, and it produces random
+         handshake failures.
+
+     ② THE GAP AFTER A RECONNECT. A dropped connection —
+       trains, tunnels, laptop lids, load-balancer timeouts —
+       reconnects automatically, and EVENTS EMITTED WHILE
+       DISCONNECTED ARE GONE. The UI is silently stale and
+       nothing errored.
+       ⇒ ⭐ ON RECONNECT, RE-FETCH CURRENT STATE OVER HTTP. Do
+         not trust your cache. This is the correctness fix, and
+         the adapter has nothing to do with it.
+
+     ③ MEMORY AND CONNECTION LIMITS. Each open connection is
+       state on a server. Thousands of them is a capacity
+       question, and file-descriptor limits bite before CPU does.
+
+   AND THE SECURITY LAYER, WHICH IS SEPARATE AGAIN
+     · authenticate AT THE HANDSHAKE, so no handler ever
+       wonders who is connected
+     · ⚠ the token is checked ONCE — a long-lived socket
+       outlives a fifteen-minute token
+     · ⭐ ROOMS ARE THE AUTHORISATION BOUNDARY, and the server
+       decides membership from the verified identity. Letting a
+       client ask to join `team:9` without a check is the
+       socket version of the wrong-id vulnerability.
+     · `server.emit()` with no room sends to EVERY connected
+       client — in an HR application that is a breach one
+       keyword long.</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 11</span>
+  <h2>Realtime progress pipelines</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">The layer this adds</span>
+    <p>This is the six-stage report pipeline on the CV, and the claim invites a specific question:
+    <strong>how does a multi-stage job report progress honestly, and what happens when stage four of
+    six fails?</strong></p></div>
+  <div class="b"><span class="k">The shape that works</span>
+    <ol>
+      <li><strong>The request accepts and returns a handle.</strong> A job id, immediately, with status <code>queued</code>. Nothing long-running happens inside the request.</li>
+      <li><strong>State lives in the database, not in memory.</strong> One row per job with a stage, a percentage, a message and a timestamp. <strong>Memory does not survive a restart and cannot be read by another instance</strong> — and the status endpoint must work even if every worker is down.</li>
+      <li><strong>Each stage updates the row, then emits.</strong> The database write is the source of truth; the socket event is an optimisation. In that order, so a missed event costs nothing.</li>
+      <li><strong>The client has two paths.</strong> Subscribe to events for immediacy, and poll the status endpoint on reconnect or as a fallback. <strong>Realtime is the fast path, not the only path.</strong></li>
+      <li><strong>Stages are checkpointed.</strong> Record which stages completed, so a retry resumes rather than restarting — which matters when stage three called a metered API.</li>
+      <li><strong>Failure is a state, not silence.</strong> <code>failed</code> with the stage, a human message and a correlation id. The user should never be left watching a spinner.</li>
+    </ol></div>
+  <div class="b junior"><span class="k">Where it goes wrong</span>
+    <ul>
+      <li><strong>Progress that lies.</strong> Six stages reported as even sixteens when stage four takes 80% of the time. Weight the stages, or report the stage name rather than a fake percentage — <strong>a stalled bar at 66% destroys trust faster than no bar.</strong></li>
+      <li><strong>Progress only in memory</strong>, so a restart loses it and the user's job appears to vanish.</li>
+      <li><strong>The event as the only channel</strong>, so a reconnect leaves a permanently stale UI.</li>
+      <li><strong>An event arriving before the HTTP response that caused it.</strong> The client is told about a record it does not yet know exists — handle the not-found case rather than crashing.</li>
+      <li><strong>No terminal state.</strong> Jobs that are neither finished nor failed, forever, with nothing reaping them.</li>
+      <li><strong>Emitting the full record</strong> over the socket, bypassing the response shaping that keeps a salary out of the payload.</li>
+    </ul></div>
+  <div class="b check"><span class="k">The question you must be able to answer</span>
+    <p>"Stage four of six fails and the user is watching. Walk me through exactly what they see and
+    what the system does." A strong answer covers the row update, the emitted failure event, the
+    message shown, whether the retry resumes or restarts, whether stage three's side effects are
+    duplicated, and how you would find the cause afterwards.</p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="drill">
+  <span class="mn">Reference</span>
+  <h2>The rapid drill</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Ten one-sentence answers to have ready</div>
+<pre><code>□  a queue is at-least-once, so consumers must be idempotent
+□  concurrency × replicas is the real load on your database
+□  retries need backoff, a cap AND jitter
+□  a dead-letter queue nobody watches is silent data loss
+□  pass an id, not a payload — the payload lives in Redis
+□  sockets on two instances need an adapter to see each other
+□  ⭐ and sticky sessions, because polling must hit the same box
+□  a reconnect loses the events sent while it was down — so
+   re-fetch state, do not trust the cache
+□  rooms are the authorisation boundary; the server decides
+   membership
+□  progress belongs in the database; the socket event is an
+   optimisation</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume 04 · Frontend depth</h4><p>The client half of this: TanStack Query's cache and invalidation, which is what consumes these progress events sensibly.</p></div>
+  <div class="card"><h4>Volume 07 · Delivery &amp; testing</h4><p>Where sticky sessions and multi-replica routing actually get configured — Traefik and Kubernetes.</p></div>
+  <div class="card"><h4>Volume 10 · The labs</h4><p>Labs 02 and 05: build a six-stage realtime pipeline, and a BullMQ pipeline with retries and a dead-letter queue.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>prep/phase-2-async-realtime-and-jobs/</code> — files 09–11, about 5,400 lines.</p></div>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
