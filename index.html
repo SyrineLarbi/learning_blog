@@ -1,4 +1,8 @@
 <title>HR Insight Handbook Library</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon-16.png" type="image/png" sizes="16x16">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
@@ -33,6 +37,12 @@
   --t-anly:  #9C6412;
   --t-ds:    #2A6B3C;
   --t-ai:    #A85018;
+  --t-sfs:   #7A2D6B;
+  --t-sds:   #4E5C1C;
+  --t-bank:  #233A6B;
+  --t-loop:  #8A5A1E;
+  --t-exer:  #0F5C6E;
+  --t-prep:  #5B3A8C;
 
   --focus: #2C3138;
 }
@@ -61,6 +71,12 @@
     --t-anly:  #DDA74E;
     --t-ds:    #7CC194;
     --t-ai:    #F0A265;
+    --t-sfs:   #DB94CC;
+    --t-sds:   #AFC456;
+    --t-bank:  #8DA5DE;
+    --t-loop:  #DFB472;
+    --t-exer:  #5FBFD4;
+    --t-prep:  #B79AE0;
 
     --focus: #D6D9DE;
   }
@@ -89,6 +105,12 @@
   --t-anly:  #DDA74E;
   --t-ds:    #7CC194;
   --t-ai:    #F0A265;
+  --t-sfs:   #DB94CC;
+  --t-sds:   #AFC456;
+  --t-bank:  #8DA5DE;
+  --t-loop:  #DFB472;
+  --t-exer:  #5FBFD4;
+  --t-prep:  #B79AE0;
 
   --focus: #D6D9DE;
 }
@@ -150,6 +172,12 @@ code { font-family: var(--mono); font-size: .87em; background: var(--panel); pad
 .group.g-anly  { --stripe: var(--t-anly); }
 .group.g-ds    { --stripe: var(--t-ds); }
 .group.g-ai    { --stripe: var(--t-ai); }
+.group.g-sfs   { --stripe: var(--t-sfs); }
+.group.g-sds   { --stripe: var(--t-sds); }
+.group.g-bank  { --stripe: var(--t-bank); }
+.group.g-loop  { --stripe: var(--t-loop); }
+.group.g-exer  { --stripe: var(--t-exer); }
+.group.g-prep  { --stripe: var(--t-prep); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; margin: 18px 0 0; }
 .doc {
@@ -197,16 +225,16 @@ html { scroll-behavior: smooth; }
 
 <header class="hero">
   <p class="eyebrow">HR Insight AI · engineering documentation</p>
-  <h1>The handbook library. <span class="thin">Twenty-five documents, one reading order.</span></h1>
+  <h1>The handbook library. <span class="thin">Forty-four documents, one reading order.</span></h1>
   <p class="lede">Everything from what software engineering <em>is</em>, through this project's actual
-  stack, to becoming senior — plus the data-analyst, data-science and AI-engineering tracks and the
-  interview preparation. Every document is self-contained, navigable, and works offline.</p>
+  stack, to becoming senior — plus the data-analyst, data-science and AI-engineering tracks, the
+  senior operating standards, three graded question banks, the interview loop, eight hands-on exercises, and the ten-volume prep curriculum with its twelve labs. Every document is self-contained, navigable, and works offline.</p>
   <div class="stats">
-    <div class="stat"><b>25</b><span>documents</span></div>
-    <div class="stat"><b>49,317</b><span>lines</span></div>
-    <div class="stat"><b>7</b><span>tracks</span></div>
+    <div class="stat"><b>44</b><span>documents</span></div>
+    <div class="stat"><b>63,612</b><span>lines</span></div>
+    <div class="stat"><b>13</b><span>tracks</span></div>
     <div class="stat"><b>3</b><span>step learning path</span></div>
-    <div class="stat"><b>108</b><span>source markdown files</span></div>
+    <div class="stat"><b>278</b><span>source markdown files</span></div>
   </div>
 </header>
 
@@ -485,9 +513,216 @@ html { scroll-behavior: smooth; }
   </div>
 </section>
 
+<section class="group g-sfs">
+  <h2><span class="gn">Track 7 · 1 document</span> Senior full-stack practice</h2>
+  <p class="gd">The operating standard for this stack — usable as a team review standard rather than
+  as reading.</p>
+  <div class="cards">
+    <a class="doc" href="25-senior-fullstack-practice.html">
+      <span class="dn">25 · standard</span>
+      <h3>The Senior Full-Stack Standard</h3>
+      <p>Twelve areas — architecture, NestJS, Next.js, Prisma, API design, security, testing,
+      performance, observability, deployment, the mistakes list and code review — each as
+      <strong>what a senior knows → the junior anti-patterns → the practical patterns → a
+      checklist</strong>. Closes with twelve operating principles.</p>
+      <span class="meta">12 topics · KB files 01–12</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-sds">
+  <h2><span class="gn">Track 8 · 2 documents</span> Senior data science practice</h2>
+  <p class="gd">Two companions: how to build it well, and how to decide what to build. Read the
+  strategy one first if you are being handed vague requests.</p>
+  <div class="cards">
+    <a class="doc" href="26-senior-data-science-practice.html">
+      <span class="dn">26 · standard</span>
+      <h3>The Senior Data Science Standard</h3>
+      <p>Eleven areas in the same four bands: problem framing, <strong>data hygiene and
+      leakage</strong>, experiment design, feature discipline, modelling, evaluation, MLOps, LLM and
+      RAG practice, monitoring, the mistakes list and communication. Almost none of it is about
+      choosing a model.</p>
+      <span class="meta">11 topics · KB files 01–11</span>
+    </a>
+    <a class="doc" href="27-senior-data-science-strategy.html">
+      <span class="dn">27 · strategy</span>
+      <h3>Problems Before Models</h3>
+      <p>Turning a business sentence into a problem type, a plan, a target and a system — the
+      complexity ladder, the problem taxonomy, when <em>not</em> to use ML — plus <strong>eight domain
+      playbooks</strong>: sales, e-commerce, marketing, chemistry, finance, <strong>supply
+      chain</strong>, healthcare and <strong>HR people analytics</strong>.</p>
+      <span class="meta">8 framework sections + 8 domains · KB files 01–14</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-bank">
+  <h2><span class="gn">Track 9 · 3 documents</span> The question banks</h2>
+  <p class="gd">Roughly 1,030 source questions, organised by domain and graded — every question with
+  what it is testing, a weak answer, a strong one, the follow-up, and the red flag.</p>
+  <div class="cards">
+    <a class="doc" href="28-interview-bank-technical.html">
+      <span class="dn">28 · bank I</span>
+      <h3>The Technical Question Bank</h3>
+      <p>Runtimes, TypeScript's erased types, async, HTTP and idempotency, SQL fan-out, the ORM ·
+      React state and keys, Next.js server actions · complexity, structures, algorithms in real work
+      · the request journey, <strong>CORS properly</strong>, window functions, lost updates.</p>
+      <span class="meta">17 topics · prep files 01, 02, 11, 12</span>
+    </a>
+    <a class="doc" href="29-interview-bank-data-ai.html">
+      <span class="dn">29 · bank II</span>
+      <h3>The Data and AI Question Bank</h3>
+      <p>Describing data, inference, causation, <strong>the base-rate trap worked through</strong> ·
+      framing, splits, leakage, bias–variance, algorithm choice, evaluation, drift · LLM mechanism,
+      prompting, RAG's four failure causes, agents, injection · the vocabulary they listen for.</p>
+      <span class="meta">19 topics · prep files 03, 04, 05, 14</span>
+    </a>
+    <a class="doc" href="30-interview-bank-practice-career.html">
+      <span class="dn">30 · bank III</span>
+      <h3>The Practice and Career Bank</h3>
+      <p>Working with AI tools and reviewing generated PRs · review, debugging, testing, security,
+      performance · Git, containers, CI/CD, observability, incidents · cloud choices, IAM, cost ·
+      decisions, estimation, <strong>saying no</strong>, behavioural answers, business acumen.</p>
+      <span class="meta">22 topics · prep files 06–10, 13</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-loop">
+  <h2><span class="gn">Track 10 · 2 documents</span> Running the loop</h2>
+  <p class="gd">The interview as a performance rather than a knowledge test — and the four topics
+  interviewers probe hardest.</p>
+  <div class="cards">
+    <a class="doc" href="31-interview-loop-toolkit.html">
+      <span class="dn">31 · toolkit</span>
+      <h3>The Interview Loop Toolkit</h3>
+      <p>What each of the five stages actually scores · the screen minute by minute · coding rounds
+      and take-homes · the 45-minute design allocation · <strong>four worked design scenarios</strong>
+      · an annotated mock transcript · questions worth asking them · <strong>why candidates actually
+      get rejected</strong> · a two-week plan.</p>
+      <span class="meta">17 sections · 9 source files</span>
+    </a>
+    <a class="doc" href="32-interview-deep-dives.html">
+      <span class="dn">32 · deep dives</span>
+      <h3>The Four Deep Dives</h3>
+      <p>Prisma and SQL · auth and security · testing · patterns and SOLID. Each opens with
+      <strong>the probe sequence to expect</strong>, then the answers that separate tiers. Closes with
+      twenty one-sentence answers to have ready.</p>
+      <span class="meta">22 sections · ~15,200 source lines</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-exer">
+  <h2><span class="gn">Track 11 · 1 document</span> Hands-on exercises</h2>
+  <p class="gd">Practice rather than reading — eight corporate briefs with the traps deliberately
+  planted.</p>
+  <div class="cards">
+    <a class="doc" href="33-data-science-exercises.html">
+      <span class="dn">33 · exercises</span>
+      <h3>The TechCorp Exercises</h3>
+      <p>Eight escalating tasks from different stakeholders — cleaning, EDA, features, model
+      selection, segmentation, evaluation, production readiness, and a <strong>ten-phase
+      capstone</strong>. Each with its brief, its planted traps, the deliverable and a self-grading
+      standard.</p>
+      <span class="meta">8 exercises · 40–53 hours of practice</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-prep">
+  <h2><span class="gn">Track 12 · 10 volumes</span> The prep curriculum — the layer underneath</h2>
+  <p class="gd">The gap-filling course: not the frameworks you already use, but the mechanisms below
+  them — and the twelve labs that turn the reading into evidence. Volume tabs at the top of each page
+  link to the other nine.</p>
+  <div class="cards">
+    <a class="doc" href="34-prep-measurement.html">
+      <span class="dn">34 · volume 1</span>
+      <h3>Measurement Before Claims</h3>
+      <p>Why every performance number needs a method before it needs a value · percentiles versus
+      averages and why a p95 understates the user's experience · profiling before optimising ·
+      the architecture exercise: draw your system and defend every boundary.</p>
+      <span class="meta">Volume 1 · 806 lines</span>
+    </a>
+    <a class="doc" href="35-prep-typescript-nest.html">
+      <span class="dn">35 · volume 2</span>
+      <h3>TypeScript and NestJS Depth</h3>
+      <p>The type system as a proof system · generics, narrowing, and where <code>any</code> actually
+      costs you · decorators and reflection · dependency injection, module scope, lifecycle hooks ·
+      guards, interceptors, pipes and filters, and which layer each belongs in.</p>
+      <span class="meta">Volume 2 · 591 lines</span>
+    </a>
+    <a class="doc" href="36-prep-async-realtime.html">
+      <span class="dn">36 · volume 3</span>
+      <h3>Async, Realtime and Jobs</h3>
+      <p>The event loop, microtasks and what blocks it · backpressure and streams · WebSockets versus
+      SSE versus polling, and the reconnect problem · queues, retries with jitter, dead letters,
+      idempotency · why "exactly once" is not something you get.</p>
+      <span class="meta">Volume 3 · 520 lines</span>
+    </a>
+    <a class="doc" href="37-prep-frontend.html">
+      <span class="dn">37 · volume 4</span>
+      <h3>Frontend Depth</h3>
+      <p>Rendering, reconciliation and the cost of a re-render · the server–client boundary as a design
+      decision · caching layers in Next.js · bundle budgets, Core Web Vitals and the device your users
+      actually have · accessibility as a correctness property.</p>
+      <span class="meta">Volume 4 · 564 lines</span>
+    </a>
+    <a class="doc" href="38-prep-data-layer.html">
+      <span class="dn">38 · volume 5</span>
+      <h3>The Data Layer</h3>
+      <p>What the planner does with your query · indexes as sorted structures, and why the one you
+      added was ignored · transactions, isolation levels and the anomalies each permits · N+1 ·
+      migrations that ship safely · connection pools and the arithmetic behind their size.</p>
+      <span class="meta">Volume 5 · 663 lines</span>
+    </a>
+    <a class="doc" href="39-prep-identity-security.html">
+      <span class="dn">39 · volume 6</span>
+      <h3>Identity, Security and Compliance</h3>
+      <p>OIDC end to end and the five ID-token validations · sessions versus tokens, and the
+      deprovisioning window · authorisation as a mechanism rather than a convention · the export
+      problem — <strong>a link is a credential</strong> · audit logs that record reads · GDPR in code.</p>
+      <span class="meta">Volume 6 · 590 lines</span>
+    </a>
+    <a class="doc" href="40-prep-delivery-testing.html">
+      <span class="dn">40 · volume 7</span>
+      <h3>Delivery, Operations and Testing</h3>
+      <p>What a container image actually is · Kubernetes objects, probes and rolling updates · the
+      testing pyramid and what each layer is for · engineering out flakiness rather than retrying it ·
+      observability versus monitoring · incidents, SLOs and the on-call reality.</p>
+      <span class="meta">Volume 7 · 704 lines</span>
+    </a>
+    <a class="doc" href="41-prep-python-ml-llm.html">
+      <span class="dn">41 · volume 8</span>
+      <h3>Python, ML and LLM Engineering</h3>
+      <p>FastAPI, async Python and the GIL · the point-in-time test for every feature · PR-AUC,
+      precision at k and thresholds derived from cost · serving and drift · prompt caching verified
+      rather than assumed · evals as the only safe way to change a prompt · cost per request.</p>
+      <span class="meta">Volume 8 · 661 lines</span>
+    </a>
+    <a class="doc" href="42-prep-analytics-leadership.html">
+      <span class="dn">42 · volume 9</span>
+      <h3>Analytics, Legacy and Leadership</h3>
+      <p>Dimensional modelling and the metric defined once · row-level security and minimum cell size ·
+      inheriting a system you did not write, and the strangler pattern · technical decisions argued
+      rather than announced · what transfers from a management role and what has to be rebuilt.</p>
+      <span class="meta">Volume 9 · 753 lines</span>
+    </a>
+    <a class="doc" href="43-prep-labs-and-insights.html">
+      <span class="dn">43 · volume 10</span>
+      <h3>The Labs and the Field Insights</h3>
+      <p><strong>Twelve labs</strong> — the 50-second query, the six-stage pipeline, query-level RBAC,
+      OIDC, BullMQ, Kubernetes, Playwright, PDF delivery, XGBoost, an LLM report generator, an
+      analytics layer, and the full rebuild — plus <strong>ten practitioner insights</strong>, each
+      compressed to the one idea that changes how you work.</p>
+      <span class="meta">Volume 10 · 12 labs · 898 lines</span>
+    </a>
+  </div>
+</section>
+
 <section class="group" style="--stripe: var(--ink);">
   <h2><span class="gn">Reference</span> Routes by role</h2>
-  <p class="gd">Nobody needs all twenty-five. Pick the route that matches what you are doing.</p>
+  <p class="gd">Nobody needs all forty-four. Pick the route that matches what you are doing.</p>
   <div class="tw">
   <table>
     <thead><tr><th style="width:23%">If you are…</th><th style="width:40%">Read, in this order</th><th>Why this route</th></tr></thead>
@@ -509,8 +744,8 @@ html { scroll-behavior: smooth; }
       </tr>
       <tr>
         <td><strong>Interview-preparing</strong></td>
-        <td class="route">14 → 13 → 08 → 12</td>
-        <td><strong>Reasoning method first</strong>, then the loop itself, then the two knowledge gaps that most often read as junior.</td>
+        <td class="route">31 → 28 → 32 → 13</td>
+        <td><strong>How the loop is scored first</strong>, then the technical bank, then the four topics probed hardest, then the CV-anchored playbook.</td>
       </tr>
       <tr>
         <td><strong>A data analyst</strong></td>
@@ -531,6 +766,41 @@ html { scroll-behavior: smooth; }
         <td><strong>Moving toward senior</strong></td>
         <td class="route">05 → 06 → 07 → 12</td>
         <td>The AI review discipline, architecture, craft, and the capstone on how seniors actually think.</td>
+      </tr>
+      <tr>
+        <td><strong>Interviewing for data/ML</strong></td>
+        <td class="route">29 → 33 → 27 → 26</td>
+        <td>The data bank, then the exercises as portfolio work, then the strategy and practice standards.</td>
+      </tr>
+      <tr>
+        <td><strong>Practising, not reading</strong></td>
+        <td class="route">33 → 16 → 15</td>
+        <td>Eight briefs with planted traps, then the analyst craft course, then a full project worked end to end.</td>
+      </tr>
+      <tr>
+        <td><strong>Setting a team standard</strong></td>
+        <td class="route">25 → 12 → 07</td>
+        <td>The full-stack standard is written to be adopted as a review checklist; 12 and 07 give the reasoning behind it.</td>
+      </tr>
+      <tr>
+        <td><strong>Handed a vague data request</strong></td>
+        <td class="route">27 → 26 → 11</td>
+        <td><strong>Translation first</strong> — problem type, target, and whether it should be a model at all — then how to build it well.</td>
+      </tr>
+      <tr>
+        <td><strong>Filling the gaps under the frameworks</strong></td>
+        <td class="route">34 → 38 → 36 → 39</td>
+        <td><strong>Measurement first</strong>, because every other claim depends on it — then the data layer, async, and the security model. The four that most often turn out to be the real gap.</td>
+      </tr>
+      <tr>
+        <td><strong>Practising with artefacts, not notes</strong></td>
+        <td class="route">43 → 34 → back to 43</td>
+        <td>Lab 01 and Lab 09 done properly beat all twelve skimmed. Volume 34 gives you the method to record them with; Lab 12 rebuilds the whole system from a blank folder.</td>
+      </tr>
+      <tr>
+        <td><strong>Interviewing in two weeks</strong></td>
+        <td class="route">31 → 34 → 39 → 43 → 28</td>
+        <td>The loop's scoring, the measurement method, the export and authorisation story, two labs as evidence, then the bank for recall.</td>
       </tr>
       <tr>
         <td><strong>Doing DevOps or cloud work</strong></td>
@@ -565,12 +835,19 @@ html { scroll-behavior: smooth; }
 </div>
 
 <div class="foot">
-  <p><strong>Where this comes from.</strong> These 25 documents are the taught, navigable edition of
-  108 markdown files across three knowledge bases — <code>software-engineering-foundations/</code>
-  (15 files), <code>onboarding-knowledge-base/</code> (39) and
-  <code>skill-upgrading-knowledge-base/</code> (54) — plus the standalone playbooks and the data
-  science and AI engineering sets. The originals hold the longer code examples and exercises; these
+  <p><strong>Where this comes from.</strong> These 44 documents are the taught, navigable edition of
+  278 markdown files across nine knowledge bases — <code>software-engineering-foundations/</code>
+  (15 files), <code>onboarding-knowledge-base/</code> (39),
+  <code>skill-upgrading-knowledge-base/</code> (54), the three senior standards folders, the
+  <code>interviews/</code> and <code>interview-prep/</code> banks, <code>data-science-exercises/</code>,
+  and <code>prep/</code> (97 technical files) — plus the standalone playbooks and the data science and
+  AI engineering sets. The originals hold the longer code examples and the full lab briefs; these
   carry the concepts, the mechanisms and the judgement.</p>
+  <p><strong>Two honest limits.</strong> The question banks hold roughly 1,030 source questions and
+  the deep dives about 15,200 lines; documents 28–32 cover every <em>topic area</em> with
+  representative graded examples rather than reproducing every item, and each names its source files
+  in its own footer. And <code>prep/phase-0-orientation/01-resume-claim-audit-and-defensibility-map.md</code>
+  is deliberately excluded — it is a personal CV audit, not technical material.</p>
   <p><strong>On what will age.</strong> Framework defaults, provider products and tool names will
   move. The reasoning will not: how systems fail, where authorisation belongs, what a trade-off costs,
   and how to tell a real improvement from a plausible one.</p>
