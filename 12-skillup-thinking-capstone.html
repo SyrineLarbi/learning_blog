@@ -1,0 +1,1683 @@
+<title>Thinking, Career and Capstone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #8A2D2D;
+  --accent-soft: #F7E6E4;
+  --accent-deep: #5C1B1B;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #8A2D2D;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #DD9490;
+    --accent-soft: #241211;
+    --accent-deep: #EEB6B2;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #DD9490;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #DD9490;
+  --accent-soft: #241211;
+  --accent-deep: #EEB6B2;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #DD9490;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume VIII</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · Deciding</div>
+  <a href="#a1"><span class="n">01</span>Decision frameworks</a>
+  <a href="#a2"><span class="n">02</span>Trade-offs</a>
+  <a href="#a3"><span class="n">03</span>Technical debt</a>
+  <a href="#a4"><span class="n">04</span>Refactor or rewrite</a>
+  <a href="#a5"><span class="n">05</span>Choosing technology</a>
+
+  <div class="rail-group">II · Decomposing</div>
+  <a href="#b1"><span class="n">06</span>Why it is the #1 skill</a>
+  <a href="#b2"><span class="n">07</span>Top-down &amp; bottom-up</a>
+  <a href="#b3"><span class="n">08</span>Requirements</a>
+  <a href="#b4"><span class="n">09</span>Scope &amp; MVP</a>
+  <a href="#b5"><span class="n">10</span>Estimation</a>
+
+  <div class="rail-group">III · Communicating</div>
+  <a href="#c1"><span class="n">11</span>Why it multiplies</a>
+  <a href="#c2"><span class="n">12</span>Writing documents</a>
+  <a href="#c3"><span class="n">13</span>Explaining to non-engineers</a>
+  <a href="#c4"><span class="n">14</span>RFCs</a>
+  <a href="#c5"><span class="n">15</span>Diagrams</a>
+  <a href="#c6"><span class="n">16</span>Saying no</a>
+
+  <div class="rail-group">IV · Learning</div>
+  <a href="#d1"><span class="n">17</span>How learning works</a>
+  <a href="#d2"><span class="n">18</span>New technology, fast</a>
+  <a href="#d3"><span class="n">19</span>Deep work</a>
+  <a href="#d4"><span class="n">20</span>Staying current</a>
+
+  <div class="rail-group">V · Growing</div>
+  <a href="#e1"><span class="n">21</span>Skill shapes</a>
+  <a href="#e2"><span class="n">22</span>What compounds</a>
+  <a href="#e3"><span class="n">23</span>Culture &amp; process</a>
+  <a href="#e4"><span class="n">24</span>Business acumen</a>
+  <a href="#e5"><span class="n">25</span>Vocabulary</a>
+  <a href="#e6"><span class="n">26</span>The AI-era strategy</a>
+
+  <div class="rail-group">VI · The capstone</div>
+  <a href="#f1"><span class="n">27</span>How seniors think</a>
+  <a href="#f2"><span class="n">28</span>The ritual before code</a>
+  <a href="#f3"><span class="n">29</span>What "done" means</a>
+  <a href="#f4"><span class="n">30</span>The production stack</a>
+  <a href="#f5"><span class="n">31</span>The five levels</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>The whole handbook</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume VIII of VIII</p>
+  <h1>Thinking, career and capstone. <span class="thin">The skills AI amplifies and cannot replace.</span></h1>
+  <p class="lede">Deciding under uncertainty, breaking a problem down, explaining it to people who
+  will act on it, learning faster than the field changes, and building a career on what compounds.
+  Then the capstone: how senior engineers actually think, and the stack they reach for.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · the previous seven</span>
+    <span><b>Covers</b> · KB files 22–26, 28, 46–48, 53, 54</span>
+    <span><b>The KB calls 53–54</b> · the capstone pair</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<a class="vol" href="06-skillup-architecture.html"><span class="vn">Volume II</span><b>Architecture &amp; design</b></a>
+<a class="vol" href="07-skillup-craft.html"><span class="vn">Volume III</span><b>Engineering craft</b></a>
+<a class="vol" href="08-skillup-cs-foundations.html"><span class="vn">Volume IV</span><b>CS foundations &amp; the stack</b></a>
+<a class="vol" href="09-skillup-ship-and-run.html"><span class="vn">Volume V</span><b>Ship it &amp; run it</b></a>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<a class="vol" href="11-skillup-data-ai.html"><span class="vn">Volume VII</span><b>Data, AI &amp; emerging tech</b></a>
+<div class="vol here"><span class="vn">Volume VIII · here</span><b>Thinking, career &amp; capstone</b></div>
+</div>
+
+<header class="part" id="decide">
+  <span class="pn">Part I</span>
+  <h2>Deciding</h2>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Senior 01</span>
+  <h2>Decision frameworks</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Match the process to the decision, not the reverse</div>
+<pre><code>⭐ THE FIRST MOVE: CLASSIFY THE DECISION.
+
+  REVERSIBLE AND CHEAP     ⇒ just decide. A meeting costs more
+                             than being wrong.
+  REVERSIBLE AND EXPENSIVE ⇒ decide fast, but instrument it so
+                             you find out quickly.
+  IRREVERSIBLE             ⇒ ⭐ SLOW DOWN. Data models, public
+                             APIs, a vendor holding your data,
+                             anything that touches employment
+                             decisions.
+
+  ⚠ THE TWO FAILURES ARE SYMMETRIC AND BOTH COMMON: agonising
+    over a reversible choice, and rushing an irreversible one.
+    ⭐ MOST ENGINEERING DECISIONS ARE FAR MORE REVERSIBLE THAN
+      THEY FEEL — which argues for deciding and moving.
+
+THE QUESTIONS THAT ACTUALLY RESOLVE THINGS
+  ①  WHAT ARE WE OPTIMISING FOR? ⭐ half of all technical
+     disagreements are two people optimising different things
+     without saying so. Surface it and the argument often
+     dissolves.
+  ②  WHAT WOULD CHANGE MY MIND? ⇒ if nothing would, it is not
+     a position, it is a preference.
+  ③  WHAT IS THE COST OF BEING WRONG, AND WHO PAYS IT?
+  ④  WHAT IS THE SIMPLEST THING THAT COULD WORK, and why is it
+     insufficient?
+  ⑤  WHAT DO WE DO IF THIS IS WRONG IN SIX MONTHS?
+
+⭐ AND THE HABIT: DISAGREE AND COMMIT. Once a decision is made,
+  execute it properly even if you argued the other way. ⚠ A
+  team where the loser of an argument quietly undermines the
+  outcome cannot make decisions at all — and re-litigating a
+  settled choice is more expensive than either option was.
+
+⇒ WRITE IT DOWN. An ADR (Volume II) for anything architectural:
+  context, decision, alternatives, consequences.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Senior 02</span>
+  <h2>Trade-offs, articulated</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The sentence, one last time</span>
+  <p><strong>"I chose X over Y because Z, and it costs me W."</strong></p>
+  <p>If you cannot fill in W, you have not made a decision — you have accepted a default. This is the
+  single most reliable marker of experience in any technical conversation, and it appears in every
+  volume of this handbook because it is the same skill wearing different clothes.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The trade-offs you will actually face</div>
+<pre><code>SPEED NOW  ←→  SPEED LATER
+  ⭐ THE MOST COMMON, AND THE MOST OFTEN DECIDED DISHONESTLY.
+    Shipping fast is frequently correct — for a hypothesis you
+    expect to discard. It is a disaster for a data model.
+  ⇒ THE HONEST VERSION: "we are taking a shortcut here, it will
+    cost roughly a week to undo, and we will undo it when X."
+    Named and scheduled, that is a decision. Unnamed, it is
+    just debt.
+
+BUILD  ←→  BUY
+  building costs engineering time forever, not once. ⭐ THE REAL
+  QUESTION IS NOT COST — IT IS WHETHER THIS IS YOUR
+  DIFFERENTIATOR. Nobody was ever promoted for writing an
+  in-house authentication system.
+
+CONSISTENCY  ←→  AVAILABILITY · LATENCY  ←→  THROUGHPUT ·
+FLEXIBILITY  ←→  SIMPLICITY
+  Volume II covers these. ⭐ AND THE ONE WORTH REPEATING:
+  every abstraction added for future flexibility is complexity
+  paid today for an option that usually expires unused.
+
+GENERALITY  ←→  FITNESS
+  a solution that handles every case handles none of them
+  particularly well. ⇒ solve the case you have.
+
+⭐ AND THE META-SKILL: MAKE THE TRADE-OFF VISIBLE TO THE PEOPLE
+  WHO OWN THE CONSEQUENCE. "We can ship in two weeks with a
+  manual step, or five weeks fully automated" is a business
+  decision presented properly. Deciding it silently in a
+  technical design is where engineers overstep — and where they
+  get blamed for an outcome someone else would have chosen
+  differently.</code></pre>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Senior 03</span>
+  <h2>Technical debt</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four kinds, and only one is a problem</div>
+<pre><code>①  DELIBERATE AND DOCUMENTED — ⭐ THIS IS NOT A PROBLEM.
+   "We hardcoded the tax rate because the rules land in
+   Q3; here is the ticket." That is a loan with terms.
+
+②  DELIBERATE AND UNDOCUMENTED — a shortcut nobody recorded.
+   It becomes archaeology, and the next person assumes it was
+   intentional design.
+
+③  ACCIDENTAL — we did not know better at the time. Normal, and
+   it is what a codebase looks like after learning.
+
+④  ⚠ BIT ROT — the code did not change; the world did.
+   Dependencies aged, the API moved, the assumption expired.
+   ⭐ THE ONLY KIND THAT GROWS WHILE YOU DO NOTHING, which is
+     why "we'll deal with upgrades later" compounds badly.
+
+⭐ THE FRAMING THAT GETS DEBT PAID DOWN: TALK ABOUT INTEREST,
+  NOT AESTHETICS.
+  ⚠ "the code is messy" ⇒ nobody funds that.
+  ✅ "every change to reporting takes three days instead of one
+     because the logic is duplicated in four places, and we
+     make about two changes a month" ⇒ that is a quantified
+     cost, and it can be prioritised against features.
+
+HOW IT ACTUALLY GETS PAID
+  · ⭐ ALONGSIDE FEATURE WORK, IN THE AREA YOU ARE ALREADY
+    TOUCHING. This is the only approach that reliably works.
+  · a standing allocation — one day a fortnight — that is
+    genuinely protected
+  ⚠ NOT a "refactoring sprint" scheduled for later. It never
+    arrives, and if it did it would be a large risky change
+    with no feature to justify it.
+
+⚠ AND THE HONEST WARNING: NOT ALL DEBT IS WORTH PAYING. Ugly
+  code in a stable module nobody touches costs nothing. ⭐ PAY
+  DEBT WHERE YOU WORK; TOLERATE IT WHERE YOU DO NOT.</code></pre>
+</div>
+
+<header class="mod" id="a4">
+  <span class="mn">Senior 04</span>
+  <h2>Refactor or rewrite</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Refactor when</th><th>Rewrite when</th></tr></thead>
+  <tbody>
+    <tr><td>The structure is wrong but the behaviour is right and understood</td><td>The requirements have fundamentally changed — you are building a different thing</td></tr>
+    <tr><td>You can proceed incrementally, shipping throughout</td><td>The technology is genuinely unsupportable — an abandoned framework, an unpatched runtime</td></tr>
+    <tr><td>Tests exist, or you can add them first</td><td>The system is small enough that a rewrite is days, not quarters</td></tr>
+    <tr><td><strong>Almost always. This is the default.</strong></td><td>You have a <em>specification</em> — meaning the old system's behaviour is documented or covered by tests</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">Why rewrites fail, specifically</span>
+  <p><strong>The old system's ugliness is mostly accumulated knowledge.</strong> Every strange
+  conditional is a bug someone hit, an edge case a customer reported, a regulation. A rewrite
+  discards all of it and rediscovers it one production incident at a time.</p>
+  <p>And the second reason: <strong>you must maintain two systems</strong> while the rewrite catches
+  up to a moving target. The feature freeze required to prevent that is usually politically
+  impossible.</p>
+  <p><strong>If you must replace something, use the strangler fig</strong> — route one path at a time
+  from old to new, keeping both alive. Incremental, reversible per route, and it never requires a
+  freeze.</p>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">Senior 05</span>
+  <h2>Choosing technology</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The questions in the order that matters</div>
+<pre><code>①  DOES THE BORING OPTION WORK?
+   ⭐ THE FIRST AND MOST IMPORTANT QUESTION. Postgres, a
+     monolith, server-rendered pages, a cron job. Boring
+     technology has known failure modes, abundant answers to
+     its problems, and people who can be hired to work on it.
+   ⇒ CHOOSE INTERESTING TECHNOLOGY DELIBERATELY AND RARELY, and
+     spend that budget where it is your actual differentiator.
+
+②  WHO WILL MAINTAIN THIS IN TWO YEARS?
+   a tool one person understands is a risk with a name.
+
+③  WHAT IS THE ECOSYSTEM LIKE?
+   is there a maintained client for our language? are the
+   questions we will have already answered somewhere? ⭐ AND —
+   is the documentation good? You will read it far more than
+   you expect.
+
+④  WHAT IS THE EXIT?
+   if this is wrong in a year, how hard is it to leave? A tool
+   that processes data is a smaller commitment than one that
+   holds it or holds your business logic.
+
+⑤  WHAT DOES IT COST, INCLUDING OPERATIONS?
+   the licence is rarely the expensive part.
+
+⚠ THE BAD REASONS, AND THEY ARE THE COMMON ONES
+  · it is what a large company at enormous scale uses ⭐ (their
+    constraints are not yours, and their solution is a response
+    to problems you do not have)
+  · a conference talk was persuasive
+  · someone wants it on their CV
+  · it is new
+
+⭐ AND THE HONEST NOTE ABOUT THIS PROJECT'S STACK: NestJS,
+  Next.js, Postgres, Prisma, FastAPI, XGBoost. Every one is a
+  boring, well-documented, widely-used choice with a large
+  hiring pool. That is a feature.</code></pre>
+</div>
+
+<header class="part" id="decompose">
+  <span class="pn">Part II</span>
+  <h2>Decomposing</h2>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Senior 06</span>
+  <h2>Why decomposition is the number-one skill</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The claim, and the evidence for it</span>
+  <p><strong>Nearly every engineering failure is a decomposition failure.</strong> The estimate was
+  wrong because the work was never broken down. The design was wrong because the problem was never
+  separated from the proposed solution. The code is unmaintainable because the boundaries were drawn
+  in the wrong places.</p>
+  <p>And it is the skill AI helps least with: a model can implement a well-specified piece and cannot
+  tell you where the pieces should be, because that depends on what varies, who owns what, and what
+  you will need to change next quarter.</p>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Senior 07</span>
+  <h2>Top-down and bottom-up</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two directions, and you need both</div>
+<pre><code>TOP-DOWN — split the goal into parts
+  "attrition reporting" → data pipeline · the model · the API ·
+  the dashboard · the notifications
+  ⇒ good for planning and for communicating.
+  ⚠ THE RISK: PLAUSIBLE BOXES THAT DO NOT SURVIVE CONTACT. The
+    split feels clean and the real work does not divide that
+    way, so estimates are confidently wrong.
+
+BOTTOM-UP — start from something concrete and generalise
+  "make one employee's risk score appear on one screen"
+  ⇒ ⭐ THE VERTICAL SLICE, AND IT IS THE MORE VALUABLE HABIT.
+    One thin path through every layer reveals the real
+    integration problems, the missing permission, the field
+    nobody modelled — in days rather than at the end.
+
+⭐ THE PRACTICAL METHOD: TOP-DOWN TO COMMUNICATE, BOTTOM-UP TO
+  DE-RISK. Draw the boxes so people can see the shape, then
+  build one thin slice all the way through before building any
+  box completely.
+
+THE THREE CUTS THAT ALWAYS WORK
+  ①  ⭐ SEPARATE GETTING THE DATA FROM DECIDING ABOUT IT.
+     fetch → decide → act, with the middle piece pure. The
+     decision becomes testable with no setup, readable, and
+     reusable from a job or a script.
+     ⚠ THE SMELL THAT SAYS YOU HAVE NOT: to test the rule you
+       must create a user, a row and a fake request. That
+       difficulty is a design problem announcing itself.
+  ②  SEPARATE THE PIPELINE STEPS — each with one input shape
+     and one output shape, each nameable in three words.
+  ③  SEPARATE WHAT CHANGES FROM WHAT DOESN'T — put the seam
+     where the churn is, so the churn lands in one place.
+
+⭐ HOW BIG SHOULD A PIECE BE? SMALL ENOUGH THAT ITS NAME IS
+  ACCURATE. If the name needs "and", cut again. ⚠ And the
+  opposite failure is real: five files of two lines each means
+  following the logic requires opening all five.</code></pre>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Senior 08</span>
+  <h2>Requirements</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Finding the problem behind the request</div>
+<pre><code>⭐ HALF OF ALL REQUESTS ARE A PROPOSED SOLUTION WEARING THE
+  COSTUME OF A REQUIREMENT.
+
+    asked:  "add a CSV export button"
+    actual: "finance re-types these numbers every Monday"
+    ⇒ a scheduled email, or a filtered read-only view, may be
+      the real answer — and less work.
+
+THE QUESTIONS THAT FIND IT
+  ①  WHAT WILL YOU DO WITH IT? ⭐ the single most useful
+     question in requirements gathering. The answer reveals the
+     real workflow.
+  ②  WHAT DO YOU DO TODAY, WITHOUT IT? the current workaround
+     is a specification, and it is usually more honest than the
+     request.
+  ③  WHAT HAPPENS IF WE DO NOTHING? sizes the problem, and
+     occasionally ends the conversation.
+  ④  WHO ELSE IS AFFECTED? ⇒ in an HR system, ⭐ THE EMPLOYEE
+     IS A STAKEHOLDER, and often not in the room.
+  ⑤  HOW WILL WE KNOW IT WORKED?
+
+THE FOUR UNKNOWNS TO NAME EVERY TIME
+  SCALE      how many, how often, how big at the extreme?
+  OWNERSHIP  whose data, who may see it, who may change it?
+  FAILURE    what happens when this fails halfway?
+  DONE       how do we know it worked, and what happens next?
+
+⭐ AND THE RULE: ASSUMING IS FINE. ASSUMING SILENTLY IS NOT.
+  Write the assumption in the ticket. It costs a sentence and
+  it converts a future argument into a correction now.
+
+⚠ THE ANTI-PATTERN: TAKING THE REQUEST LITERALLY AND BUILDING
+  IT PERFECTLY. Delivering exactly what was asked when it does
+  not solve the problem is a failure that looks like
+  compliance — and it is the one juniors are most often praised
+  for.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Senior 09</span>
+  <h2>Scope and MVP</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The most senior move available to you</div>
+<pre><code>⭐ CUTTING SCOPE IS A SKILL, NOT A FAILURE. And it is the
+  fastest way to deliver value, reduce risk and learn whether
+  the thing is wanted at all.
+
+WHAT AN MVP ACTUALLY IS
+  the smallest version that DELIVERS REAL VALUE TO A REAL USER
+  and TEACHES YOU SOMETHING.
+  ⚠ NOT: a broken version of the full thing. ⚠ NOT: the full
+    thing with no error handling. ⭐ THOSE ARE PROTOTYPES
+    MASQUERADING AS PRODUCTS, and they damage trust.
+
+THE CUTTING QUESTIONS
+  ·  WHAT IS THE ONE THING THIS MUST DO?
+  ·  which half could ship next month instead?
+  ·  ⭐ WHICH PART CAN BE MANUAL AT FIRST? A human running a
+     script weekly is a legitimate version one, and it teaches
+     you what to automate.
+  ·  which user group can we serve first?
+  ·  what could be a report instead of a feature?
+
+⭐ AND THE HONEST FRAMING TO USE WITH STAKEHOLDERS:
+  "Here is what I would cut first if we are short on time, and
+  here is what I would not cut." That sentence demonstrates
+  judgement, invites the right conversation, and protects the
+  part that matters. It is far stronger than either "yes to
+  everything" or "that's not possible".
+
+ITERATIVE DELIVERY — the discipline underneath
+  ⭐ EVERY ITERATION SHIPS SOMETHING USABLE. Not "the backend
+    this sprint, the UI next" — that delivers nothing until
+    both are done and hides integration risk until the end.
+  ⇒ A THIN VERTICAL SLICE, END TO END, EVERY TIME.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Senior 10</span>
+  <h2>Estimation</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Why estimates are wrong, and what to do about it</div>
+<pre><code>⭐ THE ROOT CAUSE IS ALMOST ALWAYS THE SAME: THE ESTIMATE
+  COVERED THE CODING AND NOT THE WORK.
+
+  what gets forgotten, every time:
+    understanding the problem · the edge cases · code review ·
+    the review feedback · testing · the migration · deployment ·
+    the documentation · ⭐ THE INTEGRATION WITH THINGS YOU DO
+    NOT CONTROL · and the two days of other people's
+    interruptions
+
+WHAT ACTUALLY HELPS
+  ①  ⭐ DECOMPOSE UNTIL EACH PIECE IS A DAY OR LESS. Estimation
+     error compounds with size — a "two week" task is a guess,
+     and ten one-day tasks is an estimate. This one habit does
+     most of the work.
+  ②  ESTIMATE A RANGE, AND SAY WHAT DRIVES IT. "Three to eight
+     days; eight if the legacy export format is undocumented."
+     ⭐ THE CONDITION IS THE USEFUL PART — it tells everyone
+       what to resolve to narrow the range.
+  ③  SEPARATE THE UNKNOWN INTO A SPIKE. Timebox an
+     investigation, then estimate. ⚠ Estimating something you
+     do not understand is fiction with a number attached.
+  ④  TRACK YOUR OWN RATIO. If you are consistently 2× under,
+     that is not a character flaw — it is a calibration
+     constant, and you can apply it.
+
+⭐ THE HONEST CONVERSATION THAT BUILDS TRUST: SAY WHAT YOU DO
+  NOT KNOW.
+  "I can commit to the API by Friday. The AI-service
+  integration depends on how their auth works, which I have not
+  seen — I will know by Wednesday."
+  ⇒ THAT IS MORE USEFUL THAN A CONFIDENT NUMBER, and it is what
+    makes your later commitments believable.
+
+⚠ AND THE ONE THAT DAMAGES CAREERS QUIETLY: SILENCE WHEN AN
+  ESTIMATE SLIPS. ⭐ TELL PEOPLE EARLY. A revised date is a
+  manageable problem; a missed date discovered on the day is a
+  trust problem, and trust is the thing seniority is made of.</code></pre>
+</div>
+
+<header class="part" id="communicate">
+  <span class="pn">Part III</span>
+  <h2>Communicating</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Senior 11</span>
+  <h2>Why it multiplies everything</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The uncomfortable arithmetic</span>
+  <p><strong>A good decision nobody understands does not get implemented. A risk nobody hears about
+  is not mitigated. A design nobody can follow gets rebuilt.</strong></p>
+  <p>Which means communication is not a soft skill sitting beside the technical ones — it is the
+  mechanism by which technical work has an effect. Two engineers of equal ability, one of whom can
+  explain their reasoning, do not have equal impact, and the difference grows with seniority because
+  the work increasingly happens through other people.</p>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Senior 12</span>
+  <h2>Writing a document people read</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Structure, and one rule about order</div>
+<pre><code>⭐ ANSWER FIRST. THE CONCLUSION GOES AT THE TOP.
+  ⚠ engineers instinctively write chronologically — context,
+    investigation, findings, conclusion. That is the order you
+    discovered it in, and the wrong order to read it in. A busy
+    reader stops after three paragraphs, and they stop before
+    the point.
+
+THE SHAPE
+  ①  THE ANSWER, IN ONE OR TWO SENTENCES.
+     "We should move report generation to a job queue. It will
+      take about a week and removes the timeouts affecting
+      long-tenure employees."
+  ②  WHY IT MATTERS — the cost of the status quo, in numbers if
+     you have them.
+  ③  THE OPTIONS CONSIDERED, and why not.
+  ④  THE DETAIL, for whoever needs it.
+  ⑤  WHAT YOU NEED — ⭐ AND BE EXPLICIT. A decision? A review?
+     Nothing? A document with no ask produces no action.
+
+THE RULES OF THE CRAFT
+  · SHORT SENTENCES. One idea each.
+  · CONCRETE OVER ABSTRACT: ⭐ "queries take 4 seconds" beats
+    "performance is suboptimal". A number is an argument.
+  · ⭐ WRITE FOR THE PERSON WHO WILL READ IT IN SIX MONTHS with
+    none of today's context. Usually that person is you.
+  · say what you are NOT proposing — it prevents the most
+    common misreading
+  · state the risks yourself. ⭐ IT IS MORE CREDIBLE THAN HAVING
+    THEM FOUND FOR YOU, and it is how you are trusted with the
+    next decision.
+
+⚠ AND THE TEST BEFORE SENDING: CAN SOMEONE READ ONLY THE FIRST
+  PARAGRAPH AND ACT CORRECTLY? If not, restructure — the
+  problem is not the writing, it is the order.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Senior 13</span>
+  <h2>Explaining to non-engineers</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Instead of</th><th>Say</th></tr></thead>
+  <tbody>
+    <tr><td>"We need to refactor the reporting module"</td><td>"Every change to reports takes three days instead of one. A week of work now makes future changes routine."</td></tr>
+    <tr><td>"There's an N+1 query"</td><td>"The page asks the database 200 separate questions instead of one. That's why it takes four seconds."</td></tr>
+    <tr><td>"The model has 0.72 PR-AUC"</td><td>"Of the ten people it flags, about three would have left. That's far better than guessing — and it means seven conversations that turn out fine."</td></tr>
+    <tr><td>"We should add caching"</td><td>"We can remember the answer for a minute. Pages get much faster, and a number could be up to a minute out of date."</td></tr>
+    <tr><td>"There's technical debt"</td><td>"We took a shortcut in March to hit the deadline. It costs us about two days a month now."</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The technique underneath the right column</div>
+<pre><code>⭐ TRANSLATE INTO CONSEQUENCE, NOT ANALOGY.
+  the instinct is to reach for a metaphor. The better move is
+  to state the EFFECT ON SOMETHING THEY ALREADY CARE ABOUT:
+  time, money, risk, or a person's experience.
+
+THE FOUR MOVES
+  ①  LEAD WITH THE IMPACT, not the mechanism.
+  ②  USE THEIR UNITS — days, money, people, customers.
+  ③  ⭐ OFFER A CHOICE, NOT A LECTURE. "Two weeks with a manual
+     step, or five fully automated" respects that the decision
+     is theirs and makes the trade-off visible.
+  ④  ⭐ SAY WHAT YOU RECOMMEND. Presenting options without a
+     recommendation is abdication dressed as neutrality —
+     you have the most information in the room.
+
+⚠ AND TWO THINGS TO AVOID
+  · CONDESCENSION. Simplifying the mechanism is right;
+    simplifying the person is not. They make harder decisions
+    than yours with less information.
+  · FALSE CERTAINTY to end a conversation quickly. ⭐ "I don't
+    know yet, I'll know by Wednesday" is a complete and
+    professional answer.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Senior 14</span>
+  <h2>RFCs and proposals</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">For a decision that affects other people's work</div>
+<pre><code>THE SECTIONS
+  PROBLEM       what is wrong, with evidence. ⭐ IF THE PROBLEM
+                SECTION IS WEAK, NOTHING BELOW IT MATTERS —
+                and most rejected proposals are rejected here.
+  GOALS         what success looks like
+  NON-GOALS     ⭐ THE MOST UNDER-USED SECTION. It prevents the
+                three tangents that would otherwise derail
+                every review.
+  PROPOSAL      what you want to do
+  ALTERNATIVES  what else, and why not. ⭐ INCLUDING "DO
+                NOTHING", seriously considered.
+  RISKS         and the mitigation for each
+  MIGRATION     how we get from here to there, incrementally
+  OPEN QUESTIONS what you genuinely have not resolved
+
+⭐ WHY THE PROCESS IS WORTH IT EVEN WHEN THE ANSWER IS OBVIOUS:
+  WRITING FORCES YOU TO NOTICE WHAT YOU HAVE NOT THOUGHT
+  THROUGH. A surprising number of proposals are abandoned by
+  their own authors while writing the alternatives section —
+  and that is the process working, not failing.
+
+HOW TO RUN IT
+  · share it early, while you are still willing to change it.
+    ⚠ A proposal circulated as a formality invites either
+      rubber-stamping or resentment.
+  · ⭐ ASK SPECIFIC PEOPLE FOR SPECIFIC REVIEW. "Can you check
+    the migration section?" gets a real response; "thoughts?"
+    gets silence.
+  · set a decision date, or it drifts indefinitely
+  · record the outcome — ⭐ INCLUDING A REJECTION AND ITS
+    REASON. A record of the road not taken is one of the most
+    useful documents a team owns.</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Senior 15</span>
+  <h2>Diagrams</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>One zoom level per diagram</h4><p>Context, containers, or components. Mixing all three produces something unreadable that nobody updates — and then it misleads.</p></div>
+  <div class="card"><h4>Label the arrows</h4><p>Protocol and direction. <strong>"HTTP/JSON, sync" versus "event, async" is the most information-dense thing on the page</strong>, and every sync arrow is a dependency that can take you down.</p></div>
+  <div class="card"><h4>Include what fails</h4><p>The queue, the third party, the cache, the trust boundary. Diagrams that show only the happy path hide exactly what a review should discuss.</p></div>
+  <div class="card"><h4>Whiteboard beats a tool</h4><p>For thinking and for interviews. Draw the boxes, talk through one request, add detail under pressure. Polish is not the point.</p></div>
+</div>
+
+<header class="mod" id="c6">
+  <span class="mn">Senior 16</span>
+  <h2>Saying no</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The skill that makes seniority sustainable</div>
+<pre><code>⚠ "NO" ALONE IS RARELY THE RIGHT ANSWER, AND NEITHER IS "YES"
+  TO EVERYTHING. The first makes you an obstacle; the second
+  makes you unreliable, because you will miss something.
+
+⭐ THE TRADE-OFF SENTENCE IS THE ANSWER:
+  "I can do that. It means X slips by two weeks — is that the
+  right priority?"
+  ⇒ THIS DOES THREE THINGS AT ONCE: it accepts the work,
+    surfaces the real cost, and puts the prioritisation where
+    it belongs. It converts a refusal into a decision for the
+    person entitled to make it.
+
+THE OTHER USEFUL FORMS
+  · "Not now, and here is when." A date beats a vague deferral.
+  · "Not this, but here is what solves the problem." ⭐ THE
+    STRONGEST FORM — it addresses the need while declining the
+    proposed solution, and it requires having asked reflex 08's
+    questions.
+  · "Yes, and here is what we should stop doing." Makes
+    capacity visible.
+  · ⭐ "I don't think we should build this, and here is why."
+    Sometimes correct, and it is the version that requires the
+    most standing. Use it deliberately.
+
+⚠ WHERE "NO" IS NOT NEGOTIABLE
+  · shipping something that leaks personal data
+  · removing a permission check to hit a date
+  · an AI feature making employment decisions with no human
+    review or explanation
+  ⭐ THESE ARE NOT PRIORITISATION CONVERSATIONS. State the
+    reason plainly, in writing, and escalate rather than
+    comply. That is what professional judgement means, and it
+    is occasionally the whole job.</code></pre>
+</div>
+
+<header class="part" id="learn">
+  <span class="pn">Part IV</span>
+  <h2>Learning</h2>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Senior 17</span>
+  <h2>How learning actually works</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four findings worth acting on</div>
+<pre><code>①  ⭐ RETRIEVAL BEATS REVIEW.
+   trying to recall something strengthens it far more than
+   re-reading it. ⇒ SO: close the tutorial and rebuild the
+   thing from memory. The struggle IS the learning; the
+   comfortable feeling of re-reading is not.
+
+②  ⭐ UNDERSTANDING IS ATTACHMENT TO WHAT YOU ALREADY KNOW.
+   new information sticks when it connects to an existing
+   model. ⇒ ASK "WHAT IS THIS LIKE?" — FastAPI's Depends is
+   NestJS's constructor injection; a decorator is a decorator
+   in both languages. That is why this handbook keeps drawing
+   those parallels.
+
+③  SPACING BEATS CRAMMING. Revisit after a day, a week, a
+   month. Ideas deepen with experience between visits, which is
+   why re-reading a volume of this handbook in six months is
+   genuinely different.
+
+④  ⭐ TEACHING EXPOSES EVERY GAP INSTANTLY.
+   explain it to a colleague, write it down, answer a question
+   in a channel. Every fuzzy area becomes audible the moment
+   you try to say it out loud. Nothing else works as fast.
+
+⚠ AND THE TRAP THAT IS SPECIFIC TO THIS ERA: WATCHING SOMETHING
+  BE SOLVED IS NOT LEARNING TO SOLVE IT. A model producing a
+  working answer to your problem creates the feeling of
+  understanding without the retrieval that builds it.
+  ⭐ WHICH IS WHY VOLUME I RECOMMENDED SOLVING SOMETHING
+    WITHOUT ASSISTANCE, WEEKLY, DELIBERATELY. Not nostalgia —
+    it is the only way the judgement in these eight volumes
+    accumulates.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Senior 18</span>
+  <h2>Learning a new technology fast</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A sequence that works, and it is not "read the docs"</div>
+<pre><code>1  ⭐ WHAT PROBLEM DOES THIS EXIST TO SOLVE?
+   read the project's own "why" page or its original
+   announcement. ⇒ WITHOUT THIS, EVERY DESIGN DECISION IN THE
+   TOOL LOOKS ARBITRARY. With it, most become obvious.
+
+2  WHAT IS IT LIKE THAT I ALREADY KNOW?
+   map the concepts onto something familiar, and note where the
+   analogy breaks — ⭐ THE PLACE IT BREAKS IS THE THING WORTH
+   LEARNING.
+
+3  BUILD THE SMALLEST REAL THING.
+   not a tutorial you follow — something you want, however
+   trivial. ⇒ you will hit the actual friction immediately.
+
+4  READ THE ERRORS PROPERLY.
+   the first ten errors teach the model of the tool faster than
+   any guide, because each one is a mismatch between your
+   assumption and its reality.
+
+5  THEN SKIM THE DOCUMENTATION STRUCTURE.
+   ⭐ NOW you know which parts matter, and the map means you can
+     find things later. Reading documentation cover to cover
+     first is slow and it does not stick.
+
+6  ⭐ FIND THE IDIOMATIC EXAMPLE.
+   a well-regarded open-source project using it properly.
+   Reading how experienced people use a tool teaches
+   conventions no reference documents.
+
+7  LEARN THE FAILURE MODES.
+   what goes wrong, what the confusing errors mean, what the
+   community complains about. ⇒ this is what separates "I have
+   used it" from "I can be trusted with it in production".
+
+⭐ AND THE PRINCIPLE UNDERNEATH: LEARN THE MODEL, NOT THE API.
+  APIs change; the model of what a tool is doing survives. This
+  is exactly why Volume V taught layer caching rather than
+  Dockerfile syntax.</code></pre>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Senior 19</span>
+  <h2>Deep work</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The economics of interruption</div>
+<pre><code>⭐ COMPLEX WORK REQUIRES HOLDING A LOT OF STATE IN YOUR HEAD,
+  AND AN INTERRUPTION DISCARDS IT. Rebuilding that state takes
+  fifteen to thirty minutes.
+  ⇒ SO FOUR ONE-HOUR BLOCKS ARE NOT EQUIVALENT TO ONE
+    FOUR-HOUR BLOCK. They are roughly half as productive for
+    anything requiring depth, and this is why a fragmented day
+    feels busy and produces little.
+
+WHAT ACTUALLY HELPS
+  · BLOCK TIME AND DEFEND IT — a recurring calendar block for
+    the work that needs depth
+  · BATCH THE SHALLOW WORK — reviews, messages, small fixes in
+    one window rather than continuously
+  · ⭐ LEAVE A NOTE FOR YOURSELF BEFORE STOPPING. "Next: check
+    whether the guard runs before the pipe." Three lines that
+    save twenty minutes of state rebuilding tomorrow, and it is
+    the highest-return habit on this list.
+  · notifications off during the block. All of them.
+
+⭐ AND THE HONEST CAVEAT ABOUT SENIORITY: THE MORE SENIOR YOU
+  GET, THE LESS OF YOUR DAY IS DEEP WORK — and that is not a
+  failure. Reviewing, unblocking, deciding and explaining IS
+  the work at that level. The mistake is expecting to do both a
+  full IC workload and a senior's coordination load in the same
+  week, and then feeling inadequate about the arithmetic.
+  ⇒ WHAT TO PROTECT IS ENOUGH DEPTH TO STAY TECHNICALLY
+    CREDIBLE, not the volume you had as a junior.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Senior 20</span>
+  <h2>Staying current without burning out</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A filter, because the field emits more than anyone can absorb</div>
+<pre><code>⭐ THE THREE-TIER FILTER
+
+  FUNDAMENTALS — learn deeply, they last decades
+    ⇒ how systems fail · data modelling · concurrency ·
+      networking · evaluation · security thinking · the
+      trade-offs in Volume II.
+    ⭐ EVERYTHING IN THIS TIER IS AS TRUE NOW AS IT WAS IN 2010,
+      and it is what this handbook is mostly made of.
+
+  TOOLS — learn as needed, they last a few years
+    frameworks, cloud services, libraries. ⇒ learn on demand,
+    from the real problem. ⚠ LEARNING A FRAMEWORK YOU HAVE NO
+    USE FOR IS EXPENSIVE AND IT DOES NOT STICK.
+
+  NEWS — skim, and mostly ignore
+    releases, launches, opinions. ⭐ A WEEKLY SKIM OF ONE OR TWO
+      SOURCES IS SUFFICIENT. The genuinely important
+      developments are still important a month later; the rest
+      were noise, and you can tell which is which with hindsight
+      for free.
+
+⚠ THE TRAP: FEELING BEHIND BECAUSE OF THE NEWS TIER. It is
+  designed to produce that feeling. ⭐ NOBODY KNOWS ALL OF THIS.
+  The people who appear to are specialists in one area who
+  sound confident about the rest.
+
+⭐ THE HEALTHIEST HABIT: LEARN FROM THE PROBLEM IN FRONT OF YOU.
+  Depth acquired while solving something real sticks, connects
+  to what you already know, and is immediately useful. Depth
+  acquired from a tutorial for a problem you do not have
+  evaporates.
+
+AND ONE PRACTICE WORTH THE TIME
+  ⭐ READ ONE SYSTEM'S DESIGN A MONTH. Pick something you use
+    and work out why it is shaped that way. Architecture
+    intuition is pattern exposure, and you can accumulate it by
+    reading rather than by building.</code></pre>
+</div>
+
+<header class="part" id="grow">
+  <span class="pn">Part V</span>
+  <h2>Growing</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Senior 21</span>
+  <h2>Skill shapes</h2>
+</header>
+
+<div class="ascii">   I-SHAPED        deep in one thing, narrow
+                   ⚠ fragile — when that thing moves, so does
+                     your value
+
+   ─ DASH-SHAPED   broad and shallow
+                   ⚠ useful in a small team, and hard to be
+                     trusted with anything difficult
+
+   ⊤ T-SHAPED      ⭐ deep in one, competent across many
+                   the standard target, and for good reason:
+                   the depth earns trust, the breadth lets you
+                   see how the pieces meet.
+
+   ⊤⊤ COMB-SHAPED  deep in two or three, broad across the rest
+                   what senior generalists actually look like
+                   after a decade.
+
+   ⭐ HOW TO CHOOSE YOUR DEPTH — and it is not "what is in
+     demand":
+       · what do people already come to you for?
+       · what do you find yourself reading about anyway?
+       · where does your unusual background give you an
+         advantage nobody else has?
+     ⇒ ⭐ THE LAST ONE IS THE MOST VALUABLE AND THE MOST
+       OVERLOOKED. A supply-chain background plus data skills
+       is a genuinely rare combination; so is HR domain
+       knowledge plus ML engineering. THE INTERSECTION IS
+       WHERE YOU ARE HARD TO REPLACE, and it is usually
+       something you already have rather than something you
+       must acquire.
+
+   AND THE BREADTH THAT PAYS MOST RELIABLY
+     ⭐ ONE LAYER EITHER SIDE OF YOUR DEPTH. A backend engineer
+       who understands the frontend's constraints and the
+       database's internals is far more effective than one who
+       knows a second backend framework.</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Senior 22</span>
+  <h2>What compounds</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Compounds</th><th>Depreciates</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Judgement under uncertainty</strong> — accumulated from outcomes you observed</td><td>Framework-specific knowledge</td></tr>
+    <tr><td><strong>Systems thinking</strong> — how things interact and fail</td><td>Tool proficiency and keybindings</td></tr>
+    <tr><td><strong>Communication and writing</strong></td><td>Syntax and API surface</td></tr>
+    <tr><td><strong>Domain knowledge</strong> — how HR, or supply chains, or finance actually work</td><td>A specific cloud console's layout</td></tr>
+    <tr><td><strong>A reputation for reliability</strong></td><td>Certifications</td></tr>
+    <tr><td><strong>A network of people who have worked with you</strong></td><td>Knowing the current hot library</td></tr>
+    <tr><td><strong>Debugging and evaluation instincts</strong></td><td>Memorised algorithm implementations</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The strategic read</span>
+  <p><strong>The right column is where most learning anxiety lives, and it is the column that
+  expires.</strong> The left column is what makes someone valuable in ten years, and none of it can
+  be acquired by watching a course — all of it comes from doing work, observing outcomes, and
+  reflecting on the difference.</p>
+  <p>Which is the argument for the practice habits in this handbook rather than a longer reading
+  list.</p>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Senior 23</span>
+  <h2>Culture and process</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Agile in practice, and what actually matters</div>
+<pre><code>⭐ THE FOUR PRACTICES THAT PRODUCE MOST OF THE BENEFIT,
+  WHATEVER THE FRAMEWORK IS CALLED
+  ①  SHORT CYCLES with something usable at the end
+  ②  TALKING TO THE PERSON WHO WANTED IT, directly
+  ③  ADJUSTING THE PLAN when you learn something
+  ④  LOOKING AT WHAT WENT WRONG, WITHOUT BLAME
+
+⇒ SCRUM AND KANBAN ARE TWO PACKAGINGS OF THOSE.
+  SCRUM   fixed-length sprints, a committed scope, ceremonies.
+          Suits work that can be planned in two-week units.
+  KANBAN  continuous flow, a work-in-progress limit, no
+          sprints. ⭐ SUITS INTERRUPT-DRIVEN WORK — support,
+          platform, data teams.
+  ⚠ AND THE CEREMONY TRAP: a team can perform every ritual and
+    still not do ①–④. Standing up daily to read a board aloud
+    is not communication.
+
+⭐ THE ONE PRACTICE WITH THE BEST RETURN: THE BLAMELESS
+  POST-MORTEM.
+  the question is "what made this possible?", never "who did
+  it". ⇒ A CULTURE WHERE THE ANSWER IS A PERSON PRODUCES HIDDEN
+  INCIDENTS, and hidden incidents are how small failures become
+  large ones.
+  three outputs or it did not happen: what stops the CLASS,
+  what DETECTS it sooner, what makes it SMALLER.
+  ⚠ "we'll be more careful" is a wish, not an action item.
+
+AND THE TWO SIGNALS OF A HEALTHY TEAM
+  · ⭐ PEOPLE SAY "I DON'T KNOW" AND "I WAS WRONG" WITHOUT
+    COST. That is psychological safety, and it is the strongest
+    predictor of a team that finds problems early.
+  · WORK IN PROGRESS IS LIMITED. Six things at 80% is worth
+    nothing; two things finished is worth two things.</code></pre>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Senior 24</span>
+  <h2>Business acumen</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Enough to argue for your work in the language decisions are made in</div>
+<pre><code>HOW THE BUSINESS MAKES MONEY
+  subscription · transactional · licensed · services. ⭐ IT
+  DETERMINES WHAT MATTERS TECHNICALLY: a subscription business
+  lives or dies on retention, so reliability and onboarding are
+  strategic; a transactional one cares about conversion and
+  payment reliability.
+
+THE NUMBERS WORTH UNDERSTANDING
+  REVENUE − COST OF SALES = GROSS MARGIN
+    ⭐ CLOUD SPEND USUALLY SITS IN COST OF SALES, which is why
+      infrastructure efficiency is a margin conversation and
+      not just an engineering one.
+  CAC and LTV — what a customer costs to acquire and is worth
+  PAYBACK PERIOD — how long until a customer is profitable
+  BURN AND RUNWAY — ⭐ this is why "we need six months to
+    rebuild it" is sometimes simply unavailable, regardless of
+    whether you are right
+
+WRITING A PROPOSAL THAT GETS FUNDED
+  ①  the problem in BUSINESS terms — cost, risk, or a missed
+     opportunity
+  ②  the cost of doing nothing, quantified if you can
+  ③  what you propose, and what it costs
+  ④  the expected impact, with your confidence in it stated
+  ⑤  ⭐ WHAT YOU WILL MEASURE AND WHEN YOU WILL REPORT BACK.
+     This is what distinguishes a proposal from a wish, and it
+     is what earns the next one.
+
+⭐ AND THE TRANSLATION THAT MATTERS MOST: "THIS REDUCES RISK"
+  IS WEAK. "This removes a failure mode that has caused two
+  incidents this quarter, each costing about four hours of
+  eleven people's time" is a number, and numbers get funded.
+
+⚠ THE MISTAKE ENGINEERS MAKE: ASSUMING THE BUSINESS DOES NOT
+  UNDERSTAND. Usually they understand their side perfectly and
+  have never been told the cost of yours in units they use.</code></pre>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Senior 25</span>
+  <h2>Vocabulary</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Why the words are a technical skill</div>
+<pre><code>⭐ A TERM IS COMPRESSED EXPERIENCE. Saying "that's a thundering
+  herd" transmits a whole failure mode, its cause and its fix
+  in three words — to anyone who has the word.
+  ⇒ WITHOUT THE VOCABULARY YOU CANNOT PARTICIPATE IN THE DESIGN
+    CONVERSATION AT SPEED, even when you understand the
+    concept perfectly. That is most of what "sounds junior"
+    means, and it is fixable in weeks rather than years.
+
+THE TERMS THIS HANDBOOK HAS TAUGHT, BY AREA
+  DISTRIBUTED   idempotent · eventual consistency ·
+                read-your-writes · at-least-once · back-pressure
+                · thundering herd · circuit breaker · bulkhead ·
+                saga
+  DATA          grain · fan-out · watermark · restatement ·
+                lineage · point-in-time correctness ·
+                minimum cell size
+  PERFORMANCE   N+1 · p99 · saturation · the knee ·
+                layout thrashing · seq scan · covering index
+  DELIVERY      canary · blue-green · feature flag ·
+                expand-migrate-contract · artefact promotion ·
+                drift
+  ML/AI         base rate · leakage · calibration · data drift ·
+                concept drift · training/serving skew ·
+                trust boundary · eval set · trajectory
+  ARCHITECTURE  bounded context · ubiquitous language ·
+                aggregate · ports and adapters · ADR ·
+                strangler fig
+
+⭐ HOW TO ACTUALLY ACQUIRE THEM: USE ONE CORRECTLY, ONCE, IN A
+  REAL CONVERSATION. Reading a glossary produces recognition;
+  using a term produces fluency. ⚠ And using one incorrectly to
+  sound senior is worse than not using it — so use them where
+  you genuinely mean them.</code></pre>
+</div>
+
+<header class="mod" id="e6">
+  <span class="mn">Senior 26</span>
+  <h2>The AI-era career strategy</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What is changing, what is not, and what to do</div>
+<pre><code>WHAT IS GENUINELY CHANGING
+  · producing code is much cheaper ⇒ the bottleneck moved to
+    deciding, judging and integrating
+  · the floor rose: routine implementation is less of a
+    differentiator than it was
+  · ⭐ THE VOLUME OF CODE NOBODY FULLY READ IS GROWING, which
+    makes review, evaluation and debugging more valuable, not
+    less
+
+WHAT IS NOT CHANGING
+  · someone must decide what to build, and be accountable
+  · someone must know whether it is correct
+  · someone must explain it to the people affected
+  · someone must be woken at 3 a.m. and own the outcome
+  ⭐ ALL FOUR ARE JUDGEMENT AND ACCOUNTABILITY, and neither
+    delegates.
+
+THE ROLES THAT ARE GROWING
+  anything with EVALUATION in it · anything at the boundary
+  between a model and a consequence · domain specialists who
+  can build · the people who make other engineers faster and
+  safer
+
+⭐ THE STRATEGY, IN FOUR LINES
+  ①  GO DEEP ON SOMETHING THAT COMPOUNDS — a domain, a system
+     class, evaluation, reliability.
+  ②  GET FLUENT WITH THE TOOLS WITHOUT DEPENDING ON THEM.
+     Volume I's habits: review everything, verify
+     independently, solve something unaided weekly.
+  ③  BUILD THE THINGS THAT MAKE OTHERS FASTER — the eval
+     harness, the single path every query goes through, the
+     constraint that removes a bug family permanently.
+  ④  WRITE AND EXPLAIN. ⭐ The engineer who can say why is the
+     one who gets to decide.
+
+⚠ AND THE ANXIETY, ADDRESSED DIRECTLY: THE THING THAT MAKES YOU
+  REPLACEABLE IS NOT AI — IT IS BEING ABLE TO DO ONLY WHAT IS
+  ALREADY WRITTEN DOWN SOMEWHERE. Everything in these eight
+  volumes that is worth learning is the part that is not.</code></pre>
+</div>
+
+<header class="part" id="capstone">
+  <span class="pn">Part VI · the capstone</span>
+  <h2>How seniors think, and what they reach for</h2>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">Capstone 27</span>
+  <h2>The mental models</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Eight, and they recur across every volume of this handbook</div>
+<pre><code>①  ⭐ SOLVE THE PROBLEM, NOT THE REQUEST.
+   half of all tasks are a proposed solution in disguise. Ask
+   what it is for before building it.
+
+②  ⭐ WHAT BREAKS, AND WHO NOTICES? (blast radius)
+   a cosmetic glitch, a wrong number in a decision, money
+   moving, or private data reaching the wrong person. THE
+   ANSWER SETS HOW MUCH CARE THE TASK DESERVES — and pretending
+   all code deserves equal rigour spends your care in the wrong
+   place.
+
+③  MAKE THE MISTAKE IMPOSSIBLE, NOT UNLIKELY.
+   a comment · a convention · a review · a test · a lint rule ·
+   a type · one path everything traverses · a database
+   constraint. ⭐ AFTER EVERY BUG, ASK WHICH RUNG UP THIS COULD
+   MOVE. Constraints outlive discipline.
+
+④  THE DETERMINISTIC SYSTEM COMPUTES; THE MODEL NARRATES.
+   compute the number where it is reproducible and auditable;
+   let the model write the sentence around it.
+
+⑤  ⭐ NAME WHAT THE CHOICE COSTS.
+   "I chose X over Y because Z, and it costs me W."
+
+⑥  IMAGINE THE FAILURE FIRST.
+   zero · one · many · null · twice · order · race · lie ·
+   halfway.
+
+⑦  DUPLICATION IS CHEAPER THAN THE WRONG ABSTRACTION.
+   two similar things are often two things. Wait for the third.
+
+⑧  ⭐ BORING IS A FEATURE.
+   the best compliment a codebase can receive is that it is
+   unsurprising, and the best architecture is usually one
+   database and one well-structured service.</code></pre>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">Capstone 28</span>
+  <h2>The ritual before code</h2>
+</header>
+
+<div class="ascii">   ⭐ NINETY SECONDS THAT CHANGE THE NEXT WEEK
+
+   ①  RESTATE THE TASK IN ONE SENTENCE.
+        if you cannot, you do not understand it yet — and
+        nothing you produce will be reviewable.
+
+   ②  NAME THE FOUR UNKNOWNS.
+        SCALE · OWNERSHIP · FAILURE · DONE.
+        ask about at least one; state assumptions for the rest.
+
+   ③  STATE THE BLAST RADIUS.
+        what breaks if this is wrong, and who notices.
+
+   ④  SAY THE APPROACH IN ONE SENTENCE, BEFORE WRITING IT.
+        a wrong approach costs one sentence to reject; a wrong
+        implementation costs a review.
+
+   ⑤  WRITE DOWN TWO CONCRETE EXAMPLES — input and expected
+        output. ⭐ THEY PIN THE SPECIFICATION, CATCH THE
+        MISUNDERSTANDING, AND BECOME YOUR TESTS FOR FREE.
+
+   ⑥  NAME THE TRADE-OFF YOU ARE MAKING, AND ITS COST.
+
+   ⑦  DECIDE WHAT YOU ARE *NOT* DOING, and say so in the
+        ticket.
+
+   ⭐ AND THE SAME LIST IS WHAT AN INTERVIEW SCORES, WHAT A
+     DESIGN REVIEW ASKS, AND WHAT A GOOD PR DESCRIPTION
+     CONTAINS. It is one habit with three payoffs — which is
+     why it is the last thing in this handbook worth
+     memorising.</div>
+
+<header class="mod" id="f3">
+  <span class="mn">Capstone 29</span>
+  <h2>What "done" means to a senior</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The definition that separates shipped from finished</div>
+<pre><code>A JUNIOR'S DONE          A SENIOR'S DONE
+  it works                 □  it works, including at the edges
+  tests pass               □  the failure paths are handled and
+                              visible
+  merged                   □  authorisation is enforced in code,
+                              on every path
+                           □  it is observable — logs, metrics,
+                              a correlation id
+                           □  ⭐ IT CAN BE TURNED OFF WITHOUT A
+                              DEPLOY
+                           □  ⭐ IT CAN BE UNDONE, or the reason
+                              it cannot is stated
+                           □  the migration is compatible with
+                              the version still running
+                           □  someone else can understand it —
+                              names, and a why
+                           □  the person who asked has seen it
+                              and agrees it solves their problem
+                           □  what you did NOT do is written
+                              down
+
+⭐ THE TWO ITEMS THAT MATTER MOST AND ARE MOST OFTEN MISSING:
+  CAN IT BE TURNED OFF, AND CAN IT BE UNDONE. Everything else
+  on the list is recoverable; those two are what determine how
+  bad the worst day gets.
+
+AND THE LAST ONE, WHICH IS THE WHOLE JOB
+  ⭐ THE PERSON WHO ASKED HAS SEEN IT AND AGREES IT SOLVES THEIR
+    PROBLEM. Code that satisfies every technical criterion and
+    does not solve the problem is not done — it is finished,
+    which is a different thing.</code></pre>
+</div>
+
+<header class="mod" id="f4">
+  <span class="mn">Capstone 30</span>
+  <h2>The production stack</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What "production-grade" actually consists of</div>
+<pre><code>THE LAYERS OF A REAL SYSTEM — and this project's answer
+
+  RUNTIME        containers on a managed platform
+  CONFIG         environment variables, one artefact promoted
+                 across environments
+  SECRETS        a managed store, injected at runtime, never in
+                 an image or a log
+  DATA           managed Postgres (Neon), migrations in the
+                 repository, tested restores
+  CACHE / QUEUE  Redis where it earns its place; a queue for
+                 anything unbounded
+  ENTRY          a load balancer with managed TLS; a CDN for
+                 static assets
+  IDENTITY       short-lived tokens, checks in code, roles per
+                 workload
+  OBSERVABILITY  structured logs with a correlation id, four
+                 metrics per service, traces, an external uptime
+                 check
+  DELIVERY       CI on every change, one artefact, rolling
+                 deploys, verify-then-keep or roll back
+  SAFETY         feature flags, budget alerts, runbooks for the
+                 four known failures
+
+⭐ THE POINT OF THE LIST IS NOT TO ADOPT ALL OF IT. It is to
+  know which line you are missing, and to be able to say
+  whether that is a deliberate choice or an oversight.
+  ⇒ A SMALL TEAM WITH FIVE OF THESE DONE WELL AND FIVE
+    KNOWINGLY DEFERRED IS IN BETTER SHAPE THAN ONE WITH TEN
+    HALF-CONFIGURED.
+
+⚠ AND THE ONE THAT IS NEVER OPTIONAL, WHATEVER THE SCALE:
+  BACKUPS WITH A RESTORE YOU HAVE ACTUALLY TESTED. Everything
+  else on this list degrades gracefully. That one does not.</code></pre>
+</div>
+
+<header class="mod" id="f5">
+  <span class="mn">Capstone 31</span>
+  <h2>The five levels</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Where this handbook has been taking you</div>
+<pre><code>1  IT WORKS
+   the feature does what was asked, on the happy path.
+   ⭐ MOVES YOU UP: the edge catalogue, applied to everything
+     you write, out loud, for a month.
+
+2  IT WORKS PROPERLY
+   errors, edges, tests, debugging by bisection.
+   ⭐ MOVES YOU UP: name the four unknowns before starting, and
+     ask about at least one.
+
+3  IT'S DESIGNED
+   a feature end to end — schema, API, states, permissions,
+   failure. Trade-offs with their costs named.
+   ⭐ MOVES YOU UP: argue a requested feature DOWN in scope and
+     be right. Ask "who can see this, per field?" where nobody
+     else did.
+
+4  IT'S THE RIGHT THING, AND IT WILL LAST
+   find the problem behind the request · say no with an
+   alternative · see the security consequence before the
+   feature exists · design so mistakes are unrepresentable ·
+   close bugs at the class level.
+   ⭐ MOVES YOU UP: build the thing that makes everyone else
+     faster and safer.
+
+5  IT CHANGES HOW WE BUILD
+   set the standard · own the measurement system · say which of
+   the last ten proposals should not have been built · make the
+   uncomfortable call in the room where it is made.
+   ⚠ NOBODY REACHES THIS RUNG BY LEARNING A FIFTH FRAMEWORK.
+
+⭐ THE HONEST SHAPE OF IT: LEVEL 1 → 2 IS KNOWLEDGE. EVERY
+  LEVEL AFTER THAT IS A QUESTION YOU LEARNED TO ASK BEFORE YOU
+  STARTED.
+  ⇒ which is why this handbook has eight volumes of mechanism
+    and one recurring habit — and the habit is the part that
+    moves you.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume VIII · thinking and career vocabulary</div>
+  <dl>
+    <dt>reversible decision</dt><dd>One you can undo cheaply. Decide it fast; agonising costs more than being wrong.</dd>
+    <dt>disagree and commit</dt><dd>Executing a decision properly after arguing against it.</dd>
+    <dt>technical debt interest</dt><dd>The ongoing cost a shortcut imposes. The only framing that gets debt funded.</dd>
+    <dt>bit rot</dt><dd>Debt that grows while you change nothing, because the world moved.</dd>
+    <dt>strangler fig</dt><dd>Replacing a live system one route at a time. The only sane way.</dd>
+    <dt>boring technology</dt><dd>Well-understood, well-documented, widely hired for. A feature, not a compromise.</dd>
+    <dt>vertical slice</dt><dd>One thin path through every layer. De-risks integration early.</dd>
+    <dt>the four unknowns</dt><dd>Scale, ownership, failure, done. Named before starting.</dd>
+    <dt>blast radius</dt><dd>What breaks if this is wrong, and who notices. Sets how much care is warranted.</dd>
+    <dt>spike</dt><dd>A timeboxed investigation before estimating something you do not understand.</dd>
+    <dt>answer-first</dt><dd>Conclusion at the top. Readers stop after three paragraphs.</dd>
+    <dt>non-goals</dt><dd>The RFC section that prevents three tangents. Most under-used.</dd>
+    <dt>trade-off sentence</dt><dd>"I can do that; it means X slips — is that the right priority?"</dd>
+    <dt>retrieval practice</dt><dd>Recalling beats re-reading. The struggle is the learning.</dd>
+    <dt>deep work</dt><dd>Uninterrupted blocks. Four one-hour blocks are not one four-hour block.</dd>
+    <dt>T-shaped</dt><dd>Deep in one area, competent across many. Depth earns trust; breadth sees the seams.</dd>
+    <dt>psychological safety</dt><dd>People say "I don't know" and "I was wrong" without cost. Predicts early problem detection.</dd>
+    <dt>WIP limit</dt><dd>Capping work in progress. Six things at 80% is worth nothing.</dd>
+    <dt>gross margin</dt><dd>Revenue minus cost of sales. Where cloud spend usually sits.</dd>
+    <dt>runway</dt><dd>How long the money lasts. Why "six months to rebuild" is sometimes unavailable.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>The whole handbook</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Volume</th><th style="width:26%">Covers</th><th>The one thing to take from it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>I · Working with AI</strong></td><td>KB 01–06</td><td>Plausible is not correct. The review pass is the skill.</td></tr>
+    <tr><td><strong>II · Architecture &amp; design</strong></td><td>KB 07–09, 11, 44</td><td>Estimate before you architect. Name what the lever costs.</td></tr>
+    <tr><td><strong>III · Engineering craft</strong></td><td>KB 12–16</td><td>Hypothesis, not guessing. Close bugs at the class level.</td></tr>
+    <tr><td><strong>IV · CS foundations</strong></td><td>KB 10, 41–43, 45</td><td>A map replaces a nested loop. Read the query plan.</td></tr>
+    <tr><td><strong>V · Ship it &amp; run it</strong></td><td>KB 29–34</td><td>Two versions run at once. Alert on symptoms, not causes.</td></tr>
+    <tr><td><strong>VI · Cloud mastery</strong></td><td>KB 35–40</td><td>Learn the categories, not the product names. Least privilege, actually.</td></tr>
+    <tr><td><strong>VII · Data, AI &amp; emerging</strong></td><td>KB 17–21, 27, 49–51</td><td>An ML system can fail without failing. Fairness definitions conflict — someone must choose.</td></tr>
+    <tr><td><strong>VIII · Thinking &amp; capstone</strong></td><td>KB 22–26, 28, 46–48, 53–54</td><td>Solve the problem, not the request. Make the mistake impossible.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <div class="card"><h4>The companion handbook</h4><p><code>docs/onboarding-handbook/</code> — four volumes on this stack specifically: foundations, architecture, the frameworks, and data science.</p></div>
+  <div class="card"><h4>Reasoning practice</h4><p><code>docs/fullstack-ai-thinking.html</code> — the four rounds (coding, design, system design, debugging) as scenarios with the thinking spelled out.</p></div>
+  <div class="card"><h4>The AI engineering set</h4><p>Foundations, guide, cheat sheet and interview file — Volume VII's Part V at full depth.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/skill-upgrading-knowledge-base/</code> — 54 files, 65,900 lines, with the exercises and long code examples this handbook condenses.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this handbook is.</strong> A taught, navigable edition of the Skill Upgrading
+  knowledge base — eight volumes covering all 54 source files. It carries the concepts, the
+  mechanisms and the judgement; the markdown originals hold the longer code, the checklists and the
+  exercises.</p>
+  <p><strong>On what will age.</strong> Tool names, framework defaults and provider products will
+  move. The reasoning will not: how systems fail, where authorisation belongs, why an index does not
+  help, what a trade-off costs, and how to tell a real improvement from a plausible one.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

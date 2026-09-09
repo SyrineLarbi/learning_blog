@@ -1,0 +1,1171 @@
+<title>From Zero to AI Engineer</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=Fira+Mono:wght@400;500;700&display=swap">
+
+<style>
+/* ============================================================
+   FROM ZERO TO AI ENGINEER — the foundations
+   Series identity: warm-neutral graphite ground, one accent
+   per file. This file: burnt orange.
+   ============================================================ */
+
+:root {
+  --ground:      #F5F4F2;
+  --ground-2:    #FFFFFF;
+  --panel:       #EAE8E6;
+  --panel-2:     #DFDCDA;
+  --ink:         #17171A;
+  --ink-2:       #45444A;
+  --ink-3:       #706E77;
+  --rule:        #CFCCCA;
+  --rule-2:      #E6E3E1;
+  --accent:      #A85018;
+  --accent-soft: #F9EAE0;
+  --accent-ink:  #7E3A10;
+  --good:        #A85018;
+  --good-soft:   #F9EAE0;
+  --warn:        #8A5A0A;
+  --warn-soft:   #F6EEDD;
+  --bad:         #A6232F;
+  --bad-soft:    #F9E6E7;
+  --shadow:      0 1px 2px rgba(23,23,26,.06), 0 10px 26px -18px rgba(23,23,26,.22);
+
+  --measure: 69ch;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:    "Spectral", Georgia, "Times New Roman", serif;
+  --mono:    "Fira Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #111013;
+    --ground-2:    #17161A;
+    --panel:       #1D1C21;
+    --panel-2:     #26242B;
+    --ink:         #ECEAEF;
+    --ink-2:       #B6B3BD;
+    --ink-3:       #85828D;
+    --rule:        #33313A;
+    --rule-2:      #26242B;
+    --accent:      #F0A265;
+    --accent-soft: #2E1C10;
+    --accent-ink:  #F5BF91;
+    --good:        #F0A265;
+    --good-soft:   #2E1C10;
+    --warn:        #E2AF4A;
+    --warn-soft:   #2C2413;
+    --bad:         #EE8189;
+    --bad-soft:    #2E1518;
+    --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #111013;
+  --ground-2:    #17161A;
+  --panel:       #1D1C21;
+  --panel-2:     #26242B;
+  --ink:         #ECEAEF;
+  --ink-2:       #B6B3BD;
+  --ink-3:       #85828D;
+  --rule:        #33313A;
+  --rule-2:      #26242B;
+  --accent:      #F0A265;
+  --accent-soft: #2E1C10;
+  --accent-ink:  #F5BF91;
+  --good:        #F0A265;
+  --good-soft:   #2E1C10;
+  --warn:        #E2AF4A;
+  --warn-soft:   #2C2413;
+  --bad:         #EE8189;
+  --bad-soft:    #2E1518;
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 17.5px; line-height: 1.58; -webkit-font-smoothing: antialiased; }
+
+.shell { display: grid; grid-template-columns: 274px minmax(0,1fr); align-items: start; max-width: 1500px; margin: 0 auto; }
+.rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 60px 26px; border-right: 1px solid var(--rule); background: var(--ground); font-family: var(--display); font-size: 12.5px; }
+.series { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 2px 8px; display: inline-block; margin-bottom: 10px; }
+.rail-brand { font-weight: 700; font-size: 15.5px; letter-spacing: -.02em; line-height: 1.15; }
+.rail-sub { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding: 5px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 12px; }
+.rail nav { display: flex; flex-direction: column; gap: 1px; }
+.rail-group { font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 5px; }
+.rail-group.hot { color: var(--accent); }
+.rail a { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 7px; padding: 4px 7px 4px 5px; border-radius: 3px; color: var(--ink-2); text-decoration: none; line-height: 1.3; border-left: 2px solid transparent; font-weight: 600; }
+.rail a:hover { background: var(--panel); color: var(--ink); }
+.rail a .n { font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-3); padding-top: 2px; }
+.rail a.on { background: var(--accent-soft); color: var(--accent-ink); border-left-color: var(--accent); }
+.rail a.on .n { color: var(--accent); }
+.rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.doc { padding: 0 clamp(18px,4.5vw,70px) 135px; min-width: 0; }
+.doc > * { max-width: var(--measure); }
+.doc > .wide, .doc > .hero, .doc > .part, .doc > .mod, .doc > .band, .doc > .tw, .doc > .grid2, .doc > .cols { max-width: none; }
+
+h1,h2,h3,h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
+h2 { font-size: clamp(25px,3.1vw,35px); font-weight: 700; }
+h3 { font-size: 20px; font-weight: 700; margin: 42px 0 12px; padding-top: 13px; border-top: 1px solid var(--rule-2); }
+h4 { font-size: 15.5px; font-weight: 700; margin: 26px 0 8px; }
+p { margin: 0 0 1em; }
+strong { font-weight: 600; }
+a { color: var(--accent-ink); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 9px; }
+.lede { font-size: 19.5px; line-height: 1.46; color: var(--ink-2); }
+.small { font-size: 13.5px; color: var(--ink-2); }
+code { font-family: var(--mono); font-size: .85em; background: var(--panel); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--rule-2); }
+ul, ol { margin: 0 0 1em; padding-left: 1.28em; }
+li { margin-bottom: .38em; }
+ol.proc { list-style: none; padding-left: 0; counter-reset: p; }
+ol.proc > li { counter-increment: p; position: relative; padding-left: 40px; margin-bottom: 1.05em; }
+ol.proc > li::before { content: counter(p, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--rule); background: var(--ground-2); border-radius: 3px; padding: 2px 5px; }
+
+.hero { padding: clamp(36px,6.5vw,80px) 0 40px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; }
+.hero h1 { font-size: clamp(34px,6.2vw,68px); font-weight: 700; letter-spacing: -.04em; line-height: .99; margin-bottom: 20px; max-width: 21ch; }
+.hero h1 .thin { font-weight: 600; color: var(--ink-3); }
+.hero .lede { max-width: 62ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 22px; margin-top: 26px; padding-top: 17px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.hero-meta b { color: var(--ink-2); font-weight: 500; }
+
+.part { margin: 100px 0 38px; padding: 23px 0 19px; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.part .pn { font-family: var(--mono); font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 9px; }
+.part h2 { font-size: clamp(29px,4.2vw,46px); max-width: 24ch; }
+.part .lede { margin-top: 14px; max-width: 62ch; }
+
+.mod { margin: 78px 0 26px; padding: 14px 17px 16px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--ground-2); box-shadow: var(--shadow); scroll-margin-top: 14px; }
+.mod .mn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px; }
+.mod h2 { font-size: clamp(22px,2.7vw,31px); max-width: 30ch; }
+.mod .lede { font-size: 16.5px; margin: 9px 0 0; max-width: 60ch; }
+.band { margin: 78px 0 26px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.band h2 { max-width: 26ch; }
+.band .lede { margin-top: 12px; max-width: 62ch; }
+
+.sheet { border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 9px; padding: 7px 13px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+.sheet > .foot { padding: 10px 14px 12px; border-top: 1px solid var(--rule-2); background: var(--panel); font-size: 13.5px; color: var(--ink-2); }
+.sheet > .foot p:last-child { margin-bottom: 0; }
+pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; overflow-x: auto; padding: 14px 15px; background: var(--ground-2); color: var(--ink); tab-size: 2; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+.note, .warn, .bad, .good { border: 1px solid var(--rule); border-left-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 14px 17px 15px; margin: 22px 0; font-size: 16.5px; }
+.note { border-left-color: var(--accent); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); border-width: 2px; border-left-width: 4px; }
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; margin-bottom: 6px; }
+.note .tag { color: var(--accent); } .warn .tag { color: var(--warn); }
+.bad .tag { color: var(--bad); } .good .tag { color: var(--good); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child { margin-bottom: 0; }
+
+.ex { border: 1px solid var(--accent); border-radius: 4px; background: var(--ground-2); margin: 24px 0; overflow: hidden; }
+.ex > .q { padding: 13px 16px 14px; border-bottom: 1px dashed var(--rule); }
+.ex .qt { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+.ex > .q p:last-child { margin-bottom: 0; }
+.ex summary { cursor: pointer; list-style: none; padding: 10px 16px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-soft); display: flex; align-items: center; gap: 9px; }
+.ex summary::-webkit-details-marker { display: none; }
+.ex summary::before { content: "\25B8"; color: var(--accent); transition: transform .15s ease; }
+.ex details[open] summary::before { transform: rotate(90deg); }
+.ex summary:hover { background: var(--panel-2); }
+.ex summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.ex .sol { padding: 16px; border-top: 1px solid var(--rule); font-size: 16.5px; }
+.ex .sol > *:first-child { margin-top: 0; }
+.ex .sol > *:last-child { margin-bottom: 0; }
+.ex .sol pre { border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); }
+
+.exit { border: 1px solid var(--accent); border-top-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 16px 18px 17px; margin: 28px 0; }
+.exit .tag { color: var(--accent); }
+.exit ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 15.5px; }
+.exit li { position: relative; padding-left: 26px; margin-bottom: .45em; }
+.exit li::before { content: "\2610"; position: absolute; left: 0; top: -1px; font-family: var(--mono); font-size: 15px; color: var(--accent); }
+
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-family: var(--display); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); vertical-align: top; line-height: 1.4; }
+thead th { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; border-bottom: 1px solid var(--rule); }
+tbody tr:last-child td { border-bottom: 0; }
+tr.sec-row td { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td code { font-size: 12px; }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; } .mid { color: var(--warn); font-weight: 600; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(252px,1fr)); gap: 14px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 4px; padding: 13px 15px 14px; background: var(--ground-2); font-size: 15px; }
+.card h4 { margin: 0 0 6px; } .card p:last-child { margin-bottom: 0; }
+.ascii { font-family: var(--mono); font-size: 12px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 15px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+.disclaimer { margin: 26px 0 0; padding: 12px 15px; border: 1px dashed var(--rule); border-radius: 4px; background: var(--panel); font-size: 13px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 36px 0; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px clamp(18px,4vw,36px) 22px; }
+  .rail nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 2px 15px; }
+  .rail-group { grid-column: 1 / -1; }
+  .doc { padding-top: 6px; }
+  .part { margin-top: 66px; } .mod, .band { margin-top: 54px; }
+}
+@media (max-width: 520px) { body { font-size: 16.5px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<aside class="rail">
+  <span class="series">Series · 8 of 8</span>
+  <div class="rail-brand">From Zero to<br>AI Engineer</div>
+  <div class="rail-sub">Foundations · beginner → expert</div>
+  <nav id="toc">
+    <a href="#open"><span class="n">§</span><span>Start here</span></a>
+
+    <div class="rail-group hot">I · The map</div>
+    <a href="#g1"><span class="n">01</span><span>What the job is</span></a>
+    <a href="#g2"><span class="n">02</span><span>How we got here</span></a>
+
+    <div class="rail-group">II · What a model is</div>
+    <a href="#g3"><span class="n">03</span><span>Tokens &amp; prediction</span></a>
+    <a href="#g4"><span class="n">04</span><span>Attention, plainly</span></a>
+    <a href="#g5"><span class="n">05</span><span>How it was trained</span></a>
+    <a href="#g6"><span class="n">06</span><span>What context <em>is</em></span></a>
+
+    <div class="rail-group">III · Capability</div>
+    <a href="#g7"><span class="n">07</span><span>What it can &amp; can't do</span></a>
+    <a href="#g8"><span class="n">08</span><span>Why it hallucinates</span></a>
+
+    <div class="rail-group hot">IV · The building blocks</div>
+    <a href="#b1"><span class="n">09</span><span>Prompting</span></a>
+    <a href="#b2"><span class="n">10</span><span>Structured output</span></a>
+    <a href="#b3"><span class="n">11</span><span>Embeddings</span></a>
+    <a href="#b4"><span class="n">12</span><span>RAG</span></a>
+    <a href="#b5"><span class="n">13</span><span>Tools &amp; agents</span></a>
+    <a href="#b6"><span class="n">14</span><span>Fine-tuning</span></a>
+    <a href="#b7"><span class="n">15</span><span>The choosing table</span></a>
+
+    <div class="rail-group">V · What you need</div>
+    <a href="#g9"><span class="n">16</span><span>Skills, honestly</span></a>
+    <a href="#g10"><span class="n">17</span><span>The stack</span></a>
+
+    <div class="rail-group hot">VI · The ladder</div>
+    <a href="#g11"><span class="n">18</span><span>Beginner → expert</span></a>
+    <a href="#g12"><span class="n">19</span><span>The six-month plan</span></a>
+  </nav>
+</aside>
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Foundations · 8 of 8 · AI engineering</p>
+  <h1>What the model is, before what to do with it. <span class="thin">Taught, not listed.</span></h1>
+  <p class="lede">What an LLM actually is and how it was made. Why attention changed everything. Why
+  hallucination is structural rather than a bug. Every building block — prompting, embeddings, RAG,
+  tools, fine-tuning — explained by mechanism. And a ladder from beginner to expert.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · you can write some code</span>
+    <span><b>Maths</b> · none required</span>
+    <span><b>Ends with</b> · a 5-level ladder and a 6-month plan</span>
+  </div>
+</header>
+
+<div class="good">
+  <span class="tag">Where this sits</span>
+  <p>Read this <strong>first</strong>. The <em>AI engineering guide</em> teaches judgement — trust
+  boundaries, eval-first, context engineering — and assumes this vocabulary. The <em>cheat sheet</em>
+  is the API reference you look things up in. This one builds the mental model.</p>
+</div>
+
+<header class="part" id="mapp">
+  <span class="pn">Part I</span>
+  <h2>The map</h2>
+</header>
+
+<header class="mod" id="g1">
+  <span class="mn">Foundation 01</span>
+  <h2>What the job actually is</h2>
+</header>
+
+<p><strong>AI engineering is building products on models somebody else trained.</strong> That single
+sentence separates it from everything adjacent, and it explains why the skill set is what it is.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Role</th><th style="width:26%">Owns</th><th>Core skill</th></tr></thead>
+  <tbody>
+    <tr><td><strong>ML researcher</strong></td><td>New model architectures and training methods</td><td>Deep maths, enormous compute. A few thousand people worldwide.</td></tr>
+    <tr><td><strong>ML engineer</strong></td><td>Training and serving models on your own data</td><td>Pipelines, features, deployment, scale.</td></tr>
+    <tr><td><strong>Data scientist</strong></td><td>Extracting signal, proving it is real</td><td>Statistics, experiments, framing.</td></tr>
+    <tr><td><strong>AI engineer</strong></td><td><strong>Products built on foundation models</strong></td><td>Prompting, retrieval, tools, <strong>evals</strong>, cost, safety. Mostly software engineering plus a specific kind of judgement.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The good news, and the trap in it</span>
+  <p><strong>You do not need to understand transformers mathematically to be excellent at this job.</strong>
+  You need to understand what the model can and cannot do, and how to build a system around something
+  that is usually right. That is closer to distributed-systems thinking than to machine learning.</p>
+  <p>The trap is the inverse: because the barrier to a <em>demo</em> is so low, the field is full of
+  people who can build one and cannot make it reliable, cheap, measurable or safe. <strong>That gap is
+  the entire career.</strong></p>
+</div>
+
+<header class="mod" id="g2">
+  <span class="mn">Foundation 02</span>
+  <h2>How we got here — in one page</h2>
+  <p class="lede">Not history for its own sake. Each step explains a behaviour you will hit.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The four ideas that produced modern LLMs</div>
+<pre><code>1  STATISTICAL LANGUAGE MODELS (n-grams)
+   "predict the next word from the previous two or three."
+   Worked a little. Could not remember anything further back, and
+   had no notion that two different words might mean the same thing.
+
+2  WORD EMBEDDINGS (~2013)
+   represent each word as a VECTOR, learned so that words used in
+   similar contexts land near each other.
+   ⭐ suddenly "king" and "queen" are geometrically related.
+   MEANING BECAME MATHEMATICS. This is the ancestor of every
+   embedding you will use — see Foundation 11.
+
+3  SEQUENCE MODELS (RNN / LSTM)
+   process words in ORDER, carrying a hidden memory.
+   ⚠ two fatal limits: strictly sequential, so you cannot
+     parallelise training; and the memory fades, so long-range
+     dependencies are lost.
+
+4  THE TRANSFORMER (2017) — ATTENTION
+   drop recurrence entirely. Let EVERY position look directly at
+   EVERY other position, weighting by learned relevance.
+   ⇒ fully parallelisable  → you can train on far more data
+   ⇒ no memory decay       → long-range dependencies work
+   ⭐ THIS IS THE UNLOCK. Everything since is mostly scale plus
+     training technique on top of this one architecture.
+
+THEN: SCALE
+   same architecture, more parameters, more data, more compute.
+   And capabilities appeared that nobody explicitly trained for —
+   translation, arithmetic, code, following instructions. That
+   surprise is why the field moved the way it did.</code></pre>
+</div>
+
+<header class="part" id="whatis">
+  <span class="pn">Part II</span>
+  <h2>What a model is</h2>
+  <p class="lede">Four mechanics. They explain almost every surprising behaviour you will
+  encounter.</p>
+</header>
+
+<header class="mod" id="g3">
+  <span class="mn">Foundation 03</span>
+  <h2>Tokens and next-token prediction</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The entire mechanism</div>
+<pre><code>STEP 1 — TEXT BECOMES TOKENS
+  the model never sees letters. text is split into TOKENS —
+  roughly ¾ of a word in English, but model-specific and not
+  word-based.
+
+    "unbelievable"  →  un | believ | able        (3 tokens)
+    "Larbi"         →  L | arb | i                (3)
+    "1234567"       →  splits unevenly
+
+  ⭐ THIS EXPLAINS THE "STUPID" FAILURES. Counting letters in a
+    word, reversing a string, precise character manipulation — the
+    model does not see characters, it sees token ids. It is not
+    being careless; it structurally cannot see what you are asking
+    about.
+  ⚠ and non-English text costs MORE per unit of meaning, because it
+    splits into more tokens.
+
+STEP 2 — PREDICT THE NEXT TOKEN
+  given every token so far, produce a probability distribution over
+  what comes next. pick one. append it. repeat.
+
+    "The capital of France is" → { " Paris": 0.94, " a": 0.01, ...}
+
+  THAT IS THE WHOLE THING. Everything the model appears to do —
+  reasoning, coding, summarising — is this, repeated.
+
+⭐ THREE CONSEQUENCES YOU WILL FEEL EVERY DAY
+
+  · READING is parallel; WRITING is serial.
+    the model processes your whole prompt at once (fast, and
+    cacheable) but generates one token at a time (slow).
+    ⇒ OUTPUT LENGTH DOMINATES LATENCY, and output tokens cost
+      roughly 5× input. "Answer in one sentence" is a genuine
+      performance and cost control.
+
+  · IT CANNOT REVISE. once a token is emitted it is part of the
+    context and conditions everything after it. This is exactly
+    what "thinking" gives it — a place to work before committing.
+
+  · IT IS NOT LOOKING ANYTHING UP. there is no database inside.
+    See Foundation 08.</code></pre>
+</div>
+
+<header class="mod" id="g4">
+  <span class="mn">Foundation 04</span>
+  <h2>Attention, plainly</h2>
+  <p class="lede">The one architectural idea worth understanding, with no maths.</p>
+</header>
+
+<div class="ascii">   THE PROBLEM ATTENTION SOLVES
+
+     "The trophy didn't fit in the suitcase because it was too big."
+
+     What does "it" refer to? To answer, the model must connect "it"
+     back to "trophy" — six words earlier. Change one word:
+
+     "The trophy didn't fit in the suitcase because it was too small."
+
+     Now "it" means the SUITCASE. Same sentence shape, different
+     referent, and only meaning decides which.
+
+   HOW ATTENTION HANDLES IT
+
+     when processing "it", the model asks every other position:
+     "how relevant are you to me, right now?"
+
+       The    trophy   didn't  fit  in  the  suitcase  because  it
+        ·      ███      ·       ·   ·   ·     ██        ·      ▲
+        low    HIGH    low     low low low   MEDIUM    low    (here)
+
+     it then builds its representation of "it" as a weighted blend,
+     dominated by whatever it attended to most. The weights are
+     LEARNED — nobody wrote a rule about pronouns.
+
+   WHY THIS WAS THE UNLOCK
+     · every position reaches every other DIRECTLY — no fading memory
+     · all positions computed IN PARALLEL — trainable at huge scale
+     · relevance is learned from data, not hand-specified
+
+   WHAT IT COSTS
+     every position attending to every other is QUADRATIC in the
+     sequence length. Double the context, quadruple the work.
+     ⇒ this is why context windows were historically small, and why
+       long contexts remain expensive even now that they are large.
+
+   ⚠ AND A PRACTICAL CONSEQUENCE: attention is not uniform. Material
+     in the MIDDLE of a very long prompt gets less weight than
+     material at the beginning or end. Put the critical instruction
+     and the most relevant document near the ends.</div>
+
+<header class="mod" id="g5">
+  <span class="mn">Foundation 05</span>
+  <h2>How the model was trained</h2>
+  <p class="lede">Three stages. Knowing them explains why the model behaves helpfully, why it has a
+  knowledge cutoff, and why it sometimes refuses.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Pretraining → instruction tuning → preference tuning</div>
+<pre><code>STAGE 1 · PRETRAINING            months · enormous compute
+  predict the next token, over an enormous corpus of text.
+  no human labelled any of it — the "label" IS the next word.
+  (this is SELF-SUPERVISED learning.)
+
+  what it produces: a model with a vast amount of knowledge and
+  language ability, that does NOT follow instructions. Ask it a
+  question and it might continue with more questions, because that
+  is what text often does.
+
+  ⭐ THIS STAGE IS WHERE THE KNOWLEDGE CUTOFF COMES FROM. The corpus
+    stops at a date. The model does not know what it does not know
+    about anything after it — and will answer confidently anyway.
+
+STAGE 2 · INSTRUCTION TUNING (SFT)      weeks
+  fine-tune on curated examples of instruction → good response.
+  now it answers questions instead of continuing them.
+
+  ⇒ this is why it behaves like an assistant at all. That behaviour
+    was TRAINED IN, not emergent.
+
+STAGE 3 · PREFERENCE TUNING (RLHF / DPO)   weeks
+  humans compare pairs of responses; the model is tuned toward the
+  preferred ones.
+
+  ⇒ this produces the tone, the helpfulness, the hedging, the
+    formatting habits — and the refusals.
+
+⭐ WHAT THIS EXPLAINS, PRACTICALLY
+  · "why does it write like that?" — stage 3.
+  · "why won't it answer?" — stage 3. a refusal is a trained
+    behaviour, not a lookup against a rule list.
+  · "why is it confident about things it can't know?" — stage 1
+    gave it knowledge with no timestamp and no uncertainty signal.
+  · "why does it follow my instructions at all?" — stage 2.
+
+⚠ AND WHAT IT MEANS FOR YOU: you are working with a model whose
+  behaviour was shaped by choices you did not make and cannot see.
+  Fine-tuning (Foundation 14) adds a fourth stage on top — it does
+  not replace any of these.</code></pre>
+</div>
+
+<header class="mod" id="g6">
+  <span class="mn">Foundation 06</span>
+  <h2>What "context" actually is</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One budget, and no memory</div>
+<pre><code>THE CONTEXT WINDOW holds EVERYTHING for one request:
+
+  system prompt + tool definitions + full conversation history
+  + retrieved documents + the output being generated
+
+  input and output share the same budget.
+
+⭐ THE API IS STATELESS. The model remembers NOTHING between calls.
+  A chat that "remembers" earlier turns does so because YOUR CODE
+  resends the entire conversation every time — and you pay for all
+  of it, every turn.
+
+  turn 1:  send [system + msg1]                    → pay for that
+  turn 2:  send [system + msg1 + reply1 + msg2]    → pay for ALL
+  turn 3:  send [system + msg1 + reply1 + msg2
+                 + reply2 + msg3]                  → pay for ALL
+
+  ⇒ cost grows QUADRATICALLY over a long conversation. This is the
+    single biggest surprise in the bill for chat products.
+
+WHAT "MEMORY" MEANS IN PRACTICE — three different things
+  CONVERSATION HISTORY  resending it. simple, costly, bounded.
+  SUMMARISATION /       compress old turns so the window lasts
+    COMPACTION          longer. lossy by design.
+  EXTERNAL MEMORY       write facts to a store, retrieve them later.
+                        the only one that persists across sessions.
+
+⚠ AND THE FAILURE TO DESIGN AGAINST: when the conversation exceeds
+  the window, something must go. If your code silently truncates,
+  you have removed information without telling anyone — and the
+  resulting confusion looks like a model failure rather than a
+  design one.</code></pre>
+</div>
+
+<header class="part" id="cap">
+  <span class="pn">Part III</span>
+  <h2>Capability</h2>
+</header>
+
+<header class="mod" id="g7">
+  <span class="mn">Foundation 07</span>
+  <h2>What it can and cannot do</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">Genuinely good at</th><th>Genuinely bad at</th></tr></thead>
+  <tbody>
+    <tr><td>Summarising, rewriting, explaining, drafting</td><td><strong>Arithmetic</strong> and anything auditable — it predicts plausible digits, it does not calculate</td></tr>
+    <tr><td>Extraction into a schema from messy input</td><td><strong>Exact reproducibility</strong> — same input, same output, forever</td></tr>
+    <tr><td>Classification where categories are fuzzy or numerous</td><td><strong>Tabular prediction with labels</strong> — gradient boosting wins, cheaply and auditably</td></tr>
+    <tr><td>Translation between formats, languages, registers</td><td><strong>Character-level work</strong> — counting letters, reversing strings (see tokenisation)</td></tr>
+    <tr><td>Code generation and explanation</td><td><strong>Knowing what it doesn't know</strong> — no reliable uncertainty signal</td></tr>
+    <tr><td>Turning intent into structured action (as an interface)</td><td><strong>Anything after the knowledge cutoff</strong>, without tools or context</td></tr>
+    <tr><td>Working with unstructured text and images</td><td><strong>Being the only guard on a destructive action</strong></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The architectural pattern that follows</span>
+  <p><strong>The deterministic system computes; the model narrates.</strong> Calculate the number in
+  SQL where it is reproducible and auditable, and have the model write the explanation around it.</p>
+  <p>Then the worst possible hallucination is a clumsy sentence rather than a wrong figure in a board
+  pack. This single split covers a very large share of real AI features in business software, and
+  recognising it is what separates a design from a demo.</p>
+</div>
+
+<header class="mod" id="g8">
+  <span class="mn">Foundation 08</span>
+  <h2>Why it hallucinates</h2>
+  <p class="lede">Not a bug. A direct consequence of Foundation 03.</p>
+</header>
+
+<div class="bad">
+  <span class="tag">The mechanism</span>
+  <p>The model produces <strong>plausible continuations</strong>. It has no lookup table, no truth
+  flag, and no reliable internal signal for "I don't know". <strong>An invented citation and a real
+  one are produced by exactly the same process and look identical to it.</strong></p>
+  <p>So it will always be possible. You cannot prompt it away — you engineer around it.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The six mitigations, in order of strength</div>
+<pre><code>1  COMPUTE IT ELSEWHERE   ⭐ strongest. anything numeric or
+                          auditable never comes from the model.
+2  GROUND IT              retrieval, plus an instruction to answer
+                          only from the provided context
+3  CONSTRAIN IT           a schema or an enum cannot be hallucinated
+                          into. removes the failure rather than
+                          reducing it.
+4  VERIFY IT              check claims programmatically. if it cites
+                          chunk ids, assert each was in the context —
+                          a dozen lines, and it converts an invisible
+                          failure into a caught one.
+5  PERMIT "I DON'T KNOW"  explicitly. without permission the model
+                          fills the gap, because that is what it is
+                          for. one sentence measurably helps.
+6  SHOW THE SOURCES       so a human can check. converts a silent
+                          failure into a visible one.
+
+⚠ WHAT DOESN'T WORK: "be accurate", "don't make things up", "only
+  say true things". The model is not withholding accuracy. It has no
+  mechanism to comply.</code></pre>
+</div>
+
+<header class="part" id="blocks">
+  <span class="pn">Part IV · the part you came for</span>
+  <h2>The building blocks</h2>
+  <p class="lede">Six techniques, each explained by mechanism, then a table for choosing between
+  them.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Block 09</span>
+  <h2>Prompting</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What a prompt is made of, and what each part does</div>
+<pre><code>SYSTEM PROMPT     role, task, constraints, output contract, domain
+                  vocabulary the model won't know.
+                  ⭐ KEEP IT FROZEN — it is the cache prefix, and any
+                    change invalidates everything after it. No dates,
+                    no user names, no per-request anything.
+
+FEW-SHOT EXAMPLES 3–5 input/output pairs showing the edge cases an
+                  instruction can't express. Examples beat adjectives:
+                  showing a 40-word answer works better than asking
+                  for "concise".
+
+DELIMITERS        &lt;document&gt;…&lt;/document&gt; around anything untrusted,
+                  with a statement that it is data, not instructions.
+
+THE ACTUAL INPUT  last, because it varies per request.
+
+⭐ THE HIERARCHY — in order of payoff
+  1  the right CONTEXT      ← biggest win by far. most "bad output"
+                              is MISSING INFORMATION, not bad wording.
+  2  the right TOOLS        ← let it fetch what it needs
+  3  a constrained SHAPE    ← a schema beats a plea
+  4  EXAMPLES for edges
+  5  the right EFFORT level
+  6  rewording              ← smallest lever, most fiddled with
+
+⚠ OBSOLETE: "think step by step". Current models reason by default,
+  and explicit don't-think instructions actively make output worse.
+
+⭐ DEBUGGING RULE: when output is bad, READ THE FULLY RENDERED
+  PROMPT — the actual bytes sent, every variable interpolated. A
+  surprising share of prompt bugs are visible immediately: an empty
+  variable, a truncated document, retrieved chunks that are all
+  irrelevant. Then ask: could a competent human do this task with
+  ONLY this context? If not, the problem is context, and no rewording
+  fixes an absence.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Block 10</span>
+  <h2>Structured output</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Stop parsing prose</div>
+<pre><code>THE PROBLEM   you need a machine-readable answer, and the model
+              returns "Sure! Here's the JSON: ```json {...}```"
+
+THE OLD FIXES asking nicely · regex extraction · prefilling the
+              assistant turn with "{"
+              ⚠ prefill is REMOVED on current models — it returns
+                a 400. It used to be the standard trick.
+
+THE FIX       declare a SCHEMA. the model is constrained to produce
+              conforming output. you deserialise instead of parsing.
+
+  ⭐ WHY THIS MATTERS MORE THAN IT SOUNDS: a constrained output space
+    is also a HALLUCINATION control. If a field is an enum of seven
+    categories, the model cannot invent an eighth. You have removed
+    a failure mode rather than mitigating it.
+
+TWO MECHANISMS, DIFFERENT JOBS
+  STRUCTURED OUTPUT   the RESPONSE is a JSON object matching a
+                      schema. for extraction, classification with
+                      metadata, anything you deserialise.
+  STRICT TOOL USE     the ARGUMENTS to a tool call validate against
+                      a schema. for when the model should DO
+                      something and you need the parameters right.
+
+⭐ RULE OF THUMB: if you are writing a regex against model output,
+  you have skipped a schema.</code></pre>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Block 11</span>
+  <h2>Embeddings</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Meaning as geometry</div>
+<pre><code>An embedding is a vector of floats representing text, where
+SEMANTIC PROXIMITY becomes GEOMETRIC PROXIMITY.
+
+  "cancel my order"     → [0.021, −0.113, 0.087, …]   768–3072 dims
+  "how do I get a refund" → [0.019, −0.109, 0.091, …]  ← CLOSE
+  "cold chain packaging"  → [−0.204, 0.331, −0.017, …] ← FAR
+
+  two texts meaning the same thing land near each other WITH NO
+  WORDS IN COMMON. that is the whole value, and it is exactly what
+  keyword search cannot do.
+
+MEASURING CLOSENESS
+  COSINE          the angle between vectors, ignoring magnitude.
+                  ⭐ the default for text — a long document and a
+                    short query on the same topic score as similar.
+  DOT PRODUCT     angle and magnitude. on NORMALISED vectors it is
+                  equivalent to cosine and cheaper, which is why
+                  most stores normalise on write.
+  EUCLIDEAN       straight-line distance. rarely right for text.
+
+⚠ THREE THINGS EMBEDDINGS ARE PREDICTABLY BAD AT
+  NEGATION        "invoices that are NOT paid" retrieves paid
+                  invoices — a sentence and its negation embed close.
+  EXACT IDS       product codes, error codes, names. semantically
+                  meaningless, so semantic search misses them.
+                  ⭐ THIS IS WHY HYBRID SEARCH EXISTS.
+  NUMBERS/DATES   "orders over €500 in March" is a FILTER, not a
+                  similarity question. use metadata.
+
+⚠ AND: changing the embedding model means RE-EMBEDDING EVERYTHING.
+  Vectors from two models live in different spaces and are not
+  comparable. There is no migration — it is a full re-index.
+
+BEYOND SEARCH: deduplication · clustering · classification by
+nearest labelled example · recommendation · anomaly detection</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Block 12</span>
+  <h2>RAG</h2>
+  <p class="lede">Retrieval-augmented generation: fetch relevant context at query time and put it in
+  the prompt.</p>
+</header>
+
+<div class="ascii">   WHY IT EXISTS
+     the model doesn't know your documents, and its knowledge stops
+     at a date. RAG puts the right information in front of it at the
+     moment of the question.
+
+   THE PIPELINE
+
+     documents
+        │  ① CHUNK        split into passages
+        ▼
+     chunks ──② EMBED──► vector store
+        │                     │
+        │  query ──embed──────┤
+        │                     ▼
+        │              ③ RETRIEVE  (top-k by similarity)
+        │                     │
+        │              ④ RERANK    (a slower, better model reorders)
+        │                     │
+        │              ⑤ ASSEMBLE  context + citations
+        │                     ▼
+        └───────────────► ⑥ GENERATE ──► answer + sources
+
+   ⭐ THE SINGLE MOST USEFUL THING TO KNOW: when the answer is wrong,
+     there are FOUR possible causes and you must be able to tell them
+     apart —
+
+       ① was it in the corpus AT ALL?        (coverage)
+       ② was it in the retrieved set?         (recall)
+       ③ did it survive reranking?            (precision)
+       ④ did the model use it?                (faithfulness)
+
+     Without this split, debugging RAG is guesswork — and teams
+     spend weeks tuning chunk size when the document was never
+     ingested.
+
+   THE CHEAPEST QUALITY WIN
+     PREPEND THE DOCUMENT TITLE AND SECTION HEADING TO EVERY CHUNK.
+     A chunk reading "…must be refrigerated at 2–8 °C" is useless
+     without knowing which product it describes.
+
+   ⚠ BEFORE YOU BUILD IT, CHECK WHETHER YOU NEED IT
+     context windows are now ~1M tokens. If your whole corpus fits,
+     put it in the prompt and cache it — no vector store, no
+     chunking, no retrieval bugs, and cache reads cost ~0.1× input.
+     RAG earns its complexity when the corpus far exceeds the window,
+     changes constantly, or needs per-user access filtering.</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Block 13</span>
+  <h2>Tools and agents</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Tool use — the mechanism</div>
+<pre><code>You describe functions the model may call. It doesn't execute them —
+it REQUESTS a call, you run it, and you return the result.
+
+  1  you send: messages + tool definitions
+  2  model replies: "call get_weather(location='Paris')"
+     (stop_reason: "tool_use")
+  3  YOUR CODE runs the function
+  4  you send the result back
+  5  model continues, now knowing the answer
+
+⭐ THE MODEL NEVER RUNS ANYTHING. It asks. Your code decides whether
+  to comply — and that gap is where all your security lives.
+
+THE TOOL DESCRIPTION IS A PROMPT. It is how the model decides
+whether to call it. Vague descriptions cause wrong tool choice, and
+that is a DOCUMENTATION bug, not a model failure.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Agents — and the test for whether you need one</div>
+<pre><code>   ONE CALL          you write the prompt. deterministic.
+      │              easiest to evaluate, cheapest, most reliable.
+      ▼
+   CHAINED CALLS     you write the sequence. each step evaluable
+      │              separately. ⭐ MOST PRODUCTION VALUE LIVES HERE
+      │                and it is deeply unglamorous.
+      ▼
+   ROUTED            a classifier picks a branch. still bounded.
+      ▼
+   AGENT             THE MODEL chooses the sequence. unbounded
+                     paths, unbounded cost, every run different —
+                     which is exactly what makes evaluation hard.
+
+⭐ THE TEST: CAN YOU ENUMERATE THE STEPS IN ADVANCE?
+  yes → pipeline. you get determinism, per-step evals, lower cost
+        and debuggability, for free.
+  genuinely no → agent, with caps.
+
+WHAT MAKES AN AGENT OPERABLE (non-negotiable)
+  · an ITERATION CAP — an unbounded loop is an unbounded bill
+  · a TOKEN BUDGET
+  · a FULL TRACE of every tool call, argument and result
+  · a CONTEXT STRATEGY — tool results accumulate forever
+  · TOOLS SCOPED TO THE CALLER, built from the session
+
+⚠ AGENTS ARE THE MOST OVER-APPLIED PATTERN IN THE FIELD. Most tasks
+  people build agents for can be enumerated, which means they are
+  pipelines wearing a costume.</code></pre>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Block 14</span>
+  <h2>Fine-tuning</h2>
+</header>
+
+<div class="ascii">   THE LADDER — exhaust each rung before the next
+
+   1  BETTER PROMPT + CONTEXT     minutes   ← most problems die here
+   2  FEW-SHOT EXAMPLES           minutes
+   3  STRUCTURED OUTPUT / TOOLS   hours     ← fixes most format pain
+   4  RAG                         days      ← fixes most "it doesn't
+                                              know our stuff" pain
+   5  FINE-TUNING                 weeks     ← last, with a measured
+                                              reason
+   6  TRAIN FROM SCRATCH          don't
+
+   ⭐ THE TEST BEFORE STARTING: can a prompt get it right MOST of the
+     time? If no, fine-tuning usually won't fix it either.
+     FINE-TUNING MAKES A MODEL DO RELIABLY WHAT IT CAN ALREADY DO
+     OCCASIONALLY. It does not add a capability.
+
+   GOOD FOR                      NOT THE ANSWER FOR
+   style, tone, format           ⚠ ADDING KNOWLEDGE — facts baked
+   consistency at scale            into weights are uncitable, stale
+   domain vocabulary               on change, unverifiable. USE RAG.
+   making a SMALL model match      ⚠ reasoning ability
+   a large one on ONE task         ⚠ anything that changes often
+   dropping a long prompt          ⚠ low volume
+
+   METHODS
+     LoRA / PEFT   freeze the base, train small adapter matrices.
+                   cheap, fast, swappable, revertible. ⭐ the default.
+     QLoRA         LoRA on a quantised base. cheaper hardware.
+     FULL          update every weight. expensive, and risks
+                   CATASTROPHIC FORGETTING — better at your task,
+                   measurably worse at everything else.
+
+   THE COST NOBODY BUDGETS: the base model improves, and your tuned
+   model is stuck behind a better one you cannot use without redoing
+   the work. Prompt-based systems inherit improvements for free.</div>
+
+<header class="mod" id="b7">
+  <span class="mn">Block 15</span>
+  <h2>The choosing table</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">If the problem is…</th><th>Reach for</th></tr></thead>
+  <tbody>
+    <tr><td>"It doesn't know our documents"</td><td><strong>RAG</strong> — or the whole corpus in a cached prompt if it fits.</td></tr>
+    <tr><td>"The output format is inconsistent"</td><td><strong>Structured output.</strong> Not prompting.</td></tr>
+    <tr><td>"It needs live or private data"</td><td><strong>Tools.</strong></td></tr>
+    <tr><td>"It doesn't follow our house style"</td><td><strong>Few-shot examples</strong> first; fine-tuning only at scale.</td></tr>
+    <tr><td>"It makes things up"</td><td><strong>Grounding + citations + verification.</strong> And move any computation out of the model.</td></tr>
+    <tr><td>"It's too expensive"</td><td><strong>Caching first</strong>, then input/output hygiene, then batch, then effort, then model.</td></tr>
+    <tr><td>"It's too slow"</td><td><strong>Stream</strong>, shorten the output, lower effort, parallelise.</td></tr>
+    <tr><td>"We need to know if changes help"</td><td><strong>Evals.</strong> Before anything else.</td></tr>
+    <tr><td>"The task needs many unpredictable steps"</td><td><strong>An agent</strong> — but check you can't enumerate them first.</td></tr>
+    <tr><td>"It's tabular data with labels"</td><td><strong>Not an LLM.</strong> Gradient boosting.</td></tr>
+    <tr><td>"The answer must be exact and auditable"</td><td><strong>Not an LLM.</strong> Compute it; let the model explain it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="need">
+  <span class="pn">Part V</span>
+  <h2>What you actually need</h2>
+</header>
+
+<header class="mod" id="g9">
+  <span class="mn">Foundation 16</span>
+  <h2>Skills, honestly</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Skill</th><th style="width:14%">Depth</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Software engineering</strong></td><td><span class="ok">Deep</span></td><td>This is the job. APIs, error handling, retries, logging, testing, deployment. AI engineering is backend engineering against a probabilistic dependency.</td></tr>
+    <tr><td><strong>One language well</strong></td><td><span class="ok">Deep</span></td><td>Python or TypeScript. Both SDKs are first-class.</td></tr>
+    <tr><td><strong>Evaluation thinking</strong></td><td><span class="ok">Deep</span></td><td>The actual differentiator. Held-out splits, grading methods, judge validation. Almost nobody has this and everybody needs it.</td></tr>
+    <tr><td><strong>Prompting &amp; context</strong></td><td><span class="ok">Solid</span></td><td>Less about wording than about deciding what the model sees.</td></tr>
+    <tr><td><strong>Retrieval</strong></td><td><span class="ok">Solid</span></td><td>Chunking, hybrid search, reranking, and the four-stage debugging split.</td></tr>
+    <tr><td><strong>Security thinking</strong></td><td><span class="ok">Solid</span></td><td>Prompt injection and the trust boundary. The highest-stakes thing on this list.</td></tr>
+    <tr><td><strong>Cost reasoning</strong></td><td><span class="mid">Working</span></td><td>Token arithmetic, caching, batch. Estimate the monthly bill at design time.</td></tr>
+    <tr><td><strong>Statistics</strong></td><td><span class="mid">Working</span></td><td>Enough for evals: sample size, base rates, why a difference across 20 examples means nothing.</td></tr>
+    <tr><td><strong>Classical ML</strong></td><td><span class="mid">Conceptual</span></td><td>Enough to recognise when the answer is boosting, not an LLM. The companion DS foundations file covers it.</td></tr>
+    <tr><td><strong>Training models</strong></td><td><span class="no">Not needed</span></td><td>You are not training foundation models. Nobody expects you to.</td></tr>
+    <tr><td><strong>Deep learning maths</strong></td><td><span class="no">Not needed</span></td><td>Understand attention conceptually. You will never write a backward pass.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The honest summary</span>
+  <p><strong>AI engineering is 70% software engineering, 20% evaluation discipline, 10% knowing what
+  models can and cannot do.</strong> If you can already build and ship a backend service, you are most
+  of the way there — the missing pieces are on this page and are learnable in months, not years.</p>
+</div>
+
+<header class="mod" id="g10">
+  <span class="mn">Foundation 17</span>
+  <h2>The stack</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Layer</th><th style="width:14%">Priority</th><th>What and when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The provider SDK</strong></td><td><span class="ok">First</span></td><td>Anthropic's Python or TypeScript SDK. Learn one properly rather than three superficially.</td></tr>
+    <tr><td><strong>A schema library</strong></td><td><span class="ok">First</span></td><td>Zod or Pydantic. Structured output and tool schemas both run through it.</td></tr>
+    <tr><td><strong>Your own eval harness</strong></td><td><span class="ok">First</span></td><td>A script, a JSON file of cases, and a score. <strong>Write it yourself before adopting a framework</strong> — you will understand what the frameworks do and often not need one.</td></tr>
+    <tr><td><strong>Postgres + pgvector</strong></td><td><span class="mid">When you need retrieval</span></td><td>One database, transactional, real metadata filtering, your existing backups. Handles millions of vectors comfortably.</td></tr>
+    <tr><td><strong>Tracing / observability</strong></td><td><span class="mid">Before production</span></td><td>Log prompt version, retrieved doc ids, token counts, stop reason, latency. Those five make regressions reproducible.</td></tr>
+    <tr><td><strong>Orchestration frameworks</strong></td><td><span class="no">Later, maybe never</span></td><td>LangChain, LlamaIndex and similar. Useful for prototyping and they hide the mechanics you most need to understand. <strong>Build it directly first.</strong></td></tr>
+    <tr><td><strong>Dedicated vector DBs</strong></td><td><span class="no">When you hit a limit</span></td><td>Adopt when you can name the specific limit you hit — not because it is "the vector database".</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="ladder">
+  <span class="pn">Part VI · what you asked for</span>
+  <h2>Beginner to expert</h2>
+</header>
+
+<header class="mod" id="g11">
+  <span class="mn">Foundation 18</span>
+  <h2>The ladder</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Level 1 · Beginner — "I can call the API"</div>
+<pre><code>CAN DO      make a request · get a response · build a chat demo ·
+            follow a RAG tutorial
+CANNOT YET  tell whether it works
+THE GAP     everything you have built has been evaluated by looking
+            at three outputs and thinking "that seems fine".
+
+⭐ WHAT MOVES YOU UP: ship something to five real users. The gap
+  between demo and product will become obvious within a week.
+
+TYPICAL: days to weeks. This rung is genuinely easy now, which is
+exactly why it is not worth much.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 2 · Builder — "I can ship a feature"</div>
+<pre><code>CAN DO      structured output · tool calls · a working RAG pipeline ·
+            error handling · streaming
+CANNOT YET  improve it deliberately
+THE GAP     ⭐ NO EVALS. You change the prompt, it seems better, you
+            ship. You cannot tell an improvement from a regression,
+            so eventually nobody dares touch the prompt.
+
+⭐ WHAT MOVES YOU UP: build a 20-case eval set and put it in CI.
+  This is THE rung transition in AI engineering, and it is a day's
+  work that most people postpone for a year.
+
+TYPICAL: 1–6 months. Most people building with LLMs today are here.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 3 · Engineer — "I can make it reliable"</div>
+<pre><code>CAN DO      evals with a held-out split · debug RAG across the four
+            stages · caching and cost control · handle every failure
+            mode · trace and monitor · reason about latency
+CANNOT YET  judge whether the feature should exist
+THE GAP     you can execute well. You are not yet the person
+            deciding what gets built or where the boundary sits.
+
+⭐ WHAT MOVES YOU UP: two things. Say "this shouldn't be an LLM" —
+  and be right. And design a trust boundary properly, so that an
+  injection can succeed completely and still achieve nothing.
+
+TYPICAL: 6 months–2 years. Solidly employable and in short supply.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 4 · Senior — "I decide what gets built"</div>
+<pre><code>CAN DO      everything above, plus: recognise a classical ML problem
+            and refuse to LLM it · estimate cost at design time ·
+            design the human review surface · put authorisation in
+            code rather than prompts · know when a pipeline beats an
+            agent · mentor
+CANNOT YET  set how the organisation builds AI
+THE GAP     your judgement is trusted on your projects; it is not
+            yet the standard.
+
+⭐ WHAT MOVES YOU UP: build the thing that makes everyone else
+  faster — the shared eval harness, the internal interface every
+  model call goes through, the standard for what ships.
+
+TYPICAL: 2–4 years, and it maps onto general senior engineering
+judgement more than onto AI-specific knowledge.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 5 · Expert / staff — "I change how the org builds"</div>
+<pre><code>CAN DO      set the standard others work to · own the measurement
+            system, not just a feature · say which of the last ten
+            AI proposals should have been rules · make the
+            uncomfortable call in the room where it is decided
+
+NOT DEFINED BY  knowing more techniques. Nobody reaches this rung by
+                learning a fifth agent framework.
+DEFINED BY      judgement under uncertainty, and making other
+                people's judgement better.
+
+TYPICAL: 4+ years, and substantially less hands-on than level 3.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The honest thing about this ladder</span>
+  <p><strong>Rung 1→2 is API skills. Every rung after that is engineering discipline and
+  judgement</strong> — evals, failure modes, cost, trust boundaries, knowing when not to use a model
+  at all.</p>
+  <p>Which means the field's obsession with new frameworks is aimed at the least valuable rung. The
+  fastest genuine progress you can make from level 2 is building an eval set, and it is a day's work.</p>
+</div>
+
+<header class="mod" id="g12">
+  <span class="mn">Foundation 19</span>
+  <h2>The six-month plan</h2>
+  <p class="lede">Assumes you can already write backend code. Built around shipping one thing
+  properly.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:14%">Month</th><th style="width:24%">Focus</th><th>Do this</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1</strong></td><td>The API, hands-on</td><td>Make twenty calls. System prompts, structured output, streaming, error handling. <strong>Deliberately trigger a 400</strong> by sending a removed parameter, so the drift becomes muscle memory.</td></tr>
+    <tr><td><strong>2</strong></td><td>One real feature</td><td>Something small and genuine — summarise, classify, extract. <strong>One call.</strong> Ship it behind a flag. Resist the agent.</td></tr>
+    <tr><td><strong>3</strong></td><td><strong>Evals</strong></td><td>Twenty cases. Programmatic checks first. Into CI. Then improve the prompt and watch the number move. <em>This is the month that changes how you work.</em></td></tr>
+    <tr><td><strong>4</strong></td><td>Cost and caching</td><td>Log all four token counts. Restructure for caching and verify the cache read is non-zero. Compute the monthly bill at 10× volume.</td></tr>
+    <tr><td><strong>5</strong></td><td>Retrieval</td><td>Build RAG over a corpus you know. <strong>Build the four-stage measurement first.</strong> Add hybrid search and a reranker and measure each separately.</td></tr>
+    <tr><td><strong>6</strong></td><td>Tools, safety, ops</td><td>Two tools, then a small agent with an iteration cap and a trace. Then <strong>prompt-inject your own system</strong> through a retrieved document, and fix it at the authorisation layer rather than the prompt.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Portfolio: show the measurement</h4>
+    <p>An eval harness with a documented golden set, a before/after score, and an analysis of the
+    failure modes. Almost nobody shows this, and it is exactly what separates shipped from
+    tutorial.</p>
+  </div>
+  <div class="card">
+    <h4>Portfolio: show the cost</h4>
+    <p>"$0.004 per request, $240/month at current volume, down from $900 — here are the three levers."
+    Real engineering, and rare.</p>
+  </div>
+  <div class="card">
+    <h4>Portfolio: show a failure</h4>
+    <p>A case where the model was confidently wrong, why, and what you changed <em>in the system</em>
+    so it gets caught. Judgement beats polish.</p>
+  </div>
+  <div class="card">
+    <h4>Don't collect frameworks</h4>
+    <p>The orchestration library will change. Evals, retrieval quality, cost and trust boundaries will
+    not. Build directly before you adopt an abstraction over it.</p>
+  </div>
+</div>
+
+<hr class="rule">
+
+<h3>Where to go next</h3>
+
+<p>You now have the mental model the rest of the set assumes. <strong>The <em>AI engineering
+guide</em></strong> is the natural next file — ten reasoning procedures and eleven build modules, on
+judgement rather than mechanism. <strong>The <em>cheat sheet</em></strong> is the API reference for
+when you are actually working.</p>
+
+<p>And the closing note: everything in Part IV is a technique, and techniques change. What does not
+change is that somebody has to decide whether this should be a model at all, build the measurement
+before the feature, put the authorisation in code, and design the surface where a human catches what
+the model got wrong. That is the job, and none of it is in an SDK.</p>
+
+<div class="disclaimer">
+  <p><strong>Companion files.</strong> This is 8 of 8. The <em>AI engineering cheat sheet</em> is the
+  API reference; the <em>guide</em> is the judgement course; the <em>interview</em> file is the loop.
+  The <em>data science</em> track has the same four, and its foundations file covers the classical ML
+  this one deliberately points at rather than teaches.</p>
+  <p><strong>On versions.</strong> The API specifics here — removed parameters, current behaviour —
+  were written against the current Claude API reference. Framework and API details drift; the
+  mechanics in Parts I–III do not. Before relying on any default, check the docs for the version in
+  your stack.</p>
+</div>
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark() {
+    var best = 0, y = window.scrollY + 145;
+    for (var i = 0; i < targets.length; i++) if (targets[i] && targets[i].offsetTop <= y) best = i;
+    for (var j = 0; j < links.length; j++) links[j].classList.toggle('on', j === best);
+  }
+  var q = false;
+  window.addEventListener('scroll', function () {
+    if (q) return; q = true;
+    requestAnimationFrame(function () { q = false; mark(); });
+  }, { passive: true });
+  mark();
+})();
+</script>

@@ -1,0 +1,2058 @@
+<title>The Discipline Before the Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F5F3F0;
+  --ground-2: #FCFBFA;
+  --panel:    #ECE8E3;
+  --panel-2:  #E2DDD6;
+
+  --ink:   #1A1714;
+  --ink-2: #433D36;
+  --ink-3: #756D64;
+
+  --rule:   #D8D2CA;
+  --rule-2: #E7E3DD;
+
+  --accent:      #6B4A2F;
+  --accent-soft: #F2E9E0;
+  --accent-deep: #452D18;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #6B4A2F;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #131110;
+    --ground-2: #1A1714;
+    --panel:    #221E1A;
+    --panel-2:  #2B2621;
+
+    --ink:   #EDE9E4;
+    --ink-2: #C4BDB4;
+    --ink-3: #8C837A;
+
+    --rule:   #35302A;
+    --rule-2: #2B2621;
+
+    --accent:      #C9A47C;
+    --accent-soft: #22190F;
+    --accent-deep: #DDBE9B;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #C9A47C;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #131110;
+  --ground-2: #1A1714;
+  --panel:    #221E1A;
+  --panel-2:  #2B2621;
+
+  --ink:   #EDE9E4;
+  --ink-2: #C4BDB4;
+  --ink-3: #8C837A;
+
+  --rule:   #35302A;
+  --rule-2: #2B2621;
+
+  --accent:      #C9A47C;
+  --accent-soft: #22190F;
+  --accent-deep: #DDBE9B;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #C9A47C;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + path band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Foundations · Primer</p>
+  <p class="rail-sub">The discipline before the stack</p>
+  <span class="rail-vol">Step 1 of 3</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · The discipline</div>
+  <a href="#d1"><span class="n">01</span>Programming vs engineering</a>
+  <a href="#d2"><span class="n">02</span>Why it exists</a>
+  <a href="#d3"><span class="n">03</span>The SDLC</a>
+  <a href="#d4"><span class="n">04</span>The cost of late</a>
+  <a href="#d5"><span class="n">05</span>Methodologies</a>
+  <a href="#d6"><span class="n">06</span>Scrum &amp; Kanban</a>
+  <a href="#d7"><span class="n">07</span>Requirements</a>
+  <a href="#d8"><span class="n">08</span>Quality &amp; versions</a>
+  <a href="#d9"><span class="n">09</span>The roles</a>
+
+  <div class="rail-group">II · How it gets built</div>
+  <a href="#b1"><span class="n">10</span>Client &amp; server</a>
+  <a href="#b2"><span class="n">11</span>Front, back, API</a>
+  <a href="#b3"><span class="n">12</span>What the cloud is</a>
+  <a href="#b4"><span class="n">13</span>The tools</a>
+  <a href="#b5"><span class="n">14</span>What a stack is</a>
+  <a href="#b6"><span class="n">15</span>Working in a team</a>
+  <a href="#b7"><span class="n">16</span>Pairing &amp; review</a>
+
+  <div class="rail-group">III · Programming basics</div>
+  <a href="#p1"><span class="n">17</span>What a language is</a>
+  <a href="#p2"><span class="n">18</span>Compiled &amp; interpreted</a>
+  <a href="#p3"><span class="n">19</span>Levels &amp; paradigms</a>
+  <a href="#p4"><span class="n">20</span>Variables &amp; types</a>
+  <a href="#p5"><span class="n">21</span>Control flow</a>
+  <a href="#p6"><span class="n">22</span>Functions</a>
+  <a href="#p7"><span class="n">23</span>Data structures</a>
+  <a href="#p8"><span class="n">24</span>Pseudocode &amp; flowcharts</a>
+
+  <div class="rail-group">IV · Design &amp; architecture</div>
+  <a href="#o1"><span class="n">25</span>What OOP solves</a>
+  <a href="#o2"><span class="n">26</span>The four pillars</a>
+  <a href="#o3"><span class="n">27</span>Composition vs inheritance</a>
+  <a href="#o4"><span class="n">28</span>SOLID</a>
+  <a href="#o5"><span class="n">29</span>Design vs architecture</a>
+  <a href="#o6"><span class="n">30</span>UML that earns its keep</a>
+  <a href="#o7"><span class="n">31</span>The C4 model</a>
+  <a href="#o8"><span class="n">32</span>Architecture styles</a>
+  <a href="#o9"><span class="n">33</span>Choosing one</a>
+
+  <div class="rail-group">V · The profession</div>
+  <a href="#c1"><span class="n">34</span>What the job is</a>
+  <a href="#c2"><span class="n">35</span>Levels &amp; tracks</a>
+  <a href="#c3"><span class="n">36</span>Specialisations</a>
+  <a href="#c4"><span class="n">37</span>Why ethics is engineering</a>
+  <a href="#c5"><span class="n">38</span>The code, applied</a>
+  <a href="#c6"><span class="n">39</span>Everyday dilemmas</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Software engineering foundations · the entry-level course</p>
+  <h1>The discipline before the stack. <span class="thin">What software engineering actually is.</span></h1>
+  <p class="lede">Before any framework, before any language: what the profession is, how software
+  gets built from an idea to a running system, who does what, what kinds of languages exist and why,
+  how engineers design before building — and what the career and the responsibilities actually look
+  like. Nothing here assumes you have written code.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · nothing at all</span>
+    <span><b>Covers</b> · all 15 source files, 5 modules</span>
+    <span><b>Read before</b> · the other two handbooks</span>
+  </div>
+</header>
+
+<div class="band">
+<div class="vol here"><span class="vn">Step 1 · you are here</span><b>Foundations</b><em>What the discipline is</em></div>
+<a class="vol" href="01-onboarding-foundations.html"><span class="vn">Step 2 · 4 volumes</span><b>Onboarding handbook</b><em>This project's stack</em></a>
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Step 3 · 8 volumes</span><b>Skill upgrading handbook</b><em>Becoming senior</em></a>
+</div>
+
+<div class="good">
+  <span class="tag">Why this exists</span>
+  <p>The other two handbooks are excellent and they both <strong>assume you already know what
+  software engineering is</strong>. One teaches this project's stack; the other teaches you to become
+  senior. Neither steps back to answer the entry-level questions.</p>
+  <p>This one does, and it is also the <strong>connective hub</strong>: nearly every section points at
+  the deeper treatment elsewhere, so once a concept clicks here you know exactly where to go
+  next.</p>
+</div>
+
+<header class="part" id="discipline">
+  <span class="pn">Part I · Module 1</span>
+  <h2>The discipline</h2>
+  <p class="lede">What the field is, how software gets built start to finish, how teams choose to move
+  through that, and who is involved.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Foundations 01</span>
+  <h2>Programming versus software engineering</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%"></th><th style="width:32%">Programming</th><th>Software engineering</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Produces</strong></td><td>A program that works</td><td>A system that keeps working — for other people, under change, over years</td></tr>
+    <tr><td><strong>Timescale</strong></td><td>Now</td><td>Years, including after you leave</td></tr>
+    <tr><td><strong>Audience</strong></td><td>You</td><td>Users who did not ask how it works, and colleagues who must modify it</td></tr>
+    <tr><td><strong>Success</strong></td><td>It runs</td><td>It runs, it is correct at the edges, it can be changed safely, and someone would notice if it stopped</td></tr>
+    <tr><td><strong>Concerns</strong></td><td>Logic</td><td>Logic <em>plus</em> requirements, design, testing, deployment, operation, maintenance, cost, security, and the people involved</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">A definition worth keeping</div>
+<pre><code>⭐ SOFTWARE ENGINEERING IS THE DISCIPLINED APPLICATION OF
+  ENGINEERING PRINCIPLES TO BUILDING SOFTWARE THAT IS CORRECT,
+  MAINTAINABLE AND FIT FOR PURPOSE — AT A SCALE AND OVER A
+  LIFETIME WHERE INDIVIDUAL CLEVERNESS IS NOT ENOUGH.
+
+THE KEY PHRASE IS THE LAST ONE.
+  a script you write for yourself needs no process. A system
+  forty people will modify over a decade needs:
+    · a shared understanding of what it should do
+    · a structure people can navigate without asking
+    · a way to change it without breaking what worked
+    · a way to know it is broken before a customer tells you
+  ⇒ THE PROCESS IS NOT BUREAUCRACY. It is what makes a system
+    survivable by people who were not there when it was built.
+
+⭐ WHAT MAKES SOFTWARE "ENGINEERED" — five properties
+  ①  IT IS SPECIFIED — somebody wrote down what it must do
+  ②  IT IS DESIGNED — the structure was chosen, not accreted
+  ③  IT IS VERIFIED — there is evidence it works, not a belief
+  ④  IT IS MAINTAINABLE — the next person can change it
+  ⑤  IT IS OPERABLE — you can tell what it is doing in
+      production, and fix it when it is not
+
+⇒ code that has none of these can still be perfectly good code.
+  It is just not yet part of an engineered system.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Foundations 02</span>
+  <h2>Why the discipline exists</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The software crisis, and what it taught</div>
+<pre><code>IN THE 1960s AND 70s, LARGE SOFTWARE PROJECTS ROUTINELY:
+  · ran years late
+  · cost several times their estimate
+  · shipped unusable, or never shipped at all
+  · could not be maintained after the original team dispersed
+
+⚠ AND THE CAUSE WAS NOT BAD PROGRAMMERS. It was the absence of
+  any method for coordinating many people around a system too
+  large for any one of them to hold in their head.
+
+⭐ THE OBSERVATIONS THAT CAME OUT OF IT ARE STILL THE FIELD'S
+  MOST DURABLE FINDINGS:
+
+  ①  ADDING PEOPLE TO A LATE PROJECT MAKES IT LATER.
+     communication paths grow faster than the workforce — every
+     new person must be brought up to speed by someone who was
+     already busy.
+
+  ②  THERE IS NO SINGLE TECHNIQUE THAT MULTIPLIES PRODUCTIVITY.
+     the hard part is understanding the problem — and no tool,
+     language or process removes that.
+
+  ③  THE COST OF FIXING A DEFECT RISES SHARPLY WITH HOW LATE IT
+     IS FOUND. See reflex 04. ⭐ THIS ONE SHAPES EVERY
+     METHODOLOGY IN THE FIELD.
+
+  ④  MOST OF A SYSTEM'S TOTAL COST IS SPENT AFTER IT FIRST
+     SHIPS. Maintenance is the main event, not the epilogue.
+     ⇒ WHICH IS WHY READABILITY AND STRUCTURE ARE NOT
+       AESTHETICS — they are the majority of the budget.
+
+⭐ AND THE MINDSET THAT FOLLOWS FROM ALL FOUR: ASSUME YOU WILL
+  BE WRONG ABOUT SOMETHING, AND MAKE BEING WRONG CHEAP. That is
+  the whole of engineering judgement in one sentence, and every
+  practice in this primer is a version of it.</code></pre>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Foundations 03</span>
+  <h2>The SDLC — seven phases</h2>
+</header>
+
+<div class="ascii">   THE SOFTWARE DEVELOPMENT LIFECYCLE
+   the sequence every piece of software goes through, whether or
+   not anyone names it.
+
+   ①  PLANNING          is this worth building? what would
+                        success look like? who is it for?
+                        ⇒ output: a goal and a rough scope.
+
+   ②  REQUIREMENTS      what exactly must it do, and not do?
+                        ⇒ output: written requirements, functional
+                          and non-functional (reflex 07).
+                        ⭐ THE HIGHEST-LEVERAGE PHASE — a
+                          misunderstanding here is carried
+                          faithfully through all six that follow.
+
+   ③  DESIGN            how will it be structured? what are the
+                        pieces, the data, the interfaces?
+                        ⇒ output: a design, and diagrams where
+                          they help (Part IV).
+
+   ④  IMPLEMENTATION    write the code.
+                        ⚠ THE PHASE EVERYONE PICTURES WHEN THEY
+                          IMAGINE THE JOB, and typically well
+                          under half the effort.
+
+   ⑤  TESTING           does it do what was specified, including
+                        at the edges and under load?
+
+   ⑥  DEPLOYMENT        get it running where users are, safely
+                        and repeatably.
+
+   ⑦  MAINTENANCE       fix, adapt, extend, operate.
+                        ⭐ THE LONGEST AND MOST EXPENSIVE PHASE
+                          BY FAR — usually most of the system's
+                          total lifetime cost.
+
+   ⭐ THE CRUCIAL POINT: THESE ARE PHASES, NOT NECESSARILY STEPS
+     IN ORDER. Doing them strictly once, in sequence, is one
+     methodology (waterfall). Doing all seven every two weeks on
+     a small slice is another (agile). THE PHASES ARE ALWAYS
+     PRESENT; WHAT VARIES IS HOW OFTEN YOU GO ROUND.</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Foundations 04</span>
+  <h2>The cost of finding problems late</h2>
+</header>
+
+<div class="ascii">   RELATIVE COST TO FIX THE SAME DEFECT, BY WHERE IT IS FOUND
+
+   requirements  █                                        1×
+   design        ██                                        ~5×
+   coding        ████                                     ~10×
+   testing       ████████                                 ~25×
+   production    ████████████████████████████████         ~100×
+
+   ⭐ THE NUMBERS VARY BY STUDY AND CONTEXT — THE SHAPE DOES NOT.
+     The curve is why the entire field is organised the way it
+     is.
+
+   WHY IT RISES SO STEEPLY
+     · a requirements error costs a conversation
+     · a design error costs rework of code that exists
+     · a production error costs the rework PLUS the incident,
+       PLUS the data already written incorrectly, PLUS the
+       trust, PLUS doing it under time pressure
+
+   ⭐ AND HERE IS WHAT EVERY PRACTICE IN THIS PRIMER IS ACTUALLY
+     FOR — MOVING DETECTION LEFT:
+       asking questions before building     ⇒ catches it at 1×
+       writing requirements down            ⇒ catches it at 1×
+       designing and reviewing the design   ⇒ catches it at 5×
+       code review                          ⇒ catches it at 10×
+       automated tests                      ⇒ catches it at 10×
+       staging and canary deploys           ⇒ catches it at 25×
+       monitoring and alerting              ⇒ 100×, but fast
+
+   ⇒ SO WHEN SOMEONE ASKS WHY YOU SPENT TWENTY MINUTES ASKING
+     QUESTIONS BEFORE STARTING, THIS CHART IS THE ANSWER.</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Foundations 05</span>
+  <h2>Methodologies</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Model</th><th style="width:30%">How it moves</th><th>Right when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Waterfall</strong></td><td>Each phase once, in order, each signed off before the next</td><td>Requirements are genuinely fixed and knowable up front — regulated, contractual, or physical-world work. <span class="no">Its weakness: you learn whether it was right at the very end.</span></td></tr>
+    <tr><td><strong>V-model</strong></td><td>Waterfall with a matching test level for each design level</td><td>Safety-critical work where every requirement must be traceably verified.</td></tr>
+    <tr><td><strong>Iterative / incremental</strong></td><td>Build a piece, review, build the next</td><td>The bridge to agile. Delivers something usable early and learns from it.</td></tr>
+    <tr><td><strong>Agile</strong></td><td>Short cycles, working software each cycle, plan adjusted as you learn</td><td><span class="ok">Most software, most of the time</span> — because requirements usually are <em>not</em> knowable up front.</td></tr>
+    <tr><td><strong>Lean / XP</strong></td><td>Eliminate waste; engineering practices (pairing, TDD, continuous integration)</td><td>XP contributed most of the technical practices agile teams now take for granted.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">What agile actually says — and the common misreading</div>
+<pre><code>THE FOUR PREFERENCES (each says "over", not "instead of")
+  people and collaboration   OVER   process and tools
+  working software           OVER   comprehensive documentation
+  customer collaboration     OVER   contract negotiation
+  responding to change       OVER   following a plan
+
+⚠ THE MISREADING IS UNIVERSAL: "agile means no documentation, no
+  planning and no process."
+  ⭐ IT SAYS THE RIGHT-HAND ITEMS HAVE VALUE — just less than
+    the left when they conflict. An agile team still plans,
+    still documents, still has process. It just does not let
+    those become the point.
+
+⭐ AND THE FOUR PRACTICES THAT PRODUCE MOST OF THE BENEFIT,
+  WHATEVER THE FRAMEWORK IS CALLED:
+  ①  short cycles with something usable at the end
+  ②  talking to the person who wanted it, directly
+  ③  adjusting the plan when you learn something
+  ④  looking at what went wrong, without blame
+
+⚠ THE CEREMONY TRAP: a team can perform every ritual —
+  stand-ups, retros, story points — and still not do ①–④.
+  ⭐ WHEN JUDGING A TEAM'S PROCESS, ASK WHETHER THOSE FOUR
+    HAPPEN, NOT WHICH MEETINGS ARE ON THE CALENDAR.</code></pre>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">Foundations 06</span>
+  <h2>Scrum and Kanban</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%"></th><th style="width:38%">Scrum</th><th>Kanban</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Rhythm</strong></td><td>Fixed-length sprints, commonly two weeks</td><td>Continuous flow, no sprints</td></tr>
+    <tr><td><strong>Scope</strong></td><td>Committed at the start of the sprint</td><td>Pulled when there is capacity</td></tr>
+    <tr><td><strong>Central control</strong></td><td>The sprint commitment</td><td><strong>The work-in-progress limit</strong> — only N items in a column at once</td></tr>
+    <tr><td><strong>Roles</strong></td><td>Product owner, scrum master, developers</td><td>None prescribed</td></tr>
+    <tr><td><strong>Meetings</strong></td><td>Planning, daily stand-up, review, retrospective</td><td>Whatever the team needs; usually a stand-up</td></tr>
+    <tr><td><strong>Suits</strong></td><td>Work that can be planned in two-week units</td><td><span class="ok">Interrupt-driven work</span> — support, platform, data teams</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The one idea worth stealing from Kanban regardless</span>
+  <p><strong>Limit work in progress.</strong> Six things at 80&nbsp;% complete are worth nothing; two
+  things finished are worth two things. A WIP limit forces finishing over starting, and it makes
+  bottlenecks visible instead of hiding them in everyone's parallel workload.</p>
+</div>
+
+<header class="mod" id="d7">
+  <span class="mn">Foundations 07</span>
+  <h2>Requirements</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two kinds, and the second is where systems fail</div>
+<pre><code>FUNCTIONAL — what it must DO
+  "a manager can generate a report for their own team"
+  ⇒ testable as a yes/no.
+
+NON-FUNCTIONAL — how well it must do it
+  ⭐ THE ONES ROUTINELY OMITTED, AND THE ONES THAT DECIDE THE
+    ARCHITECTURE:
+      PERFORMANCE   "the page loads in under two seconds for
+                    95% of requests"
+      SCALE         "500 concurrent users; 50,000 employees"
+      AVAILABILITY  "available during business hours in three
+                    time zones"
+      SECURITY      "salary is visible only to HR and the
+                    employee"
+      PRIVACY       "EU employee data stays in the EU"
+      USABILITY · ACCESSIBILITY · MAINTAINABILITY
+
+  ⚠ "IT SHOULD BE FAST" IS NOT A REQUIREMENT. It cannot be
+    tested, cannot be designed for, and cannot be argued about
+    productively. ⭐ A REQUIREMENT WITHOUT A NUMBER IS AN
+    OPINION.
+
+WHAT MAKES A REQUIREMENT GOOD
+  □  UNAMBIGUOUS — one reading only
+  □  TESTABLE — you can demonstrate it is met
+  □  NECESSARY — someone loses something if it is absent
+  □  FEASIBLE — possible within the constraints
+  □  ⭐ TRACEABLE — you can say who asked for it and why. Six
+     months later "why does it do that?" has an answer.
+
+⭐ THE FORMAT THAT WORKS FOR MOST TEAMS — the user story:
+  "AS A manager, I WANT to see my team's attrition risk, SO
+  THAT I can have a conversation before someone resigns."
+  ⇒ THE "SO THAT" IS THE VALUABLE PART. It states the purpose,
+    which is what lets you propose a better solution than the
+    one that was requested.
+
+⚠ AND THE MOST COMMON FAILURE OF ALL: TAKING A REQUEST AT FACE
+  VALUE. Half of all requests are a proposed solution wearing
+  the costume of a requirement. Ask what they will do with it.</code></pre>
+</div>
+
+<header class="mod" id="d8">
+  <span class="mn">Foundations 08</span>
+  <h2>Quality, versions, testing, documentation</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four practices, compressed</div>
+<pre><code>WHAT "QUALITY" MEANS — and it is two different things
+  EXTERNAL   what the user experiences: it works, it is fast,
+             it does not lose data, it is usable.
+  INTERNAL   what the next engineer experiences: it is
+             readable, structured, testable, changeable.
+  ⭐ USERS PAY FOR EXTERNAL QUALITY AND ONLY INTERNAL QUALITY
+    LETS YOU KEEP DELIVERING IT. Neglect the inside and the
+    outside degrades a year later, when every change becomes
+    risky.
+
+SEMANTIC VERSIONING — MAJOR.MINOR.PATCH  (e.g. 3.4.1)
+  PATCH  a bug fix, nothing else changes            3.4.1 → 3.4.2
+  MINOR  new functionality, nothing breaks          3.4.1 → 3.5.0
+  MAJOR  ⭐ SOMETHING BREAKS — callers must change   3.4.1 → 4.0.0
+  ⇒ SO A VERSION NUMBER IS A PROMISE, and reading one tells you
+    how carefully to upgrade. `^3.4.1` means "any 3.x" — which
+    is why a lock file matters (Part II).
+
+TESTING — the levels
+  UNIT         one piece in isolation. Many, fast.
+  INTEGRATION  pieces together, with a real database.
+               ⭐ THE BEST VALUE PER TEST in most web
+               applications, because most defects live in the
+               seams rather than inside a function.
+  SYSTEM / E2E the whole thing as a user experiences it. Few,
+               slow, and the only proof it actually works.
+  ACCEPTANCE   does it satisfy the requirement? Often a person.
+  ⇒ AND THE ORTHOGONAL PAIR: REGRESSION testing (did this
+    change break something that worked?) and SMOKE testing (is
+    it fundamentally alive after deploy?).
+
+DOCUMENTATION — write the kinds that get read
+  ⭐ THE CODE SAYS WHAT. ONLY DOCUMENTATION CAN SAY WHY.
+  worth writing: a README that gets someone running · API
+  documentation GENERATED from the code so it cannot drift ·
+  a decision record for anything architectural · a runbook for
+  a known failure.
+  ⚠ not worth writing: prose describing what the code does
+    line by line. It is wrong within a month and nobody trusts
+    it after that.</code></pre>
+</div>
+
+<header class="mod" id="d9">
+  <span class="mn">Foundations 09</span>
+  <h2>The roles</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Role</th><th style="width:30%">Owns</th><th>Answers</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Product manager</strong></td><td>What gets built and in what order</td><td>"Why this, and why now?"</td></tr>
+    <tr><td><strong>Business analyst</strong></td><td>Turning business need into requirements</td><td>"What exactly must it do?"</td></tr>
+    <tr><td><strong>UX / UI designer</strong></td><td>How it is used, and how it looks</td><td>"Can a person actually do this?"</td></tr>
+    <tr><td><strong>Frontend engineer</strong></td><td>What runs in the browser</td><td>"How does the user interact with it?"</td></tr>
+    <tr><td><strong>Backend engineer</strong></td><td>Business logic, data, APIs</td><td>"What are the rules, and where does truth live?"</td></tr>
+    <tr><td><strong>Data engineer</strong></td><td>Pipelines and the analytical store</td><td>"How does the data get here reliably?"</td></tr>
+    <tr><td><strong>Data scientist / ML engineer</strong></td><td>Models and their production life</td><td>"What can we predict, and is it any good?"</td></tr>
+    <tr><td><strong>QA engineer</strong></td><td>Test strategy and coverage</td><td>"How would this break?"</td></tr>
+    <tr><td><strong>DevOps / SRE</strong></td><td>Deployment, infrastructure, reliability</td><td>"Is it running, and would we know if it wasn't?"</td></tr>
+    <tr><td><strong>Security engineer</strong></td><td>Threats and controls</td><td>"Who could abuse this, and how?"</td></tr>
+    <tr><td><strong>Tech lead / architect</strong></td><td>Technical direction and coherence</td><td>"Does this fit, and what does it cost us later?"</td></tr>
+    <tr><td><strong>Engineering manager</strong></td><td>The people and the delivery</td><td>"Is the team effective and growing?"</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">Three things to understand about this table</span>
+  <p><strong>Roles are not people.</strong> In a small team one person covers five of these. In a
+  large one, a single role is a department. The table is a list of <em>responsibilities that must be
+  owned by somebody</em> — and the useful question on any project is which of them currently has no
+  owner.</p>
+  <p><strong>Job titles do not map cleanly onto it.</strong> "Full-stack developer" spans three rows;
+  "software engineer" can mean any of eight.</p>
+  <p><strong>A cross-functional squad contains the roles needed to ship something end to end</strong>
+  — which is precisely so that shipping does not require queueing behind another team.</p>
+</div>
+
+<header class="part" id="built">
+  <span class="pn">Part II · Module 2</span>
+  <h2>How software gets built</h2>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Foundations 10</span>
+  <h2>Client and server</h2>
+</header>
+
+<div class="ascii">   THE MODEL UNDER ALMOST EVERYTHING
+
+     CLIENT  ──── request ────►  SERVER
+     (browser,  ◄─── response ──  (a program on a machine
+      phone, app)                  you control)
+
+   the client ASKS; the server ANSWERS. The client never touches
+   the data directly, and the server never assumes the client is
+   honest.
+
+   WHAT HAPPENS WHEN YOU OPEN A WEB PAGE — the short version
+     ①  you type a URL
+     ②  the name is resolved to an address
+     ③  a connection is opened, and secured
+     ④  the browser requests the page
+     ⑤  the server responds with HTML
+     ⑥  the browser reads it and requests what it references —
+         stylesheets, scripts, images, fonts
+     ⑦  it draws the page
+     ⑧  scripts run, and the page becomes interactive
+     ⑨  from then on, the page requests DATA rather than pages
+
+   ⭐ STEP ⑨ IS THE MODERN WEB. Older sites fetched a whole new
+     page for every action; today the page stays and asks for
+     data as needed. That single shift is why front-end
+     engineering became a specialism.
+
+   ⭐ AND THE PROPERTY THAT EXPLAINS MOST OF WEB SECURITY:
+     HTTP IS STATELESS — the server remembers nothing between
+     requests. So every request must carry its own proof of
+     identity, and "logged in" is not a state the server holds.</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Foundations 11</span>
+  <h2>Front end, back end, and the API between them</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%"></th><th style="width:38%">Front end</th><th>Back end</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Runs</strong></td><td>In the user's browser or app</td><td>On a server you control</td></tr>
+    <tr><td><strong>Responsible for</strong></td><td>Rendering, interaction, requesting data, displaying it</td><td>Business rules, data storage, authentication, authorisation, talking to other services</td></tr>
+    <tr><td><strong>Can be trusted?</strong></td><td><span class="no">No.</span> The code has been delivered to someone else's machine; it can be read and modified</td><td><span class="ok">Yes</span> — it is the only place a rule can actually be enforced</td></tr>
+    <tr><td><strong>Typical concerns</strong></td><td>Layout, state, accessibility, bundle size, perceived speed</td><td>Correctness, permissions, data integrity, throughput, cost</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The API — a contract, explained by analogy and then plainly</div>
+<pre><code>THE RESTAURANT: you read the MENU and order from a waiter. You
+never enter the kitchen, and you do not know whether the soup
+was made fresh. You know the CONTRACT and nothing else.
+
+⭐ AND THAT IGNORANCE IS THE POINT. The kitchen can be rebuilt
+  in a different language and your order still works, as long as
+  the menu is unchanged.
+
+PLAINLY: AN API IS A PUBLISHED SET OF OPERATIONS ONE PROGRAM
+OFFERS ANOTHER, WITH AGREED INPUTS AND OUTPUTS.
+  · the front end calls the back end's API
+  · the back end may call another service's API
+  · they exchange data in a common format — usually JSON, plain
+    text that every language can read, which is why two
+    services written in different languages can cooperate at
+    all
+
+⭐ WHY THE SPLIT IS WORTH THE COMPLEXITY — four reasons
+  ①  SEPARATION OF CONCERNS — UI problems and business-rule
+     problems are genuinely different kinds of problem
+  ②  INDEPENDENT WORK — agree the contract, then proceed in
+     parallel
+  ③  THE RIGHT TOOL FOR EACH JOB
+  ④  ⭐ SECURITY — the non-negotiable one. Password checks,
+     permission decisions and database access must happen
+     somewhere the user cannot modify.
+     ⇒ A DISABLED BUTTON IS A COURTESY, NOT A CONTROL.</code></pre>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Foundations 12</span>
+  <h2>What "the cloud" means</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Renting computers, with layers of how much you manage</div>
+<pre><code>⭐ THE CLOUD IS SOMEBODY ELSE'S COMPUTERS, RENTED BY THE HOUR,
+  WITH AN API TO CREATE AND DESTROY THEM. Everything else is a
+  consequence of those three facts.
+
+THE SERVICE MODELS — how much you still manage
+
+  IaaS   you rent the machine
+         ⇒ you manage the operating system, the runtime, the
+           application, patching and scaling. Most control,
+           most work.
+  PaaS   you rent a place to run your application
+         ⇒ push code, it runs. ⭐ WHERE MOST SMALL TEAMS SHOULD
+           LIVE.
+  SaaS   you rent the finished software
+         ⇒ email, a managed database, an authentication
+           provider. You manage nothing.
+
+  ⇒ AND THE MODERN ADDITION: SERVERLESS — you rent the
+    execution of a single function, and pay nothing when idle.
+
+⭐ THE JUDGEMENT THAT MATTERS MORE THAN THE ACRONYMS: EVERY
+  LAYER YOU MANAGE IS A LAYER YOU MUST PATCH, MONITOR, SCALE
+  AND BE WOKEN UP BY. A small team running its own database
+  cluster has chosen to spend its scarcest resource —
+  attention — on something a provider does better and cheaper.
+
+WHY TEAMS USE IT
+  · no capital purchase, and capacity in minutes
+  · elasticity — scale up for a spike, back down after
+  · managed services that would otherwise be a full-time job
+  · geographic reach without owning buildings
+
+⚠ AND THE HONEST COSTS
+  · it is not automatically cheaper — a steady predictable load
+    can be cheaper on your own hardware
+  · ⭐ THE BILL IS A DESIGN CONSEQUENCE. An inefficient query
+    now has a price, which is a genuinely new discipline.
+  · you are dependent on a provider, and on your network</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Foundations 13</span>
+  <h2>The tools of the trade</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Tool</th><th style="width:30%">Does</th><th>Why it matters</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Editor / IDE</strong></td><td>Writes code, with navigation, autocomplete, refactoring and a debugger</td><td>An IDE understands your code, not just its text — "find all references" before a change is worth more than any typing speed.</td></tr>
+    <tr><td><strong>Version control</strong></td><td>Records every change, who made it and why; lets people work in parallel</td><td><span class="ok">The single most important tool on this list.</span> It is what makes collaboration and undo possible at all.</td></tr>
+    <tr><td><strong>Package manager</strong></td><td>Installs libraries and records exact versions</td><td>The lock file is what makes an install reproducible on someone else's machine.</td></tr>
+    <tr><td><strong>Compiler / bundler</strong></td><td>Turns source into something runnable or shippable</td><td>Where type errors and build failures surface — before users see them.</td></tr>
+    <tr><td><strong>Linter / formatter</strong></td><td>Flags likely mistakes; enforces one style automatically</td><td><strong>Every preference you automate is a code-review argument you never have again.</strong></td></tr>
+    <tr><td><strong>Debugger</strong></td><td>Pauses a running program so you can inspect real values</td><td>Five minutes watching actual data beats an hour reasoning about what the code probably does.</td></tr>
+    <tr><td><strong>Terminal</strong></td><td>Runs commands, scripts and tools</td><td>Unavoidable, and worth becoming comfortable with early.</td></tr>
+    <tr><td><strong>Containers</strong></td><td>Package the app <em>and its environment</em> together</td><td>Removes "it works on my machine" as a category of problem.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Foundations 14</span>
+  <h2>What a stack is</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The set of technologies chosen to work together</div>
+<pre><code>A STACK IS THE LAYERS A SYSTEM IS BUILT FROM:
+
+  presentation   what the user sees
+  application    the logic
+  data           where it is stored
+  infrastructure where it all runs
+
+THE NAMED ONES YOU WILL HEAR
+  LAMP    Linux · Apache · MySQL · PHP        — the classic
+  MEAN    MongoDB · Express · Angular · Node
+  MERN    MongoDB · Express · React · Node
+  ⇒ these names matter less than they used to; most teams now
+    assemble their own.
+
+⭐ THIS PROJECT'S STACK, AS AN EXAMPLE OF THE SHAPE
+  presentation    Next.js + React + Ant Design
+  application     NestJS (TypeScript) + FastAPI (Python)
+  data            PostgreSQL, via Prisma
+  infrastructure  containers on a managed platform
+
+  ⇒ NOTE THE TWO APPLICATION LANGUAGES. That is a deliberate
+    choice with one stated reason: Python has the machine-
+    learning ecosystem and Node does not. ⭐ A STACK DECISION
+    SHOULD ALWAYS HAVE A REASON YOU CAN STATE IN ONE SENTENCE.
+
+HOW STACKS ARE ACTUALLY CHOSEN — honestly
+  ①  what the team already knows      ⭐ the biggest factor,
+                                        and a legitimate one
+  ②  what the problem requires
+  ③  what you can hire for
+  ④  what has a healthy ecosystem and good documentation
+  ⚠ NOT: what is newest, or what a company at a thousand times
+    your scale uses. Their solution is a response to problems
+    you do not have.</code></pre>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Foundations 15</span>
+  <h2>Working in a team</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Why this is a core engineering skill, not a soft one</div>
+<pre><code>⭐ SOFTWARE IS BUILT BY GROUPS, AND THE LIMIT ON WHAT A GROUP
+  CAN BUILD IS USUALLY COORDINATION RATHER THAN INDIVIDUAL
+  ABILITY. That is the lesson of the software crisis
+  (reflex 02), and it has not changed.
+
+HOW TEAMS ARE ORGANISED
+  BY FUNCTION   all the frontend engineers together, all the
+                backend engineers together.
+                ⚠ shipping one feature then requires
+                  coordinating three teams' priorities.
+  BY PRODUCT    ⭐ A SQUAD — a small cross-functional group with
+                the roles needed to ship something end to end.
+                ⇒ THE POINT IS AUTONOMY: it can deliver without
+                  queueing behind anyone.
+
+THE DAILY RITUALS, AND WHAT EACH IS FOR
+  STAND-UP        ⭐ for surfacing BLOCKERS, not for reporting
+                  status to a manager. If it is a status
+                  recital, it has failed.
+  PLANNING        agreeing what the next cycle contains
+  REVIEW / DEMO   showing working software to the people who
+                  asked for it
+  RETROSPECTIVE   ⭐ THE HIGHEST-VALUE ONE, and the first to be
+                  cancelled when busy. It is where a team
+                  actually improves.
+
+⭐ THE PRACTICAL HABITS THAT MAKE SOMEONE GOOD TO WORK WITH
+  □  ASK EARLY. Thirty minutes stuck is learning; a day stuck
+     is waste, and nobody thanks you for it.
+  □  WRITE THINGS DOWN where others can find them.
+  □  SAY WHEN YOU ARE BLOCKED, IMMEDIATELY.
+  □  ⭐ SAY "I DON'T KNOW" AND "I WAS WRONG" WITHOUT DRAMA. A
+     team where those are cheap finds problems early; a team
+     where they are expensive hides them until they are large.
+  □  keep changes small, so review is fast
+  □  assume good intent in review comments — text has no tone
+  □  ⭐ FLAG A SLIPPING ESTIMATE EARLY. A revised date is a
+     manageable problem; a missed date discovered on the day is
+     a trust problem.</code></pre>
+</div>
+
+<header class="mod" id="b7">
+  <span class="mn">Foundations 16</span>
+  <h2>Pairing, mobbing and review</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Practice</th><th style="width:30%">What it is</th><th>Best for</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Pair programming</strong></td><td>Two people, one piece of work. One drives, one navigates; they swap</td><td>Hard problems, onboarding someone, high-risk code. <strong>Slower per hour, and often faster to a correct result</strong> — and it spreads knowledge as a side effect.</td></tr>
+    <tr><td><strong>Mob programming</strong></td><td>The whole team on one thing, one screen</td><td>An important decision, an unfamiliar area, or a crisis. Expensive, and occasionally exactly right.</td></tr>
+    <tr><td><strong>Code review</strong></td><td>Someone reads your change before it merges</td><td><span class="ok">The default, and the highest-value collaboration ritual there is.</span> Asynchronous, and it leaves a written record.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">What review is actually for — and it is not mainly bugs</div>
+<pre><code>⭐ THE BIGGEST OUTPUT IS THAT TWO PEOPLE NOW UNDERSTAND THE
+  CHANGE. That is knowledge spreading, and it is why a reviewed
+  codebase survives someone leaving.
+
+WHAT TO LOOK FOR, IN ORDER
+  ①  does it do the RIGHT THING? (read the description, then
+     the code) ⭐ THE MOST EXPENSIVE DEFECT IS A CORRECT
+     SOLUTION TO THE WRONG PROBLEM
+  ②  are permissions enforced?
+  ③  the edge cases — empty, one, many, absent, twice
+  ④  ⭐ WHAT ELSE DOES THIS CHANGE? A changed default or error
+     case, visible only in the diff
+  ⑤  is it clear? would a stranger understand WHY?
+
+HOW TO COMMENT SO IT LANDS
+  ⚠ "this is wrong" — no information, defensive author
+  ✅ THE FAILURE · THE CONSEQUENCE · A SUGGESTION
+  ⭐ AND LABEL THE SEVERITY: blocking · suggestion · question ·
+    nit · praise. Without labels every comment reads as
+    blocking, and a review of twelve nits feels like a
+    rejection.
+
+⚠ WHAT NOT TO SPEND REVIEW ON: formatting, import order, quote
+  style. Automate all of it — every comment spent there is
+  attention taken from ①–④.</code></pre>
+</div>
+
+<header class="part" id="prog">
+  <span class="pn">Part III · Module 3</span>
+  <h2>Programming basics</h2>
+  <p class="lede">How code becomes action, why there are so many languages, and the logic that is
+  identical in every one of them.</p>
+</header>
+
+<header class="mod" id="p1">
+  <span class="mn">Foundations 17</span>
+  <h2>What a language is, and how source becomes action</h2>
+</header>
+
+<div class="ascii">   A PROGRAMMING LANGUAGE IS A NOTATION FOR EXPRESSING
+   INSTRUCTIONS PRECISELY ENOUGH THAT A MACHINE CAN CARRY THEM
+   OUT — and readably enough that a person can maintain them.
+
+   ⭐ BOTH HALVES MATTER. A notation only a machine can read is
+     assembly; a notation only a human can read is a
+     specification.
+
+   FROM SOURCE TO EXECUTION
+
+     source code        text you write
+         │
+         │   TRANSLATION   (a compiler, an interpreter, or both)
+         ▼
+     machine instructions the processor's own operations
+         │
+         ▼
+     THE PROCESSOR EXECUTES THEM
+
+   ⭐ EVERYTHING A COMPUTER DOES REDUCES TO A SMALL SET OF
+     PRIMITIVE OPERATIONS: move a value, add, compare, jump if
+     a condition holds. Every language, every framework and
+     every model is built out of those.
+     ⇒ WHICH IS WHY THE LOGIC IN REFLEXES 20–23 IS UNIVERSAL:
+       it is what those primitives compose into.
+
+   AND THE THING THAT ACTUALLY RUNS IT
+     THE RUNTIME — the program that executes your program.
+       the browser's engine · Node.js · CPython · a virtual
+       machine.
+     ⇒ so "which language" and "which runtime" are two
+       questions, and the second decides where your code can
+       run.</div>
+
+<header class="mod" id="p2">
+  <span class="mn">Foundations 18</span>
+  <h2>Compiled, interpreted, and the hybrid middle</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%"></th><th style="width:30%">How</th><th>Consequences</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Compiled</strong><br><span class="mid">C, Rust, Go</span></td><td>A build step translates the whole program to machine code before it runs</td><td>Fast to run; errors caught at build time; a separate binary per platform. <strong>Slower to iterate.</strong></td></tr>
+    <tr><td><strong>Interpreted</strong><br><span class="mid">Python, Ruby</span></td><td>A runtime reads and executes the source as it goes</td><td>No build step, quick to start, portable. <strong>Slower to run, and many errors appear only when that line executes.</strong></td></tr>
+    <tr><td><strong>Bytecode + VM</strong><br><span class="mid">Java, C#</span></td><td>Compiled to an intermediate form, then run by a virtual machine</td><td>"Compile once, run anywhere the VM exists." A middle position on both axes.</td></tr>
+    <tr><td><strong>JIT</strong><br><span class="mid">JavaScript</span></td><td>Interpreted, but frequently-run code is compiled to machine code <em>while running</em></td><td><span class="ok">Most of both benefits.</span> Why JavaScript is far faster than its interpreted description suggests.</td></tr>
+    <tr><td><strong>Transpiled</strong><br><span class="mid">TypeScript</span></td><td>Translated to <em>another language</em> first — TypeScript becomes JavaScript</td><td><strong>The types are deleted in that step</strong>, so they catch mistakes before the program runs and are entirely absent while it runs.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">Why the distinction is worth knowing</span>
+  <p>It predicts <strong>when you find out you were wrong</strong> — at build time or at run time —
+  and that single difference shapes how you work. In a compiled or typed language you lean on the
+  build; in an interpreted one you lean on tests, because nothing else will tell you.</p>
+</div>
+
+<header class="mod" id="p3">
+  <span class="mn">Foundations 19</span>
+  <h2>Levels and paradigms</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two independent ways of classifying a language</div>
+<pre><code>LEVEL — how far from the machine
+  MACHINE CODE   the processor's own numeric instructions
+  ASSEMBLY       a readable name per instruction. One line, one
+                 machine operation.
+  LOW-LEVEL      C — you manage memory yourself
+  HIGH-LEVEL     Python, JavaScript, Java — memory, and much
+                 else, is managed for you
+  ⭐ THE TRADE IS ALWAYS THE SAME: CONTROL AND SPEED VERSUS
+    SAFETY AND PRODUCTIVITY. Higher level means fewer things
+    you can get catastrophically wrong, and less control over
+    the machine.
+
+PARADIGM — how you organise the instructions
+  IMPERATIVE       describe the STEPS. "Do this, then this."
+  PROCEDURAL       imperative, grouped into procedures.
+  OBJECT-ORIENTED  organise around THINGS that hold data and
+                   behaviour together. ⇒ Part IV.
+  FUNCTIONAL       ⭐ describe TRANSFORMATIONS; avoid changing
+                   state. Its central ideas — immutability,
+                   pure functions, map/filter/reduce — are now
+                   everywhere, including in React.
+  DECLARATIVE      describe the RESULT and let something else
+                   work out how. ⭐ SQL AND HTML ARE BOTH
+                   DECLARATIVE, which is why they feel
+                   different from writing code.
+  ⇒ MOST MODERN LANGUAGES ARE MULTI-PARADIGM, and good code
+    often mixes them: objects for structure, functional style
+    for transformation.
+
+AND THE LANGUAGES THAT ARE NOT PROGRAMMING LANGUAGES
+  QUERY (SQL)  ⭐ you state WHAT you want; the database decides
+               how to get it
+  MARKUP (HTML, XML)  structure and meaning, no logic
+  STYLING (CSS)       presentation
+  DATA (JSON, YAML)   ⚠ these describe data, not behaviour, and
+                      calling them programming languages
+                      confuses a real distinction</code></pre>
+</div>
+
+<header class="mod" id="p4">
+  <span class="mn">Foundations 20</span>
+  <h2>Variables and types</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The universal building blocks — part one</div>
+<pre><code>A VARIABLE IS A NAMED PLACE TO HOLD A VALUE.
+  the name is for humans; the machine cares only about the
+  location. ⭐ SO NAMING IS NOT COSMETIC — it is the only
+  documentation that is always present.
+
+THE TYPES EVERY LANGUAGE HAS, UNDER SOME NAME
+  INTEGER    whole numbers                       42
+  FLOAT      numbers with a fractional part      0.73
+  STRING     text                                "Alice"
+  BOOLEAN    true or false
+  NULL       ⭐ THE ABSENCE OF A VALUE — and it is the source of
+             more bugs than any other single concept in
+             programming
+
+⚠ THE THREE THINGS THAT ARE NOT THE SAME, AND ARE CONSTANTLY
+  TREATED AS THE SAME:
+    0            a real value that happens to be zero
+    ""           a real value that happens to be empty
+    null         no value at all
+  ⇒ A DISCOUNT OF ZERO AND NO DISCOUNT ARE DIFFERENT FACTS. A
+    system that conflates them reports the wrong number and
+    never errors.
+
+STATIC vs DYNAMIC TYPING
+  STATIC   the type is fixed and checked before running
+           ⇒ mistakes caught early, more to write
+  DYNAMIC  the type is whatever the value currently is
+           ⇒ quicker to write, mistakes found at run time
+  ⭐ AND THE MIDDLE THAT MOST TEAMS NOW CHOOSE: a dynamic
+    language with an optional type layer — TypeScript over
+    JavaScript, type hints in Python. You get early checking
+    where it pays and flexibility where it does not.
+
+⚠ AND ONE FACT THAT SURPRISES EVERYONE ONCE: FLOATING-POINT
+  ARITHMETIC IS NOT EXACT. 0.1 + 0.2 does not equal 0.3 in most
+  languages. ⭐ NEVER STORE MONEY AS A FLOAT — use integer minor
+  units, or a decimal type.</code></pre>
+</div>
+
+<header class="mod" id="p5">
+  <span class="mn">Foundations 21</span>
+  <h2>Control flow</h2>
+</header>
+
+<div class="ascii">   EVERY PROGRAM EVER WRITTEN IS MADE OF THREE SHAPES.
+   ⭐ THAT IS A PROVEN RESULT, NOT A SIMPLIFICATION.
+
+   ①  SEQUENCE — one thing after another
+
+         step 1  ──►  step 2  ──►  step 3
+
+   ②  SELECTION — a decision
+
+                    ┌── condition true ──►  do this
+         ──► test ──┤
+                    └── condition false ─►  do that
+
+       if / else if / else · switch
+       ⚠ AND THE PART BEGINNERS MISS: WHAT HAPPENS WHEN NO
+         BRANCH MATCHES? An `if` with no `else` silently does
+         nothing, and "silently does nothing" is a bug that is
+         very hard to see.
+
+   ③  REPETITION — a loop
+
+         ┌─────────────────┐
+         │  do the thing   │
+         └────────┬────────┘
+                  │  more to do?
+                  └── yes ──► round again
+                      no  ──► carry on
+
+       `for` when you know how many · `while` when you loop
+       until a condition changes
+       ⚠ THE TWO CLASSIC ERRORS:
+         · THE INFINITE LOOP — the condition never becomes
+           false. ⭐ ASK OF EVERY LOOP: WHAT MAKES THIS STOP?
+         · THE OFF-BY-ONE — running once too often or too few.
+           Almost always at the boundary: the first item, the
+           last item, or an empty collection.
+
+   ⭐ AND THE THING TO CARRY INTO EVERY LANGUAGE YOU EVER LEARN:
+     ONCE YOU CAN READ THESE THREE SHAPES, YOU CAN READ THE
+     STRUCTURE OF ANY PROGRAM. What changes between languages is
+     spelling.</div>
+
+<header class="mod" id="p6">
+  <span class="mn">Foundations 22</span>
+  <h2>Functions</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The unit of reuse, and of thought</div>
+<pre><code>A FUNCTION IS A NAMED PIECE OF LOGIC THAT TAKES INPUTS AND
+PRODUCES AN OUTPUT.
+
+  function riskLevel(score):
+      if score &gt; 0.7:  return "high"
+      if score &gt; 0.4:  return "medium"
+      return "low"
+
+  PARAMETERS   the inputs it declares
+  ARGUMENTS    the actual values passed in
+  RETURN       what it hands back
+  SCOPE        ⭐ names created inside are invisible outside —
+               which is what stops two parts of a program
+               accidentally sharing a variable
+
+⭐ WHY FUNCTIONS ARE THE MOST IMPORTANT IDEA IN THIS PART
+  ①  REUSE — write once, call anywhere
+  ②  NAMING — a good name replaces a comment, permanently
+  ③  TESTABILITY — a function with inputs and an output can be
+     checked in isolation
+  ④  ⭐ ABSTRACTION — the caller need not know how it works.
+     This is how a program of a million lines stays thinkable.
+
+⭐ THE ONE DISTINCTION THAT MATTERS MOST, AND IT RECURS AT EVERY
+  LEVEL OF ENGINEERING:
+    A PURE FUNCTION depends only on its inputs and changes
+    nothing outside itself. Same inputs, same output, always.
+    A SIDE EFFECT is anything else — writing to a database,
+    sending an email, reading the clock, printing.
+
+  ⇒ PURE LOGIC IS EASY TO TEST, EASY TO REASON ABOUT AND EASY
+    TO REUSE. So the durable design habit is to SEPARATE THE
+    DECISION FROM THE I/O:
+        fetch  →  decide  →  act
+        (I/O)    (pure)     (I/O)
+    ⭐ THE MIDDLE PIECE IS WHERE YOUR BUSINESS RULES LIVE, and
+      keeping it pure is the single most valuable structural
+      habit in this primer.
+
+GOOD FUNCTION HYGIENE
+  □  ONE JOB. ⭐ If the name needs "and", split it.
+  □  a name that says what it does, not how
+  □  few parameters — many usually means a missing concept
+  □  ⚠ and a return that is predictable: a function that
+     sometimes returns a value and sometimes nothing will
+     eventually be called by someone who assumes the first.</code></pre>
+</div>
+
+<header class="mod" id="p7">
+  <span class="mn">Foundations 23</span>
+  <h2>Basic data structures</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Structure</th><th style="width:30%">Holds</th><th>Use it when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Array / list</strong></td><td>An ordered sequence, read by position</td><td>The default. You have several of something and order matters.</td></tr>
+    <tr><td><strong>Object / dictionary / map</strong></td><td>Key → value pairs</td><td><span class="ok">The most useful one in practice.</span> Looking something up by id, repeatedly, without searching.</td></tr>
+    <tr><td><strong>Set</strong></td><td>Unique values, no order</td><td>"Have I seen this?" and removing duplicates.</td></tr>
+    <tr><td><strong>Tuple / record</strong></td><td>A fixed group of related values</td><td>A pair or triple that belongs together — coordinates, a date range.</td></tr>
+    <tr><td><strong>Stack</strong></td><td>Last in, first out</td><td>Undo history, nesting. <strong>The call stack is one</strong> — which is why a stack trace is called that.</td></tr>
+    <tr><td><strong>Queue</strong></td><td>First in, first out</td><td>Work waiting to be processed, in arrival order.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The one insight to take from this table</span>
+  <p><strong>A map turns searching into looking up.</strong> If you find yourself scanning a list
+  inside a loop over another list, building a map first collapses the work dramatically — and it is
+  the single most common fix for slow application code at any level of experience.</p>
+  <p>Everything else here is vocabulary. That one is a tool you will use constantly.</p>
+</div>
+
+<header class="mod" id="p8">
+  <span class="mn">Foundations 24</span>
+  <h2>Pseudocode and flowcharts</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Thinking about logic without committing to a language</div>
+<pre><code>PSEUDOCODE — the logic in structured plain language
+
+  READ the team's employees
+  FOR EACH employee
+      IF satisfaction is missing
+          FLAG as "no data" and SKIP
+      COMPUTE risk from tenure, satisfaction, last promotion
+      IF risk is above the threshold
+          ADD to the review list
+  SORT the review list by risk, highest first
+  RETURN the top 10
+
+⭐ WHY THIS IS WORTH DOING BEFORE WRITING CODE
+  · it exposes the decisions — ⭐ look at line 3: SOMEONE HAD
+    TO DECIDE what happens when data is missing, and writing it
+    in plain language made that decision visible instead of
+    accidental
+  · it can be checked by a non-programmer who knows the domain
+  · it separates "what should happen" from "how do I express
+    this in TypeScript", which are two different difficulties
+
+FLOWCHARTS — the same logic as a picture
+    ▭  a step        ◇  a decision
+    ▱  input/output   ⬭  start or end
+  ⇒ useful for a branchy process a stakeholder must validate.
+  ⚠ USELESS FOR REAL CODE — a flowchart of a real function is
+    unreadable, and it goes out of date immediately.
+
+⭐ THE HABIT THAT SURVIVES: WRITE THE STEPS IN PLAIN LANGUAGE
+  FIRST, IN A COMMENT OR A TICKET. If you cannot state the
+  logic in seven plain sentences, you do not yet understand the
+  problem — and code written before that point will be a
+  confident answer to the wrong question.</code></pre>
+</div>
+
+<header class="part" id="design">
+  <span class="pn">Part IV · Module 4</span>
+  <h2>Design and architecture</h2>
+  <p class="lede">Deciding the shape of a system before building it — objects, models, diagrams, and
+  the structure of the whole.</p>
+</header>
+
+<header class="mod" id="o1">
+  <span class="mn">Foundations 25</span>
+  <h2>The problem OOP solves</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Organising code around things, not just steps</div>
+<pre><code>THE PROBLEM
+  a purely procedural program of any size becomes a large set
+  of functions operating on a large set of shared data. ⚠ ANY
+  FUNCTION MIGHT CHANGE ANY DATA, so understanding one change
+  means understanding everything.
+
+THE IDEA
+  ⭐ GROUP THE DATA WITH THE OPERATIONS THAT ARE ALLOWED ON IT,
+    AND LET NOTHING ELSE TOUCH IT DIRECTLY.
+
+  A CLASS is a template: what an Employee has, and what can be
+  done to one.
+  AN OBJECT is one actual employee, built from that template.
+
+    class Employee
+        has:  name, salary, hireDate
+        can:  tenureYears(), applyRaise(percent)
+
+    alice = new Employee("Alice", 62000, "2021-03-01")
+
+  ⇒ so the rule "a raise may not exceed 20%" lives INSIDE
+    Employee, next to the salary it protects — rather than in
+    whichever four places happen to change salaries.
+
+⭐ WHAT YOU ACTUALLY GAIN, STATED PLAINLY
+  · the rules about a thing are in one findable place
+  · the data cannot be corrupted from outside
+  · the concepts in the code match the concepts in the business
+    — an Employee, a Team, a Report. ⭐ THIS IS THE UNDERRATED
+    BENEFIT: the code becomes discussable with non-engineers.
+
+⚠ AND THE HONEST CAVEAT: OOP IS NOT THE ONLY GOOD WAY, AND IT
+  IS OFTEN OVERUSED. A pure transformation is better as a
+  function than as a class with one method. Modern code mixes
+  objects for structure with functional style for computation —
+  and this project's NestJS services are exactly that mix.</code></pre>
+</div>
+
+<header class="mod" id="o2">
+  <span class="mn">Foundations 26</span>
+  <h2>The four pillars</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Pillar</th><th style="width:32%">Means</th><th>Why it helps</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Encapsulation</strong></td><td>Data is private; access goes through methods that enforce the rules</td><td><span class="ok">The most important of the four.</span> An invariant enforced inside the object holds for every caller, forever — including the caller written next year.</td></tr>
+    <tr><td><strong>Abstraction</strong></td><td>Expose <em>what</em> it does, hide <em>how</em></td><td>Callers depend on a small stable surface, so the inside can be rewritten without breaking them. This is the same idea as an API.</td></tr>
+    <tr><td><strong>Inheritance</strong></td><td>A class extends another, reusing and specialising it</td><td>Real reuse where a genuine "is-a" relationship exists — <span class="mid">and the most misused of the four.</span> See reflex 27.</td></tr>
+    <tr><td><strong>Polymorphism</strong></td><td>Different types respond to the same call in their own way</td><td><strong>The one that pays off most in practice.</strong> Code written against a general shape works with implementations that did not exist when it was written.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Polymorphism, concretely, because it is the abstract-sounding one</div>
+<pre><code>you need to send a notification. Three channels exist: email,
+in-app, SMS.
+
+⚠ WITHOUT POLYMORPHISM
+  if channel is "email"      → sendEmail(...)
+  else if channel is "inapp" → sendInApp(...)
+  else if channel is "sms"   → sendSms(...)
+  ⇒ AND EVERY NEW CHANNEL MEANS FINDING AND EDITING EVERY ONE
+    OF THESE BLOCKS — of which there are now eleven, scattered.
+
+✅ WITH POLYMORPHISM
+  every channel implements the same shape: `send(message)`
+  the calling code does:  channel.send(message)
+  ⇒ ADDING A CHANNEL MEANS ADDING ONE CLASS AND CHANGING NO
+    EXISTING CODE.
+
+⭐ THAT PROPERTY — EXTEND BY ADDING RATHER THAN BY EDITING — IS
+  THE WHOLE POINT, and it is the "O" in SOLID (reflex 28).</code></pre>
+</div>
+
+<header class="mod" id="o3">
+  <span class="mn">Foundations 27</span>
+  <h2>Composition versus inheritance</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The most useful design judgement in this part</div>
+<pre><code>INHERITANCE  "IS-A"      a Manager IS AN Employee
+COMPOSITION  "HAS-A"     an Employee HAS A Salary, HAS A
+                         ContactDetails
+
+⚠ WHY INHERITANCE GOES WRONG SO OFTEN
+  ①  IT IS PERMANENT. A class has one parent, chosen at
+     design time, and changing it later touches everything.
+  ②  ⭐ IT COUPLES YOU TO THE PARENT'S INTERNALS. A change in
+     the base class can break every subclass — sometimes
+     subtly, and at a distance. This is called the fragile base
+     class problem, and it is real.
+  ③  DEEP HIERARCHIES BECOME UNREADABLE. To understand one
+     method you open five files.
+  ④  IT IS USED FOR CODE REUSE WHEN THERE IS NO REAL "IS-A".
+     ⚠ THE CLASSIC: `class Employee extends DatabaseRecord`.
+       An employee is not a database record; it HAS a
+       representation in a database.
+
+⭐ THE RULE THE FIELD SETTLED ON: FAVOUR COMPOSITION OVER
+  INHERITANCE.
+  build behaviour by assembling small pieces rather than by
+  extending a chain. It is more flexible, changeable at run
+  time, and each piece is testable alone.
+
+WHEN INHERITANCE IS GENUINELY RIGHT
+  · a true, stable "is-a" that will not be re-classified
+  · implementing an INTERFACE — ⭐ which is inheritance of a
+    CONTRACT rather than of implementation, and carries almost
+    none of the problems above
+  · the framework requires it (extending a base controller)
+
+⭐ THE TEST: WOULD "IS A" BE TRUE TO A DOMAIN EXPERT WHO HAS
+  NEVER SEEN CODE? If you have to explain why it is technically
+  true, it is composition.</code></pre>
+</div>
+
+<header class="mod" id="o4">
+  <span class="mn">Foundations 28</span>
+  <h2>SOLID</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:10%"></th><th style="width:26%">Principle</th><th>In plain terms</th></tr></thead>
+  <tbody>
+    <tr><td><strong>S</strong></td><td>Single responsibility</td><td>A class should have one reason to change. <strong>If two different stakeholders can request changes to it, it is doing two jobs.</strong></td></tr>
+    <tr><td><strong>O</strong></td><td>Open/closed</td><td>Open to extension, closed to modification — add a new case by <em>adding</em> code, not by editing a chain of conditionals. This is reflex 26's payoff.</td></tr>
+    <tr><td><strong>L</strong></td><td>Liskov substitution</td><td>Anywhere the parent works, a child must work. <strong>If a subclass throws where the parent returned, or narrows what it accepts, the hierarchy is wrong.</strong></td></tr>
+    <tr><td><strong>I</strong></td><td>Interface segregation</td><td>Many small interfaces beat one large one. Nobody should be forced to implement methods they do not use.</td></tr>
+    <tr><td><strong>D</strong></td><td>Dependency inversion</td><td>Depend on an abstraction, not a concrete thing. <strong>A service should ask for "a way to store reports", not construct a specific database client</strong> — which is exactly what dependency injection does in NestJS and FastAPI.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">How to actually use these</span>
+  <p><strong>As diagnostic questions, not as a checklist.</strong> Nobody designs by reciting SOLID.
+  But when a piece of code is painful to change, one of these five is usually the reason — and naming
+  it turns "this feels wrong" into a specific, fixable observation.</p>
+  <p>The two with the most day-to-day value are <strong>S</strong> (this class does too much) and
+  <strong>D</strong> (this class built its own dependencies and is now untestable).</p>
+</div>
+
+<header class="mod" id="o5">
+  <span class="mn">Foundations 29</span>
+  <h2>Design versus architecture, and why model at all</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two altitudes of the same activity</div>
+<pre><code>ARCHITECTURE   the decisions that are EXPENSIVE TO REVERSE
+               ⇒ how many services · what the data model is ·
+                 which database · synchronous or asynchronous ·
+                 where the trust boundary sits
+DESIGN         the decisions INSIDE those
+               ⇒ which classes, which functions, which
+                 patterns, how this module is organised
+
+⭐ THE PRACTICAL DIFFERENCE IS COST OF CHANGE. Renaming a class
+  is an afternoon. Splitting a database is a quarter. ⇒ SPEND
+  YOUR CARE PROPORTIONALLY: think hard, and briefly, about the
+  first; iterate freely on the second.
+
+WHY MODEL BEFORE BUILDING — four honest reasons
+  ①  ⭐ IT IS THE CHEAPEST PLACE TO BE WRONG. Reflex 04's chart:
+     a design error costs ~5×, the same error found in
+     production ~100×.
+  ②  IT SURFACES DISAGREEMENT. Two people who "agree" on a
+     feature often discover, at the whiteboard, that they
+     imagined different systems.
+  ③  IT REVEALS THE MISSING QUESTIONS. Drawing the boxes makes
+     you ask what happens when one of them is unavailable.
+  ④  IT COMMUNICATES. A diagram explains in a minute what
+     prose takes a page to convey.
+
+⚠ AND WHY NOT TO OVER-MODEL: A DESIGN IS A PREDICTION, AND
+  PREDICTIONS DECAY. A complete design for a six-month project
+  will be wrong in its details, and the detailed parts are the
+  parts that will be wrong.
+  ⭐ SO: MODEL THE EXPENSIVE DECISIONS AND THE INTERFACES; LEAVE
+    THE INSIDES TO BE DISCOVERED WHILE BUILDING.</code></pre>
+</div>
+
+<header class="mod" id="o6">
+  <span class="mn">Foundations 30</span>
+  <h2>The UML diagrams that earn their keep</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Diagram</th><th style="width:28%">Shows</th><th>Worth it when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Class diagram</strong></td><td>Classes, their fields, and the relationships between them</td><td>Working out the domain model. <strong>The most used of the structural diagrams.</strong></td></tr>
+    <tr><td><strong>ER diagram</strong></td><td>Tables, columns, keys and cardinality</td><td><span class="ok">Genuinely essential.</span> The database schema is the most permanent decision in a system — draw it before creating it.</td></tr>
+    <tr><td><strong>Sequence diagram</strong></td><td>Messages between participants, in time order</td><td><span class="ok">The highest-value behavioural diagram.</span> Tracing a login, a payment, or a report request across services — it exposes every round trip and every failure point.</td></tr>
+    <tr><td><strong>Use-case diagram</strong></td><td>Actors and what they can do</td><td>Scoping a feature with non-technical stakeholders. Deliberately simple.</td></tr>
+    <tr><td><strong>State diagram</strong></td><td>States and the legal transitions between them</td><td><span class="ok">Underused and very valuable</span> — anything with a lifecycle (draft → submitted → approved → paid). <strong>It makes the illegal transitions visible</strong>, which is where the bugs are.</td></tr>
+    <tr><td><strong>Activity diagram</strong></td><td>A process, with decisions and parallel paths</td><td>A business workflow that must be validated by the people who run it.</td></tr>
+    <tr><td><strong>Component diagram</strong></td><td>The deployable pieces and their interfaces</td><td>Mostly superseded by C4's container view — reflex 31.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The honest position on UML</span>
+  <p><strong>Full UML is a formal notation with fourteen diagram types, and almost no team uses it
+  formally.</strong> What survives in practice is four or five of the above, drawn loosely on a
+  whiteboard to have a conversation — and then usually thrown away.</p>
+  <p>That is not a failure of UML; it is the correct use of it. <strong>The value was in the
+  conversation, not in the artefact.</strong> Keep a diagram only when someone will read it later —
+  and then accept that you have taken on the obligation to keep it true.</p>
+</div>
+
+<header class="mod" id="o7">
+  <span class="mn">Foundations 31</span>
+  <h2>The C4 model</h2>
+</header>
+
+<div class="ascii">   FOUR ZOOM LEVELS, AND YOU DRAW ONE DIAGRAM PER LEVEL.
+   ⭐ THE MODERN, LIGHTWEIGHT ALTERNATIVE TO FORMAL UML, AND IT
+     IS WHAT MOST TEAMS ACTUALLY WANT.
+
+   ①  CONTEXT     your system as ONE box, with the people and
+                  the external systems around it.
+                  ⇒ for non-technical stakeholders. One page.
+
+   ②  CONTAINERS  ⭐ THE MOST USEFUL DIAGRAM IN SOFTWARE. The
+                  deployable pieces and the protocols between
+                  them.
+
+                  ┌──────────┐  HTTP/JSON  ┌──────────┐
+                  │ frontend │ ──────────► │ backend  │
+                  └──────────┘             └────┬─────┘
+                                       HTTP │   │ SQL
+                                    ┌───────┘   └──────┐
+                                    ▼                  ▼
+                              ┌──────────┐      ┌────────────┐
+                              │ AI svc   │      │ PostgreSQL │
+                              └──────────┘      └────────────┘
+
+   ③  COMPONENTS  inside ONE container. Only for the part under
+                  active discussion.
+
+   ④  CODE        classes. ⚠ Rarely worth drawing — your IDE
+                  generates it, and it is stale immediately.
+
+   ⭐ WHY C4 WON WHERE UML DID NOT: ONE DIAGRAM, ONE ZOOM LEVEL,
+     ONE AUDIENCE. The classic failure is a single diagram
+     trying to serve all three audiences, which becomes
+     unreadable and is therefore never updated — and an
+     out-of-date architecture diagram is worse than none,
+     because people trust it.
+
+   WHAT MAKES ANY OF THESE USEFUL
+     · LABEL THE ARROWS with the protocol AND the direction
+     · ⭐ MARK WHAT IS SYNCHRONOUS — every synchronous arrow is
+       a dependency that can make you slow or down
+     · include the things that FAIL: the queue, the third
+       party, the cache
+     · mark the TRUST BOUNDARY — where data leaves your control</div>
+
+<header class="mod" id="o8">
+  <span class="mn">Foundations 32</span>
+  <h2>Architecture styles</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Style</th><th style="width:30%">Shape</th><th>Trade-off</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Monolith</strong></td><td>One application, one deployable, one database</td><td><span class="ok">Simple to build, deploy, debug and reason about.</span> One codebase, one log. <strong>The right starting point for almost everything.</strong> Its limit: everything scales together, and one language for all of it.</td></tr>
+    <tr><td><strong>Layered (n-tier)</strong></td><td>Presentation → business logic → data access, dependencies pointing one way</td><td>A monolith with internal discipline. <span class="ok">What NestJS imposes</span>, and what makes a large codebase navigable.</td></tr>
+    <tr><td><strong>Modular monolith</strong></td><td>One deployable, strong internal module boundaries</td><td><strong>Most of the organisational benefit of services with none of the network.</strong> Frequently the right answer where people reach for microservices.</td></tr>
+    <tr><td><strong>Microservices</strong></td><td>Many small independently deployable services</td><td>Independent scaling, deployment and languages. <span class="no">A permanent tax:</span> network failures, no shared transactions, distributed debugging, and an operational burden that needs a platform team.</td></tr>
+    <tr><td><strong>Event-driven</strong></td><td>Components publish and react to events</td><td>Loose coupling and easy extension. <strong>No single place shows the whole flow</strong>, and nobody knows who is listening.</td></tr>
+    <tr><td><strong>Serverless</strong></td><td>Functions, run on demand</td><td>No servers, scales to zero. Cold starts, time limits, and connection exhaustion against a relational database.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">And a distinction that is constantly muddled</div>
+<pre><code>ARCHITECTURAL PATTERN   the shape of the WHOLE SYSTEM
+                        ⇒ monolith · microservices · layered ·
+                          event-driven
+DESIGN PATTERN          a solution to a recurring problem
+                        INSIDE the code
+                        ⇒ factory · strategy · adapter ·
+                          observer · decorator
+
+⭐ DIFFERENT ALTITUDES, DIFFERENT COST OF CHANGE. Swapping a
+  design pattern is a refactor; swapping an architectural
+  pattern is a project. ⇒ WHICH IS EXACTLY WHY THE FIRST IS A
+  DESIGN DECISION AND THE SECOND IS AN ARCHITECTURE DECISION
+  (reflex 29).</code></pre>
+</div>
+
+<header class="mod" id="o9">
+  <span class="mn">Foundations 33</span>
+  <h2>Choosing an architecture</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The advice the whole field converged on</span>
+  <p><strong>Start with a monolith. Give it clean internal boundaries. Split off a service only when
+  you can state the specific reason in one sentence.</strong></p>
+  <p>Good reasons: this part needs a different language (Python for machine learning); this part must
+  scale independently; this part has a genuinely separate team and lifecycle. Bad reasons:
+  microservices are modern; a large company does it; we might need to scale one day.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The deployment environments this all runs through</div>
+<pre><code>LOCAL       your machine. Fast iteration.
+DEVELOPMENT a shared integrated environment.
+STAGING     ⭐ AS CLOSE TO PRODUCTION AS YOU CAN AFFORD — its
+            value is exactly proportional to how similar it is.
+            A staging environment with 200 rows and different
+            configuration tells you almost nothing.
+PRODUCTION  real users, real data. The only one that matters.
+
+⭐ TWO RULES THAT PREVENT REAL INCIDENTS
+  ①  SEPARATE CREDENTIALS PER ENVIRONMENT. A shared secret
+     means a test script can reach production.
+  ②  ⚠ DO NOT COPY PRODUCTION DATA INTO LOWER ENVIRONMENTS.
+     Salaries, reviews and health information in an
+     environment with weaker access control is a breach waiting
+     to be found. ⇒ ANONYMISE OR GENERATE.
+
+WHAT A PRODUCTION SYSTEM CONTAINS BEYOND YOUR CODE
+  a load balancer · TLS certificates · a managed database with
+  tested backups · a cache where it earns its place · a queue
+  for unbounded work · monitoring, logs and alerts · a
+  deployment pipeline · secrets management · and a way to turn
+  a feature off without deploying.
+  ⭐ THE POINT OF THE LIST IS NOT TO ADOPT ALL OF IT — IT IS TO
+    KNOW WHICH LINE YOU ARE MISSING, AND WHETHER THAT IS A
+    CHOICE OR AN OVERSIGHT.</code></pre>
+</div>
+
+<header class="part" id="prof">
+  <span class="pn">Part V · Module 5</span>
+  <h2>The profession</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Foundations 34</span>
+  <h2>What the job actually is</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Where the time goes — and it surprises people</div>
+<pre><code>A REALISTIC WEEK
+
+  writing new code                    ~25–35%
+  ⭐ READING AND UNDERSTANDING CODE     ~20%
+  debugging and investigating          ~15%
+  meetings, planning, review           ~15%
+  testing and deployment work          ~10%
+  documentation and writing            ~5%
+
+⭐ THE HEADLINE: WRITING CODE IS UNDER HALF THE JOB, AND
+  READING CODE IS ALMOST AS LARGE A SHARE AS WRITING IT. Which
+  is why readability is an engineering property rather than a
+  courtesy — you are optimising the largest cost.
+
+WHAT A DAY LOOKS LIKE
+  a stand-up · a couple of hours of focused work · a code
+  review or two · a conversation with whoever asked for the
+  feature · an unexpected investigation · and some
+  interruptions.
+  ⚠ AND THE ARITHMETIC OF INTERRUPTION: complex work needs
+    state held in your head, and rebuilding it takes 15–30
+    minutes. ⭐ SO FOUR ONE-HOUR BLOCKS ARE NOT ONE FOUR-HOUR
+    BLOCK — they are roughly half as productive for anything
+    that requires depth.
+
+THE SKILLS THAT ACTUALLY DECIDE OUTCOMES
+  TECHNICAL   a language well · data modelling · debugging ·
+              testing · version control · how systems fail
+  ⭐ AND THE ONES THAT DECIDE MORE THAN PEOPLE EXPECT
+              · WRITING CLEARLY — a good decision nobody
+                understands does not get implemented
+              · ASKING THE RIGHT QUESTION BEFORE BUILDING
+              · ESTIMATING HONESTLY, and flagging a slip early
+              · GIVING AND RECEIVING REVIEW WITHOUT FRICTION
+              · KNOWING WHEN TO STOP POLISHING</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Foundations 35</span>
+  <h2>Levels and the two tracks</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Level</th><th style="width:30%">Scope of ownership</th><th>What changes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Junior</strong></td><td>A well-defined task</td><td>Learning the stack and the codebase. Success is completing tasks well and asking good questions.</td></tr>
+    <tr><td><strong>Mid</strong></td><td>A feature, end to end</td><td>Works independently. Handles edge cases and failure paths without being told.</td></tr>
+    <tr><td><strong>Senior</strong></td><td>A system or a significant area</td><td><strong>Designs before building; argues scope; names trade-offs.</strong> Makes other people's work better through review and mentoring.</td></tr>
+    <tr><td><strong>Staff / principal</strong></td><td>Direction across teams</td><td>Decides what should be built. Less hands-on. Judgement, and raising everyone else's.</td></tr>
+    <tr><td><strong>Manager → director</strong></td><td>People and delivery</td><td>A <em>different job</em>, not a promotion from engineering. Its craft is people and systems of work.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The two tracks, and the honest framing</div>
+<pre><code>INDIVIDUAL CONTRIBUTOR   senior → staff → principal
+  influence through technical judgement and building.
+MANAGEMENT               lead → manager → director
+  influence through people, priorities and organisation.
+
+⭐ THE THING WORTH KNOWING EARLY: THESE ARE PARALLEL, NOT
+  SEQUENTIAL. Management is not the next level up from senior
+  engineer; it is a career change into a different craft, one
+  whose daily work — hiring, feedback, prioritisation, conflict
+  — has little overlap with engineering.
+  ⇒ AND YOU CAN MOVE BETWEEN THEM. Many people do, in both
+    directions, and doing so is not a failure.
+
+⭐ WHAT ACTUALLY MOVES YOU UP A LEVEL, AT EVERY LEVEL: THE SIZE
+  OF THE PROBLEM YOU CAN BE HANDED WITH LITTLE CONTEXT AND
+  STILL RESOLVE WELL — including deciding it should not be
+  built. Not years served, and not lines written.
+
+⚠ AND A NOTE ON TITLES: THEY ARE NOT COMPARABLE BETWEEN
+  COMPANIES. A "senior engineer" at one organisation is a
+  "mid" at another, and a "full-stack developer" may be doing
+  the work of three roles. ⇒ READ THE RESPONSIBILITIES, NOT THE
+  LABEL.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Foundations 36</span>
+  <h2>Specialisations</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Frontend</h4><p>Interfaces, interaction, accessibility, performance in the browser. Visible work, fast feedback, and a genuinely deep discipline.</p></div>
+  <div class="card"><h4>Backend</h4><p>Business logic, data, APIs, correctness and scale. Where most of the rules and most of the risk live.</p></div>
+  <div class="card"><h4>Full-stack</h4><p>Both, usually with a stronger side. Valued in small teams for shipping without hand-offs.</p></div>
+  <div class="card"><h4>Mobile</h4><p>iOS or Android. Constrained devices, app-store release cycles, offline behaviour.</p></div>
+  <div class="card"><h4>Data engineering</h4><p>Pipelines, warehouses, freshness. The layer everyone else's analysis stands on.</p></div>
+  <div class="card"><h4>Data science / ML</h4><p>Statistics, models, evaluation. And, increasingly, the responsibility that comes with predicting things about people.</p></div>
+  <div class="card"><h4>AI engineering</h4><p>Products built on foundation models. Mostly software engineering plus evaluation discipline and a trust boundary.</p></div>
+  <div class="card"><h4>DevOps / SRE</h4><p>Delivery and reliability. Automation, observability, incident response.</p></div>
+  <div class="card"><h4>Security</h4><p>Threats, controls, review. High leverage, and it requires thinking like an attacker.</p></div>
+  <div class="card"><h4>QA / test engineering</h4><p>Test strategy and automation. Underrated, and it is where "how would this break?" is a full-time skill.</p></div>
+</div>
+
+<div class="note">
+  <span class="tag">On choosing, and on the effect of AI</span>
+  <p><strong>Depth in one area plus competence across many</strong> is the shape that holds up — the
+  depth earns trust, the breadth lets you see how the pieces meet. And the most valuable depth is
+  often an <em>intersection</em> you already have: a domain background plus engineering skills is
+  rarer, and harder to replace, than a second framework.</p>
+  <p>On AI specifically: it has made producing code much cheaper, which moved the bottleneck to
+  deciding what to build, judging whether it is correct, and owning the outcome. Those were always
+  the senior skills — the change is that they are now the <em>main</em> skills rather than the ones
+  you grew into.</p>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Foundations 37</span>
+  <h2>Why ethics is part of engineering</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Not a separate subject</div>
+<pre><code>⭐ SOFTWARE DECIDES THINGS ABOUT PEOPLE WHO NEVER AGREED TO IT
+  AND USUALLY CANNOT SEE IT. Whether someone gets a loan, an
+  interview, a shift, a diagnosis, a benefit. Whether their
+  data is safe. Whether a system works for them at all.
+
+  ⇒ AND THE ENGINEER IS OFTEN THE ONLY PERSON WHO UNDERSTANDS
+    WHAT THE SYSTEM ACTUALLY DOES. That asymmetry is the
+    source of the obligation: nobody else is positioned to
+    notice.
+
+THE ACM/IEEE CODE OF ETHICS — its eight principles, compressed
+  ①  THE PUBLIC INTEREST comes first ⭐ AND IT IS FIRST
+     DELIBERATELY — ahead of the client and the employer
+  ②  act in the best interests of CLIENT AND EMPLOYER,
+     consistent with ①
+  ③  ensure the PRODUCT meets professional standards
+  ④  maintain integrity in JUDGEMENT
+  ⑤  MANAGERS shall promote an ethical approach
+  ⑥  advance the INTEGRITY OF THE PROFESSION
+  ⑦  be fair and supportive to COLLEAGUES
+  ⑧  maintain your own COMPETENCE — ⭐ staying current is
+     framed as an ethical duty, not just career development
+
+⭐ THE ORDERING IS THE MOST IMPORTANT THING ABOUT IT. When
+  the public interest and your employer's interest conflict,
+  the code is explicit about which wins. That is what makes it
+  a professional code rather than a policy.
+
+AND THE PRACTICAL FORM IT TAKES
+  COMPETENCE   ⭐ do not take on work you cannot do safely —
+               and say so early rather than late
+  HONESTY      about estimates, risks, capabilities and what
+               you do not know
+  PRIVACY      collect what the purpose needs, protect it,
+               delete it when done
+  SECURITY     ⭐ AN ETHICAL DUTY, NOT A FEATURE REQUEST. The
+               people harmed by a breach are not the people who
+               deprioritised it.
+  ACCESSIBILITY excluding people is a defect, not a
+               nice-to-have</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Foundations 38</span>
+  <h2>The code, applied to this kind of system</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">HR software concentrates almost every ethical question at once</div>
+<pre><code>THIS PROJECT PREDICTS WHETHER IDENTIFIABLE PEOPLE WILL LEAVE
+THEIR JOBS. That makes the following engineering requirements,
+not principles.
+
+PRIVACY AND MINIMISATION
+  □  collect what the stated purpose needs — ⚠ "it might be a
+     useful feature" is not a purpose
+  □  ⭐ PURPOSE LIMITATION: data gathered for payroll may not
+     silently become model input
+  □  a retention period, and an erasure path that reaches
+     backups, logs, exports and training sets
+
+ACCESS AND PROPORTIONALITY
+  □  ⭐ PER-FIELD PERMISSIONS. Salary, sickness, disciplinary
+     notes and a name have completely different audiences —
+     one endpoint returning "the employee" returns all of it
+  □  a minimum cell size on every aggregate. ⭐ "ENGAGEMENT IN
+     THE LISBON TEAM" WHERE THE TEAM IS THREE PEOPLE
+     IDENTIFIES THREE PEOPLE — aggregation is not
+     anonymisation
+  □  audit who viewed whose record
+
+FAIRNESS
+  □  exclude protected attributes AND their proxies — ⚠
+     postcode, school, name, working pattern and career gaps
+     all correlate with them, so removing the obvious column
+     is not sufficient
+  □  ⭐ EVALUATE PER SUBGROUP, not only in aggregate. An
+     overall score can hide a model that works well for one
+     group and badly for another.
+  □  a model that faithfully reproduces a biased history is a
+     machine for perpetuating it at scale, with an appearance
+     of objectivity
+
+TRANSPARENCY AND RECOURSE
+  □  a human who can genuinely override — ⚠ a rubber stamp is
+     not human review
+  □  an explanation the person affected could be given
+  □  ⭐ FRAME A PREDICTION AS A PROMPT, NOT A VERDICT. With a
+     low base rate, most people a good model flags will not
+     leave. Presenting a flag as a fact is both wrong and
+     unfair.
+
+⭐ AND THE QUESTION THAT COVERS ALL OF IT: WOULD WE BE
+  COMFORTABLE EXPLAINING THIS SYSTEM, IN DETAIL, TO THE PEOPLE
+  IT SCORES? If not, that discomfort is the finding.</code></pre>
+</div>
+
+<header class="mod" id="c6">
+  <span class="mn">Foundations 39</span>
+  <h2>Everyday dilemmas</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:38%">The situation</th><th>What professional judgement looks like</th></tr></thead>
+  <tbody>
+    <tr><td>You are asked to ship with a known security flaw to hit a date</td><td><strong>State the risk in writing, with the consequence.</strong> Offer the smallest mitigation that fits the time. If overruled, the written record matters — and if it is severe enough, escalate rather than comply.</td></tr>
+    <tr><td>You are told to log data "just in case it's useful later"</td><td>That is collection without a purpose. Ask what decision it serves; log the minimum, with a retention period.</td></tr>
+    <tr><td>Your estimate was wrong and the date will slip</td><td><strong>Say so immediately.</strong> A revised date is manageable; a missed date discovered on the day is a trust failure — and trust is what seniority is made of.</td></tr>
+    <tr><td>You find a bug in production that nobody has noticed</td><td>Report it. Silence is a decision that the people affected did not get to make.</td></tr>
+    <tr><td>You are asked to build something you believe is harmful to users</td><td>Say why, once, clearly, with an alternative. This is the case the code of ethics puts the public interest first for.</td></tr>
+    <tr><td>You do not understand the code you are about to change</td><td>Say so and take the time. <strong>Changing code you do not understand is how outages happen</strong>, and "I need an hour to read this" is always cheaper.</td></tr>
+    <tr><td>You copied a solution you cannot explain</td><td>Understand it before merging. You now own it, and you will be the one debugging it at 3&nbsp;a.m.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The pattern in the right-hand column</span>
+  <p>Every one is a version of the same two acts: <strong>make the consequence visible to the person
+  entitled to decide, and put it in writing.</strong></p>
+  <p>Almost no engineering ethics dilemma requires heroism. It requires saying the uncomfortable thing
+  once, clearly, early — and that is a learnable professional habit rather than a character trait.</p>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">The vocabulary this primer has introduced</div>
+  <dl>
+    <dt>SDLC</dt><dd>The seven phases every piece of software goes through, however often you cycle through them.</dd>
+    <dt>waterfall</dt><dd>Each phase once, in order, signed off. Right only when requirements are genuinely fixed.</dd>
+    <dt>agile</dt><dd>Short cycles, working software each cycle, plan adjusted as you learn.</dd>
+    <dt>WIP limit</dt><dd>A cap on work in progress. Forces finishing over starting.</dd>
+    <dt>functional requirement</dt><dd>What the system must do. Testable as a yes/no.</dd>
+    <dt>non-functional requirement</dt><dd>How well — speed, scale, availability, security. Where architectures are decided.</dd>
+    <dt>user story</dt><dd>"As a … I want … so that …". The "so that" is the valuable part.</dd>
+    <dt>semantic versioning</dt><dd>MAJOR.MINOR.PATCH — a version number as a promise about breakage.</dd>
+    <dt>regression test</dt><dd>A check that a change did not break something that already worked.</dd>
+    <dt>squad</dt><dd>A cross-functional team with the roles needed to ship end to end.</dd>
+    <dt>client–server</dt><dd>The client asks, the server answers, and the server never trusts the client.</dd>
+    <dt>stateless</dt><dd>The server keeps nothing between requests, so each must carry its own identity.</dd>
+    <dt>API</dt><dd>A published contract of operations one program offers another.</dd>
+    <dt>IaaS / PaaS / SaaS</dt><dd>How much of the stack you still manage yourself.</dd>
+    <dt>stack</dt><dd>The set of technologies chosen to work together across the four layers.</dd>
+    <dt>runtime</dt><dd>The program that executes your program.</dd>
+    <dt>compiled / interpreted</dt><dd>Translated before running, or read and executed as it goes. Decides when you learn you were wrong.</dd>
+    <dt>transpile</dt><dd>Translate to another language — TypeScript to JavaScript, with the types deleted.</dd>
+    <dt>paradigm</dt><dd>How you organise instructions: imperative, object-oriented, functional, declarative.</dd>
+    <dt>null</dt><dd>The absence of a value. Not zero, and not empty.</dd>
+    <dt>pure function</dt><dd>Depends only on its inputs, changes nothing outside. Easy to test and reuse.</dd>
+    <dt>side effect</dt><dd>Anything a function does beyond returning a value.</dd>
+    <dt>encapsulation</dt><dd>Data private, access through methods that enforce the rules.</dd>
+    <dt>polymorphism</dt><dd>Different types answering the same call their own way. Extend by adding, not editing.</dd>
+    <dt>composition over inheritance</dt><dd>Assemble behaviour from parts rather than extending a chain.</dd>
+    <dt>SOLID</dt><dd>Five diagnostic principles for why code is painful to change.</dd>
+    <dt>architecture vs design</dt><dd>Decisions expensive to reverse, versus decisions inside them.</dd>
+    <dt>C4</dt><dd>Four zoom levels, one diagram each. The container view is the most useful diagram in software.</dd>
+    <dt>modular monolith</dt><dd>One deployable with strong internal boundaries. Often the right answer.</dd>
+    <dt>staging</dt><dd>A pre-production environment whose value equals how similar it is to production.</dd>
+    <dt>minimum cell size</dt><dd>The floor below which an aggregate identifies individuals.</dd>
+    <dt>purpose limitation</dt><dd>Data collected for one purpose may not silently be used for another.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Step 2 · The onboarding handbook</h4><p>Four volumes on this project's actual stack: how code runs, databases, APIs, JS/TS and Python · architecture, auth, Prisma, React · NestJS, Next.js, FastAPI, patterns · data science and AI.</p></div>
+  <div class="card"><h4>Step 3 · The skill-upgrading handbook</h4><p>Eight volumes on becoming senior: working with AI, architecture, craft, CS foundations, delivery, cloud, data/AI strategy, and how senior engineers think.</p></div>
+  <div class="card"><h4>Where each Part continues</h4><p>Part I → skill-upgrading VIII (deciding, decomposing) · Part II → onboarding II and skill-upgrading V · Part III → onboarding I · Part IV → skill-upgrading II · Part V → skill-upgrading VII and VIII.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/software-engineering-foundations/</code> — 15 files, 4,348 lines across five modules. This page covers all of them.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A taught, single-page edition of the Software Engineering
+  Foundations knowledge base — all 15 source files, in the order they depend on each other. It is
+  deliberately the entry point: nothing here assumes you have written code, and every part points at
+  where the subject continues.</p>
+  <p><strong>On the numbers.</strong> The defect-cost multipliers in Reflex 04 and the time
+  distribution in Reflex 34 are widely cited industry approximations, not precise measurements —
+  their shape is the useful part, not their decimal places.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

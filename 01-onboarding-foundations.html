@@ -1,0 +1,1464 @@
+<title>Foundations and Two Languages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #0E6A6A;
+  --accent-soft: #DDEEEE;
+  --accent-deep: #084848;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #0E6A6A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #5BC2C2;
+    --accent-soft: #0E2020;
+    --accent-deep: #8FD9D9;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #5BC2C2;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #5BC2C2;
+  --accent-soft: #0E2020;
+  --accent-deep: #8FD9D9;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #5BC2C2;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size:18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size:13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size:15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size:10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size:10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size:10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+.doc > .tw, .doc > .ascii, .doc > .sheet, .doc > .grid2, .doc > .grid3, .doc > .band, .doc > .stack { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size:12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size:19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size:12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size:14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size:10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size:15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size:11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size:33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size:18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size:10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size:24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size:18.2px; margin-bottom: 0; }
+
+h3 { font-size:19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size:16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size:17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size:10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size:10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size:13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size:13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== stack fact strip ===== */
+.stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 8px; margin: 20px 0; font-family: var(--mono); font-size:13.1px; }
+.st { border: 1px solid var(--rule); border-top: 2px solid var(--accent); border-radius: 2px; padding: 9px 11px; background: var(--ground-2); }
+.st .sk { display: block; font-size:10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.st b { font-weight: 700; color: var(--ink); }
+.st span.p { color: var(--accent); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size:16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size:10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(186px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size:16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size:10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(120px, 168px) 1fr; gap: 7px 14px; font-size:16.5px; }
+.terms dt { font-family: var(--mono); font-size:13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size:15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">HR Insight AI · Handbook</p>
+  <p class="rail-sub">Onboarding knowledge base</p>
+  <span class="rail-vol">Volume I</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · How code runs</div>
+  <a href="#a1"><span class="n">01</span>Runtimes</a>
+  <a href="#a2"><span class="n">02</span>Package managers</a>
+  <a href="#a3"><span class="n">03</span>Ports &amp; env vars</a>
+
+  <div class="rail-group">II · Databases</div>
+  <a href="#b1"><span class="n">04</span>Tables, rows, keys</a>
+  <a href="#b2"><span class="n">05</span>Relationships</a>
+  <a href="#b3"><span class="n">06</span>Enough SQL to read</a>
+
+  <div class="rail-group">III · APIs</div>
+  <a href="#c1"><span class="n">07</span>What HTTP is</a>
+  <a href="#c2"><span class="n">08</span>Methods &amp; URLs</a>
+  <a href="#c3"><span class="n">09</span>Status codes</a>
+  <a href="#c4"><span class="n">10</span>REST conventions</a>
+
+  <div class="rail-group">IV · JSON</div>
+  <a href="#d1"><span class="n">11</span>The format</a>
+  <a href="#d2"><span class="n">12</span>Where it bites</a>
+
+  <div class="rail-group">V · JavaScript &amp; TS</div>
+  <a href="#e1"><span class="n">13</span>The language</a>
+  <a href="#e2"><span class="n">14</span>Async, properly</a>
+  <a href="#e3"><span class="n">15</span>What TypeScript adds</a>
+
+  <div class="rail-group">VI · TypeScript deeper</div>
+  <a href="#f1"><span class="n">16</span>How TS thinks</a>
+  <a href="#f2"><span class="n">17</span>Unions &amp; narrowing</a>
+  <a href="#f3"><span class="n">18</span>any · unknown · never</a>
+  <a href="#f4"><span class="n">19</span>Generics</a>
+  <a href="#f5"><span class="n">20</span>Utility types</a>
+  <a href="#f6"><span class="n">21</span>Reading errors</a>
+
+  <div class="rail-group">VII · Python</div>
+  <a href="#g1"><span class="n">22</span>The language</a>
+  <a href="#g2"><span class="n">23</span>Classes, just enough</a>
+  <a href="#g3"><span class="n">24</span>Virtual environments</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Onboarding handbook · Volume I of IV</p>
+  <h1>Foundations, and the two languages. <span class="thin">Before any framework makes sense.</span></h1>
+  <p class="lede">How code actually runs on a machine, what a database is, what an API is, what JSON is
+  — then JavaScript and TypeScript properly, and enough Python to read the AI service. Nothing here
+  assumes prior experience, and everything here is assumed by the three volumes that follow.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · nothing</span>
+    <span><b>Covers</b> · KB files 01–06 and 39</span>
+    <span><b>Read before</b> · Volumes II and III</span>
+  </div>
+</header>
+
+<div class="band">
+<div class="vol here"><span class="vn">Volume I · you are here</span><b>Foundations &amp; the two languages</b></div>
+<a class="vol" href="02-onboarding-architecture.html"><span class="vn">Volume II</span><b>Architecture, data &amp; the browser</b></a>
+<a class="vol" href="03-onboarding-frameworks.html"><span class="vn">Volume III</span><b>The frameworks &amp; the patterns</b></a>
+<a class="vol" href="04-onboarding-data-science.html"><span class="vn">Volume IV</span><b>Data science &amp; AI</b></a>
+</div>
+
+<div class="stack">
+  <div class="st"><span class="sk">Frontend</span><b>Next.js</b> · port <span class="p">3001</span></div>
+  <div class="st"><span class="sk">Backend</span><b>NestJS</b> · port <span class="p">3010</span></div>
+  <div class="st"><span class="sk">AI service</span><b>FastAPI</b> · port <span class="p">8000</span></div>
+  <div class="st"><span class="sk">Database</span><b>PostgreSQL</b> · Neon</div>
+</div>
+
+<div class="warn">
+  <span class="tag">Two corrections to the source knowledge base</span>
+  <p>The markdown files this handbook is built from say the backend runs on port <code>3000</code> and
+  that the AI service calls <strong>Groq</strong> for language generation. Both changed: the backend
+  moved to <strong>3010</strong> because Docker Desktop's VM holds 3000, and the LLM provider is now
+  the <strong>Claude API</strong> via <code>@anthropic-ai/sdk</code>. Where the two disagree, this
+  handbook is current and the markdown is not.</p>
+</div>
+
+<header class="part" id="run">
+  <span class="pn">Part I</span>
+  <h2>How code runs</h2>
+  <p class="lede">Four ideas — runtime, package manager, port, environment variable. Every command you
+  will type in your first week is one of these four wearing a costume.</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Foundation 01</span>
+  <h2>Runtimes</h2>
+</header>
+
+<p>Source code is text. Text does nothing. A <strong>runtime</strong> is the program that reads your
+text and makes the machine act on it.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Runtime</th><th style="width:20%">Runs</th><th>In this project</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The browser</strong> (V8 in Chrome)</td><td>JavaScript</td><td>Everything the user sees. The frontend, once it has been downloaded.</td></tr>
+    <tr><td><strong>Node.js</strong></td><td>JavaScript / TypeScript</td><td>The NestJS backend, and Next.js while it renders on the server.</td></tr>
+    <tr><td><strong>CPython</strong></td><td>Python</td><td>The FastAPI AI service and everything with a model in it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Interpreted, compiled, and the confusing middle</div>
+<pre><code>COMPILED       source ──► machine code ──► run
+               (C, Rust, Go) a separate build step produces a
+               binary. Fast to run, slow to iterate.
+
+INTERPRETED    source ──► runtime reads and executes line by line
+               (Python) no build step. Start fast, run slower.
+
+THE MIDDLE     JavaScript is interpreted, but modern engines
+               compile hot code to machine code WHILE RUNNING
+               (just-in-time). You get most of both.
+
+⭐ WHERE TYPESCRIPT SITS — AND WHY IT MATTERS TO YOU
+  TypeScript is NOT a runtime. Nothing runs TypeScript. It is
+  compiled ("transpiled") to plain JavaScript first, and the
+  types are DELETED in that step.
+
+    employee.ts  ──tsc──►  employee.js  ──node──►  runs
+
+  ⇒ so types catch mistakes BEFORE the program runs, and are
+    completely absent AT runtime. A value that arrives from an
+    API as a string does not become a number because you typed
+    it as one. This single fact explains most TypeScript
+    surprises — see reflex 16.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Foundation 02</span>
+  <h2>Package managers</h2>
+</header>
+
+<p>Nobody writes a web framework from scratch. A <strong>package manager</strong> downloads code other
+people wrote, records exactly which versions you used, and makes the same set reproducible on someone
+else's machine.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Language</th><th style="width:16%">Tool</th><th style="width:24%">Declares</th><th>Locks</th></tr></thead>
+  <tbody>
+    <tr><td>JavaScript</td><td><code>npm</code></td><td><code>package.json</code></td><td><code>package-lock.json</code></td></tr>
+    <tr><td>Python</td><td><code>pip</code></td><td><code>requirements.txt</code></td><td>the same file, when versions are pinned</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The two files, and why the second one exists</div>
+<pre><code>package.json      WHAT YOU ASKED FOR
+                  "@nestjs/common": "^11.0.0"
+                  the ^ means "11.anything, as long as it is not 12".
+
+package-lock.json WHAT YOU ACTUALLY GOT
+                  "@nestjs/common": "11.0.4", plus the exact
+                  version of every dependency of every dependency.
+
+⭐ COMMIT THE LOCK FILE. Without it, two developers running the
+  same install command a month apart get different code, and the
+  bug that appears on one machine and not the other is
+  unexplainable. With it, installs are reproducible.
+
+DEPENDENCIES vs DEV DEPENDENCIES
+  dependencies      needed to RUN            (nestjs, prisma, react)
+  devDependencies   needed to BUILD or TEST  (typescript, jest,
+                    eslint) — not shipped to production.
+
+THE COMMANDS THAT MATTER
+  npm install              install everything in package.json
+  npm install &lt;pkg&gt;        add one, and record it
+  npm run &lt;script&gt;         run a script defined in package.json
+  ⚠ npm run dev / start:dev — this project's services each have
+    their own; you will run three terminals.</code></pre>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Foundation 03</span>
+  <h2>Ports and environment variables</h2>
+</header>
+
+<div class="ascii">   A PORT IS AN APARTMENT NUMBER
+
+     your machine is the building        →  localhost / 127.0.0.1
+     the port says which program answers →  3001, 3010, 8000, 5432
+
+     http://localhost:3010/api/employees
+     └─┬──┘   └───┬───┘ └┬─┘ └─────┬────┘
+     protocol   host    port      path
+
+   THIS PROJECT'S FOUR
+     3001   Next.js frontend      what you open in the browser
+     3010   NestJS backend        the API the frontend calls
+     8000   FastAPI AI service    the backend calls this
+     5432   PostgreSQL            the backend talks to this via Prisma
+
+   ⚠ "PORT ALREADY IN USE" is the most common first-week error.
+     Something else is answering on that number — an old process
+     you did not stop, or another program entirely. That is exactly
+     why this project's backend moved off 3000: Docker Desktop's
+     VM holds it.
+
+   ENVIRONMENT VARIABLES — configuration that is not code
+
+     values that DIFFER per machine or must not be committed:
+       DATABASE_URL      where the database is, with credentials
+       JWT_SECRET        the key that signs login tokens
+       ANTHROPIC_API_KEY the LLM credential
+
+     they live in a .env file, and ⭐ .env IS NEVER COMMITTED.
+     A .env.example with empty values IS committed, so the next
+     person knows which variables they need.
+
+   ⚠ THE ONE FRONTEND RULE WORTH LEARNING NOW: in Next.js, any
+     variable prefixed NEXT_PUBLIC_ is embedded into the JavaScript
+     sent to the browser. Anyone can read it. A secret with that
+     prefix is not a secret — it is published.</div>
+
+<header class="part" id="db">
+  <span class="pn">Part II</span>
+  <h2>Databases</h2>
+  <p class="lede">Where the data actually lives, and the smallest amount of SQL that lets you read
+  what the ORM generates.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Foundation 04</span>
+  <h2>Tables, rows, keys</h2>
+</header>
+
+<p>A <strong>relational database</strong> stores data in tables. A table is a grid: <strong>columns</strong>
+define what a record can hold, and each <strong>row</strong> is one record.</p>
+
+<div class="sheet">
+  <div class="cap">One table, and the four ideas in it</div>
+<pre><code>employees
+┌────┬─────────────┬──────────────┬────────┬─────────────┐
+│ id │ name        │ department   │ salary │ hired_at    │
+├────┼─────────────┼──────────────┼────────┼─────────────┤
+│  1 │ A. Chen     │ Engineering  │  62000 │ 2021-03-01  │
+│  2 │ B. Osei     │ Engineering  │  58000 │ 2023-09-15  │
+│  3 │ C. Rossi    │ Sales        │  51000 │ 2019-01-07  │
+└────┴─────────────┴──────────────┴────────┴─────────────┘
+
+①  SCHEMA — the shape is declared and enforced. A column typed
+    as a date rejects "next Tuesday". The database refuses bad
+    data rather than storing it, which is the entire reason to
+    prefer one over a spreadsheet.
+
+②  PRIMARY KEY — `id`. Unique, never reused, never meaningful.
+    ⚠ never key on something real (email, employee number) —
+    real things change, and a key that changes breaks everything
+    pointing at it.
+
+③  NOT NULL vs NULL — is this value REQUIRED, or may it be
+    absent? "absent" and "zero" and "empty string" are three
+    different things, and treating them alike is a classic bug.
+
+④  INDEX — a lookup structure. Without one, finding a row means
+    reading every row. With one, it is near-instant.
+    ⇒ the trade: indexes make reads fast and writes slightly
+      slower, and they take space. Add them for columns you
+      filter or join on, not for everything.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Foundation 05</span>
+  <h2>Relationships</h2>
+</header>
+
+<div class="ascii">   ONE-TO-MANY — one team has many employees
+
+     teams                     employees
+     ┌────┬────────────┐       ┌────┬──────────┬─────────┐
+     │ id │ name       │       │ id │ name     │ team_id │
+     ├────┼────────────┤       ├────┼──────────┼─────────┤
+     │  5 │ Platform   │◄──────┤  1 │ A. Chen  │    5    │
+     │  6 │ Growth     │       │  2 │ B. Osei  │    5    │
+     └────┴────────────┘       │  3 │ C. Rossi │    6    │
+                               └────┴──────────┴─────────┘
+                                                 └─ FOREIGN KEY
+
+     ⭐ THE CHILD HOLDS THE LINK. The employee row knows its team;
+       the team row does not list its employees. The "many" side
+       always carries the foreign key.
+
+     ⭐ AND THE FOREIGN KEY IS A GUARANTEE, not a convention: the
+       database will REFUSE an employee whose team_id does not
+       exist. That is a whole class of bug the database removes
+       for you, on every path, forever.
+
+   MANY-TO-MANY — an employee has many skills; a skill has many
+   employees. Neither side can hold the link, so a third table does:
+
+     employees      employee_skills          skills
+     ┌────┐         ┌─────────────┬────────┐ ┌────┬─────────┐
+     │  1 │◄────────┤ employee_id │ skill_id├─┤  9 │ Python  │
+     └────┘         │      1      │    9    │ │ 10 │ SQL     │
+                    │      1      │   10    │ └────┴─────────┘
+                    └─────────────┴─────────┘
+     called a JOIN TABLE (or junction, or pivot). Recognising when
+     you need one is a real modelling skill — the moment you find
+     yourself wanting a list inside a column, this is the answer.
+
+   ON DELETE — the question people forget
+     delete a team with employees in it. What happens?
+       CASCADE   delete the employees too      ⚠ rarely right
+       RESTRICT  refuse the delete             ← usually right
+       SET NULL  employees keep existing, teamless
+     ⇒ the database makes you choose. Choose deliberately.</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Foundation 06</span>
+  <h2>Enough SQL to read</h2>
+  <p class="lede">You will write queries through Prisma, not by hand. But you must be able to read the
+  SQL it generates when something is slow or wrong.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The clauses, in the order the database applies them</div>
+<pre><code>SELECT   name, department, salary      -- ⑤ which columns
+FROM     employees                     -- ① which table
+JOIN     teams ON teams.id = employees.team_id   -- ② stitch
+WHERE    salary &gt; 55000                -- ③ filter ROWS
+GROUP BY department                    -- ④ collapse into groups
+HAVING   COUNT(*) &gt; 3                  -- ④b filter GROUPS
+ORDER BY salary DESC                   -- ⑥ sort
+LIMIT    10;                           -- ⑦ cut
+
+⭐ THE NUMBERS ARE THE EXECUTION ORDER, AND IT IS NOT THE WRITING
+  ORDER. FROM first, SELECT almost last. This explains the error
+  every beginner hits: you cannot use a name you invented in
+  SELECT inside WHERE, because WHERE ran first.
+
+WHERE vs HAVING — the distinction that produces wrong numbers
+  WHERE  filters rows BEFORE grouping
+  HAVING filters groups AFTER
+  ⚠ putting a row condition in HAVING (or an aggregate in WHERE)
+    gives a number that is wrong but plausible — the most
+    expensive kind of bug.
+
+JOIN TYPES
+  INNER JOIN   only rows that match on BOTH sides
+               ⚠ silently DROPS employees with no team. If a
+                 count is lower than expected, suspect this first.
+  LEFT JOIN    all rows from the left, NULLs where no match
+               ⇒ what you usually want for "list everyone, with
+                 their team if they have one".
+
+⚠ AND THE ONE THAT PRODUCES WRONG TOTALS: joining a table that
+  has MANY matching rows multiplies your rows. Sum a salary after
+  joining to three skills and you have counted the salary three
+  times. This is called fan-out, and it is the most common source
+  of inflated figures in reporting.
+
+AGGREGATES
+  COUNT(*)  rows        COUNT(col)  non-null values in col
+  SUM AVG MIN MAX
+  ⚠ COUNT(*) and COUNT(column) differ whenever the column has
+    nulls, and AVG silently ignores nulls rather than treating
+    them as zero.</code></pre>
+</div>
+
+<header class="part" id="api">
+  <span class="pn">Part III</span>
+  <h2>APIs</h2>
+  <p class="lede">How two programs on different machines — or on the same machine in different
+  languages — agree to talk.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Foundation 07</span>
+  <h2>What HTTP is</h2>
+</header>
+
+<div class="ascii">   THE RESTAURANT, AND WHY THE ANALOGY IS ACTUALLY USEFUL
+
+     you (the frontend)  ──order──►  waiter (the API)  ──►  kitchen
+                         ◄──plate──                    ◄──  (backend
+                                                             + DB)
+
+     you never enter the kitchen. You do not know whether the soup
+     was made fresh or reheated. You know the MENU — the contract —
+     and nothing else.
+
+     ⭐ THAT IGNORANCE IS THE POINT. The kitchen can be rebuilt in
+       a different language and your order still works, as long as
+       the menu is unchanged. This is the whole value of an API,
+       and it is why "what can never change?" is the key API
+       design question.
+
+   ONE REQUEST, ONE RESPONSE
+
+     REQUEST                          RESPONSE
+     ┌──────────────────────────┐     ┌──────────────────────────┐
+     │ POST /api/reports        │     │ 201 Created              │
+     │ Host: localhost:3010     │     │ Content-Type: application│
+     │ Authorization: Bearer …  │     │                     /json│
+     │ Content-Type: application│     │                          │
+     │                    /json │     │ { "id": 42,              │
+     │                          │     │   "status": "PENDING" }  │
+     │ { "teamId": 5 }          │     │                          │
+     └──────────────────────────┘     └──────────────────────────┘
+       method · path · headers          status · headers · body
+       · body
+
+   ⭐ HTTP IS STATELESS. The server remembers nothing between
+     requests. Every single request must carry its own proof of
+     identity — which is exactly why a token is attached to all of
+     them, and why "logged in" is not a state the server holds.</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Foundation 08</span>
+  <h2>Methods and URLs</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:12%">Method</th><th style="width:22%">Means</th><th style="width:14%">Safe to repeat?</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET</code></td><td>Read something</td><td><span class="ok">Yes</span></td><td>Must not change anything. A GET that deletes is a genuine bug — browsers and proxies pre-fetch GETs.</td></tr>
+    <tr><td><code>POST</code></td><td>Create something</td><td><span class="no">No</span></td><td>Two POSTs make two things. This is why double-clicks create duplicates, and why an idempotency key exists.</td></tr>
+    <tr><td><code>PUT</code></td><td>Replace entirely</td><td><span class="ok">Yes</span></td><td>Send the whole object. Omitted fields are <em>erased</em> — the trap.</td></tr>
+    <tr><td><code>PATCH</code></td><td>Update partially</td><td><span class="mid">Usually</span></td><td>Send only what changes. Almost always what you actually want.</td></tr>
+    <tr><td><code>DELETE</code></td><td>Remove</td><td><span class="ok">Yes</span></td><td>Deleting twice should not be an error the second time — it is already gone, which is the requested state.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Where data can travel in a request — and the security consequence</div>
+<pre><code>PATH PARAMETER      /api/employees/42
+                    identifies WHICH resource.
+                    ⭐ every id in a path is a CLAIM, not a fact.
+                      "42" being well-formed says nothing about
+                      whether this caller may see employee 42.
+
+QUERY STRING        /api/employees?department=Sales&amp;page=2
+                    filters, sorting, pagination — things that
+                    modify a read.
+                    ⚠ appears in server logs and browser history.
+                      Never put a token or a password here.
+
+HEADERS             Authorization: Bearer &lt;token&gt;
+                    identity, content type, caching. Metadata
+                    about the request rather than the subject
+                    of it.
+
+BODY                { "teamId": 5 }
+                    the payload for POST / PUT / PATCH.
+                    GET requests do not have one.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Foundation 09</span>
+  <h2>Status codes</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The families, then the ones you will actually meet</div>
+<pre><code>2xx  it worked
+3xx  look somewhere else
+4xx  ⭐ YOU sent something wrong      ← do not retry, fix the call
+5xx  ⭐ THE SERVER broke              ← retrying may help
+
+THE ONES THAT MATTER
+
+200 OK                  read succeeded
+201 Created             ⇒ and return the thing you created, or
+                          at least where to find it
+204 No Content          succeeded, nothing to say (a delete)
+
+400 Bad Request         malformed or invalid input
+401 Unauthorized        ⭐ MISNAMED — it means UNAUTHENTICATED.
+                          "I do not know who you are." No token,
+                          bad token, or expired token.
+403 Forbidden           "I know exactly who you are, and you may
+                          not do this." ⇒ 401 vs 403 is the
+                          authentication/authorisation distinction
+                          made visible, and getting it backwards
+                          in your own API confuses every client.
+404 Not Found           no such thing
+                        ⚠ ALSO the right answer for "exists, but
+                          not yours" — a 403 confirms the record
+                          exists, which is itself a leak.
+409 Conflict            it clashes with current state (duplicate
+                          email, already approved)
+422 Unprocessable       well-formed but semantically invalid
+429 Too Many Requests   rate limited ⇒ back off, don't hammer
+
+500 Internal Error      an unhandled bug on the server
+502 / 503 / 504         a service behind this one is broken,
+                          unavailable, or too slow
+
+⚠ THE ANTI-PATTERN: returning 200 with {"error": "..."} in the
+  body. Every generic client — retry logic, monitoring, load
+  balancers — believes the status code. Lying in it means your
+  failures are invisible to all of them.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Foundation 10</span>
+  <h2>REST conventions</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">Convention</th><th>Why it exists</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Nouns, not verbs</strong><br><code>/api/employees</code>, not <code>/api/getEmployees</code></td><td>The method is already the verb. <code>GET /employees</code> and <code>POST /employees</code> are two operations on one noun, and a new reader can guess both.</td></tr>
+    <tr><td><strong>Plural collections</strong><br><code>/employees</code> and <code>/employees/42</code></td><td>Consistency beats grammar. Pick plural everywhere and never think about it again.</td></tr>
+    <tr><td><strong>Nesting shows ownership</strong><br><code>/teams/5/employees</code></td><td>Reads as "the employees of team 5". Stop at one level of nesting — deeper than that becomes unreadable and inflexible.</td></tr>
+    <tr><td><strong>Filters go in the query string</strong><br><code>?department=Sales&amp;page=2</code></td><td>The path identifies <em>what</em>; the query modifies <em>which ones</em>. Filters in the path multiply endpoints forever.</td></tr>
+    <tr><td><strong>Every list is paginated</strong></td><td>An unpaginated list endpoint is a future incident. And the response <em>shape</em> is a contract — adding a wrapper later breaks every caller, so decide now.</td></tr>
+    <tr><td><strong>Errors have a shape</strong></td><td>A code a machine can branch on, a message a human can read, and which field was wrong. Otherwise every integration becomes a support conversation.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="proj">
+  <span class="tag">In this project</span>
+  <p>The NestJS backend exposes <code>/api/auth</code>, <code>/api/users</code>,
+  <code>/api/teams</code>, <code>/api/employees</code>, <code>/api/analytics</code> and
+  <code>/api/reports</code> — one module per noun, which is exactly the NestJS structure covered in
+  Volume III. Swagger generates browsable documentation from the code, so the contract is never a
+  separate document that drifts.</p>
+</div>
+
+<header class="part" id="json">
+  <span class="pn">Part IV</span>
+  <h2>JSON</h2>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Foundation 11</span>
+  <h2>The format</h2>
+</header>
+
+<p>JSON is how all three services talk to each other despite two of them being TypeScript and one
+being Python. It is <strong>text</strong> — which is precisely why every language can read it.</p>
+
+<div class="sheet">
+  <div class="cap">Six types, and that is the entire specification</div>
+<pre><code>{
+  "employeeId": 42,                    ← number  (no quotes)
+  "name": "Alice Chen",                ← string  (double quotes ONLY)
+  "isActive": true,                    ← boolean (lowercase)
+  "managerId": null,                   ← null
+  "skills": ["Python", "SQL"],         ← array
+  "risk": { "score": 0.73,             ← object  (nested freely)
+            "level": "high" }
+}
+
+THE RULES THAT TRIP PEOPLE
+  ⚠ DOUBLE QUOTES ONLY — on values AND on keys. 'single' is
+    invalid JSON, even though it is valid JavaScript.
+  ⚠ NO TRAILING COMMA after the last item. Valid in JS, invalid
+    in JSON, and the error message is unhelpful.
+  ⚠ NO COMMENTS. There is no way to write one.
+  ⚠ NO DATE TYPE. A date is a string, by convention ISO 8601:
+    "2026-03-01T09:00:00Z" — and the Z matters. A timestamp with
+    no timezone is the single most common data bug in reporting.
+  ⚠ NO undefined. Only null.
+
+JSON vs A JAVASCRIPT OBJECT — they are not the same thing
+  a JS object is a live thing in memory with methods and
+  references. JSON is a string. Converting loses everything that
+  is not one of the six types above:
+
+    JSON.stringify({ when: new Date(), fn: () =&gt; {} })
+    ⇒ the Date becomes a string; the function VANISHES silently.
+
+  ⭐ so a value that is a Date on the server is a STRING by the
+    time the browser has it, even if TypeScript says otherwise.
+    See reflex 16: types are erased, and the network does not
+    read your interfaces.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Foundation 12</span>
+  <h2>Where it bites</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Numbers lose precision</h4><p>JSON numbers are doubles. A 19-digit database id survives the trip only as a string — as a number it silently rounds, and the record you fetch is not the one you asked for.</p></div>
+  <div class="card"><h4>Key order is not guaranteed</h4><p>Never rely on it, and never hash a serialised object to compare two payloads.</p></div>
+  <div class="card"><h4>Empty vs missing vs null</h4><p><code>""</code>, absent, and <code>null</code> are three different states. Decide which one your API means, then be consistent — the frontend has to branch on it.</p></div>
+  <div class="card"><h4>Snake case meets camel case</h4><p>Python writes <code>risk_score</code>; TypeScript expects <code>riskScore</code>. Convert at exactly one boundary, deliberately, or you will convert in five places and miss one.</p></div>
+</div>
+
+<header class="part" id="js">
+  <span class="pn">Part V</span>
+  <h2>JavaScript &amp; TypeScript</h2>
+  <p class="lede">The language the frontend and the backend are both written in — and the type layer
+  on top that stops most of its sharp edges.</p>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Foundation 13</span>
+  <h2>The language, in one pass</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What you need before reading any React or NestJS file</div>
+<pre><code>VARIABLES
+  const  cannot be reassigned          ← use this by default
+  let    can be reassigned             ← when it must change
+  var    ⚠ legacy, function-scoped, avoid
+  ⭐ const on an object still lets you change what is INSIDE it.
+    It freezes the binding, not the contents.
+
+FUNCTIONS — and the one difference that matters
+  function classic(a) { return a * 2; }
+  const arrow = (a) =&gt; a * 2;          ← implicit return
+  ⭐ ARROW FUNCTIONS INHERIT `this`. That is why every React
+    handler and every class method callback is an arrow — a
+    classic function loses `this` and you get "cannot read
+    property of undefined" at runtime.
+
+DESTRUCTURING — everywhere in modern code
+  const { name, department } = employee;
+  const [first, ...rest] = list;
+  function f({ id, name }) { … }       ← props, in one line
+
+SPREAD — copy and merge
+  const updated = { ...employee, salary: 65000 };
+  ⭐ THE MOST IMPORTANT PATTERN IN REACT: build a NEW object
+    rather than mutating the old one, because React decides
+    whether to re-render by comparing references.
+  ⚠ IT IS SHALLOW. Nested objects are still shared with the
+    original, so mutating one mutates both.
+
+THE ARRAY METHODS YOU WILL READ CONSTANTLY
+  .map()     transform each → new array of the same length
+  .filter()  keep some      → new, shorter array
+  .find()    first match    → one item, or undefined
+  .reduce()  collapse to one value (a sum, a lookup object)
+  .some() / .every()   → boolean
+  ⭐ all of these RETURN A NEW ARRAY and leave the original
+    alone. That is exactly why they suit React.
+
+TRUTHINESS — the source of real bugs
+  falsy: false · 0 · "" · null · undefined · NaN
+  ⚠ if (count) is FALSE when count is 0. So a genuine zero is
+    treated as "missing" — the same 0-versus-null confusion as
+    in the database, now in the UI.
+  ⭐ ?? vs || : `a ?? b` falls back only on null/undefined;
+    `a || b` falls back on any falsy value, including 0 and "".
+    Use ?? for numbers, always.
+  ⭐ ?. safely reads through a possibly-absent object:
+    employee?.team?.name</code></pre>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Foundation 14</span>
+  <h2>Async, properly</h2>
+  <p class="lede">Anything that touches a network or a disk is asynchronous. Getting this wrong is the
+  most common source of "it works sometimes".</p>
+</header>
+
+<div class="ascii">   WHY IT EXISTS
+     JavaScript runs on ONE thread. If a database call blocked it,
+     nothing else could happen — no other request, no click, no
+     render. So slow work is handed off and the thread carries on.
+
+   THE THREE GENERATIONS
+     callbacks   → nesting that becomes unreadable
+     promises    → .then().catch() chains
+     async/await → ⭐ what all modern code uses
+
+   THE SHAPE
+     async function load(id) {
+       const employee = await prisma.employee.findUnique({ … });
+       return employee;
+     }
+     · `await` pauses THIS function until the promise settles.
+       It does not block the thread.
+     · an `async` function ALWAYS returns a promise — so its
+       caller must await it too, all the way up.
+
+   ⭐ THE FOUR MISTAKES, IN ORDER OF HOW OFTEN THEY HAPPEN
+
+     ① FORGETTING await
+         const e = getEmployee();       // a Promise, not a value
+         console.log(e.name);           // undefined
+       ⇒ if a value is mysteriously undefined or "[object
+         Promise]", this is the first thing to check.
+
+     ② SEQUENTIAL WHEN IT COULD BE PARALLEL
+         const a = await getTeams();      // 200ms
+         const b = await getEmployees();   // 200ms  → 400ms total
+       vs
+         const [a, b] = await Promise.all([getTeams(),
+                                           getEmployees()]);
+                                          // → 200ms total
+       ⭐ these do NOT depend on each other, so waiting for the
+         first before starting the second is pure waste. This is
+         the single easiest performance win in most codebases.
+
+     ③ await INSIDE A LOOP
+         for (const id of ids) { await fetchOne(id); }
+       200 ids × 50ms = 10 seconds, one at a time. This is the
+       N+1 problem in its most literal form. Fetch them together,
+       or in bounded batches.
+
+     ④ AN UNHANDLED REJECTION
+       a promise that rejects with nobody awaiting it does not
+       stop your code — it becomes a warning in a log nobody
+       reads, and the operation silently did not happen.
+       ⇒ every await belongs inside a try/catch, or under a
+         framework that catches for you (NestJS does).</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Foundation 15</span>
+  <h2>What TypeScript adds</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The annotations you will meet on day one</div>
+<pre><code>PRIMITIVES        string · number · boolean · null · undefined
+ARRAYS            string[]   ·   Employee[]
+OBJECT SHAPES     interface Employee {
+                    id: number;
+                    name: string;
+                    managerId?: number;      ← optional
+                    readonly createdAt: Date;
+                  }
+UNIONS            type Role = 'employee' | 'manager' | 'admin';
+                  ⭐ a LITERAL UNION is better than a string. It
+                    makes a typo a compile error rather than a
+                    silent permission failure.
+FUNCTIONS         function raise(e: Employee, pct: number): Employee
+GENERICS          Promise&lt;Employee&gt;  ·  Array&lt;string&gt;
+                  "a container of a type you specify"
+
+interface vs type — the practical answer
+  interface  object shapes; can be extended and merged
+  type       anything: unions, primitives, computed types
+  ⇒ use interface for object shapes, type for everything else,
+    and do not spend time on the debate.
+
+ENUM vs UNION
+  enum Role { Employee = 'employee', … }   generates real runtime
+                                            code
+  type Role = 'employee' | …               vanishes at compile
+  ⇒ prefer the union unless you need the value to exist at
+    runtime. Less shipped code, same safety.
+
+⭐ THE ONE-SENTENCE VALUE: TypeScript turns a class of bug you
+  would have found in production into a red squiggle you find
+  while typing. That is all it does, and it is enormous.</code></pre>
+</div>
+
+<header class="part" id="ts">
+  <span class="pn">Part VI</span>
+  <h2>TypeScript, deeper</h2>
+  <p class="lede">The follow-on that makes NestJS and Next.js code readable rather than mysterious.
+  Six ideas, and the last one is a skill nobody teaches.</p>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">Foundation 16</span>
+  <h2>How TypeScript thinks</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two facts that explain almost every surprise</div>
+<pre><code>①  TYPES ARE ERASED. They exist at compile time and are GONE at
+   runtime. Nothing is checked when the program runs.
+
+   ⚠ SO THIS COMPILES AND IS STILL WRONG:
+       const res = await axios.get&lt;Employee&gt;('/api/employees/42');
+       res.data.hiredAt.getFullYear();   // 💥 at runtime
+
+     you TOLD TypeScript the response is an Employee. Nobody
+     verified it. The API sent a JSON string for the date, and a
+     string has no getFullYear.
+
+   ⭐ THE RULE THAT FOLLOWS: at every boundary where data enters
+     your program — an HTTP response, a request body, a queue
+     message, a parsed file — a type annotation is a HOPE.
+     Validate the shape at runtime (class-validator in NestJS,
+     Pydantic in FastAPI, Zod in the frontend) and let the type
+     describe what the validator guarantees.
+
+②  TYPING IS STRUCTURAL, NOT BY NAME. If the shape fits, it fits.
+
+     interface Point { x: number; y: number }
+     const p = { x: 1, y: 2, label: 'a' };
+     const q: Point = p;        // ✅ fine — extra keys allowed
+                                //    when assigning a variable
+     ⚠ but an OBJECT LITERAL assigned directly is checked for
+       excess properties, so the same shape written inline
+       errors. That inconsistency is a real rule, and it is why
+       "object literal may only specify known properties"
+       appears when a spread of the same object would not.
+
+   ⭐ AND INFERENCE IS USUALLY BETTER THAN YOU
+     const names = employees.map(e =&gt; e.name);   // string[]
+     let count = 0;                              // number
+     ⇒ annotate FUNCTION SIGNATURES (the contract) and let
+       inference handle the inside. Over-annotating adds noise
+       and, worse, can hide a genuine mismatch.</code></pre>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">Foundation 17</span>
+  <h2>Unions and narrowing</h2>
+</header>
+
+<div class="ascii">   A UNION IS "ONE OF THESE"
+
+     type Result =
+       | { status: 'ok';    data: Employee }
+       | { status: 'error'; message: string }
+
+     ⭐ THIS IS A DISCRIMINATED UNION and it is the most useful
+       pattern in applied TypeScript. The shared literal field
+       (`status`) tells the compiler which branch you are in.
+
+   NARROWING — proving to the compiler which one it is
+
+     if (result.status === 'ok') {
+       result.data          // ✅ known to exist here
+     } else {
+       result.message       // ✅ known here, and .data is an error
+     }
+
+     ⭐ INSIDE THE BRANCH, THE TYPE IS NARROWER. You do not need
+       a cast, and reaching for `as` here means you have skipped
+       the check rather than done it.
+
+   THE WAYS TO NARROW
+     typeof v === 'string'         primitives
+     Array.isArray(v)              arrays
+     v instanceof Date             classes
+     'salary' in v                 property presence
+     v.kind === 'manager'          a literal discriminant  ← best
+     v !== null &amp;&amp; v !== undefined the null guard
+
+   OPTIONAL VS undefined VS null — three different statements
+     managerId?: number            the key may be ABSENT
+     managerId: number | undefined the key EXISTS, value may be
+                                   undefined
+     managerId: number | null      explicitly "no manager"
+     ⭐ pick one meaning per field and write it down. Mixing them
+       across a codebase produces checks that pass in one place
+       and fail in another for the same data.
+
+   EXHAUSTIVENESS — the trick worth stealing
+     when you handle every branch of a union in a switch, add a
+     default that assigns the value to `never`. If someone later
+     adds a fourth role, every switch that forgot it becomes a
+     COMPILE ERROR rather than a silent fall-through.
+     ⇒ this is "make it hard to do wrong", in the type system.</div>
+
+<header class="mod" id="f3">
+  <span class="mn">Foundation 18</span>
+  <h2>any · unknown · never</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Type</th><th style="width:28%">Means</th><th>When</th></tr></thead>
+  <tbody>
+    <tr><td><code>any</code></td><td>"Stop checking this."</td><td><span class="no">Almost never.</span> It disables checking for everything it touches downstream — one <code>any</code> quietly removes safety from a whole call chain. It is not a type; it is an opt-out.</td></tr>
+    <tr><td><code>unknown</code></td><td>"A value, and I do not know what."</td><td><span class="ok">The right choice</span> for anything arriving from outside. You cannot use it until you narrow it, which is exactly the behaviour you want at a boundary.</td></tr>
+    <tr><td><code>never</code></td><td>"This cannot happen."</td><td>The return type of a function that always throws, and the exhaustiveness trick above. If a variable is <code>never</code> and you did not intend it, your narrowing eliminated every case — usually a real logic error.</td></tr>
+    <tr><td><code>void</code></td><td>"Returns nothing useful."</td><td>Callbacks and handlers. Different from <code>undefined</code>: <code>void</code> is about intent, not value.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The habit that undoes TypeScript</span>
+  <p><strong><code>as</code> is not a check — it is you overruling the compiler.</strong>
+  <code>value as Employee</code> performs no verification whatsoever; it only silences the error. Used
+  at a data boundary, it converts a compile-time question into a runtime crash somewhere far away.</p>
+  <p>The two legitimate uses: narrowing a genuinely-known literal (<code>as const</code>), and the
+  rare case where you know something the compiler structurally cannot. Everything else wants a type
+  guard or a validator.</p>
+</div>
+
+<header class="mod" id="f4">
+  <span class="mn">Foundation 19</span>
+  <h2>Generics</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A type you fill in later</div>
+<pre><code>WITHOUT — you lose the type
+  function first(list: any[]): any { return list[0]; }
+  const e = first(employees);      // any. Nothing is checked.
+
+WITH — the type flows through
+  function first&lt;T&gt;(list: T[]): T | undefined { return list[0]; }
+  const e = first(employees);      // Employee | undefined ✅
+
+⭐ READ &lt;T&gt; AS "WHATEVER TYPE THE CALLER USED". The function does
+  not care what T is; it promises to give back the same thing it
+  received.
+
+CONSTRAINTS — "any type, as long as it has this"
+  function byId&lt;T extends { id: number }&gt;(items: T[], id: number)
+  ⇒ now T could be Employee, Team or Report — but not a number,
+    and inside the function `item.id` is known to exist.
+
+WHERE YOU MEET THEM IN THIS PROJECT
+  Promise&lt;Employee&gt;            an async result
+  Array&lt;string&gt; / string[]     the same thing, two spellings
+  Repository&lt;Employee&gt;         a typed data accessor
+  Partial&lt;CreateEmployeeDto&gt;   an update DTO — see 20
+  useState&lt;Employee | null&gt;    React state that starts empty
+
+⚠ WHEN NOT TO: if a generic parameter appears exactly once in a
+  signature, it is doing nothing. Generics earn their complexity
+  by LINKING two positions — an input to an output.</code></pre>
+</div>
+
+<header class="mod" id="f5">
+  <span class="mn">Foundation 20</span>
+  <h2>Utility types and type operators</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">Written</th><th>Gives you</th></tr></thead>
+  <tbody>
+    <tr><td><code>keyof Employee</code></td><td>A union of its key names — <code>'id' | 'name' | …</code>. Lets a function accept "any field of this thing" safely, so a sort helper cannot be passed a column that does not exist.</td></tr>
+    <tr><td><code>typeof config</code></td><td>The type of an existing <em>value</em>. Useful for deriving a type from a constant instead of writing it twice and letting the two drift.</td></tr>
+    <tr><td><code>Employee['name']</code></td><td>The type of one property. Reuse it rather than re-declaring <code>string</code> in ten places.</td></tr>
+    <tr><td><code>Partial&lt;T&gt;</code></td><td>All fields optional. <strong>Exactly what an update DTO is</strong> — which is why NestJS ships <code>PartialType()</code>.</td></tr>
+    <tr><td><code>Required&lt;T&gt;</code> · <code>Readonly&lt;T&gt;</code></td><td>The inverses: everything mandatory, everything frozen.</td></tr>
+    <tr><td><code>Pick&lt;T, K&gt;</code> · <code>Omit&lt;T, K&gt;</code></td><td>A subset, or everything except. <code>Omit&lt;Employee, 'salary'&gt;</code> is a public-facing employee — <strong>the type system expressing a permission boundary</strong>.</td></tr>
+    <tr><td><code>Record&lt;K, V&gt;</code></td><td>A dictionary — <code>Record&lt;Role, string[]&gt;</code> maps every role to a permission list, and the compiler notices when a new role is unhandled.</td></tr>
+    <tr><td><code>ReturnType&lt;typeof f&gt;</code></td><td>Whatever that function returns. Handy when a service method's shape is the truth and you do not want to duplicate it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The principle underneath all of them</span>
+  <p><strong>Derive types, do not duplicate them.</strong> Every type written twice is a promise to
+  update both, and that promise is always broken eventually. <code>Partial</code>, <code>Omit</code>,
+  <code>keyof</code> and <code>ReturnType</code> all exist so that one definition stays the single
+  source of truth — the same principle as one source of truth in data, applied to types.</p>
+</div>
+
+<header class="mod" id="f6">
+  <span class="mn">Foundation 21 · the skill nobody teaches</span>
+  <h2>Reading a TypeScript error</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Long errors are not hard errors</div>
+<pre><code>THE METHOD
+  1  READ THE FIRST LINE AND THE LAST LINE. The middle is the
+     compiler showing its work as it walks nested types.
+  2  FIND THE PHRASE "Type 'X' is not assignable to type 'Y'".
+     ⭐ X IS WHAT YOU HAVE. Y IS WHAT IS WANTED. Almost every
+       error reduces to that one sentence.
+  3  LOOK FOR THE SMALLEST DIFFERENCE. Usually one field, one
+     `undefined`, or one string where a literal union was wanted.
+
+THE FIVE YOU WILL ACTUALLY SEE
+
+  "Object is possibly 'undefined'"
+    ⇒ you have not handled the absent case. This is the compiler
+      finding a real crash before your users do — do not silence
+      it with `!`, handle it.
+
+  "Property 'x' does not exist on type 'y'"
+    ⇒ a typo, or the type is narrower than you think. Hover it.
+
+  "Type 'string' is not assignable to type '"admin" | "manager"'"
+    ⇒ a literal union wants an exact value. `as const` on the
+      source, or narrow it properly.
+
+  "Argument of type 'X' is not assignable to parameter of type 'Y'.
+   Types of property 'z' are incompatible."
+    ⇒ ⭐ the last clause is the answer. Skip to it: property `z`
+      is the mismatch, and everything above is the path to it.
+
+  "Type 'undefined' is not assignable to type 'string'"
+    ⇒ an optional field meeting a required one. Either the field
+      should be optional downstream too, or you need a default.
+
+⚠ THE ANTI-PATTERNS — both make the message go away and the bug
+  stay: casting with `as`, and asserting non-null with `!`.
+  ⭐ THE ERROR IS USUALLY RIGHT. When the compiler and your
+    instinct disagree, the compiler has read more of the codebase
+    than you have.</code></pre>
+</div>
+
+<header class="part" id="py">
+  <span class="pn">Part VII</span>
+  <h2>Python</h2>
+  <p class="lede">Enough to read and modify the FastAPI AI service. Not a second full language course
+  — the concepts transfer, only the spelling changes.</p>
+</header>
+
+<header class="mod" id="g1">
+  <span class="mn">Foundation 22</span>
+  <h2>The language, for a TypeScript reader</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">TypeScript</th><th>Python</th></tr></thead>
+  <tbody>
+    <tr><td>Braces define blocks</td><td><strong>Indentation defines blocks.</strong> Whitespace is syntax — a misindented line is a different program, not a style problem.</td></tr>
+    <tr><td><code>const x = 1;</code></td><td><code>x = 1</code> — no keyword, no semicolon, and no true constant.</td></tr>
+    <tr><td><code>{ }</code> object</td><td><code>{ }</code> <strong>dict</strong>, and <code>[]</code> list, <code>( )</code> tuple (immutable), <code>{1,2}</code> set.</td></tr>
+    <tr><td><code>null</code> / <code>undefined</code></td><td><code>None</code> — one absent value, not two.</td></tr>
+    <tr><td><code>true</code> / <code>false</code></td><td><code>True</code> / <code>False</code> — capitalised.</td></tr>
+    <tr><td><code>&amp;&amp; || !</code></td><td><code>and or not</code></td></tr>
+    <tr><td><code>list.map(f)</code></td><td><code>[f(x) for x in list]</code> — a <strong>comprehension</strong>, and it is everywhere in data code.</td></tr>
+    <tr><td><code>interface</code></td><td>A <strong>Pydantic model</strong> in FastAPI — and unlike an interface, it <em>validates at runtime</em>.</td></tr>
+    <tr><td>Types are erased</td><td>Type hints are optional and also not enforced at runtime — <em>except</em> where Pydantic uses them, which is the entire point of FastAPI.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The shapes you will read in the AI service</div>
+<pre><code>def predict(employee: dict, threshold: float = 0.5) -&gt; dict:
+    """Docstrings are the convention, in triple quotes."""
+    score = model.predict_proba([features(employee)])[0][1]
+    return {
+        "risk_score": round(float(score), 3),
+        "risk_level": "high" if score &gt; threshold else "low",
+    }
+
+· type hints after the colon, return type after -&gt;
+· DEFAULT ARGUMENTS make a parameter optional
+· f-strings for interpolation:  f"score is {score:.2f}"
+· ⚠ MUTABLE DEFAULT ARGUMENT is a genuine Python trap:
+    def f(items=[]):   # the SAME list is reused across calls
+  ⇒ use None and create inside.
+
+ERROR HANDLING
+  try:
+      value = risky()
+  except ValueError as e:
+      logger.warning("bad input: %s", e)
+      raise HTTPException(status_code=422, detail=str(e))
+  finally:
+      cleanup()
+  ⚠ never `except:` bare — it swallows keyboard interrupts and
+    hides real failures. Catch the exception you expect.</code></pre>
+</div>
+
+<header class="mod" id="g2">
+  <span class="mn">Foundation 23</span>
+  <h2>Classes, just enough</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">You will read more classes than you write</div>
+<pre><code>class RiskModel:
+    def __init__(self, path: str):        ← the constructor
+        self.model = joblib.load(path)    ← self is EXPLICIT
+
+    def score(self, features: list[float]) -&gt; float:
+        return float(self.model.predict_proba([features])[0][1])
+
+⭐ `self` IS THE ONE THING TO REMEMBER. Python passes the
+  instance in as the first parameter, explicitly, on every
+  method. Forgetting it in a definition is the most common
+  beginner error, and the message is confusing.
+
+WHERE THIS APPEARS IN FASTAPI CODE
+  · Pydantic models — a class per request and response shape,
+    which is how FastAPI validates and documents automatically
+  · a model wrapper loaded once at startup rather than per
+    request, because loading is slow and the object is reusable
+  · scikit-learn estimators — every one of them is a class with
+    .fit() and .predict()
+
+DECORATORS — @ before a definition
+  @app.post("/predict")
+  def predict(body: PredictRequest) -&gt; PredictResponse: …
+
+  a decorator wraps the function in another function. Here it
+  registers the route. In NestJS you will see the same idea with
+  @Controller() and @Get() — ⭐ the concept is identical across
+  the two languages, which is why FastAPI feels familiar after
+  NestJS.</code></pre>
+</div>
+
+<header class="mod" id="g3">
+  <span class="mn">Foundation 24</span>
+  <h2>Virtual environments</h2>
+</header>
+
+<div class="ascii">   THE PROBLEM
+     project A needs pandas 1.5. Project B needs pandas 2.2.
+     Python installs packages globally by default, so the second
+     install breaks the first project. Silently.
+
+   THE FIX — one isolated package folder per project
+
+     python -m venv venv          create it
+     source venv/bin/activate     use it   (prompt changes)
+     pip install -r requirements.txt
+     deactivate                   leave it
+
+   ⭐ ACTIVATION IS PER TERMINAL. A new tab is not activated, and
+     "ModuleNotFoundError" for something you definitely installed
+     is almost always this — you are in a different shell.
+
+   ⚠ venv/ IS NEVER COMMITTED. requirements.txt is. The folder can
+     be hundreds of megabytes and is machine-specific.
+
+   THE NODE EQUIVALENT, AND THE DIFFERENCE
+     node_modules/ is already per-project, so npm needs no
+     activation step. Same isolation, achieved by default rather
+     than by ceremony — which is why this trips up people coming
+     from JavaScript.</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume I · the words that will be used without explanation later</div>
+  <dl>
+    <dt>runtime</dt><dd>The program that executes your code — Node.js, CPython, or the browser.</dd>
+    <dt>transpile</dt><dd>Convert source to other source (TypeScript → JavaScript), as opposed to compiling to machine code.</dd>
+    <dt>port</dt><dd>A number identifying which program on a machine should receive a connection.</dd>
+    <dt>env var</dt><dd>Configuration supplied from outside the code, so secrets and per-machine values stay out of the repository.</dd>
+    <dt>schema</dt><dd>The declared shape of data — of a database table, or of a request body.</dd>
+    <dt>primary key</dt><dd>The column that uniquely identifies a row. Meaningless by design.</dd>
+    <dt>foreign key</dt><dd>A column pointing at another table's primary key, enforced by the database.</dd>
+    <dt>join</dt><dd>Combining rows from two tables on a matching column.</dd>
+    <dt>fan-out</dt><dd>A join to a many-side that multiplies rows, inflating any sum computed afterwards.</dd>
+    <dt>index</dt><dd>A structure that makes lookups fast at the cost of slightly slower writes.</dd>
+    <dt>idempotent</dt><dd>Safe to repeat: doing it twice has the same effect as doing it once.</dd>
+    <dt>stateless</dt><dd>The server keeps nothing between requests, so each one must carry its own identity.</dd>
+    <dt>401 vs 403</dt><dd>"I don't know who you are" versus "I know, and you may not".</dd>
+    <dt>promise</dt><dd>A value that will exist later. <code>await</code> waits for it without blocking the thread.</dd>
+    <dt>destructuring</dt><dd>Pulling fields out of an object or array into named variables in one expression.</dd>
+    <dt>spread</dt><dd><code>{ ...obj }</code> — a shallow copy, used to create new objects instead of mutating.</dd>
+    <dt>truthy / falsy</dt><dd>Which values count as true in a condition. <code>0</code> and <code>""</code> are false, which causes real bugs.</dd>
+    <dt>narrowing</dt><dd>Proving to the compiler which member of a union a value currently is.</dd>
+    <dt>structural typing</dt><dd>Compatibility decided by shape rather than by declared name.</dd>
+    <dt>comprehension</dt><dd>Python's <code>[f(x) for x in xs]</code> — the equivalent of <code>.map()</code>.</dd>
+    <dt>venv</dt><dd>A per-project Python package folder that must be activated in each terminal.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume II · Architecture, data &amp; the browser</h4><p>The three-service split, one request traced end to end, authentication and authorisation, Prisma, React, Axios and WebSockets. Start here once Part V feels comfortable.</p></div>
+  <div class="card"><h4>Volume III · The frameworks &amp; patterns</h4><p>NestJS, Next.js, FastAPI and Ant Design, plus dependency injection, DTO validation, error handling and the project's file conventions.</p></div>
+  <div class="card"><h4>Volume IV · Data science &amp; AI</h4><p>Maths, statistics, the ML workflow, deep learning, LLMs, RAG and agents — the layer the AI service is built on.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/onboarding-knowledge-base/</code> — 39 files, 29,500 lines, with far more code than a handbook can hold. This volume covers files 01–06 and 39.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A taught, navigable edition of the project's onboarding knowledge
+  base — four volumes covering all 39 source files. It teaches concepts and mechanisms with short
+  illustrative snippets; the markdown originals hold the long code examples and are the place to type
+  things out.</p>
+  <p><strong>Currency.</strong> Backend port <code>3010</code> and the Claude API supersede the
+  <code>3000</code> and Groq references in the source files. Version-specific behaviour — Prisma 7,
+  Next.js 16, NestJS 11 — is described by mechanism where possible; check the release notes for the
+  version in your <code>package.json</code> before relying on a default.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

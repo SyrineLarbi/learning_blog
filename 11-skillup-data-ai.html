@@ -1,0 +1,1663 @@
+<title>Data, AI and Emerging Tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #2A6B3C;
+  --accent-soft: #E3F1E7;
+  --accent-deep: #194527;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #2A6B3C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #7CC194;
+    --accent-soft: #101E14;
+    --accent-deep: #A3D8B4;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #7CC194;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #7CC194;
+  --accent-soft: #101E14;
+  --accent-deep: #A3D8B4;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #7CC194;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume VII</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · MLOps</div>
+  <a href="#a1"><span class="n">01</span>What it is</a>
+  <a href="#a2"><span class="n">02</span>Tracking &amp; registry</a>
+  <a href="#a3"><span class="n">03</span>CI/CD for models</a>
+  <a href="#a4"><span class="n">04</span>Monitoring drift</a>
+  <a href="#a5"><span class="n">05</span>Feature stores</a>
+
+  <div class="rail-group">II · Data engineering</div>
+  <a href="#b1"><span class="n">06</span>ETL vs ELT</a>
+  <a href="#b2"><span class="n">07</span>Pipeline layers</a>
+  <a href="#b3"><span class="n">08</span>Incremental loads</a>
+  <a href="#b4"><span class="n">09</span>Batch vs stream</a>
+  <a href="#b5"><span class="n">10</span>Data quality</a>
+  <a href="#b6"><span class="n">11</span>Orchestration</a>
+  <a href="#b7"><span class="n">12</span>Governance</a>
+
+  <div class="rail-group">III · AI product</div>
+  <a href="#c1"><span class="n">13</span>AI or plain code?</a>
+  <a href="#c2"><span class="n">14</span>Success metrics</a>
+  <a href="#c3"><span class="n">15</span>Designing the UX</a>
+  <a href="#c4"><span class="n">16</span>Cost-benefit</a>
+  <a href="#c5"><span class="n">17</span>Common mistakes</a>
+
+  <div class="rail-group">IV · Responsible AI</div>
+  <a href="#d1"><span class="n">18</span>Where bias enters</a>
+  <a href="#d2"><span class="n">19</span>Fairness metrics</a>
+  <a href="#d3"><span class="n">20</span>Explainability</a>
+  <a href="#d4"><span class="n">21</span>HR-specific duties</a>
+  <a href="#d5"><span class="n">22</span>The checklist</a>
+
+  <div class="rail-group">V · Agents in production</div>
+  <a href="#e1"><span class="n">23</span>Demo to production</a>
+  <a href="#e2"><span class="n">24</span>Tool design</a>
+  <a href="#e3"><span class="n">25</span>Guardrails</a>
+  <a href="#e4"><span class="n">26</span>Evaluating agents</a>
+  <a href="#e5"><span class="n">27</span>MCP &amp; the ecosystem</a>
+  <a href="#e6"><span class="n">28</span>Failure modes</a>
+
+  <div class="rail-group">VI · Emerging</div>
+  <a href="#f1"><span class="n">29</span>Privacy-preserving AI</a>
+  <a href="#f2"><span class="n">30</span>Quantum awareness</a>
+  <a href="#f3"><span class="n">31</span>Wasm &amp; the edge</a>
+  <a href="#f4"><span class="n">32</span>Workflow automation</a>
+  <a href="#f5"><span class="n">33</span>Evaluating a tool</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume VII of VIII</p>
+  <h1>Data, AI and emerging tech. <span class="thin">Strategy, not just implementation.</span></h1>
+  <p class="lede">Getting a model into production and keeping it honest. Pipelines that do not lie.
+  Deciding whether a feature should use AI at all. The responsibilities that come with predicting
+  things about people. Agents that survive contact with real users. And the emerging techniques worth
+  tracking rather than adopting.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volumes I–VI</span>
+    <span><b>Covers</b> · KB files 17–21, 27, 49–51</span>
+    <span><b>Heaviest volume</b> · ten source files</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<a class="vol" href="06-skillup-architecture.html"><span class="vn">Volume II</span><b>Architecture &amp; design</b></a>
+<a class="vol" href="07-skillup-craft.html"><span class="vn">Volume III</span><b>Engineering craft</b></a>
+<a class="vol" href="08-skillup-cs-foundations.html"><span class="vn">Volume IV</span><b>CS foundations &amp; the stack</b></a>
+<a class="vol" href="09-skillup-ship-and-run.html"><span class="vn">Volume V</span><b>Ship it &amp; run it</b></a>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<div class="vol here"><span class="vn">Volume VII · here</span><b>Data, AI &amp; emerging tech</b></div>
+<a class="vol" href="12-skillup-thinking-capstone.html"><span class="vn">Volume VIII</span><b>Thinking, career &amp; capstone</b></a>
+</div>
+
+<header class="part" id="mlops">
+  <span class="pn">Part I</span>
+  <h2>MLOps</h2>
+  <p class="lede">Everything between "the model works in a notebook" and "the model works in
+  production and we would notice if it stopped".</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Data/AI 01</span>
+  <h2>What MLOps actually is</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Why an ML system is harder to operate than a normal one</div>
+<pre><code>ORDINARY SOFTWARE          AN ML SYSTEM
+  behaviour comes from       behaviour comes from CODE *AND*
+  code                       DATA — ⭐ so it can break without
+                             anyone changing anything
+  correct or broken          ⭐ DEGRADES GRADUALLY AND SILENTLY
+  a test asserts equality    a metric moves on a distribution
+  deploy = ship code         deploy = ship code + weights +
+                             the preprocessing that made them
+  reproducible from git      reproducible only if the DATA
+                             VERSION was recorded
+
+⭐ THE CONSEQUENCE THAT DEFINES THE DISCIPLINE: AN ML SYSTEM CAN
+  FAIL WITHOUT FAILING. Nothing errors, latency is fine, the
+  dashboard is green — and the predictions have quietly become
+  worthless because the world moved. No ordinary monitoring
+  catches that.
+
+SO MLOps IS FOUR THINGS
+  ①  VERSION EVERYTHING — code, data, parameters, environment,
+     artefact. ⭐ THE MINIMUM VIABLE PRACTICE, and the one that
+     pays back immediately.
+  ②  AUTOMATE THE PATH from data to a deployed model, so it is
+     repeatable rather than remembered.
+  ③  MONITOR THE INPUTS AND THE OUTPUTS, not just the service.
+  ④  BE ABLE TO ROLL BACK to a previous model as easily as to
+     previous code.
+
+⭐ AND THE HONEST STARTING POINT: FOR ONE MODEL, ①  ALONE IS
+  MOST OF THE VALUE. A tracked run and a versioned artefact
+  turn "which model is this?" from unanswerable into trivial.
+  Build the rest when retraining becomes regular.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Data/AI 02</span>
+  <h2>Tracking and the registry</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Record</th><th>Why, concretely</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Code version</strong></td><td>A commit SHA. "The script as it was that day" is not a version.</td></tr>
+    <tr><td><strong>Data version</strong></td><td><span class="ok">The one most often missing.</span> A snapshot identifier. Without it the model is not reproducible at any price, and "why did the metrics change?" is unanswerable.</td></tr>
+    <tr><td><strong>Hyperparameters</strong></td><td>So the run can be repeated and compared.</td></tr>
+    <tr><td><strong>Environment</strong></td><td>Library versions — <strong>a different XGBoost version can change results</strong>, and a pickle loaded under a different version can predict differently or refuse to load.</td></tr>
+    <tr><td><strong>Metrics, per named split</strong></td><td>Train, validation and test separately. One number with no split is not a result.</td></tr>
+    <tr><td><strong>The artefact</strong></td><td><strong>The whole fitted pipeline</strong>, not the estimator — the preprocessing is part of the model.</td></tr>
+    <tr><td><strong>Who and when</strong></td><td>Accountability, and it is what makes an audit answerable.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">What a registry adds</span>
+  <p>A registry gives a model a <strong>name, a version and a stage</strong> — staging, production,
+  archived. Which turns two otherwise painful questions into lookups: <em>which model is serving
+  right now</em>, and <em>what do I roll back to</em>.</p>
+  <p>And it gives you the promotion gate: a model moves to production because it beat the incumbent on
+  a held-out set, not because someone copied a file.</p>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Data/AI 03</span>
+  <h2>CI/CD for models</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three pipelines, not one</div>
+<pre><code>①  CODE PIPELINE — ordinary CI on the training and serving code.
+   lint, types, unit tests. Nothing special.
+
+②  TRAINING PIPELINE — triggered by new data, a schedule, or a
+   code change.
+     ingest → validate → features → train → evaluate → register
+   ⭐ WITH AN AUTOMATIC GATE: DO NOT REGISTER A MODEL THAT DOES
+     NOT BEAT THE INCUMBENT ON THE HELD-OUT SET. That single
+     rule prevents the most common regression — shipping a
+     worse model because the run completed.
+
+③  DEPLOYMENT PIPELINE — promote a registered model to serving.
+   ⭐ AND IT MUST BE SEPARATE FROM ②. Training and deploying are
+     different decisions with different risk; a model that
+     trains well may still need a human before it affects
+     anyone.
+
+⭐ THE VALIDATION STEP PEOPLE OMIT: VALIDATE THE DATA BEFORE
+  TRAINING.
+  schema unchanged? row count within expected bounds? no column
+  suddenly 90% null? distributions roughly where they were?
+  ⚠ WITHOUT THIS, A BROKEN UPSTREAM LOAD SILENTLY PRODUCES A
+    MODEL TRAINED ON GARBAGE, and the pipeline reports success
+    at every step.
+
+DEPLOYING SAFELY — the same strategies as any service
+  · SHADOW MODE: the new model predicts, its output is logged
+    and not used. ⭐ THE SAFEST AND MOST UNDER-USED OPTION —
+    real traffic, zero risk.
+  · CANARY: a small share of traffic, watched.
+  · ⚠ AND ALWAYS KEEP THE PREVIOUS VERSION DEPLOYABLE. Rolling
+    back a model must be as fast as rolling back code.</code></pre>
+</div>
+
+<header class="mod" id="a4">
+  <span class="mn">Data/AI 04</span>
+  <h2>Monitoring, and the two drifts</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The part that distinguishes a deployed model from a maintained one</div>
+<pre><code>FOUR LAYERS, AND MOST TEAMS MONITOR ONLY THE FIRST
+
+  ①  THE SERVICE — latency, error rate, throughput. Ordinary.
+
+  ②  THE INPUTS — ⭐ DATA DRIFT
+     the distribution of incoming features moves away from the
+     training distribution.
+     ⇒ a reorganisation changes every department code; a new
+       office changes the tenure mix; an upstream system starts
+       sending nulls.
+     ⭐ THIS IS DETECTABLE IMMEDIATELY AND WITHOUT LABELS, which
+       makes it the most valuable monitor you can add.
+
+  ③  THE OUTPUTS — prediction drift
+     the distribution of predictions shifts. Suddenly 40% of
+     employees are high risk where it was 8%.
+     ⇒ also label-free, and it usually means ② happened.
+
+  ④  THE OUTCOMES — ⚠ CONCEPT DRIFT
+     the relationship itself changed — the same features now
+     imply a different outcome.
+     ⭐ AND THE HONEST PROBLEM: YOU LEARN THE TRUE OUTCOME
+       MONTHS LATER. Attrition is only confirmed when someone
+       leaves. So accuracy is always measured in arrears, and
+       ② and ③ are your only early warning.
+
+⭐ AND THE ONE UNIQUE TO THIS DOMAIN, WHICH IS EASY TO MISS:
+  A RETENTION MODEL CHANGES BEHAVIOUR. Managers act on the
+  flags, so future data is shaped by the model's own
+  predictions. ⇒ YOUR NEXT TRAINING SET IS NO LONGER A CLEAN
+  OBSERVATION OF REALITY, and naive retraining on it slowly
+  degrades into modelling your own interventions. Plan for it:
+  keep a holdout that is not acted on, or record which
+  predictions were acted upon.</code></pre>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">Data/AI 05</span>
+  <h2>Feature stores</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One real problem, and whether you have it</div>
+<pre><code>THE PROBLEM THEY SOLVE — ⭐ TRAINING/SERVING SKEW
+  the feature "team average satisfaction over the last 90 days"
+  is computed one way in a training notebook and another way in
+  the serving code. They differ subtly. ⇒ THE MODEL PERFORMS
+  WORSE IN PRODUCTION THAN IN VALIDATION, FOR NO VISIBLE
+  REASON, and it is very hard to diagnose.
+
+WHAT A FEATURE STORE PROVIDES
+  · ONE DEFINITION of each feature, used by both training and
+    serving
+  · an offline store for training and an online store for
+    low-latency lookup
+  · ⭐ POINT-IN-TIME CORRECTNESS: "what was this feature's value
+    at the moment of the event?" ⇒ THIS IS LEAKAGE PREVENTION
+    AS INFRASTRUCTURE, and it is the genuinely hard part it
+    solves
+  · reuse across models, and documentation of what exists
+
+⚠ WHETHER YOU NEED ONE
+  ✅ several models sharing features · features computed from
+     streams · a team large enough that people duplicate
+     definitions
+  ❌ one model, batch scoring, a handful of features
+  ⇒ ⭐ FOR THIS PROJECT: NO. A feature store for one attrition
+    model is infrastructure without a problem.
+
+⭐ BUT TAKE THE IDEA WITHOUT THE PLATFORM: WRITE THE FEATURE
+  LOGIC ONCE, IN ONE MODULE, AND CALL IT FROM BOTH TRAINING AND
+  SERVING. That is 95% of the benefit for none of the cost —
+  and it is the same "one definition, derived everywhere"
+  principle as everywhere else in this handbook.</code></pre>
+</div>
+
+<header class="part" id="de">
+  <span class="pn">Part II</span>
+  <h2>Data engineering</h2>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Data/AI 06</span>
+  <h2>ETL versus ELT</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What actually changed, and when each is right</div>
+<pre><code>ETL  extract → TRANSFORM → load
+     transform before landing it. Made sense when storage and
+     compute were expensive and the warehouse was precious.
+
+ELT  extract → LOAD → transform
+     ⭐ land the raw data first, transform inside the warehouse.
+     WHY IT WON: storage became cheap and warehouse compute
+     became elastic. And the decisive advantage —
+
+  ⭐ YOU KEEP THE RAW DATA. So when a transformation turns out
+    to be wrong — and one will — you can rebuild from source
+    rather than re-extracting from a system that may no longer
+    have the history. WITH ETL, A BAD TRANSFORM DESTROYS
+    INFORMATION YOU CANNOT RECOVER.
+
+WHEN ETL IS STILL RIGHT
+  · the data must be masked or filtered BEFORE it lands, for
+    legal reasons ⭐ — which is a real consideration for HR
+    data crossing a boundary
+  · the volume is enormous and most of it is discarded
+  · the destination cannot transform
+
+⭐ THE RULE THAT MATTERS MORE THAN THE ACRONYM: NEVER MODIFY THE
+  RAW LAYER. It is append-only and immutable. Every
+  transformation writes somewhere new. That single discipline is
+  what makes a pipeline debuggable and rebuildable.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Data/AI 07</span>
+  <h2>Pipeline layers</h2>
+</header>
+
+<div class="ascii">   SOURCES ──► RAW ──► STAGING ──► INTERMEDIATE ──► MARTS
+               │        │            │                │
+        exactly as   typed,      joined,          shaped for
+        received     renamed,    business         one audience
+        immutable    cleaned     logic applied
+
+   ⭐ EACH LAYER HAS EXACTLY ONE JOB. That is the whole
+     discipline, and the reason it works.
+
+   RAW          land it unchanged. Never edit. ⇒ you can always
+                rebuild everything downstream.
+   STAGING      one model per source table. Rename, cast, clean,
+                deduplicate. ⭐ NO JOINS HERE — joining early
+                destroys reusability, because the next use needs
+                a different join.
+   INTERMEDIATE the joins and the business logic. Where "regretted
+                attrition" gets its definition, once.
+   MARTS        the tables people query. One per audience or
+                question, wide and denormalised on purpose.
+
+   ⭐ THE PROPERTY THAT MAKES A PIPELINE OPERABLE: IDEMPOTENCY.
+     Running any step twice produces the same result as running
+     it once. ⇒ then a failed run can simply be re-run, and a
+     backfill is not a special procedure requiring courage.
+     ⚠ AN APPEND-ONLY STEP WITH NO DEDUPLICATION IS NOT
+       IDEMPOTENT — re-running it doubles the data, and this is
+       the most common pipeline bug there is.
+
+   AND THE DEFINITION LIVES IN EXACTLY ONE PLACE
+     ⚠ if "active employee" is defined in four marts, it will
+       eventually be defined four different ways, and two
+       dashboards will disagree in a meeting. ⭐ DEFINE IT ONCE
+       IN THE INTERMEDIATE LAYER AND BUILD EVERYTHING FROM IT.</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Data/AI 08</span>
+  <h2>Incremental loads</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Full reload is simple; incremental is fast and subtly wrong</div>
+<pre><code>FULL SNAPSHOT — reload everything each run.
+  ✅ simple, self-correcting, and idempotent by construction.
+  ⭐ USE IT UNTIL IT HURTS. For a few million rows it is fine,
+    and it eliminates every problem below.
+
+INCREMENTAL — load only what changed since last time.
+  ✅ fast and cheap.
+  ⚠ AND HERE ARE THE FOUR WAYS IT LOSES DATA:
+
+  ① THE BOUNDARY. `WHERE updated_at &gt; last_run` — a row
+    written at exactly that timestamp is either processed twice
+    or missed. ⇒ use an inclusive lower bound plus
+    deduplication, or an exclusive upper bound.
+  ② CLOCK SKEW. The source's clock and yours differ, so rows
+    appear "before" your watermark and are never collected.
+    ⇒ take the watermark from the SOURCE's own timestamps.
+  ③ ⭐ UPDATES WITH AN UNCHANGED TIMESTAMP. Some systems modify
+    a row without touching `updated_at`. That change is
+    invisible to you forever.
+  ④ ⭐ DELETES — THE ONE EVERYONE MISSES. A deleted row does not
+    appear in "rows changed since". So incremental pipelines
+    silently accumulate records that no longer exist upstream,
+    and your headcount slowly drifts upward.
+    ⇒ the fixes: soft deletes at the source, change data
+      capture, or a periodic full reconciliation.
+
+⭐ THE PRACTICAL PATTERN: INCREMENTAL DAILY, FULL RELOAD WEEKLY.
+  You get the speed and a self-correcting mechanism that
+  repairs whatever the increments missed. It is unglamorous and
+  it is what keeps numbers trustworthy.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Data/AI 09</span>
+  <h2>Batch versus stream</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%"></th><th style="width:34%">Batch</th><th>Stream</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Shape</strong></td><td>Scheduled runs over a window of data</td><td>Continuous processing per event</td></tr>
+    <tr><td><strong>Freshness</strong></td><td>Minutes to a day</td><td>Seconds</td></tr>
+    <tr><td><strong>Complexity</strong></td><td><span class="ok">Low.</span> Re-runnable, debuggable, easy to reason about</td><td><span class="no">High.</span> Late-arriving events, windowing, exactly-once semantics, state management</td></tr>
+    <tr><td><strong>Failure</strong></td><td>Re-run the batch</td><td>Replay from an offset, and hope your state was checkpointed</td></tr>
+    <tr><td><strong>Right for</strong></td><td><strong>Almost everything in a business context</strong> — reporting, nightly scoring, reconciliation</td><td>Fraud detection, live dashboards, anything where seconds change a decision</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The question that settles it</span>
+  <p><strong>What decision changes if this is one hour fresher?</strong> If the answer is "none",
+  batch is correct and streaming is a large amount of complexity bought for nothing.</p>
+  <p>For HR analytics the answer is almost always none — attrition risk does not change between 9am
+  and 10am. <strong>"Real-time" is frequently a stated requirement that nobody can attach a decision
+  to</strong>, and asking this question directly is one of the more valuable things you can do in a
+  requirements conversation.</p>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Data/AI 10</span>
+  <h2>Data quality</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Tests in the pipeline, not hope</div>
+<pre><code>⭐ THE FOUR KINDS OF TEST WORTH HAVING, AND THEY ARE CHEAP
+
+  ①  SCHEMA — the columns and types are what we expect.
+     Catches an upstream change before it corrupts anything
+     downstream.
+  ②  VOLUME — the row count is within expected bounds.
+     ⭐ CATCHES THE PARTIAL LOAD, which is the most damaging
+       silent failure: a run that succeeded with 12% of the
+       data, so every number is quietly wrong.
+  ③  UNIQUENESS AND REFERENTIAL INTEGRITY — one row per grain,
+     no orphan foreign keys.
+  ④  DISTRIBUTION — nulls, ranges and category sets roughly
+     where they were. Catches "the satisfaction column is
+     suddenly all zeros".
+
+WHERE THEY GO
+  ⭐ AS A GATE BETWEEN LAYERS, NOT AS A REPORT AFTERWARDS.
+    A failing test should STOP the pipeline, not annotate it.
+    ⚠ A data-quality dashboard nobody looks at is documentation
+      of your problems, not prevention of them.
+
+AND THE TWO HABITS FROM THE ANALYTICS SIDE THAT MATTER MOST
+  · ⭐ QUANTIFY EVERY FINDING TWICE — BY ROW COUNT AND BY VALUE.
+    "3% of rows are affected" and "those rows are 40% of total
+    salary" are both true and lead to opposite decisions.
+  · ⭐ RECONCILE TO A SOURCE NOBODY IN THE ARGUMENT CONTROLS.
+    If your headcount matches the payroll system's, the number
+    is defensible. If it only matches your own pipeline, it is
+    not evidence.
+
+⚠ AND THE FAILURE THAT DEFINES THIS SECTION: A PIPELINE THAT
+  REPORTS SUCCESS AT EVERY STEP AND PRODUCED WRONG NUMBERS.
+  Every test above exists to convert that into a loud failure.</code></pre>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Data/AI 11</span>
+  <h2>Orchestration</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Dependencies, not schedules</div>
+<pre><code>⚠ THE NAIVE APPROACH: schedule the extract at 01:00, the
+  transform at 02:00, the report at 03:00, and hope each
+  finishes in an hour.
+  ⇒ THE DAY THE EXTRACT TAKES 70 MINUTES, THE TRANSFORM RUNS ON
+    YESTERDAY'S DATA AND REPORTS SUCCESS. Nothing errors, and
+    the numbers are wrong.
+
+⭐ AN ORCHESTRATOR EXPRESSES DEPENDENCIES: the transform runs
+  WHEN the extract succeeds. Time-based chaining is the bug;
+  dependency-based execution is the fix.
+
+WHAT AN ORCHESTRATOR GIVES YOU
+  · a DAG with retries and failure handling per task
+  · ⭐ BACKFILLS — re-running a date range as a first-class
+    operation rather than an act of courage
+  · visibility: what ran, when, how long, and what failed
+  · ⭐ SLAs — an alert when a task has not completed by the time
+    someone needs it, which is a different and more useful
+    alarm than "it failed"
+
+⭐ BACKFILLS ARE THE HARDEST ROUTINE OPERATION IN DATA, so the
+  checklist matters:
+  □ is the step IDEMPOTENT? ⇒ if not, stop; fix that first
+  □ what is the date range, exactly?
+  □ will it overwrite corrected values downstream?
+  □ what will it cost — compute and metered API calls?
+  □ ⭐ WILL IT RESTATE PUBLISHED NUMBERS? If last month's report
+    changes, somebody must be told BEFORE they notice.
+  □ can it run in chunks, so a failure is partial?
+
+⭐ AND THE PART THAT KEEPS TRUST: WHEN A NUMBER CHANGES
+  RETROSPECTIVELY, SAY SO. "As at" dating and a note beats a
+  stakeholder discovering that last quarter moved.</code></pre>
+</div>
+
+<header class="mod" id="b7">
+  <span class="mn">Data/AI 12</span>
+  <h2>Governance</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Lineage</h4><p>Which sources produced this number, through which steps. <strong>The first question asked when a figure is disputed</strong>, and unanswerable without it.</p></div>
+  <div class="card"><h4>Ownership</h4><p>Every dataset has a named owner. Unowned data rots, and nobody can approve access to it.</p></div>
+  <div class="card"><h4>A catalogue</h4><p>What exists, what it means, what the grain is. Prevents the same table being rebuilt three times under different names.</p></div>
+  <div class="card"><h4>Classification</h4><p>Which columns are sensitive — salary, health, disciplinary. <strong>This drives access control and masking</strong>, and in an HR system it is the foundation of everything else.</p></div>
+  <div class="card"><h4>Retention</h4><p>How long each dataset is kept, and what erasure requires. A legal commitment, not a storage preference.</p></div>
+  <div class="card"><h4>Minimum cell size</h4><p>An aggregate over three people identifies three people. <strong>Aggregation is not anonymisation</strong>, and filter combinations are a re-identification tool.</p></div>
+</div>
+
+<header class="part" id="aiprod">
+  <span class="pn">Part III</span>
+  <h2>AI product thinking</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Data/AI 13</span>
+  <h2>Should this use AI at all?</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The first question, and it is asked far too rarely</div>
+<pre><code>⭐ USE RULES WHEN A RULE WORKS.
+  "flag anyone with satisfaction below 0.3 and no promotion in
+  three years" is auditable, instant, free, explainable, and
+  often nearly as accurate.
+  ⇒ AND IT CAN BE DEFENDED IN A ROOM. A rule you can state is
+    worth a great deal in a domain where decisions affect
+    people's jobs.
+
+USE CLASSICAL ML WHEN
+  · you have labelled historical outcomes
+  · the data is tabular
+  · you need the same answer twice for the same input
+  ⭐ ⇒ THIS IS THE ATTRITION MODEL, AND GRADIENT BOOSTING WINS
+    HERE. Not deep learning, and not an LLM.
+
+USE AN LLM WHEN
+  · the input is unstructured language
+  · the task is generation, summarisation, extraction or
+    classification with fuzzy categories
+  · ⭐ AND AN OCCASIONAL WRONG ANSWER IS TOLERABLE, because it
+    will happen
+
+⚠ DO NOT USE AN LLM FOR
+  · arithmetic or anything auditable ⇒ ⭐ THE DETERMINISTIC
+    SYSTEM COMPUTES, THE MODEL NARRATES
+  · tabular prediction with labels — boosting is better, cheaper
+    and explainable
+  · a decision that must be reproducible and defensible
+
+⭐ THE TEST THAT SETTLES MOST DEBATES: WHAT IS THE COST OF BEING
+  WRONG, AND WHO PAYS IT?
+    a clumsy sentence in a summary ⇒ fine
+    a wrong number in a board pack ⇒ not fine
+    a person not shortlisted for a job ⇒ ⭐ AN ENTIRELY
+      DIFFERENT BAR — fairness, explainability, records, and an
+      appeal path.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Data/AI 14</span>
+  <h2>Success metrics</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three layers, and only the third matters to the business</div>
+<pre><code>①  MODEL METRICS — precision, recall, PR-AUC, calibration.
+   necessary, and ⚠ INVISIBLE TO STAKEHOLDERS. "PR-AUC improved
+   to 0.71" answers no business question.
+
+②  PRODUCT METRICS — is the feature being used, and does it
+   work in situ?
+   · what proportion of flagged employees get a conversation?
+   · how often does a user override the suggestion?
+     ⭐ THE OVERRIDE RATE IS THE BEST SINGLE SIGNAL YOU WILL
+       GET. High and consistent overrides mean the model is
+       wrong, or the interface is not trusted — and either way
+       nobody told you in a survey.
+   · time saved per task
+
+③  BUSINESS METRICS — did the thing we care about change?
+   · regretted attrition among flagged-and-contacted employees
+     versus a comparable group
+   ⭐ AND THE HARD PART: ATTRIBUTION. Attrition falls; was it
+     the model, the pay review, or the labour market? ⇒ THIS IS
+     WHY A HOLDOUT GROUP MATTERS EVEN WHEN IT FEELS
+     UNNECESSARY. Without one you cannot claim the effect, and
+     someone will eventually ask you to.
+
+⚠ AND THE THREE TRAPS
+  · CELEBRATING ①  ALONE. A better model nobody acts on has
+    changed nothing.
+  · GOODHART. Target "number of flags actioned" and you get
+    box-ticking conversations.
+  · ⭐ IGNORING THE FEEDBACK LOOP: acting on predictions changes
+    the outcomes you later measure, so the model appears to
+    become less accurate precisely when it is working. Say this
+    out loud before anyone concludes it is broken.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Data/AI 15</span>
+  <h2>Designing the interface</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The UX decides whether the model is used or ignored</div>
+<pre><code>⭐ THE FIRST DESIGN DECISION, BEFORE ANY SCREEN: IS THIS
+  ADVISING A HUMAN, OR ACTING?
+  ADVISING  a display problem — show the evidence, make it
+            checkable, let a person decide
+  ACTING    an authorisation problem — permission checks in
+            code, a record of what was done and why, and a way
+            to undo it
+  ⚠ MOST TEAMS BUILD THE SECOND WHILE THINKING ABOUT THE FIRST.
+
+THE FIVE RULES THAT DECIDE ADOPTION
+
+  ①  SHOW THE EVIDENCE, NOT JUST THE SCORE.
+     "0.73" is unusable. "Low satisfaction, no promotion in
+     four years, manager changed twice" is actionable — and it
+     lets the reader disagree, which is what builds trust.
+
+  ②  ⭐ FRAME IT AS A PROMPT, NOT A VERDICT.
+     "worth a conversation this month" — not "will leave".
+     ⇒ AND THE BASE-RATE ARITHMETIC REQUIRES THIS: with a 5%
+       base rate, a good model's flags are majority
+       false-positive. The framing must be honest about that or
+       the feature will lose its credibility on first contact.
+
+  ③  MAKE DISAGREEING EASY AND RECORDED.
+     an override button that captures a reason. ⭐ IT IS YOUR
+     BEST EVALUATION DATA AND YOUR BEST TRUST-BUILDING DEVICE,
+     simultaneously.
+
+  ④  BE HONEST ABOUT UNCERTAINTY.
+     ranges, confidence bands, "not enough data for this
+     employee". ⚠ A CONFIDENT WRONG ANSWER COSTS MORE TRUST
+     THAN AN UNCERTAIN RIGHT ONE EARNS.
+
+  ⑤  SET EXPECTATIONS BEFORE FIRST USE.
+     what it does, what it does not do, how often it is wrong.
+     ⭐ USERS FORGIVE A DISCLOSED LIMITATION AND DO NOT FORGIVE
+       A DISCOVERED ONE.
+
+⚠ AND FOR THIS DOMAIN SPECIFICALLY: THE EMPLOYEE IS A
+  STAKEHOLDER TOO. Who can see that someone was flagged?
+  What happens if they see it? That is a design question, and
+  in some jurisdictions a legal one.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Data/AI 16</span>
+  <h2>Cost-benefit</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The arithmetic almost nobody brings</div>
+<pre><code>THE COSTS, ALL OF THEM
+  BUILD        engineering weeks — including evaluation, which
+               is usually underestimated by half
+  RUN          ⭐ per-request, at realistic volume. Tokens, GPU
+               hours, storage, the warehouse scans.
+  MAINTAIN     ⭐ THE ONE ALWAYS OMITTED: monitoring, drift
+               investigation, retraining, prompt updates when
+               the provider changes a model. An AI feature has
+               a permanent maintenance cost that ordinary code
+               does not.
+  RISK         a wrong answer's consequence, times its rate.
+               In this domain: a discrimination exposure, and
+               the reputational cost of a bad flag.
+
+THE BENEFITS, HONESTLY
+  time saved × people × frequency × loaded hourly cost
+  ⚠ AND DISCOUNT IT: a feature used by four people twice a
+    month saves less than the meeting that specified it cost.
+
+⭐ THE SENTENCE TO BE ABLE TO SAY: "It costs about $0.004 per
+  request, roughly $240 a month at current volume, and it saves
+  each of eleven managers about two hours a month. Here are the
+  three levers if we need the cost down."
+  ⇒ ALMOST NOBODY BRINGS THAT NUMBER, and it is what turns an
+    engineering proposal into a business decision.
+
+⚠ AND THE CHEAPEST ALTERNATIVE, ALWAYS ON THE LIST: DO NOTHING,
+  or a rule, or a better report. ⭐ SOMETIMES THE HONEST ANSWER
+  IS THAT A FILTERED VIEW SOLVES 80% OF THIS FOR A DAY OF WORK
+  AND NO ONGOING COST — and saying so is a senior act, not a
+  defeat.</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Data/AI 17</span>
+  <h2>Common mistakes</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The demo that cannot become a product</h4><p>Impressive on five curated examples, unevaluated on the distribution of real inputs. The gap is the entire project.</p></div>
+  <div class="card"><h4>No baseline</h4><p>Nobody measured the rule, the spreadsheet, or the status quo. So "the model is good" has no reference point and cannot be defended.</p></div>
+  <div class="card"><h4>Solving the interesting problem</h4><p>Prediction is interesting; the actual bottleneck was that nobody can find last year's reviews. Ask what the person does all day.</p></div>
+  <div class="card"><h4>Automating a broken process</h4><p>An AI layer over a process nobody trusts produces faster distrust. Fix the process first.</p></div>
+  <div class="card"><h4>Shipping without an eval set</h4><p>Then nobody dares change the prompt, and a superstition stays frozen in production for a year.</p></div>
+  <div class="card"><h4>Ignoring the maintenance</h4><p>Launched, celebrated, unowned. Six months later it is quietly wrong and still running.</p></div>
+</div>
+
+<header class="part" id="ethics">
+  <span class="pn">Part IV</span>
+  <h2>Responsible AI</h2>
+  <p class="lede">Not a compliance chapter. In an HR system these are engineering requirements with
+  legal consequences.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Data/AI 18</span>
+  <h2>Where bias enters</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Five entry points, and none of them are the algorithm</div>
+<pre><code>①  HISTORICAL BIAS — ⭐ THE DEEPEST AND LEAST FIXABLE
+   the training data records past decisions, including
+   discriminatory ones. A model that predicts who was promoted
+   learns who WAS promoted, faithfully.
+   ⇒ AND ACCURACY MAKES IT WORSE, NOT BETTER: a model that
+     perfectly reproduces a biased history is a machine for
+     perpetuating it at scale and with an appearance of
+     objectivity.
+
+②  REPRESENTATION BIAS
+   a group is thinly represented, so the model is simply worse
+   for them — and the aggregate metric hides it.
+   ⇒ ⭐ ALWAYS EVALUATE PER SUBGROUP. An overall PR-AUC of 0.72
+     can be 0.75 for one group and 0.51 for another, and the
+     single number will never tell you.
+
+③  MEASUREMENT BIAS
+   the label is a proxy for what you actually care about, and
+   the proxy is unequal. "Performance rating" measures a
+   manager's judgement, and manager judgement varies
+   systematically.
+
+④  PROXY VARIABLES — ⭐ THE ONE PEOPLE THINK THEY HAVE SOLVED
+   you removed gender and ethnicity. But postcode, school,
+   name, working pattern, part-time status and career gaps all
+   correlate with protected characteristics.
+   ⇒ REMOVING THE OBVIOUS COLUMN IS NOT SUFFICIENT, and a model
+     can be indirectly discriminatory with no protected
+     attribute anywhere in its inputs.
+
+⑤  FEEDBACK LOOPS
+   flagged employees get attention, which changes their
+   outcomes, which becomes training data. The model's beliefs
+   become self-fulfilling.
+
+⭐ THE ENGINEERING CONSEQUENCE: BIAS IS A DATA AND DESIGN
+  PROBLEM, NOT A MODEL PROBLEM. Switching algorithms changes
+  nothing on this list.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Data/AI 19</span>
+  <h2>Fairness metrics — and why they conflict</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Definition</th><th style="width:32%">Requires</th><th>The problem with it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Demographic parity</strong></td><td>The same flag rate across groups</td><td>Ignores genuine differences in the outcome, and can require flagging people you have no reason to flag.</td></tr>
+    <tr><td><strong>Equal opportunity</strong></td><td>The same <em>recall</em> across groups</td><td>Often the most defensible for a beneficial intervention: everyone who needs help is equally likely to be found.</td></tr>
+    <tr><td><strong>Equalised odds</strong></td><td>The same recall <em>and</em> false-positive rate</td><td>Stricter, and harder to satisfy without sacrificing accuracy.</td></tr>
+    <tr><td><strong>Calibration within groups</strong></td><td>A predicted 0.7 means 70&nbsp;% in every group</td><td>Reasonable, and <strong>mathematically incompatible with equalised odds</strong> when base rates differ between groups.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The result that matters, and it is not optional knowledge</span>
+  <p><strong>These definitions are mutually incompatible.</strong> When base rates differ between
+  groups, it is mathematically impossible to satisfy calibration and equalised odds simultaneously.
+  This is proven, not a limitation of current technique.</p>
+  <p>So <strong>"is the model fair?" has no technical answer.</strong> Someone must decide which
+  definition applies to this decision, and that is a policy choice belonging to the business, HR and
+  legal — not to the engineer. <strong>Your job is to surface the trade-off, measure whichever
+  definition is chosen, and document the choice.</strong> Choosing silently is the failure.</p>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Data/AI 20</span>
+  <h2>Explainability</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three levels, and only the third satisfies a person</div>
+<pre><code>①  GLOBAL — which features matter overall?
+   feature importances. Useful for validation and for spotting
+   leakage ⭐ (one feature dominating absurdly is usually a leak,
+   not a discovery). ⚠ Says nothing about an individual.
+
+②  LOCAL — why this prediction, for this person?
+   per-prediction attributions. ⭐ THIS IS WHAT A MANAGER
+   ACTUALLY NEEDS, and what makes the output checkable.
+
+③  ACTIONABLE — what would change it?
+   "if this person had been promoted in the last two years, the
+   score would be materially lower."
+   ⭐ THE ONLY LEVEL THAT ANSWERS THE QUESTION A PERSON ASKS,
+     which is not "why" but "what now".
+
+⚠ THE HONEST CAVEATS
+  · ⭐ AN EXPLANATION IS NOT A CAUSE. Attributions describe the
+    model's behaviour, not the world. "Tenure drove this score"
+    does not mean changing tenure changes the outcome.
+  · a plausible explanation increases trust whether or not it
+    is correct ⇒ WHICH IS A RISK, not a benefit. Convincing
+    explanations of a bad model are worse than none.
+  · ⚠ NEVER LET AN LLM INVENT THE EXPLANATION. It will produce
+    fluent, confident reasoning unrelated to the model's actual
+    computation. ⭐ COMPUTE THE ATTRIBUTIONS, THEN LET THE MODEL
+    PHRASE THEM — the same "compute, then narrate" rule.
+
+⭐ AND FOR THIS DOMAIN: IF A DECISION AFFECTS SOMEONE'S
+  EMPLOYMENT, AN EXPLANATION IS OFTEN A LEGAL REQUIREMENT AND
+  ALWAYS AN ETHICAL ONE. ⇒ this is a real argument for a
+  simpler model: a logistic regression whose coefficients you
+  can state may be the correct engineering choice even at
+  slightly lower accuracy.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Data/AI 21</span>
+  <h2>HR-specific duties</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What makes people data different</div>
+<pre><code>⭐ ONE FACT SETS THE BAR: THIS SYSTEM MAKES INFERENCES ABOUT
+  IDENTIFIABLE PEOPLE'S LIVELIHOODS. Nearly every regulatory
+  framework treats employment decisions as high-risk, and
+  several treat them explicitly.
+
+THE OBLIGATIONS THAT BECOME ENGINEERING REQUIREMENTS
+  □  PURPOSE LIMITATION — data collected for payroll may not
+     silently become model features. ⭐ THIS IS A DESIGN
+     CONSTRAINT, and it is routinely violated by accident.
+  □  DATA MINIMISATION — collect and retain what the purpose
+     needs. "It might be a useful feature" is not a purpose.
+  □  MEANINGFUL HUMAN REVIEW — a person who can actually
+     override, with the information to do so. ⚠ A HUMAN WHO
+     RUBBER-STAMPS IS NOT HUMAN REVIEW, and regulators say so.
+  □  EXPLANATION — reflex 20.
+  □  ACCESS AND CORRECTION — an employee can ask what is held
+     and challenge it.
+  □  ERASURE — ⭐ WHICH MUST REACH BACKUPS, LOGS, EXPORTS,
+     ANALYTICS COPIES AND TRAINING SETS. A delete button on one
+     table is not erasure, and this is the requirement most
+     systems cannot actually satisfy.
+  □  ⭐ RETRAINING AFTER ERASURE is an open, genuinely hard
+     problem. Design so that removing an individual is
+     tractable — which argues for retraining from a versioned
+     dataset rather than incrementally.
+  □  ACCESS AUDIT — who viewed whose record, retained.
+  □  MINIMUM CELL SIZE on every aggregate. "Engagement in the
+     Lisbon team" where the team is three people identifies
+     three people.
+
+⚠ AND THE ONE THAT IS PURELY A PROCESS FAILURE: PRODUCTION HR
+  DATA IN STAGING. Salaries, reviews and health information in
+  a lower environment with weaker access control. ⭐ ANONYMISE
+  OR GENERATE — and "we only copied it once for testing" is
+  exactly how these incidents are described afterwards.</code></pre>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Data/AI 22</span>
+  <h2>The checklist</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Before an AI feature affecting people goes live</div>
+<pre><code>PURPOSE
+  □  can we state the decision this changes, in one sentence?
+  □  is a rule sufficient? ⭐ was that seriously considered?
+  □  is it advisory or decisive, and does the design match?
+
+DATA
+  □  are protected attributes and their PROXIES excluded, and
+     is that documented?
+  □  is the training data representative of everyone it will
+     be applied to?
+  □  is the dataset versioned, and does erasure reach it?
+
+MODEL
+  □  is it evaluated PER SUBGROUP, not only in aggregate?
+  □  which fairness definition did we choose, and WHO chose it?
+  □  is it calibrated, if a probability is shown to a human?
+  □  is it better than the baseline, on a held-out set?
+
+INTERFACE
+  □  is the evidence shown alongside the score?
+  □  is the framing honest about the false-positive rate?
+  □  can a human override, and is the reason recorded?
+  □  does the employee have any visibility or recourse?
+
+OPERATIONS
+  □  is drift monitored — inputs and outputs?
+  □  is there an owner, and a review date?
+  □  can we roll back to the previous model quickly?
+  □  is access to predictions audited?
+  □  ⭐ CAN WE TURN IT OFF WITHOUT A DEPLOY?
+
+⭐ AND THE LAST QUESTION, WHICH IS THE MOST IMPORTANT ONE ON THE
+  PAGE: WOULD WE BE COMFORTABLE EXPLAINING THIS SYSTEM, IN
+  DETAIL, TO THE EMPLOYEES IT SCORES?
+  If not, that discomfort is the finding — and it is worth
+  raising before launch rather than after a journalist asks.</code></pre>
+</div>
+
+<header class="part" id="agents">
+  <span class="pn">Part V</span>
+  <h2>Agents in production</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Data/AI 23</span>
+  <h2>Demo to production</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The escalation, and where to stop</div>
+<pre><code>   ONE CALL         you write the prompt. Deterministic path,
+      │             cheapest, easiest to evaluate.
+      ▼
+   CHAINED CALLS    you write the sequence. Each step
+      │             separately evaluable. ⭐ MOST PRODUCTION
+      │             VALUE LIVES HERE, and it is unglamorous.
+      ▼
+   ROUTED           a classifier picks a branch. Still bounded.
+      ▼
+   AGENT            ⭐ THE MODEL chooses the sequence. Unbounded
+                    paths, unbounded cost, every run different —
+                    which is exactly what makes evaluation hard.
+
+⭐ THE TEST: CAN YOU ENUMERATE THE STEPS IN ADVANCE?
+  yes → build a pipeline, and get determinism, per-step evals
+        and lower cost for free.
+  genuinely no → an agent, with caps.
+
+⚠ AGENTS ARE THE MOST OVER-APPLIED PATTERN IN THE FIELD. Most
+  tasks people build agents for CAN be enumerated — which makes
+  them pipelines wearing a costume, with worse economics and
+  worse debuggability.
+
+WHY THE DEMO-TO-PRODUCTION GAP IS SO LARGE
+  a demo runs one happy path once, watched by its author.
+  production means: ⚠ every path · hostile inputs · a tool
+  that times out · a loop that will not terminate · a metered
+  bill · and a user who is not you.
+  ⭐ THE GAP IS NOT MODEL QUALITY. It is ordinary engineering
+    discipline applied to a non-deterministic component.</code></pre>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Data/AI 24</span>
+  <h2>Tool design</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The tools are the agent — more than the prompt is</div>
+<pre><code>THE MECHANISM: you describe functions the model may call. It
+does not execute them — it REQUESTS a call, YOUR CODE runs it,
+and you return the result.
+⭐ THE MODEL NEVER RUNS ANYTHING. It asks. Your code decides
+  whether to comply, and that gap is where all your security
+  lives.
+
+⭐ THE TOOL DESCRIPTION IS A PROMPT. It is how the model decides
+  whether and how to call it. ⇒ A VAGUE DESCRIPTION CAUSES WRONG
+  TOOL CHOICE, AND THAT IS A DOCUMENTATION BUG, NOT A MODEL
+  FAILURE.
+
+THE RULES
+  □  FEW, WELL-NAMED TOOLS beat many overlapping ones. Twenty
+     similar tools produce confident wrong selections.
+  □  ⭐ SCOPE EVERY TOOL TO THE CALLER, BUILT FROM THE VERIFIED
+     SESSION. `get_employee(id)` must enforce the same
+     ownership check as the endpoint — ⚠ NOT accept whatever id
+     the model produced.
+  □  SEPARATE READ FROM WRITE, and require confirmation for
+     anything destructive or outward-facing.
+  □  RETURN ERRORS AS DATA, not exceptions. "No employee with
+     that id" lets the model recover; a crash ends the run.
+  □  ⭐ KEEP RESULTS SMALL. Tool output accumulates in the
+     context, and a tool returning 500 rows will exhaust the
+     window and the budget within a few turns.
+  □  MAKE WRITES IDEMPOTENT — the loop may retry.
+
+⚠ AND THE SPECIFIC HAZARD: PROMPT INJECTION THROUGH TOOL
+  RESULTS. A retrieved document, a CV or a ticket becomes part
+  of the context, and its author is now instructing your model.
+  ⭐ THE ONLY REAL DEFENCE IS THE TRUST BOUNDARY ABOVE: actions
+    run with the session user's permissions, enforced in code.
+    Then an injection that fully succeeds achieves nothing the
+    user could not already do.</code></pre>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Data/AI 25</span>
+  <h2>Guardrails</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Guardrail</th><th>Why it is not optional</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Iteration cap</strong></td><td><span class="no">An unbounded loop is an unbounded bill.</span> A confused agent will happily call the same tool forty times.</td></tr>
+    <tr><td><strong>Token / cost budget</strong></td><td>Per run and per user. Enforced in code, not hoped for.</td></tr>
+    <tr><td><strong>Wall-clock timeout</strong></td><td>A run that has taken four minutes is not going to finish well.</td></tr>
+    <tr><td><strong>Tool allow-list per context</strong></td><td>The agent handling a public query does not get the tool that writes to the employee table.</td></tr>
+    <tr><td><strong>Human confirmation for side effects</strong></td><td>Anything that sends, deletes, pays or publishes. <strong>The last line before an irreversible action.</strong></td></tr>
+    <tr><td><strong>Output validation</strong></td><td>Model output is an input. Validate it against a schema before it reaches a database, a shell or an email.</td></tr>
+    <tr><td><strong>A full trace</strong></td><td>Every call, argument and result, stored. <strong>Without it an agent failure is unexplainable</strong> — and you will be asked to explain one.</td></tr>
+    <tr><td><strong>A kill switch</strong></td><td>Disable the feature without a deploy. The first thing you want during an incident.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Data/AI 26</span>
+  <h2>Evaluating agents</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Harder than evaluating one call, and the shape is different</div>
+<pre><code>⚠ WHY IT IS HARDER: the path differs every run, so there is no
+  single correct output to compare against. Two runs can both
+  be right by different routes.
+
+⭐ SO EVALUATE AT THREE LEVELS
+
+  ①  THE OUTCOME — did it achieve the goal? A programmatic
+     check where possible: was the record updated correctly, is
+     the answer factually right against a known case.
+  ②  THE TRAJECTORY — did it take a sensible path? Count the
+     steps, the tool calls, the retries and the cost.
+     ⭐ AN AGENT THAT SUCCEEDS IN FOURTEEN STEPS WHERE THREE
+       WOULD DO IS A COST AND LATENCY PROBLEM THAT WILL BECOME
+       A CORRECTNESS PROBLEM — long trajectories drift.
+  ③  THE FAILURE MODE — when it fails, does it fail SAFELY?
+     Does it stop and say so, or does it invent a result and
+     proceed?
+
+WHAT A USABLE EVAL SET LOOKS LIKE
+  20–50 scenarios, each with a goal, a fixed starting state and
+  a programmatic success check. ⭐ INCLUDING FAILURE SCENARIOS:
+  a tool that errors, a missing record, a hostile document,
+  an ambiguous request.
+  ⇒ run it on every prompt, model or tool change, and record
+    success rate, mean steps and mean cost together. All three
+    move, and they trade against each other.
+
+⚠ AND THE LLM-AS-JUDGE CAVEAT: using a model to grade output
+  is useful and it is NOT free of error. ⭐ VALIDATE THE JUDGE
+  AGAINST HUMAN LABELS ON A SAMPLE before trusting its scores —
+  otherwise you have automated a bias and called it a metric.</code></pre>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Data/AI 27</span>
+  <h2>MCP and the ecosystem</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What the moving parts are, without the hype</div>
+<pre><code>MODEL CONTEXT PROTOCOL (MCP)
+  a standard way to expose tools, data and prompts to a model
+  host. ⭐ THE POINT: WRITE AN INTEGRATION ONCE AND ANY
+  COMPATIBLE CLIENT CAN USE IT, instead of re-implementing
+  per assistant.
+  ⇒ so "an MCP server for our HR API" would let several tools
+    query it with one integration.
+  ⚠ AND THE SECURITY POINT THAT MATTERS: CONNECTING AN MCP
+    SERVER GRANTS CAPABILITY. A server's description and tool
+    names are text written by whoever wrote it — treat them as
+    untrusted, and scope what it can reach.
+
+AGENT FRAMEWORKS
+  they supply a loop, tool plumbing, memory and often a graph
+  abstraction.
+  ⭐ THE HONEST GUIDANCE: BUILD THE LOOP DIRECTLY FIRST. It is
+    perhaps fifty lines, and having written it you will
+    understand what a framework does — and often find you do
+    not need one. Frameworks hide exactly the mechanics you
+    most need to control: context growth, retries, and where
+    the authorisation check lives.
+
+AUTONOMOUS CODING TOOLS
+  agents that read a repository, edit many files and run
+  commands.
+  ⭐ THE DISCIPLINE THAT MAKES THEM SAFE IS FROM VOLUME I:
+    commit first, keep their changes in their own commits, and
+    review the diff rather than the result.
+
+⭐ AND THE STRATEGIC READ FOR THIS WHOLE PART: THE FRAMEWORKS
+  WILL CHANGE. What will not change is the evaluation set, the
+  trust boundary, the cost model and the trace. Invest in those
+  four; rent the rest.</code></pre>
+</div>
+
+<header class="mod" id="e6">
+  <span class="mn">Data/AI 28</span>
+  <h2>Production failure modes</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The infinite loop</h4><p>Two tools that undo each other, or a retry with no cap. Caught by an iteration cap; found in the trace.</p></div>
+  <div class="card"><h4>Context exhaustion</h4><p>Tool results accumulate until the window fills and the earliest instructions fall out. Summarise, or return less.</p></div>
+  <div class="card"><h4>Confident fabrication</h4><p>A tool failed; the agent invented a plausible result and continued. <strong>Return errors as data and validate outputs.</strong></p></div>
+  <div class="card"><h4>The bill</h4><p>One user, one bad Tuesday, thousands of calls. Budgets per run <em>and</em> per user, enforced in code.</p></div>
+  <div class="card"><h4>Injection via content</h4><p>A CV instructing the agent. Defended by the trust boundary, never by a prompt instruction.</p></div>
+  <div class="card"><h4>Silent quality decay</h4><p>The provider updated the default model; nothing errored and everything got slightly worse. <strong>Pin versions, and run the eval set.</strong></p></div>
+</div>
+
+<header class="part" id="emerging">
+  <span class="pn">Part VI</span>
+  <h2>Emerging technology</h2>
+  <p class="lede">Worth understanding, mostly not worth adopting yet. The value is knowing what each
+  actually solves.</p>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">Data/AI 29</span>
+  <h2>Privacy-preserving AI</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Technique</th><th style="width:30%">Idea</th><th>Realistic use here</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Federated learning</strong></td><td>Train where the data lives; share model updates, not data</td><td>For multiple entities that cannot pool data — separate legal entities, or on-device. <span class="no">Overkill for one HR database.</span></td></tr>
+    <tr><td><strong>Differential privacy</strong></td><td>Add calibrated noise so no individual is identifiable from an output</td><td><span class="ok">Genuinely useful</span> for publishing aggregate statistics — engagement by team, pay-gap figures. <strong>The formal version of the minimum-cell-size rule.</strong> Costs accuracy, deliberately.</td></tr>
+    <tr><td><strong>Synthetic data</strong></td><td>Generate statistically similar fake records</td><td><span class="ok">The most immediately practical:</span> populating staging and demos without real employee data. <strong>Verify it does not leak — an over-fitted generator can reproduce real individuals.</strong></td></tr>
+    <tr><td><strong>Homomorphic encryption</strong></td><td>Compute on encrypted data</td><td>Elegant, and still slow enough to be impractical for most workloads. Track it.</td></tr>
+    <tr><td><strong>Secure enclaves</strong></td><td>Hardware-isolated computation</td><td>Available now from cloud providers. For processing sensitive data where even the operator should not see it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">What to actually do</span>
+  <p><strong>Two of these five pay off immediately in a project like this:</strong> synthetic data for
+  lower environments, and differential-privacy thinking — or at minimum enforced minimum cell sizes —
+  on any published aggregate.</p>
+  <p>The other three are worth being able to discuss and are not worth building. Knowing which is
+  which is the skill.</p>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">Data/AI 30</span>
+  <h2>Quantum awareness</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One concrete implication, and it is not "quantum computers will break everything"</div>
+<pre><code>WHAT IS ACTUALLY AT RISK
+  ⚠ ASYMMETRIC CRYPTOGRAPHY — RSA and elliptic curve. These
+    underpin TLS key exchange and digital signatures.
+  ✅ SYMMETRIC ENCRYPTION (AES) AND HASHES are largely fine;
+    doubling key sizes is sufficient.
+  ⇒ SO IT IS NOT "ALL ENCRYPTION BREAKS". It is specifically
+    key exchange and signatures.
+
+⭐ THE ONE IMPLICATION THAT MATTERS TODAY: HARVEST NOW, DECRYPT
+  LATER.
+  an adversary can record encrypted traffic today and decrypt
+  it once capable hardware exists.
+  ⇒ WHICH MEANS THE RELEVANT QUESTION IS: DOES ANY OF OUR DATA
+    NEED TO STAY CONFIDENTIAL FOR TEN OR TWENTY YEARS?
+    ⭐ FOR HR DATA — health information, disciplinary records,
+      salary history — THE HONEST ANSWER IS YES. That is the
+      one place this topic touches this project.
+
+POST-QUANTUM CRYPTOGRAPHY
+  standardised algorithms now exist and are being adopted in
+  TLS libraries and cloud services.
+
+⭐ WHAT TO ACTUALLY DO — AND IT IS SHORT
+  □  know where you use TLS and what versions
+  □  ⭐ PREFER MANAGED TLS from your cloud or CDN, so the
+     migration happens to you rather than by you
+  □  keep an inventory of long-lived encrypted data
+  □  ⭐ CRYPTOGRAPHIC AGILITY IS THE REAL LESSON: can you change
+     algorithm without rewriting the application? That property
+     is worth having regardless of quantum computing, and it is
+     the transferable takeaway.
+  ⚠ DO NOT implement post-quantum cryptography yourself. Use
+    the library.</code></pre>
+</div>
+
+<header class="mod" id="f3">
+  <span class="mn">Data/AI 31</span>
+  <h2>WebAssembly and the edge</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two related ideas, and what each is genuinely for</div>
+<pre><code>WEBASSEMBLY — a portable binary format that runs in a
+sandboxed VM at near-native speed.
+  IN THE BROWSER: run compiled code — image processing, video
+  editing, a CAD kernel, a database engine.
+  ⭐ OUTSIDE THE BROWSER (WASI): a sandbox that starts in
+    microseconds, which is why it is interesting for
+    serverless and for plugins.
+  ⇒ THE GENUINELY USEFUL PROPERTY: SAFE EXECUTION OF UNTRUSTED
+    CODE. Stronger isolation than a container, far lighter than
+    a VM. If you ever need to run a customer's script, this is
+    the mechanism.
+
+EDGE COMPUTING — run code in many locations near users.
+  ✅ good for: latency-sensitive transforms, auth checks at the
+     edge, personalisation of cached content, geo-routing, A/B
+     assignment.
+  ⚠ AND THE CONSTRAINTS ARE REAL: limited runtimes, tight CPU
+    and memory limits, ⭐ AND YOUR DATABASE IS STILL IN ONE
+    REGION. Edge compute plus a single-region database means
+    every data-dependent request crosses the ocean anyway —
+    which is the trap people fall into.
+
+⭐ THE HONEST ASSESSMENT FOR THIS PROJECT: an internal HR
+  dashboard used by staff in a few offices does not need edge
+  compute. The frontend on a CDN is the useful 90% of the
+  benefit.
+  ⇒ TRACK IT; DO NOT ADOPT IT WITHOUT A LATENCY PROBLEM YOU
+    HAVE MEASURED.</code></pre>
+</div>
+
+<header class="mod" id="f4">
+  <span class="mn">Data/AI 32</span>
+  <h2>Workflow automation platforms</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">n8n and its relatives — when a visual workflow beats code</div>
+<pre><code>WHAT THEY ARE: a node-based editor where a trigger starts a
+flow through connected steps — HTTP calls, transforms,
+conditionals, and hundreds of prebuilt service integrations.
+
+⭐ WHERE THEY GENUINELY WIN
+  · GLUE BETWEEN SAAS PRODUCTS you would otherwise write and
+    maintain integrations for
+  · ⭐ WORKFLOWS A NON-ENGINEER SHOULD OWN AND EDIT — an HR
+    onboarding checklist, an approval chain. That is the real
+    argument: the person who owns the process owns the
+    automation.
+  · rapid prototyping of a process before committing code
+  · scheduled internal jobs with visible run history
+
+⚠ WHERE THEY LOSE, AND IT IS WORTH SAYING PLAINLY
+  · ⭐ VERSION CONTROL AND REVIEW ARE WEAK. A visual workflow
+    diffs badly, and a critical business process with no
+    reviewable history is a liability.
+  · testing is limited; complex logic becomes an unreadable
+    graph
+  · debugging a long flow is harder than debugging code
+  · ⚠ THEY HOLD CREDENTIALS TO EVERYTHING THEY TOUCH, which
+    makes the instance a high-value target. Self-hosted means
+    you own that security.
+
+⭐ THE DIVIDING LINE: USE A WORKFLOW TOOL FOR PROCESS
+  AUTOMATION AT THE EDGE OF THE SYSTEM — notifications,
+  approvals, syncing between tools. KEEP CORE BUSINESS LOGIC IN
+  THE APPLICATION, where it is versioned, tested and reviewed.
+  ⚠ THE FAILURE MODE IS DRIFT: the critical calculation ends up
+    in a workflow nobody can review, owned by someone who has
+    left.</code></pre>
+</div>
+
+<header class="mod" id="f5">
+  <span class="mn">Data/AI 33</span>
+  <h2>Evaluating any new tool</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The meta-skill, because the list above will be out of date</div>
+<pre><code>⭐ THE SIX QUESTIONS
+
+  ①  WHAT SPECIFIC PROBLEM OF OURS DOES THIS SOLVE?
+     if you cannot name it, stop. ⚠ "It's the future" and "a
+     competitor uses it" are not problems.
+  ②  WHAT IS THE ALTERNATIVE, INCLUDING DOING NOTHING?
+     ⭐ AND HOW GOOD IS THE BORING OPTION? Frequently good
+       enough, and it is the baseline this must beat.
+  ③  WHAT DOES ADOPTION COST — REALLY?
+     licence, plus learning, plus migration, plus the
+     maintenance nobody budgets, plus the hiring implication.
+  ④  WHAT IS THE EXIT?
+     if this is wrong in a year, how hard is it to leave? ⭐ A
+     TOOL THAT HOLDS YOUR DATA OR YOUR BUSINESS LOGIC IS A
+     MUCH BIGGER COMMITMENT than one that processes it.
+  ⑤  WHO OWNS IT AFTERWARDS?
+     an unowned tool becomes an unmaintained dependency and
+     then a risk.
+  ⑥  HOW WILL WE KNOW IF IT WORKED?
+     ⭐ DECIDE THE SUCCESS CRITERION BEFORE THE TRIAL, not
+       after — otherwise the trial concludes whatever the
+       person who wanted it already believed.
+
+THE PROOF OF CONCEPT THAT IS ACTUALLY USEFUL
+  □  timeboxed — two weeks, not "when we get to it"
+  □  on a REAL problem with REAL data, not the vendor's demo
+  □  with the success criterion written down in advance
+  □  ⭐ INCLUDING THE HARD PART, not the easy path. Vendors
+     demo the easy path; your adoption will live or die on the
+     awkward integration.
+  □  a written recommendation, either way — ⭐ AND "NO" IS A
+     SUCCESSFUL POC. Two weeks spent avoiding a two-year
+     mistake is an excellent trade.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume VII · data, AI and strategy vocabulary</div>
+  <dl>
+    <dt>data drift</dt><dd>Incoming feature distributions moving away from training. Detectable without labels.</dd>
+    <dt>concept drift</dt><dd>The relationship itself changing. Only detectable once outcomes arrive.</dd>
+    <dt>training/serving skew</dt><dd>A feature computed differently in training and in production. What feature stores exist to prevent.</dd>
+    <dt>point-in-time correctness</dt><dd>Using a feature's value as at the event, not as at now. Leakage prevention as infrastructure.</dd>
+    <dt>shadow mode</dt><dd>A new model predicting on real traffic with its output logged and unused.</dd>
+    <dt>feedback loop</dt><dd>Acting on predictions changes the outcomes you later train on.</dd>
+    <dt>ELT</dt><dd>Load raw, transform in place. Keeps the raw layer so you can rebuild.</dd>
+    <dt>watermark</dt><dd>The high-water mark an incremental load resumes from. Four ways to lose data.</dd>
+    <dt>idempotent step</dt><dd>Re-running produces the same result. What makes backfills safe.</dd>
+    <dt>backfill</dt><dd>Re-running a pipeline over past dates. The hardest routine data operation.</dd>
+    <dt>restatement</dt><dd>A published number changing retrospectively. Requires telling people.</dd>
+    <dt>lineage</dt><dd>Which sources and steps produced a number. The first thing asked in a dispute.</dd>
+    <dt>minimum cell size</dt><dd>The floor below which an aggregate identifies individuals.</dd>
+    <dt>override rate</dt><dd>How often a human rejects the suggestion. The best trust signal you have.</dd>
+    <dt>proxy variable</dt><dd>A feature correlating with a protected attribute. Removing the obvious column is not enough.</dd>
+    <dt>demographic parity</dt><dd>Equal flag rates across groups. One of several incompatible fairness definitions.</dd>
+    <dt>equal opportunity</dt><dd>Equal recall across groups. Often the defensible choice for a beneficial intervention.</dd>
+    <dt>meaningful human review</dt><dd>A person who can actually override, with the information to do so. Not a rubber stamp.</dd>
+    <dt>trust boundary</dt><dd>Model-requested actions run with the session user's permissions, enforced in code.</dd>
+    <dt>trajectory</dt><dd>The path an agent took. Evaluated alongside the outcome.</dd>
+    <dt>LLM-as-judge</dt><dd>Using a model to grade output. Validate it against human labels first.</dd>
+    <dt>MCP</dt><dd>A standard for exposing tools and data to model hosts. Connecting one grants capability.</dd>
+    <dt>differential privacy</dt><dd>Calibrated noise making individuals unidentifiable in an output.</dd>
+    <dt>harvest now, decrypt later</dt><dd>Recording encrypted traffic today to decrypt when hardware allows.</dd>
+    <dt>cryptographic agility</dt><dd>Being able to change algorithm without rewriting the application.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume VIII · Thinking, career &amp; capstone</h4><p>The last volume: decision making, decomposition, communication, culture, business acumen, and how senior engineers think.</p></div>
+  <div class="card"><h4>The AI engineering set</h4><p><code>docs/ai-engineering-foundations.html</code> and its guide, cheat sheet and interview file — Part V here in far more depth.</p></div>
+  <div class="card"><h4>Volume VI · Cloud mastery</h4><p>Where the ML platforms and serving options in Part I are actually operated.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 17–21, 27, 49, 50 and 51 — ten source files, the heaviest of the eight.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On Part IV.</strong> The responsible-AI section is written as engineering requirements
+  rather than principles, because in an HR system that is what they are: subgroup evaluation, proxy
+  exclusion, explanation, audit, erasure reach, and a documented fairness choice. The incompatibility
+  of fairness definitions is a mathematical result, not an opinion — which is exactly why the choice
+  must be made explicitly and by the right people.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

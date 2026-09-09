@@ -1,0 +1,1463 @@
+<title>Frameworks and Patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #A32E52;
+  --accent-soft: #F8E5EA;
+  --accent-deep: #6E1B35;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #A32E52;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #E68CA5;
+    --accent-soft: #251117;
+    --accent-deep: #F2B1C2;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #E68CA5;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #E68CA5;
+  --accent-soft: #251117;
+  --accent-deep: #F2B1C2;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #E68CA5;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size:18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size:13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size:15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size:10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size:10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size:10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+.doc > .tw, .doc > .ascii, .doc > .sheet, .doc > .grid2, .doc > .grid3, .doc > .band, .doc > .stack { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size:12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size:19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size:12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size:14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size:10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size:15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size:11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size:33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size:18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size:10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size:24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size:18.2px; margin-bottom: 0; }
+
+h3 { font-size:19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size:16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size:17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size:10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size:10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size:13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size:13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== stack fact strip ===== */
+.stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 8px; margin: 20px 0; font-family: var(--mono); font-size:13.1px; }
+.st { border: 1px solid var(--rule); border-top: 2px solid var(--accent); border-radius: 2px; padding: 9px 11px; background: var(--ground-2); }
+.st .sk { display: block; font-size:10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.st b { font-weight: 700; color: var(--ink); }
+.st span.p { color: var(--accent); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size:16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size:10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(186px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size:16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size:10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(120px, 168px) 1fr; gap: 7px 14px; font-size:16.5px; }
+.terms dt { font-family: var(--mono); font-size:13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size:15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">HR Insight AI · Handbook</p>
+  <p class="rail-sub">Onboarding knowledge base</p>
+  <span class="rail-vol">Volume III</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · NestJS</div>
+  <a href="#a1"><span class="n">01</span>The mental model</a>
+  <a href="#a2"><span class="n">02</span>Modules</a>
+  <a href="#a3"><span class="n">03</span>Controllers</a>
+  <a href="#a4"><span class="n">04</span>Services</a>
+  <a href="#a5"><span class="n">05</span>The request lifecycle</a>
+  <a href="#a6"><span class="n">06</span>Swagger</a>
+
+  <div class="rail-group">II · Next.js</div>
+  <a href="#b1"><span class="n">07</span>The App Router</a>
+  <a href="#b2"><span class="n">08</span>File conventions</a>
+  <a href="#b3"><span class="n">09</span>Rendering modes</a>
+  <a href="#b4"><span class="n">10</span>Data fetching</a>
+  <a href="#b5"><span class="n">11</span>Loading &amp; errors</a>
+  <a href="#b6"><span class="n">12</span>Env vars &amp; metadata</a>
+
+  <div class="rail-group">III · FastAPI</div>
+  <a href="#c1"><span class="n">13</span>Why it exists</a>
+  <a href="#c2"><span class="n">14</span>Pydantic</a>
+  <a href="#c3"><span class="n">15</span>Async &amp; CORS</a>
+  <a href="#c4"><span class="n">16</span>FastAPI vs NestJS</a>
+
+  <div class="rail-group">IV · Ant Design</div>
+  <a href="#d1"><span class="n">17</span>Why a library</a>
+  <a href="#d2"><span class="n">18</span>Layout &amp; navigation</a>
+  <a href="#d3"><span class="n">19</span>Tables</a>
+  <a href="#d4"><span class="n">20</span>Forms</a>
+  <a href="#d5"><span class="n">21</span>Feedback</a>
+  <a href="#d6"><span class="n">22</span>Theming</a>
+
+  <div class="rail-group">V · The four patterns</div>
+  <a href="#e1"><span class="n">23</span>Dependency injection</a>
+  <a href="#e2"><span class="n">24</span>DTOs &amp; validation</a>
+  <a href="#e3"><span class="n">25</span>Error handling</a>
+  <a href="#e4"><span class="n">26</span>Project structure</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Onboarding handbook · Volume III of IV</p>
+  <h1>The frameworks, and the patterns underneath them. <span class="thin">Where you will spend your days.</span></h1>
+  <p class="lede">NestJS on the backend, Next.js on the frontend, FastAPI in the AI service, Ant Design
+  for the interface — then the four patterns this codebase repeats in every module: dependency
+  injection, DTO validation, error handling, and the file conventions that make a new feature obvious
+  to write.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volumes I and II</span>
+    <span><b>Covers</b> · KB files 11–14, 34–37</span>
+    <span><b>Use as</b> · reference while working</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="01-onboarding-foundations.html"><span class="vn">Volume I</span><b>Foundations &amp; the two languages</b></a>
+<a class="vol" href="02-onboarding-architecture.html"><span class="vn">Volume II</span><b>Architecture, data &amp; the browser</b></a>
+<div class="vol here"><span class="vn">Volume III · you are here</span><b>The frameworks &amp; the patterns</b></div>
+<a class="vol" href="04-onboarding-data-science.html"><span class="vn">Volume IV</span><b>Data science &amp; AI</b></a>
+</div>
+
+<header class="part" id="nest">
+  <span class="pn">Part I</span>
+  <h2>NestJS</h2>
+  <p class="lede">The backend framework. Its whole proposition is <em>structure</em> — it decides where
+  code goes so that a team does not have to argue about it.</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">NestJS 01</span>
+  <h2>The mental model</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four building blocks, and one rule for each</div>
+<pre><code>MODULE       a feature's boundary. What it owns, what it needs
+             from elsewhere, what it lets others use.
+CONTROLLER   ⭐ HTTP ONLY. Reads the request, calls a service,
+             returns the result. NO BUSINESS LOGIC.
+SERVICE      the business logic. Knows nothing about HTTP — no
+             request, no response, no status codes.
+             ⇒ so the same service can be called by a controller,
+               a scheduled job, a socket gateway or a test.
+DTO          the declared, validated shape of incoming data.
+
+⭐ THE ONE-SENTENCE VERSION: THIN CONTROLLERS, FAT SERVICES.
+  When you find business rules in a controller, the rule has
+  become unreachable from anywhere else and untestable without
+  faking a request.
+
+WHY NESTJS RATHER THAN BARE EXPRESS
+  Express gives you a router and nothing else, so every team
+  invents its own structure — and every codebase is different.
+  Nest imposes one:
+    · one module per feature, always the same internal shape
+    · dependency injection, so units are swappable and testable
+    · decorators that put routing and validation next to the code
+      they describe
+    · cross-cutting concerns (auth, logging, errors) expressed
+      once as guards, interceptors and filters
+  ⇒ the cost is more ceremony for a two-endpoint service. The
+    return is that a codebase of forty modules stays navigable,
+    and a new joiner can guess where anything lives.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">NestJS 02</span>
+  <h2>Modules</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The four keys, and what each one actually does</div>
+<pre><code>@Module({
+  imports:     [PrismaModule, AuthModule],   // what I need
+  controllers: [ReportsController],          // my HTTP surface
+  providers:   [ReportsService],             // my injectables
+  exports:     [ReportsService],             // what others may use
+})
+export class ReportsModule {}
+
+⭐ THE PART THAT CONFUSES EVERYONE FIRST WEEK:
+  A PROVIDER IS ONLY AVAILABLE WHERE IT IS EXPORTED AND IMPORTED.
+  "Nest can't resolve dependencies of ReportsService (?)" almost
+  always means: the module holding that dependency did not
+  EXPORT it, or this module did not IMPORT that module. The `?`
+  in the error marks which constructor position failed.
+
+  ⇒ read the error as a two-part checklist and it stops being
+    mysterious.
+
+THE ROOT MODULE
+  app.module.ts imports every feature module. That file is the
+  fastest map of the application you will find — read it first
+  on any unfamiliar Nest codebase.
+
+GLOBAL MODULES
+  @Global() makes a provider available everywhere without
+  importing. ⚠ convenient, and it hides the dependency graph.
+  Justified for a few genuinely universal things — the Prisma
+  client, configuration — and a bad habit beyond that.
+
+THIS PROJECT'S MODULES
+  auth · users · teams · employees · analytics · reports · audit
+  · prisma
+  ⭐ one per noun, matching the API surface from Volume I.
+    A new feature means a new folder with the same six files —
+    copying a pattern rather than inventing one.</code></pre>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">NestJS 03</span>
+  <h2>Controllers</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Decorators map HTTP onto methods</div>
+<pre><code>@Controller('reports')                    // → /api/reports
+export class ReportsController {
+  constructor(private reports: ReportsService) {}   // injected
+
+  @Get()                                  // GET /api/reports
+  findAll(@Query() q: ListReportsDto) {
+    return this.reports.findAll(q);
+  }
+
+  @Get(':id')                             // GET /api/reports/42
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.reports.findOne(id);
+  }
+
+  @Post()
+  @Roles('manager', 'admin')
+  @HttpCode(201)
+  create(@Body() dto: CreateReportDto, @CurrentUser() user: User) {
+    return this.reports.create(dto, user);
+  }
+}
+
+READING THE PARAMETER DECORATORS
+  @Param('id')   from the path
+  @Query()       from the query string
+  @Body()        from the request body
+  @CurrentUser() ⭐ a CUSTOM decorator in this project: it reads
+                 the user the JwtAuthGuard attached to the
+                 request. Cleaner than @Req() and it keeps
+                 controllers free of framework plumbing.
+
+⭐ ParseIntPipe IS NOT COSMETIC. A path parameter arrives as a
+  STRING, always. Typing it `: number` does not convert it —
+  Volume I, reflex 16: types are erased. Without the pipe you
+  have a string labelled as a number, and the comparison against
+  a database id silently fails.
+
+⚠ AND THE ONE THAT LOOKS FINE AND IS WRONG:
+  return this.prisma.employee.findMany();   // in a CONTROLLER
+  it works, and it has put a database query where no job, test or
+  socket handler can reuse it. Controllers call services.</code></pre>
+</div>
+
+<header class="mod" id="a4">
+  <span class="mn">NestJS 04</span>
+  <h2>Services</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Where the actual application lives</div>
+<pre><code>@Injectable()
+export class ReportsService {
+  constructor(
+    private prisma: PrismaService,
+    private ai: AiClientService,
+  ) {}
+
+  async create(dto: CreateReportDto, user: User) {
+    const team = await this.prisma.team.findUnique({
+      where: { id: dto.teamId },
+    });
+    if (!team) throw new NotFoundException('Team not found');
+
+    // ⭐ THE OWNERSHIP CHECK — Volume II, reflex 09.
+    // A role said "managers may create reports". This says
+    // "…for their own team", and nothing else in the stack
+    // enforces it.
+    if (team.managerId !== user.id &amp;&amp; user.role !== 'admin') {
+      throw new ForbiddenException();
+    }
+
+    const predictions = await this.ai.predict(team.id);
+    return this.prisma.report.create({ data: { … } });
+  }
+}
+
+⭐ @Injectable() IS WHAT MAKES IT AVAILABLE FOR INJECTION. Omit it
+  and Nest cannot construct the class — a confusing startup error
+  for a one-line cause.
+
+WHAT BELONGS HERE
+  · business rules and ownership checks
+  · database access, through Prisma
+  · calls to other services, including the AI service
+  · throwing the right exception, which the framework turns into
+    the right status code (reflex 25)
+
+WHAT DOES NOT
+  · reading headers or building responses — that is HTTP, and it
+    belongs in the controller or an interceptor
+  · anything that makes the service impossible to call from a
+    scheduled job
+
+⭐ THE TEST THAT TELLS YOU IT IS RIGHT: could this method be
+  called from a cron job with no HTTP request in sight? If not,
+  HTTP has leaked into your business logic.</code></pre>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">NestJS 05 · print this</span>
+  <h2>The request lifecycle</h2>
+  <p class="lede">Six stages, in a fixed order. Knowing it tells you exactly where to put a
+  cross-cutting concern — and where a bug can and cannot be.</p>
+</header>
+
+<div class="ascii">   INCOMING REQUEST
+        │
+        ▼
+   ①  MIDDLEWARE          runs first, knows nothing about routes
+        │                  ⇒ logging, request ids, raw body needs
+        ▼
+   ②  GUARDS              may I proceed?  → false gives 403
+        │                  ⇒ JwtAuthGuard, then RolesGuard
+        │                  ⭐ AUTH BELONGS HERE, before anything
+        │                    has touched the payload
+        ▼
+   ③  INTERCEPTORS (pre)  wrap the handler
+        │                  ⇒ timing, audit logging, transforms
+        ▼
+   ④  PIPES               transform + validate the arguments
+        │                  ⇒ ValidationPipe turns the body into a
+        │                    typed DTO, or throws 400
+        ▼
+   ⑤  THE HANDLER         your controller method → the service
+        │
+        ▼
+   ⑥  INTERCEPTORS (post) shape the response on the way out
+        │                  ⇒ envelope, serialisation, cache
+        ▼
+   ⑦  EXCEPTION FILTERS   anything thrown anywhere above lands
+        │                  here and becomes an HTTP response
+        ▼
+   RESPONSE
+
+   ⭐ THE TWO CONSEQUENCES WORTH INTERNALISING
+
+     GUARDS RUN BEFORE PIPES. So authorisation is decided before
+     the body has been validated. That is deliberate — an
+     unauthenticated caller should never reach your validation
+     logic, let alone your service. It also means a guard cannot
+     rely on a parsed DTO.
+
+     EVERY THROW ENDS IN ⑦. So a service can throw
+     NotFoundException and simply not think about HTTP. One
+     filter turns the whole application's failures into
+     consistent responses, and no controller needs a try/catch
+     for the ordinary cases.
+
+   WHERE TO PUT A NEW CONCERN
+     "who is allowed?"          → a guard
+     "log every call"           → an interceptor
+     "coerce and check input"   → a pipe (or the DTO)
+     "make every error look the same" → the exception filter
+     ⇒ if you are writing the same three lines at the top of
+       eleven handlers, one of the four above is the right home.</div>
+
+<header class="mod" id="a6">
+  <span class="mn">NestJS 06</span>
+  <h2>Swagger</h2>
+</header>
+
+<div class="good">
+  <span class="tag">Documentation that cannot drift</span>
+  <p>NestJS generates browsable API docs from the code itself — the routes from the decorators, the
+  request and response shapes from the DTO classes. Visit it, and every endpoint is listed with its
+  fields and their validation rules, ready to try.</p>
+  <p><strong>The point is not convenience, it is truth.</strong> A hand-written API document is
+  accurate on the day it is written and wrong within a month. Generated documentation is wrong only
+  when the code is. So the DTOs are simultaneously the validation, the types and the docs — one
+  definition, three jobs, no drift.</p>
+</div>
+
+<header class="part" id="next">
+  <span class="pn">Part II</span>
+  <h2>Next.js</h2>
+  <p class="lede">React plus routing, rendering and a server. The App Router changed the defaults, and
+  most confusion comes from following older guides.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Next.js 07</span>
+  <h2>The App Router</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The folder is the URL</div>
+<pre><code>app/
+├── layout.tsx              wraps EVERYTHING (required, root)
+├── page.tsx                        →  /
+├── globals.css
+├── dashboard/
+│   ├── layout.tsx          wraps only this subtree
+│   ├── page.tsx                    →  /dashboard
+│   ├── loading.tsx         shown while this segment loads
+│   └── error.tsx           shown if this segment throws
+├── employees/
+│   ├── page.tsx                    →  /employees
+│   └── [id]/
+│       └── page.tsx                →  /employees/42
+└── (auth)/                 ⭐ ROUTE GROUP — parentheses mean
+    ├── login/page.tsx        this folder does NOT appear in the
+    └── register/page.tsx     URL. /login, not /(auth)/login.
+                              For sharing a layout across pages
+                              that are not nested in the URL.
+
+⭐ ROUTING IS THE FILE SYSTEM. There is no route configuration
+  file to keep in step — a folder with a page.tsx in it is a URL,
+  and that is the whole mechanism.
+
+DYNAMIC SEGMENTS
+  [id]        one segment      → /employees/42
+  [...slug]   catch-all        → /docs/a/b/c
+  ⇒ the value arrives as a prop, and ⚠ it is a STRING even when
+    it looks like a number.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Next.js 08</span>
+  <h2>The special files</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">File</th><th style="width:26%">Is</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>page.tsx</code></td><td>A route</td><td>Its presence is what makes the folder a URL. Without it, the folder is just organisation.</td></tr>
+    <tr><td><code>layout.tsx</code></td><td>Persistent wrapper</td><td><strong>Does not re-render on navigation within its subtree</strong> — so a sidebar keeps its scroll position and open sections. State inside a layout survives page changes; that is the point of it.</td></tr>
+    <tr><td><code>loading.tsx</code></td><td>The loading state</td><td>Shown automatically while the segment's data resolves. This is the "loading" state from Volume II given to you for free.</td></tr>
+    <tr><td><code>error.tsx</code></td><td>The error boundary</td><td>Catches a throw in that segment and renders instead of it. <strong>Must be a client component</strong>, and it receives a reset function.</td></tr>
+    <tr><td><code>not-found.tsx</code></td><td>The 404</td><td>Rendered when code calls <code>notFound()</code> — the right response for "exists but not yours", per Volume I.</td></tr>
+    <tr><td><code>template.tsx</code></td><td>Like a layout, but remounts</td><td>Use when you specifically want state reset on navigation. Rare.</td></tr>
+    <tr><td><code>route.ts</code></td><td>An API endpoint</td><td>A backend route inside the frontend app. <strong>Useful for hiding a secret</strong> the browser must not hold — otherwise this project's API lives in NestJS.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Next.js 09</span>
+  <h2>Rendering modes</h2>
+</header>
+
+<div class="ascii">   THE FOUR, AND HOW TO CHOOSE
+
+   STATIC (default where possible)
+     rendered at BUILD time, served as a file.
+     ⇒ fastest possible, cacheable at the edge.
+     for: marketing pages, docs — anything identical for everyone.
+
+   DYNAMIC (server-rendered per request)
+     rendered on the server, per request, with that user's data.
+     ⇒ ⭐ WHAT ALMOST EVERY PAGE IN THIS PROJECT IS, because a
+       dashboard is different for every viewer and must not be
+       cached across them.
+
+   ISR (static, revalidated on a timer)
+     static, rebuilt every N seconds.
+     ⇒ for content that changes but not per-user. A public
+       league table, not an HR record.
+
+   CLIENT-RENDERED
+     an empty shell that fetches after load.
+     ⇒ for genuinely interactive surfaces. ⚠ the trade is a
+       blank first paint and no server-side data.
+
+   ⭐ HOW NEXT DECIDES — AND THE TRAP IN IT
+     it is INFERRED, not declared. Reading cookies, headers or
+     the current user makes a route dynamic automatically. So a
+     page can silently become dynamic — or silently stay static
+     and serve one user's data to another.
+     ⇒ ⚠ ON ANY AUTHENTICATED PAGE, BE EXPLICIT. Do not leave
+       per-user rendering to inference; state it, and know which
+       mode each route is in.
+
+   THE HYDRATION ERROR YOU WILL EVENTUALLY HIT
+     "Text content did not match server-rendered HTML."
+     the server rendered one thing and the browser rendered
+     another. Nearly always one of:
+       · new Date() or Math.random() in render — different on
+         each side, by definition
+       · reading localStorage or window during the first render —
+         they do not exist on the server
+       · a timezone or locale difference between server and
+         browser
+     ⭐ THE FIX IS NOT TO SUPPRESS THE WARNING. Move the
+       browser-only value into an effect so the first render
+       matches on both sides.</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Next.js 10</span>
+  <h2>Data fetching</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">In a server component, fetching is just await</div>
+<pre><code>// app/employees/page.tsx  — a SERVER component
+export default async function EmployeesPage() {
+  const employees = await api.get('/employees');   // ⭐ no effect,
+  return &lt;EmployeeTable rows={employees} /&gt;;       //   no useState,
+}                                                   //   no loading
+                                                    //   flag
+
+⭐ THIS IS THE BIGGEST PRACTICAL CHANGE THE APP ROUTER BROUGHT.
+  No useEffect, no loading state, no race conditions, no
+  cancellation, no "fetch on mount" — and the data never reaches
+  the browser as an intermediate JSON blob. loading.tsx covers
+  the wait automatically.
+
+WHERE TO FETCH
+  ⭐ AS CLOSE TO WHERE IT IS USED AS POSSIBLE, and in parallel.
+  two independent awaits in sequence are two round trips for no
+  reason — Promise.all them (Volume I, reflex 14). This matters
+  more on a server, where each call may cross a network.
+
+MUTATIONS — SERVER ACTIONS
+  a function marked 'use server' that a form or a handler can
+  call directly, running on the server. It replaces the
+  hand-written POST-then-refetch dance.
+  ⚠ AND THE SECURITY POINT PEOPLE MISS: a server action is a
+    PUBLIC ENDPOINT. It is reachable by anyone who can craft the
+    request, exactly like a REST route.
+    ⇒ so it needs the same authentication and authorisation
+      checks in its body. "It is only called from that form" is
+      not a control.
+
+CACHING
+  Next caches aggressively by default, and the defaults have
+  changed between major versions. ⭐ FOR PER-USER DATA, BE
+  EXPLICIT ABOUT NO-CACHE rather than trusting a default —
+  the failure mode is serving one user's data to another, which
+  is the worst bug in the catalogue.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Next.js 11</span>
+  <h2>Loading and error states</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>loading.tsx</h4><p>Automatic. Drop it into a segment and it appears while that segment resolves — a skeleton that matches the eventual layout beats a spinner, because the page does not jump when data arrives.</p></div>
+  <div class="card"><h4>error.tsx</h4><p>Catches throws in its segment. Must be a client component; gets a <code>reset()</code> to retry. <strong>Scope matters</strong> — one at the root means any error blanks the whole app.</p></div>
+  <div class="card"><h4>Suspense boundaries</h4><p>Wrap a slow part so the rest of the page renders immediately. The right answer for "the AI summary panel is slow" — Volume IV's problem, solved here.</p></div>
+  <div class="card"><h4>The empty state</h4><p>No framework gives you this. A new tenant sees it before any other state, and it is the best onboarding surface you will get — design it deliberately.</p></div>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Next.js 12</span>
+  <h2>Environment variables and metadata</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">The one that leaks secrets</span>
+  <p><strong><code>NEXT_PUBLIC_</code> means "embed this in the browser bundle".</strong> The value is
+  baked into the JavaScript at build time and is readable by anyone who opens the page. Not
+  hidden, not obfuscated — published.</p>
+  <p>So <code>NEXT_PUBLIC_API_URL</code> is correct, and <code>NEXT_PUBLIC_ANTHROPIC_API_KEY</code>
+  would be a disclosed credential. Anything secret has no prefix, is read on the server only, and if
+  the browser needs the <em>result</em> of using it, that call goes through a route handler.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">Metadata</div>
+<pre><code>export const metadata = {
+  title: 'Employees · HR Insight',
+  description: 'Team roster and attrition risk',
+};
+
+· static export for a fixed page; generateMetadata() when the
+  title depends on the data (an employee's name)
+· sets the tab title, and what a shared link shows in Slack
+⚠ an internal tool still needs this: "localhost:3001" as every
+  tab's title makes eleven open tabs unusable, which is a real
+  daily cost rather than a polish item.</code></pre>
+</div>
+
+<header class="part" id="fastapi">
+  <span class="pn">Part III</span>
+  <h2>FastAPI</h2>
+  <p class="lede">The AI service. Small surface, and it will feel familiar — the decorator idea is the
+  same as NestJS.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">FastAPI 13</span>
+  <h2>Why it exists here</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A whole service in fifteen lines</div>
+<pre><code>from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI(title="HR Insight AI Service")
+
+class PredictRequest(BaseModel):
+    tenure_years: float = Field(ge=0, le=60)
+    satisfaction: float = Field(ge=0, le=1)
+
+class PredictResponse(BaseModel):
+    risk_score: float
+    risk_level: str
+
+@app.post("/predict", response_model=PredictResponse)
+def predict(body: PredictRequest) -&gt; PredictResponse:
+    score = model.score(body)
+    return PredictResponse(risk_score=score,
+                           risk_level="high" if score &gt; .5 else "low")
+
+⭐ WHAT YOU GOT FOR FREE FROM THE TYPE HINTS
+  · the body PARSED AND VALIDATED — a satisfaction of 1.4 is
+    rejected with a 422 and a message naming the field, before
+    your function runs
+  · the response shape enforced on the way out
+  · OpenAPI docs generated and browsable at /docs
+  ⇒ the same "one definition, three jobs" property as NestJS
+    DTOs, arrived at from the other direction.
+
+⭐ AND THE KEY DIFFERENCE FROM TYPESCRIPT: PYDANTIC VALIDATES AT
+  RUNTIME. A TypeScript interface is a compile-time hope
+  (Volume I, reflex 16); a Pydantic model actually inspects the
+  incoming data. This is why FastAPI is a good choice for a
+  service whose input arrives over a network.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">FastAPI 14</span>
+  <h2>Pydantic</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">Declared</th><th>Enforced</th></tr></thead>
+  <tbody>
+    <tr><td><code>age: int</code></td><td>Must be an integer, or coercible to one. <code>"32"</code> is accepted and converted; <code>"thirty"</code> is rejected with a 422.</td></tr>
+    <tr><td><code>score: float = Field(ge=0, le=1)</code></td><td>Bounds checked. <strong>A probability outside 0–1 never reaches your model</strong> — an invariant expressed once.</td></tr>
+    <tr><td><code>email: EmailStr</code></td><td>Format validated by the library rather than by a regex you maintain.</td></tr>
+    <tr><td><code>tags: list[str] = []</code></td><td>Typed collection with a default. Safe here — Pydantic copies defaults, so the mutable-default trap from Volume I does not apply.</td></tr>
+    <tr><td><code>manager_id: int | None = None</code></td><td>Optional and explicitly nullable — the distinction Volume I insisted on, now enforced.</td></tr>
+    <tr><td><code>model_config</code> with an alias generator</td><td>Accept <code>riskScore</code> from TypeScript, expose <code>risk_score</code> in Python. <strong>The camelCase/snake_case boundary handled in exactly one place</strong>, which is the only way it stays consistent.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">FastAPI 15</span>
+  <h2>Async, sync and CORS</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The choice that decides whether your service stalls</div>
+<pre><code>async def  — for work that WAITS on something (a network call,
+             another API). Frees the loop to serve other requests
+             while waiting.
+def        — for work that COMPUTES. FastAPI runs it in a thread
+             pool so it does not block the event loop.
+
+⭐ THE MISTAKE THAT MATTERS, AND IT IS SPECIFIC:
+  putting BLOCKING work inside an `async def`.
+
+    @app.post("/predict")
+    async def predict(body):
+        score = model.predict(...)   # ⚠ CPU-bound, blocking
+
+  a model inference in an async handler blocks the ENTIRE event
+  loop. Every other request waits — the service appears to hang
+  under any concurrency at all, and the symptom is dramatic.
+  ⇒ for CPU-bound inference, use a plain `def` and let FastAPI
+    put it on a thread. This one decision is the difference
+    between a service that scales and one that stalls.
+
+CORS — same rule as Volume II, other side of the wire
+  the browser blocks cross-origin reads unless the server
+  permits the origin. In this project the FRONTEND does not call
+  the AI service at all, so its CORS list should be narrow or
+  empty — only the backend calls it, and backend-to-backend
+  calls are not subject to CORS.
+  ⚠ allow_origins=["*"] is a development shortcut that keeps
+    shipping to production. Name the origins.
+
+ERRORS
+  raise HTTPException(status_code=422, detail="…")
+  the same discipline as NestJS: raise, and let the framework
+  turn it into a response. And the same rule as everywhere — a
+  4xx for the caller's fault, a 5xx for yours.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">FastAPI 16</span>
+  <h2>FastAPI beside NestJS</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Concept</th><th style="width:34%">NestJS</th><th>FastAPI</th></tr></thead>
+  <tbody>
+    <tr><td>Route declaration</td><td><code>@Get()</code> on a method</td><td><code>@app.get()</code> on a function</td></tr>
+    <tr><td>Input shape</td><td>A DTO class + <code>class-validator</code></td><td>A Pydantic model</td></tr>
+    <tr><td>When it validates</td><td>Runtime, via the ValidationPipe</td><td>Runtime, via Pydantic</td></tr>
+    <tr><td>Dependency injection</td><td>Constructor injection, resolved by the module system</td><td><code>Depends()</code> in the signature</td></tr>
+    <tr><td>Docs</td><td>Swagger from decorators and DTOs</td><td>OpenAPI from type hints, at <code>/docs</code></td></tr>
+    <tr><td>Structure</td><td>Imposed — modules, controllers, services</td><td>Yours to choose; convention is routers + services</td></tr>
+    <tr><td>Suits</td><td>A large application with many features</td><td><span class="ok">A focused service with a small surface</span> — which is exactly what the AI service is</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">Why this comparison is worth reading</span>
+  <p>The two frameworks are the same ideas in two languages: <strong>declare the route next to the
+  handler, declare the input shape as a class, validate at runtime, generate the docs from both,
+  inject what the handler needs.</strong></p>
+  <p>Which means the concepts transfer completely and only the spelling changes. That is the fastest
+  route into the AI service for someone who has learned the backend.</p>
+</div>
+
+<header class="part" id="antd">
+  <span class="pn">Part IV</span>
+  <h2>Ant Design</h2>
+  <p class="lede">The component library the interface is built from. This project uses antd, not
+  Tailwind — components, not utility classes.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">antd 17</span>
+  <h2>Why a component library</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What you are actually buying</div>
+<pre><code>NOT "buttons you did not have to style". What you are buying is
+the part that takes months to get right:
+
+  · KEYBOARD NAVIGATION and focus management in a modal, a
+    dropdown, a date picker
+  · ARIA roles and screen-reader behaviour
+  · form state, validation display and error association
+  · a table with sorting, filtering, pagination and fixed columns
+  · consistent spacing and type across sixty screens by default
+  · every one of the above tested across browsers
+
+⭐ THE HONEST TRADE
+  ✅ enormous head start; internal tools look coherent for free;
+     accessibility you would not otherwise ship
+  ⚠ a large bundle; a distinctive visual identity that is
+     recognisable as antd; and fighting a component that is 90%
+     what you want is genuinely worse than building the last 10%
+     yourself.
+
+  ⇒ for an internal HR dashboard this trade is clearly right.
+    For a public marketing site it clearly is not. Knowing which
+    kind of product you are on is the whole decision.
+
+⚠ AND ONE PROJECT-SPECIFIC RULE: THIS PROJECT USES antd, NOT
+  TAILWIND. Mixing a utility-CSS system into a component library
+  produces two competing sources of spacing and colour, and the
+  result is inconsistent in a way nobody can fix later. Use
+  antd's tokens and its layout components.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">antd 18</span>
+  <h2>Layout and navigation</h2>
+</header>
+
+<div class="ascii">   THE STANDARD ADMIN SHELL — and it is standard for a reason
+
+   ┌─────────────────────────────────────────────────┐
+   │  Layout.Header      logo · user menu            │
+   ├──────────┬──────────────────────────────────────┤
+   │          │  Breadcrumb                          │
+   │  Sider   │  ┌────────────────────────────────┐  │
+   │  + Menu  │  │  Layout.Content                │  │
+   │          │  │    Card / Table / Form         │  │
+   │          │  └────────────────────────────────┘  │
+   └──────────┴──────────────────────────────────────┘
+
+   Layout · Header · Sider · Content · Footer
+     the frame. Put it in a Next.js layout.tsx so it does not
+     re-render on navigation (Volume III, reflex 08) — that is
+     what keeps the sidebar's scroll position and open sections.
+
+   Menu
+     ⚠ THE MISTAKE: not syncing selectedKeys with the current
+       route. The sidebar then highlights the wrong item after a
+       browser back or a direct link — a small bug that makes an
+       app feel broken. Drive it from the pathname, always.
+
+   Grid — Row and Col, on a 24-column grid
+     &lt;Col xs={24} md={12} xl={8}&gt; — 24 means full width on
+     phones, 12 means half on tablets. ⭐ 24, not 12, which
+     surprises people coming from Bootstrap.
+
+   Space and Flex
+     ⭐ USE THESE INSTEAD OF MARGINS. Consistent gaps from one
+       system, and no collapsing-margin surprises — the same
+       "let layout do the spacing" rule that applies anywhere.</div>
+
+<header class="mod" id="d3">
+  <span class="mn">antd 19</span>
+  <h2>Tables</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The component you will spend the most time in</div>
+<pre><code>&lt;Table
+  rowKey="id"                    ⭐ NOT optional. Volume II,
+  columns={columns}                 reflex 20 — without a stable
+  dataSource={employees}            key, selection and expansion
+  loading={isLoading}               attach to the wrong rows
+  pagination={{ current, pageSize, total, onChange }}
+/&gt;
+
+COLUMNS ARE DATA, NOT MARKUP
+  { title: 'Name', dataIndex: 'name', key: 'name', sorter: true }
+  { title: 'Risk', dataIndex: 'risk',
+    render: (v) =&gt; &lt;Tag color={v &gt; .5 ? 'red' : 'green'}&gt;{v}&lt;/Tag&gt; }
+
+  ⇒ so columns can be built from configuration — which is how you
+    show a salary column to HR and omit it for a team lead. ⭐ AND
+    THE SERVER MUST STILL OMIT THE FIELD: a column you did not
+    render is still in the payload (Volume II, reflex 09).
+
+⭐ CLIENT-SIDE VS SERVER-SIDE — THE DECISION THAT BITES LATER
+  antd will sort, filter and paginate in the browser, on whatever
+  array you passed. Delightful for 200 rows. For 50,000 it means
+  downloading 50,000 rows to show ten.
+  ⇒ past a few hundred rows, move sorting, filtering and paging
+    to the API and pass `total` in explicitly. Retrofitting this
+    means changing every call site, so decide at the start.
+
+⚠ AND THE ONE THAT LOOKS LIKE A FRAMEWORK BUG: rebuilding the
+  columns array on every render re-renders the whole table.
+  Define it outside the component, or memoise it.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">antd 20</span>
+  <h2>Forms</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Form.Item does more than it looks</div>
+<pre><code>&lt;Form form={form} layout="vertical" onFinish={submit}&gt;
+  &lt;Form.Item name="email" label="Email"
+             rules={[{ required: true }, { type: 'email' }]}&gt;
+    &lt;Input /&gt;
+  &lt;/Form.Item&gt;
+  &lt;Button type="primary" htmlType="submit" loading={saving}&gt;
+    Save
+  &lt;/Button&gt;
+&lt;/Form&gt;
+
+⭐ Form.Item OWNS THE FIELD'S STATE. You do not write value and
+  onChange (Volume II, reflex 21) — antd wires the child input
+  and manages the value, the touched state and the error display,
+  including associating the error text with the input for screen
+  readers.
+
+  ⇒ so ⚠ DO NOT put your own value/onChange on an Input inside a
+    Form.Item. You then have two owners of one value and the
+    field behaves erratically.
+
+VALIDATION — and the rule from Volume II, restated because it is
+the one people skip
+  ⭐ THESE RULES ARE FEEDBACK, NOT SECURITY. They run in a browser
+    the user controls. The DTO on the backend is what actually
+    protects the system, and it must repeat every rule that
+    matters. A request does not have to come from your form.
+
+  ⇒ where a rule exists in both places, that duplication is
+    deliberate and correct: one for the human, one for the
+    system.
+
+SUBMISSION
+  · `loading` on the button while saving — prevents the
+    double-click that creates two records
+  · show the server's field errors back on the fields with
+    form.setFields, rather than as a toast that loses the
+    connection to the input
+  · keep what the user typed on failure</code></pre>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">antd 21</span>
+  <h2>Feedback</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Component</th><th style="width:26%">For</th><th>The judgement</th></tr></thead>
+  <tbody>
+    <tr><td><code>message</code></td><td>A brief confirmation — "Saved"</td><td>Disappears. Never use it for anything the user must act on or remember.</td></tr>
+    <tr><td><code>notification</code></td><td>Something that arrived — "Report #42 is ready"</td><td>The right home for a WebSocket event. Persists until dismissed.</td></tr>
+    <tr><td><code>Modal.confirm</code></td><td>Confirming a destructive action</td><td><strong>Name the consequence in the text</strong>: "Delete 12 employee records? This cannot be undone." Not "Are you sure?"</td></tr>
+    <tr><td><code>Alert</code></td><td>A persistent state on the page</td><td>Inline, near what it concerns. For validation summaries and standing warnings.</td></tr>
+    <tr><td><code>Skeleton</code></td><td>The loading state</td><td>Shaped like the eventual content, so the page does not jump when data lands.</td></tr>
+    <tr><td><code>Empty</code></td><td>No data</td><td>Say <em>why</em> and what to do next. "No employees yet — import a CSV" beats a grey icon.</td></tr>
+    <tr><td><code>Spin</code></td><td>An indeterminate wait</td><td>Prefer Skeleton where you know the shape. A spinner over content the user could be reading is a downgrade.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">antd 22</span>
+  <h2>Theming</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Tokens, not overrides</div>
+<pre><code>&lt;ConfigProvider theme={{
+  token: { colorPrimary: '#0E6A6A', borderRadius: 4 },
+  components: { Table: { headerBg: '…' } },
+}}&gt;
+
+⭐ CHANGE THE TOKEN, NOT THE COMPONENT'S CSS. A token propagates
+  to every component that derives from it — hover states, focus
+  rings, disabled variants, the shades antd computes from your
+  primary colour. Overriding one component's class fixes one
+  place and leaves eleven derived states inconsistent.
+
+⚠ AND OVERRIDES BREAK ON UPGRADE. Internal class names are not a
+  public API; a minor version can rename them, and your styling
+  silently stops applying.
+
+DARK MODE
+  antd ships an algorithm — theme.darkAlgorithm — rather than
+  asking you to redefine every colour. Set it from the user's
+  preference and let the tokens cascade.
+
+⭐ THE PRINCIPLE, WHICH IS THE SAME ONE AS EVERYWHERE IN THIS
+  HANDBOOK: one definition, derived everywhere. A colour written
+  in two places is a promise to update both, and that promise is
+  always broken.</code></pre>
+</div>
+
+<header class="part" id="patterns">
+  <span class="pn">Part V</span>
+  <h2>The four patterns</h2>
+  <p class="lede">These repeat in every module. Learn them once and every unfamiliar file becomes
+  predictable.</p>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Pattern 23</span>
+  <h2>Dependency injection</h2>
+</header>
+
+<div class="ascii">   THE PROBLEM — TIGHT COUPLING
+
+     class ReportsService {
+       constructor() {
+         this.prisma = new PrismaClient();      // ⚠ built its own
+         this.ai = new AiClient('http://…:8000'); // ⚠ and its own
+       }
+     }
+
+     what this costs you:
+       · you CANNOT TEST IT without a real database and a running
+         AI service
+       · the URL is buried in a class that should not know it
+       · every service builds its own connection, so you have
+         twenty database clients instead of one
+       · swapping the AI client for a fake, or for a different
+         provider, means editing this file
+
+   THE FIX — ASK FOR WHAT YOU NEED
+
+     @Injectable()
+     class ReportsService {
+       constructor(
+         private prisma: PrismaService,
+         private ai: AiClientService,
+       ) {}
+     }
+
+     ⭐ THE CLASS NO LONGER DECIDES WHERE ITS DEPENDENCIES COME
+       FROM. It declares what it needs; something else supplies
+       them. That inversion is the entire idea, and the "IoC
+       container" is just the thing doing the supplying.
+
+   WHAT YOU GET
+     TESTABILITY   pass fakes in the constructor. No database, no
+                   network, no framework — a unit test that runs
+                   in milliseconds.
+     ONE INSTANCE  ⭐ providers are SINGLETONS by default. One
+                   Prisma client, one connection pool, shared.
+                   This is why you never call `new PrismaClient()`
+                   in a service.
+     SWAPPABILITY  the module decides the implementation, so
+                   changing it is one line in one place.
+
+   HOW NEST KNOWS WHAT TO INJECT
+     from the TypeScript types on the constructor parameters, via
+     decorator metadata. ⭐ WHICH IS WHY @Injectable() IS
+     REQUIRED — it is what makes that metadata get emitted.
+     ⇒ and it is why a missing @Injectable() or a
+       not-exported provider produces "cannot resolve
+       dependencies (?)" — the container has nothing to look up.
+
+   FASTAPI DOES THE SAME THING DIFFERENTLY
+     def endpoint(db = Depends(get_db)) — declared in the
+     signature rather than the constructor. Same principle: the
+     function asks, the framework provides.</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Pattern 24</span>
+  <h2>DTOs and validation</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Never trust incoming data</div>
+<pre><code>export class CreateEmployeeDto {
+  @IsString() @Length(2, 100)
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsInt() @Min(0) @Max(60)
+  tenureYears: number;
+
+  @IsOptional() @IsInt()
+  managerId?: number;
+}
+
+⭐ WHY A CLASS AND NOT AN INTERFACE: an interface is erased at
+  compile time (Volume I, reflex 16) and cannot validate
+  anything. A class exists at runtime and can carry decorators
+  that actually inspect the incoming object.
+
+THE PIPE MAKES IT AUTOMATIC
+  registered once, globally:
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,             ⭐ STRIP unknown properties
+      forbidNonWhitelisted: true,  ⭐ or reject them outright
+      transform: true,             turn the plain object into the
+                                   DTO class instance
+    }));
+
+  ⭐ `whitelist` IS A SECURITY CONTROL, not tidiness. Without it,
+    a caller can post extra fields — `role: 'admin'`,
+    `isApproved: true` — and if any code later spreads that body
+    into a database write, they have escalated their own
+    privileges. This is called mass assignment, and stripping
+    unknown keys removes the whole class of it.
+
+UPDATE DTOs
+  export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {}
+  ⇒ every field optional, every rule preserved. One definition
+    (Volume I, reflex 20 — derive types, do not duplicate them).
+
+⭐ THE THREE JOBS ONE DTO DOES
+  ① validates the request at runtime
+  ② provides the TypeScript type for the controller and service
+  ③ generates the Swagger documentation
+  ⇒ which is why a DTO is worth writing even for two fields, and
+    why the three can never disagree.
+
+⚠ AND THE BOUNDARY RULE: a DTO is for data ENTERING the system.
+  Do not reuse it as a response type — a response needs the
+  opposite shaping (omitting fields the caller may not see), and
+  conflating the two is how a salary ends up in a payload.</code></pre>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Pattern 25</span>
+  <h2>Error handling</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Throw the right thing; let one place turn it into a response</div>
+<pre><code>IN A SERVICE — throw a semantic exception
+  throw new NotFoundException('Employee not found');   → 404
+  throw new ForbiddenException();                      → 403
+  throw new ConflictException('Email already exists');  → 409
+  throw new BadRequestException('…');                   → 400
+
+⭐ THE SERVICE NEVER TOUCHES A RESPONSE OBJECT. It throws a
+  meaning; the framework maps it to a status. That is what keeps
+  the service callable from a job or a socket handler.
+
+THE FOUR CLASSES, AND THE RIGHT RESPONSE TO EACH
+  THE CALLER'S FAULT   4xx. Reject and explain precisely. Never
+                       retry — it will fail identically forever.
+  TEMPORARY            retry with backoff, a cap and jitter.
+                       ⚠ retrying instantly and forever is how
+                       one slow service takes down four.
+  PERMANENT, OURS      fail loudly. ⭐ AN ERROR CAUGHT AND LOGGED
+                       AT `info` IS A BUG YOU WILL FIND IN SIX
+                       MONTHS VIA A CUSTOMER.
+  DEGRADED             continue without the optional part, and
+                       tell the user what is missing. The AI
+                       service being down should not blank a page.
+
+THE GLOBAL FILTER — one shape for every failure
+  · a machine-readable code, a human message, the field at fault
+  · a correlation id, logged with the full detail
+  ⭐ RETURN THE ID, LOG THE STACK. A stack trace or SQL fragment
+    in a user-facing message is a security finding, not a
+    debugging convenience. "Error ref 8f2c1a" lets support find
+    everything without disclosing anything.
+
+⚠ THE THREE HABITS THAT CAUSE REAL DAMAGE
+  · catching everything and continuing — turns a loud failure
+    into silent wrong data, the most expensive kind
+  · swallowing an error in an interceptor without re-throwing —
+    every caller's catch stops running (Volume II, reflex 25)
+  · logging and re-throwing at every level, so one failure
+    produces nine log entries and nobody can find the cause</code></pre>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Pattern 26</span>
+  <h2>Project structure and conventions</h2>
+</header>
+
+<div class="ascii">   hr-insight-ai/
+   ├── backend/      NestJS REST API      :3010
+   ├── frontend/     Next.js app          :3001
+   ├── ai-service/   FastAPI ML service   :8000
+   └── docs/         this handbook and the source KB
+
+   each has its own dependency manifest. They do not import each
+   other's code. They communicate over HTTP and WebSocket only.
+
+   THE BACKEND — one folder per feature, always the same shape
+
+     backend/src/
+     ├── app.module.ts     ⭐ the map. Read this first.
+     ├── main.ts           bootstrap: pipes, CORS, Swagger, port
+     ├── auth/
+     │   ├── auth.module.ts
+     │   ├── auth.controller.ts
+     │   ├── auth.service.ts
+     │   ├── strategies/   passport-jwt
+     │   ├── guards/       JwtAuthGuard · RolesGuard
+     │   └── decorators/   @Roles() · @CurrentUser() · @Public()
+     ├── users/ teams/ employees/ analytics/ reports/
+     ├── audit/            the audit-log interceptor
+     └── prisma/           PrismaService
+
+   ⭐ WHY THE SAMENESS IS THE POINT: a new feature is a COPY OF AN
+     EXISTING PATTERN, not a design decision. Nobody asks where
+     the login logic lives, because `auth/auth.service.ts` is the
+     only answer the structure allows.
+
+   NAMING — pick once, never think again
+     files        kebab-case.role.ts    employee.service.ts
+     classes      PascalCase            EmployeeService
+     variables    camelCase             riskScore
+     DB tables    snake_case, plural    employees
+     ⭐ Python differs BY LANGUAGE CONVENTION: snake_case for
+       functions and variables. Follow the local convention, not
+       one global rule — and convert at exactly one boundary
+       (Volume I, reflex 12).
+
+   ⚠ THE STRUCTURE RULE THAT IS ACTUALLY ABOUT SAFETY
+     `.env` is never committed; `.env.example` always is.
+     Committing a real `.env` publishes your database credentials
+     and your API keys, and rotating them afterwards is the only
+     remedy — history is forever.
+
+   RUNNING IT
+     three terminals, and the order matters only for convenience:
+       backend  → npm run start:dev     :3010
+       frontend → npm run dev           :3001
+       ai       → uvicorn main:app --reload   :8000
+     ⚠ if the AI service is down, auth and CRUD still work and
+       report generation fails alone. Knowing that saves you
+       debugging the wrong service.</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume III · the vocabulary of this codebase</div>
+  <dl>
+    <dt>module</dt><dd>A feature's boundary in NestJS: what it owns, imports and exports.</dd>
+    <dt>controller</dt><dd>The HTTP surface. Reads the request, calls a service, returns. No logic.</dd>
+    <dt>service</dt><dd>The business logic, with no knowledge of HTTP.</dd>
+    <dt>provider</dt><dd>Anything injectable. A singleton by default.</dd>
+    <dt>pipe</dt><dd>Transforms and validates a handler's arguments — where the DTO is enforced.</dd>
+    <dt>interceptor</dt><dd>Wraps the handler, before and after. Logging, audit, response shaping.</dd>
+    <dt>exception filter</dt><dd>The one place every thrown error becomes an HTTP response.</dd>
+    <dt>DTO</dt><dd>A class declaring and validating the shape of incoming data.</dd>
+    <dt>mass assignment</dt><dd>Accepting unknown fields from a request body — the reason <code>whitelist</code> exists.</dd>
+    <dt>IoC container</dt><dd>The thing that constructs your classes and supplies their dependencies.</dd>
+    <dt>App Router</dt><dd>Next.js routing where the folder structure is the URL.</dd>
+    <dt>route group</dt><dd>A <code>(folder)</code> that shares a layout without appearing in the URL.</dd>
+    <dt>server action</dt><dd>A server-side function callable from the client. <strong>A public endpoint</strong> — it needs its own auth checks.</dd>
+    <dt>ISR</dt><dd>Static rendering revalidated on a timer.</dd>
+    <dt>hydration error</dt><dd>Server-rendered HTML disagreeing with the browser's first render.</dd>
+    <dt>Pydantic</dt><dd>Python models that validate at runtime — FastAPI's DTO equivalent.</dd>
+    <dt>Depends()</dt><dd>FastAPI's dependency injection, declared in the signature.</dd>
+    <dt>token (antd)</dt><dd>A theme value that every derived component state inherits.</dd>
+    <dt>rowKey</dt><dd>A Table's stable row identifier. Same rule as a React key.</dd>
+    <dt>ConfigProvider</dt><dd>Where antd's theme tokens are set, once, near the root.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume IV · Data science &amp; AI</h4><p>What the FastAPI service is actually computing — statistics, the ML workflow, evaluation, deep learning, LLMs, RAG and agents.</p></div>
+  <div class="card"><h4>Volume II · Architecture &amp; the browser</h4><p>Back up for the request trace, the auth model, Prisma, and React's state rules — all assumed here.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 11–14 and 34–37. The originals carry far more code, including full module examples worth typing out.</p></div>
+  <div class="card"><h4>Beyond the KB</h4><p><code>docs/fullstack-ai-thinking.html</code> — the same stack from the other direction: how to reason about coding, design, system-design and debugging problems.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>Currency.</strong> Backend port <code>3010</code>, and the Claude API rather than Groq.
+  Framework defaults move between major versions — Next.js caching behaviour and Prisma's client
+  construction both changed recently — so where this handbook states a default, confirm it against the
+  version in your <code>package.json</code> before depending on it.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

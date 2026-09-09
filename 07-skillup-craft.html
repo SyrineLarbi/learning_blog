@@ -1,0 +1,1373 @@
+<title>Engineering Craft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #A32E52;
+  --accent-soft: #F8E5EA;
+  --accent-deep: #6E1B35;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #A32E52;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #E68CA5;
+    --accent-soft: #251117;
+    --accent-deep: #F2B1C2;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #E68CA5;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #E68CA5;
+  --accent-soft: #251117;
+  --accent-deep: #F2B1C2;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #E68CA5;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume III</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · Code review</div>
+  <a href="#a1"><span class="n">01</span>What it is for</a>
+  <a href="#a2"><span class="n">02</span>What to look for</a>
+  <a href="#a3"><span class="n">03</span>Giving feedback</a>
+  <a href="#a4"><span class="n">04</span>Reviewing generated PRs</a>
+  <a href="#a5"><span class="n">05</span>Review culture</a>
+
+  <div class="rail-group">II · Debugging</div>
+  <a href="#b1"><span class="n">06</span>The mindset</a>
+  <a href="#b2"><span class="n">07</span>Reproduce &amp; isolate</a>
+  <a href="#b3"><span class="n">08</span>Stack traces</a>
+  <a href="#b4"><span class="n">09</span>Logging that helps</a>
+  <a href="#b5"><span class="n">10</span>Bug categories</a>
+  <a href="#b6"><span class="n">11</span>Post-mortems</a>
+
+  <div class="rail-group">III · Performance</div>
+  <a href="#c1"><span class="n">12</span>Measure first</a>
+  <a href="#c2"><span class="n">13</span>Frontend</a>
+  <a href="#c3"><span class="n">14</span>Backend &amp; API</a>
+  <a href="#c4"><span class="n">15</span>Memory</a>
+  <a href="#c5"><span class="n">16</span>Load testing</a>
+
+  <div class="rail-group">IV · Security</div>
+  <a href="#d1"><span class="n">17</span>Think like an attacker</a>
+  <a href="#d2"><span class="n">18</span>The top risks</a>
+  <a href="#d3"><span class="n">19</span>Input &amp; output</a>
+  <a href="#d4"><span class="n">20</span>Secrets</a>
+  <a href="#d5"><span class="n">21</span>Dependencies</a>
+  <a href="#d6"><span class="n">22</span>In generated code</a>
+
+  <div class="rail-group">V · Testing</div>
+  <a href="#e1"><span class="n">23</span>Why, in the AI era</a>
+  <a href="#e2"><span class="n">24</span>The pyramid</a>
+  <a href="#e3"><span class="n">25</span>What to test</a>
+  <a href="#e4"><span class="n">26</span>Mocking</a>
+  <a href="#e5"><span class="n">27</span>Coverage</a>
+  <a href="#e6"><span class="n">28</span>Testing AI features</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume III of VIII</p>
+  <h1>Engineering craft. <span class="thin">What separates junior from senior, amplified either way.</span></h1>
+  <p class="lede">Five disciplines that decide whether a codebase stays workable: reviewing so
+  defects are caught and people still want to submit work, debugging by hypothesis rather than luck,
+  optimising only what you measured, thinking like an attacker, and testing the things that would
+  actually break.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volumes I and II</span>
+    <span><b>Covers</b> · KB files 12–16</span>
+    <span><b>Most transferable</b> · of the eight volumes</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<a class="vol" href="06-skillup-architecture.html"><span class="vn">Volume II</span><b>Architecture &amp; design</b></a>
+<div class="vol here"><span class="vn">Volume III · here</span><b>Engineering craft</b></div>
+<a class="vol" href="08-skillup-cs-foundations.html"><span class="vn">Volume IV</span><b>CS foundations &amp; the stack</b></a>
+<a class="vol" href="09-skillup-ship-and-run.html"><span class="vn">Volume V</span><b>Ship it &amp; run it</b></a>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<a class="vol" href="11-skillup-data-ai.html"><span class="vn">Volume VII</span><b>Data, AI &amp; emerging tech</b></a>
+<a class="vol" href="12-skillup-thinking-capstone.html"><span class="vn">Volume VIII</span><b>Thinking, career &amp; capstone</b></a>
+</div>
+
+<header class="part" id="review">
+  <span class="pn">Part I</span>
+  <h2>Code review</h2>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Craft 01</span>
+  <h2>What review is actually for</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">People think it's for</th><th>It's mostly for</th></tr></thead>
+  <tbody>
+    <tr><td>Catching bugs</td><td><strong>Catching the bugs a machine can't</strong> — wrong business logic, a missing permission check, a behaviour change nobody noticed. Formatting and style belong to the linter.</td></tr>
+    <tr><td>Gatekeeping quality</td><td><strong>Spreading knowledge.</strong> After review, two people understand the change. That is the single highest-value output, and it is why the bus factor of a reviewed codebase is different.</td></tr>
+    <tr><td>Enforcing preferences</td><td><strong>Maintaining coherence</strong> — that the codebase still looks like one team wrote it, so the next person can predict where things go.</td></tr>
+    <tr><td>Approving</td><td><strong>Asking the question the author was too close to ask.</strong> "What happens if this list is empty?" is worth more than any number of approvals.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">Why it matters more now</span>
+  <p>When a large share of code arrives generated, review stops being a quality ritual and becomes
+  <strong>the primary control</strong>. It is the only place where a human decides whether plausible
+  code is correct code.</p>
+  <p>Which means a team that reviews shallowly has, in effect, no control at all — and the faster the
+  generation, the faster that gap compounds.</p>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Craft 02 · print this</span>
+  <h2>What to look for, in order</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Ordered by what actually costs money when missed</div>
+<pre><code>①  DOES IT DO THE RIGHT THING?
+   read the description, then the code, and ask whether they
+   match. ⭐ THE MOST EXPENSIVE DEFECT IS A CORRECT SOLUTION TO
+   THE WRONG PROBLEM, and it is invisible if you only assess
+   code quality.
+
+②  AUTHORISATION
+   every id from outside — is it checked against the caller, on
+   this path? does the response include a field this caller may
+   not see?
+   ⭐ HIGHEST SEVERITY ON THE LIST. A missing ownership check
+     looks exactly like working code.
+
+③  THE EDGE CASES
+   zero · one · many · null · twice · order · race · lie ·
+   halfway. ⇒ ask about the two most likely, by name.
+
+④  WHAT ELSE DOES THIS CHANGE?
+   ⭐ THE QUESTION SENIOR REVIEWERS ASK AND JUNIORS DO NOT.
+     A changed default, a changed error case, a changed response
+     shape, a removed field. ⚠ READ THE DIFF, NOT THE NEW FILE —
+     the diff is where the silent behaviour change is visible.
+
+⑤  FAILURE PATHS
+   what happens if this throws halfway? is there a swallowed
+   error? does a retry duplicate anything?
+
+⑥  DATA AND MIGRATIONS
+   is this migration reversible? does it lock a large table? is
+   it deployed before the code that needs it?
+   ⭐ MIGRATIONS DESERVE DISPROPORTIONATE REVIEW ATTENTION —
+     they are the part with no undo.
+
+⑦  COMPLEXITY
+   is there an abstraction with one caller? config nobody will
+   set? a clever line a tired person would misread?
+
+⑧  NAMES AND CLARITY
+   would someone with no context understand WHY? ⇒ suggesting a
+   rename is the highest-value-per-second comment available.
+
+⚠ WHAT NOT TO SPEND REVIEW ON: formatting, import order, quote
+  style, tabs. If it can be automated, automate it — every
+  comment spent there is attention taken from ① to ④.</code></pre>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Craft 03</span>
+  <h2>Giving feedback people can act on</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Same observation, three different outcomes</div>
+<pre><code>⚠ "this is wrong"
+   ⇒ no information, and a defensive author. Nothing improves.
+
+⚠ "why didn't you use a transaction here?"
+   ⇒ rhetorical questions read as accusations even when they are
+     not meant that way. Text has no tone.
+
+✅ "If the AI call fails after the report row is written, we're
+   left with a report that has no predictions. Wrap both in a
+   transaction?"
+   ⇒ THE FAILURE · THE CONSEQUENCE · A SUGGESTION. The author
+     can agree, disagree with a reason, or explain why it is
+     already handled.
+
+⭐ LABEL THE SEVERITY — the single best habit in review.
+  BLOCKING     must change before merge (correctness, security)
+  SUGGESTION   I would do it differently; your call
+  QUESTION     I do not understand this yet
+  NIT          trivial, take it or leave it
+  PRAISE       ⭐ genuinely useful — it teaches the pattern you
+               want repeated, and a review with only criticism
+               trains people to submit less
+
+  ⇒ without labels, every comment reads as blocking, and a
+    twelve-nit review feels like a rejection.
+
+⭐ AND THE RULE THAT KEEPS REVIEWS FROM STALLING: IF IT IS NOT
+  BLOCKING, DO NOT BLOCK ON IT. Approve with suggestions. A
+  reviewer who blocks on preference becomes a bottleneck people
+  route around — which loses you the review entirely.
+
+⚠ THREE HABITS TO AVOID
+  · rewriting the change in comments — if you have designed it
+    differently, talk rather than type
+  · reviewing the author instead of the code
+  · the drive-by comment on line 400 of 600 with no verdict —
+    say whether you read the rest</code></pre>
+</div>
+
+<header class="mod" id="a4">
+  <span class="mn">Craft 04</span>
+  <h2>Reviewing generated pull requests</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">A new failure mode, specific to this era</span>
+  <p><strong>A large, uniformly well-formatted, idiomatic diff that the author has not fully
+  read.</strong> Every surface cue you normally use to sense that something is off — inconsistent
+  naming, odd formatting, awkward structure — is absent. It looks like careful work.</p>
+  <p>So the reviewer becomes the first person to actually read it, while the diff size implies it was
+  already understood. That mismatch is where defects enter.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">What to do about it</div>
+<pre><code>⭐ ASK THE AUTHOR TO STATE WHAT IT DOES, IN THEIR OWN WORDS.
+  not as a challenge — as part of the description. If they
+  cannot, the change is not ready, and this single expectation
+  changes team behaviour more than any policy.
+
+REQUIRE GENERATED CHANGES IN THEIR OWN COMMITS
+  ⇒ then the diff is reviewable in isolation and revert is one
+    command. Mixed with hand edits, it is archaeology.
+
+SIZE IS NOW A REVIEW CONCERN, NOT A COURTESY
+  a 600-line generated diff gets reviewed at roughly the same
+  quality as a 600-line handwritten one — which is to say
+  poorly. ⭐ THE FIX IS UPSTREAM: ask for smaller units. A
+  reviewer cannot recover attention that the diff size already
+  spent.
+
+WHAT TO SEARCH THE DIFF FOR, MECHANICALLY
+  □ every `catch` block — is anything swallowed?
+  □ every loop containing an `await` — N+1?
+  □ every raw query — is anything interpolated?
+  □ every new dependency — was it discussed, and does it exist?
+  □ every changed default or error case
+  □ any identifier you do not recognise — is it real?
+
+⚠ AND THE ONE THAT CATCHES PEOPLE: TESTS THAT ASSERT CURRENT
+  BEHAVIOUR. Generated tests are written by reading the code, so
+  they encode what the code does — bugs included — rather than
+  what it should do. ⭐ A PASSING GENERATED TEST SUITE IS NOT
+  EVIDENCE OF CORRECTNESS. Check at least one assertion against
+  the requirement.</code></pre>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">Craft 05</span>
+  <h2>Review culture</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Small PRs, reviewed fast</h4><p>The two are linked: small changes get reviewed within the hour, which makes people submit small changes. Large ones wait a day, which makes people batch more.</p></div>
+  <div class="card"><h4>Anyone reviews anyone</h4><p>Including a junior reviewing a senior. The knowledge flows both ways, and "I don't understand this" is a legitimate and valuable review comment.</p></div>
+  <div class="card"><h4>Automate the arguments</h4><p>Formatter, linter, type check, tests in CI. Every preference you automate is a debate you never have again.</p></div>
+  <div class="card"><h4>Disagreement has an escape hatch</h4><p>Two rounds and no agreement: talk, then decide, then record it as an ADR if it is architectural. Comment threads are a terrible medium for design disputes.</p></div>
+</div>
+
+<header class="part" id="debug">
+  <span class="pn">Part II</span>
+  <h2>Debugging</h2>
+  <p class="lede">The most honest skill there is. You cannot memorise your way through a bug, and the
+  method is visible in every sentence you say about it.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Craft 06</span>
+  <h2>The mindset</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Guessing</th><th>Hypothesis testing</th></tr></thead>
+  <tbody>
+    <tr><td>"Maybe it's the cache." Clears the cache.</td><td>"If it were the cache, a fresh key would work. Let me check one."</td></tr>
+    <tr><td>Changes three things, it works, ships</td><td>Changes one, confirms it explains <strong>every</strong> symptom, then fixes</td></tr>
+    <tr><td>Cannot say why it works now</td><td>Can trace the mechanism from cause to symptom</td></tr>
+    <tr><td>The bug returns in a month</td><td>The bug <em>cannot</em> return, and a test says so</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The loop</div>
+<pre><code>1  REPRODUCE IT
+   ⭐ IF YOU CANNOT REPRODUCE IT, YOU ARE SPECULATING, NOT
+     DEBUGGING. Getting a reliable reproduction is usually 80% of
+     the work — and the moment you have one, the cause is often
+     already obvious.
+
+2  STATE WHAT YOU EXPECTED AND WHAT HAPPENED, PRECISELY
+   "it's broken" is not an observation. "It returns [] for user
+   5309 and 12 rows for 5308" is — and that difference is
+   usually the entire investigation.
+
+3  ONE HYPOTHESIS THAT EXPLAINS EVERYTHING
+   ⭐ INCLUDING THE STRANGE DETAIL. A theory that explains the
+     error but not why it only happens after 6 p.m. is not the
+     answer yet — and the strange detail is the most
+     informative thing you have.
+
+4  A PREDICTION THAT COULD BE WRONG
+   "if this is it, X will be true." Then check X. ⚠ a hypothesis
+   you cannot disprove is a belief.
+
+5  CHANGE ONE THING
+   change three and the result teaches you nothing.
+
+6  CONFIRM THE MECHANISM BEFORE FIXING
+   ⭐ "IT WORKS NOW" IS NOT A DIAGNOSIS. Without cause-to-symptom
+     you may have moved the bug rather than removed it — and it
+     returns under load, which is when it costs most.
+
+7  ASK WHY IT WAS POSSIBLE
+   the fix repairs this instance; the question repairs the class.
+   Missing check, loose type, unenforced invariant? ⇒ this is
+   where a bug becomes a constraint, a type or a test and stops
+   having siblings.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Craft 07</span>
+  <h2>Reproduce and isolate</h2>
+</header>
+
+<div class="ascii">   BISECT IN SPACE — where in the path?
+
+     browser → network → server → service → database
+
+     ⭐ THE FASTEST QUESTION IN DEBUGGING: is the data already
+       wrong when it arrives, or does it become wrong here?
+       One look at the payload halves the search, and people
+       skip it constantly.
+
+     wrong in the response, right in the database ⇒ it is
+     serialisation, mapping, or the permission filter. Three
+     places, not the whole system.
+
+   BISECT IN TIME — when did it start?
+
+     a deploy · a config change · a migration · a dependency
+     update · a certificate · a scheduled job · someone else's
+     release · a date boundary
+     ⚠ AND THE ONE PEOPLE FORGET: nothing changed in the code,
+       but the DATA crossed a threshold. The first customer with
+       10,000 rows. The first name with an apostrophe. The first
+       month-end on a Sunday.
+
+   BISECT IN SCOPE — who and what is affected?
+
+     ALL           → deploy, config, dependency, infrastructure
+     SOME          → data-dependent. ⭐ THE SHARED PROPERTY OF
+                     THE FAILING SET *IS* THE BUG.
+     ONE           → that record's data, that user's permissions,
+                     that timezone
+     INTERMITTENT  → ⭐ almost always one of five: a race, a
+                     retry, a cache, a clock, or one bad instance
+                     in a pool. Find which node served it.
+
+   ⭐ "WHAT DO THE AFFECTED CASES HAVE IN COMMON?" is the
+     highest-yield question in the discipline, and it is usually
+     answerable before you read any code.</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Craft 08</span>
+  <h2>Reading a stack trace</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A skill, not a chore</div>
+<pre><code>THE METHOD
+  1  READ THE ERROR TYPE AND MESSAGE FIRST. Half the time it
+     literally says the answer.
+  2  ⭐ FIND THE TOPMOST FRAME IN *YOUR* CODE. Twenty frames of
+     framework internals are the path, not the cause. Your file
+     is where you can act.
+  3  READ THE "CAUSED BY" CHAIN TO THE BOTTOM. ⭐ THE ROOT CAUSE
+     IS USUALLY THE LAST ONE, not the first — the top of the
+     output is the outermost wrapper.
+  4  CHECK THE LINE, then check what was passed to it.
+
+⚠ THE TRACES THAT MISLEAD
+  · ASYNC BOUNDARIES cut the stack. In Node the trace may start
+    inside the event loop with no path back to your handler.
+    ⇒ this is exactly what a correlation id and structured
+      logging are for.
+  · "Cannot read property of undefined" points at the SYMPTOM.
+    The bug is wherever that value should have been set — often
+    far away. ⭐ ASK "WHY WAS IT UNDEFINED?", not "how do I
+    guard this line?"
+  · A SWALLOWED-THEN-RETHROWN error shows the rethrow site, not
+    the origin. Which is one more reason not to catch and
+    rethrow at every level.
+  · MINIFIED FRONTEND TRACES are unreadable without source maps
+    — upload them, or production errors are unactionable.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Craft 09</span>
+  <h2>Logging that helps at 3 a.m.</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Written for the incident you have not had yet</div>
+<pre><code>⭐ LOG STRUCTURED, NOT PROSE.
+  ⚠ "Processing report for team 5"  → ungreppable at volume
+  ✅ { event: 'report.started', teamId: 5, userId: 42,
+       requestId: '9f2c…' }
+  ⇒ now you can filter by field, count by event, and correlate
+    across all three services.
+
+THE LEVELS, USED HONESTLY
+  ERROR  something failed and someone must act
+  WARN   something unexpected, handled — a retry, a fallback
+  INFO   ⭐ significant business events: a report generated, a
+         login, a job finished. This is your audit trail.
+  DEBUG  detail, off in production
+
+⚠ THE ANTI-PATTERN THAT HIDES REAL FAILURES: catching an
+  exception and logging it at info. It is an error. Logging it
+  quietly is how a bug survives six months and is discovered by
+  a customer.
+
+WHAT TO INCLUDE, EVERY TIME
+  the correlation id · who · which entity · the outcome · the
+  duration for anything slow
+  ⚠ AND WHAT NEVER: passwords, tokens, full request bodies with
+    personal data, salaries. ⭐ LOGS ARE A DATA STORE WITH
+    WEAKER ACCESS CONTROL THAN YOUR DATABASE — usually readable
+    by more people, retained longer, and shipped to a third
+    party. Treat a log line as data leaving the system.
+
+⭐ THE TEST FOR YOUR LOGGING: COULD YOU RECONSTRUCT WHAT
+  HAPPENED TO ONE USER'S REQUEST FROM THE LOGS ALONE, WITHOUT
+  ADDING ANYTHING? If not, add it now — not during the
+  incident, when you cannot.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Craft 10</span>
+  <h2>Bug categories</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Symptom</th><th>Usual suspects, in order</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Works locally, fails deployed</strong></td><td>Config or env var · a data difference (volume, encoding, real names) · timezone or locale · a permission that only exists in production · version drift · a race that needs concurrency to appear.</td></tr>
+    <tr><td><strong>Intermittent</strong></td><td>A race · a retry · a cache serving one stale copy · clock skew · one unhealthy instance. <strong>Find which instance served the failure</strong> — that single fact often ends it.</td></tr>
+    <tr><td><strong>Slow, then suddenly much slower</strong></td><td>A threshold crossed: a query outgrew its index, the pool saturated, memory started swapping, a queue's arrival rate passed its service rate. <strong>Nonlinear response means a limit, not load.</strong></td></tr>
+    <tr><td><strong>Wrong number, no error</strong></td><td><span class="no">The most dangerous class.</span> A join fanning out · a filter applied after aggregation · a timezone shifting rows across a day boundary · nulls dropped by an aggregate · a unit or currency mismatch.</td></tr>
+    <tr><td><strong>Memory grows until it dies</strong></td><td>Something accumulates: an unbounded cache, listeners added per request, an ever-growing array, a query loading everything to count it.</td></tr>
+    <tr><td><strong>Fails for some users</strong></td><td>Find the shared property — a locale, an apostrophe, an unusually large record, a missing optional relation, a role. <strong>The property is the bug.</strong></td></tr>
+    <tr><td><strong>An AI feature got worse</strong></td><td>The prompt changed · the model version changed · retrieved context changed or grew · input distribution changed · a truncation is silently cutting the prompt. Unanswerable without logged prompt versions and token counts.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Craft 11</span>
+  <h2>Incidents and post-mortems</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Mitigate first, diagnose second</div>
+<pre><code>⭐ THE RULE THAT DEFINES INCIDENT RESPONSE: the instinct — "let
+  me just find out why" — is wrong while users are affected.
+  ROLL BACK · DISABLE THE FLAG · FAIL OVER · SHED LOAD. Then
+  investigate calmly. A rollback you can explain later beats a
+  root cause found while the site is down.
+
+THE FIRST FOUR QUESTIONS
+  1  WHAT IS THE IMPACT? who, how many, how badly. This decides
+     everything else, including whether it is an incident.
+  2  WHEN DID IT START? then: what happened at that time.
+  3  WHAT CHANGED? deploys, config, migrations, dependencies.
+  4  CAN WE UNDO IT? if a change caused it, reversing that
+     change is the fastest mitigation available.
+
+WHILE IT IS HAPPENING
+  · ONE person coordinates and communicates; everyone else
+    investigates. Without this, four people chase one hypothesis
+    and nobody talks to the business.
+  · WRITE A TIMELINE AS YOU GO. You will not remember it, and
+    the review is only as good as the timeline.
+  · ⚠ DON'T DESTROY THE EVIDENCE. Before restarting, capture
+    logs, metrics and state. A restart that "fixes" it also
+    removes your only chance to learn why.
+  · say what you know AND what you do not. "Still investigating,
+    next update in fifteen minutes" beats a confident wrong
+    update.
+
+THE POST-MORTEM
+  ⭐ THE QUESTION IS "WHAT MADE THIS POSSIBLE?", NOT "WHO DID
+    IT". A culture where the answer is a person produces hidden
+    incidents — and hidden incidents are how small failures
+    become large ones.
+  three outputs or it did not happen:
+    · what stops the CLASS of failure
+    · what DETECTS it sooner
+    · what makes it SMALLER next time
+  ⚠ "we'll be more careful" is not an action item. It is a wish.</code></pre>
+</div>
+
+<header class="part" id="perf">
+  <span class="pn">Part III</span>
+  <h2>Performance</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Craft 12</span>
+  <h2>Measure first — and it is not optional</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">The golden rule, and why it keeps being broken</span>
+  <p><strong>Intuition about performance is unreliable</strong> — including yours, including mine.
+  The bottleneck is almost never where it feels like it is, because the things that feel expensive
+  (a loop, a big function) are usually cheap, and the things that feel free (a round trip, a
+  serialisation) are usually not.</p>
+  <p>So optimising without measuring produces a week of work, a 2&nbsp;% gain, and code that is now
+  harder to read. <strong>Get one real profile before touching anything.</strong></p>
+</div>
+
+<div class="sheet">
+  <div class="cap">What to measure, and which number to look at</div>
+<pre><code>⭐ LOOK AT PERCENTILES, NOT AVERAGES.
+  "average 200 ms" with a p99 of 8 seconds means one user in a
+  hundred has a terrible experience, and the average will never
+  tell you. ⇒ p50 for the typical case, p95/p99 for the pain.
+
+WHERE THE TIME GOES — four places, in order of likelihood
+  ① TOO MANY ROUND TRIPS — ⭐ the N+1, and it is the answer far
+    more often than anything exotic
+  ② ONE BAD QUERY — missing index, or a scan
+  ③ WORK DONE PER ROW THAT SHOULD BE DONE ONCE
+  ④ WAITING ON ANOTHER SERVICE
+
+THE FIRST QUESTION, THOUGH: IS THE WORK NECESSARY AT ALL?
+  ⭐ THE FASTEST QUERY IS THE ONE YOU DO NOT RUN. Can it be
+    cached, precomputed, paginated, or simply not returned?
+    Removing work beats optimising it, always.
+
+AND THE ONE THAT DECIDES WHETHER YOU ARE DONE
+  DEFINE THE TARGET BEFORE YOU START. "Under 500 ms at p95."
+  ⚠ without a target, optimisation has no stopping condition and
+    you will keep going until the code is unreadable.
+
+⚠ THE TRAP: MEASURING WITH DEV DATA. Four rows hide every N+1,
+  every missing index and every unbounded list. Measure against
+  realistic volume or you have measured nothing.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Craft 13</span>
+  <h2>Frontend performance</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Symptom</th><th style="width:28%">Cause</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Slow first load</strong></td><td>Bundle size — usually one heavy dependency, a chart or date library</td><td>Look at what is actually in the bundle before guessing. Code-split, load on demand, or drop the dependency.</td></tr>
+    <tr><td><strong>Blank then jump</strong></td><td>No skeleton; layout shifts when data lands</td><td>A skeleton shaped like the content. Reserve space for images and tables.</td></tr>
+    <tr><td><strong>Typing feels laggy</strong></td><td>State lifted too high, so every keystroke re-renders a large subtree</td><td>Keep form state local. This is the most common React performance bug.</td></tr>
+    <tr><td><strong>A long list stutters</strong></td><td>Thousands of DOM nodes</td><td>Paginate, or virtualise. And ask whether anyone needs 5,000 rows on one screen.</td></tr>
+    <tr><td><strong>Waterfall of requests</strong></td><td>Sequential awaits, or fetching in a child that could fetch in the parent</td><td>Fetch in parallel, and on the server where possible — a server component removes the round trip entirely.</td></tr>
+    <tr><td><strong>Everything re-renders</strong></td><td>A new object or array created inline on every render, or a wide context</td><td>Stabilise the value; split the context by change frequency. <strong>Measure before memoising</strong> — <code>useMemo</code> everywhere is its own cost.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Craft 14</span>
+  <h2>Backend and API performance</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The five that account for almost everything</div>
+<pre><code>①  N+1 QUERIES — ⭐ the champion
+   a loop containing an await that hits the database. 200 items
+   → 201 queries. Invisible in dev with four rows.
+   ⇒ include/join in one query, or one query filtered by
+     `id: { in: [...] }` and grouped in memory.
+
+②  MISSING INDEX
+   a filter or join on an unindexed column. Fine at 1,000 rows,
+   catastrophic at 1,000,000 — ⭐ and the transition is sudden,
+   which is why "it was fine last month" is not evidence.
+
+③  SEQUENTIAL AWAITS THAT COULD BE PARALLEL
+   two independent calls, one after the other, is double the
+   latency for no reason. Promise.all them.
+
+④  SELECTING EVERYTHING
+   fetching every column and every relation to display three
+   fields. ⭐ `select` RATHER THAN `include` IS BOTH FASTER AND
+   THE MECHANISM THAT KEEPS A SALARY OUT OF A PAYLOAD.
+
+⑤  UNBOUNDED WORK IN A REQUEST
+   a report, an import, a model call over many records. Move it
+   to a job — the request cycle is the wrong place for anything
+   whose size you do not control.
+
+CACHING — worth it, with the cost stated
+  ⭐ ASK FIRST: HOW WRONG MAY THIS BE, AND FOR HOW LONG? If the
+    answer is "not at all", a cache is the wrong tool.
+  ⚠ AND A CACHE IN FRONT OF AN N+1 HIDES THE BUG UNTIL THE CACHE
+    MISSES — then you have two problems and one of them is
+    invisible.
+
+⭐ THE ORDER THAT WORKS: fix the query · add the index · remove
+  the round trips · then cache. Caching first buys speed and
+  keeps the defect.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Craft 15</span>
+  <h2>Memory</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Leaks, and the four things that cause them</div>
+<pre><code>A LEAK IS SOMETHING THAT ACCUMULATES AND IS NEVER RELEASED.
+The signature: memory climbs steadily, restarts fix it, and the
+crash comes hours or days later.
+
+THE FOUR CAUSES
+  ① AN UNBOUNDED CACHE. A Map used as a cache with no eviction
+    and no size limit is a memory leak with a helpful name.
+  ② LISTENERS OR SUBSCRIPTIONS ADDED AND NEVER REMOVED.
+    ⭐ THIS IS WHY useEffect CLEANUP IS NOT OPTIONAL — navigate
+      twenty times, leave twenty live sockets.
+  ③ A CLOSURE HOLDING A LARGE OBJECT. A callback that captures
+    a whole request context keeps it alive as long as the
+    callback lives.
+  ④ LOADING EVERYTHING INTO MEMORY. Reading a million rows to
+    count them, or building an array of every record to sum it.
+    ⇒ aggregate in the database, or stream.
+
+⭐ THE RULE FOR ANY LONG-RUNNING PROCESS: EVERY COLLECTION NEEDS
+  A BOUND, AND EVERY SUBSCRIPTION NEEDS AN UNSUBSCRIBE. Both are
+  cheap to add when writing and expensive to find later.
+
+⚠ AND THE ONE PEOPLE MISS IN THIS STACK: a DataFrame is not the
+  size of the file that produced it. A 2 GB CSV is routinely
+  several times that in memory, so a service that loads one per
+  request will fall over under two concurrent requests.</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Craft 16</span>
+  <h2>Load testing</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>What it answers</h4><p>Where the breaking point is, and <em>which</em> resource breaks. Not "is it fast" — that is a profile. Load tests find the limit and the failure mode.</p></div>
+  <div class="card"><h4>Ramp, don't spike</h4><p>Increase gradually and watch for the knee — the point where latency stops rising linearly. That knee is the capacity number worth writing down.</p></div>
+  <div class="card"><h4>Test realistic mixes</h4><p>Hammering one cheap endpoint proves nothing. Real traffic is mostly reads with occasional expensive writes, and the interaction is the point.</p></div>
+  <div class="card"><h4>Watch the dependencies</h4><p>Under load you usually find the pool limit, the downstream rate limit, or the metered API bill — not CPU. <strong>And never load-test against a shared or production service without telling anyone.</strong></p></div>
+</div>
+
+<header class="part" id="sec">
+  <span class="pn">Part IV</span>
+  <h2>Security</h2>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Craft 17</span>
+  <h2>Thinking like an attacker</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four questions, asked while designing rather than after</div>
+<pre><code>①  WHAT IS WORTH TAKING HERE?
+   in this application: salaries, performance reviews, health
+   accommodations, disciplinary records, the whole employee
+   table. ⭐ NAMING THE ASSET FIRST TELLS YOU HOW MUCH CARE THE
+   FEATURE DESERVES.
+
+②  WHAT DOES A VALID REQUEST FROM THE WRONG PERSON LOOK LIKE?
+   ⭐ THE VULNERABILITY PEOPLE ACTUALLY SHIP. Not injection — a
+     correctly formed request from a logged-in user carrying
+     someone else's id, which the code happily serves because
+     it authenticated the caller and never asked about the
+     resource.
+
+③  WHAT DOES THE UI NOT PROTECT?
+   ⚠ THE UI IS NOT A SECURITY BOUNDARY. Hidden buttons, disabled
+     fields and client-side role checks are usability. Anything
+     the browser can do, a person can do without the browser.
+
+④  WHAT ESCAPES THE SYSTEM?
+   exports, downloads, emails, webhooks, logs, error messages,
+   analytics, third parties — and text pasted into a model
+   prompt.
+   ⭐ THE MOMENT DATA LEAVES YOUR PERMISSION SYSTEM, YOUR
+     PERMISSION SYSTEM STOPS PROTECTING IT. A file, a link, a
+     log line and an email have no idea who may read them.
+
+⭐ AND THE PRINCIPLE UNDER ALL OF IT: MAKE THE MISTAKE
+  IMPOSSIBLE, NOT UNLIKELY. A permission check repeated in forty
+  handlers will be missing from the forty-first. One path
+  everything must traverse, or a database constraint, holds
+  forever — including for the migration script and the person
+  with a console at 2 a.m.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Craft 18</span>
+  <h2>The risks that actually occur</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Risk</th><th style="width:30%">In this stack</th><th>The real defence</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Broken access control</strong></td><td>An endpoint takes an id and does not check ownership</td><td><span class="no">The most common and most damaging.</span> Enforce in one path every caller traverses. Not in the UI, not by convention.</td></tr>
+    <tr><td><strong>Injection</strong></td><td>Raw SQL with an interpolated value; a shell command built from input</td><td>Parameterise. Prisma does this by construction — <strong>the risk re-enters with <code>$queryRaw</code> and a template literal</strong>.</td></tr>
+    <tr><td><strong>XSS</strong></td><td>Rendering user text as HTML; <code>dangerouslySetInnerHTML</code></td><td>React escapes by default — <strong>so the vulnerability is always an explicit opt-out</strong>. Sanitise if you must render HTML at all.</td></tr>
+    <tr><td><strong>Sensitive data exposure</strong></td><td>An endpoint returning the whole record; a salary in a log line; a field the UI hides but the payload contains</td><td>Shape responses per requester. <code>select</code>, not <code>include</code>. Audit what you log.</td></tr>
+    <tr><td><strong>Auth failures</strong></td><td>Long-lived tokens, no revocation path, secrets in the frontend bundle</td><td>Short expiry, a refresh path, and nothing secret behind <code>NEXT_PUBLIC_</code>.</td></tr>
+    <tr><td><strong>Vulnerable dependencies</strong></td><td>Transitive packages nobody chose</td><td>Automated scanning in CI, and a habit of actually updating. <strong>Most real breaches use a known, patched flaw.</strong></td></tr>
+    <tr><td><strong>Misconfiguration</strong></td><td><code>allow_origins=["*"]</code> shipped to production; debug mode on; a bucket left public</td><td>Config review as part of deployment review. This category causes more incidents than clever exploits.</td></tr>
+    <tr><td><strong>Prompt injection</strong></td><td>A CV or document instructing the model</td><td>The trust boundary: model-requested actions run with the session user's permissions, enforced in code.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Craft 19</span>
+  <h2>Input and output</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Validate on the way in, escape on the way out</div>
+<pre><code>ON THE WAY IN — ⭐ VALIDATE AT THE BOUNDARY, IN CODE
+  · a schema per endpoint (DTO + ValidationPipe, or Pydantic)
+  · ALLOW-LISTS, NOT DENY-LISTS. You cannot enumerate every bad
+    input; you can enumerate the acceptable ones.
+  · ⭐ STRIP UNKNOWN FIELDS. `whitelist: true` is a security
+    control, not tidiness: without it a caller can post
+    `role: 'admin'` and any code that spreads the body into a
+    write has just granted it. That is mass assignment.
+  · bound every string, array and number. An unbounded array is
+    a denial-of-service parameter.
+  ⚠ AND THE THREE-LAYER RULE: the browser validates for
+    FEEDBACK, the API for CORRECTNESS, the database for
+    INVARIANTS. Only the second protects anything — a request
+    does not have to come from your form.
+
+ON THE WAY OUT — escape for the destination
+  the same string is dangerous differently in HTML, in SQL, in a
+  shell, in a URL, in a CSV.
+  ⭐ ESCAPE FOR WHERE IT IS GOING, NOT ON THE WAY IN. Escaping at
+    input corrupts your stored data and still gets it wrong for
+    the next destination.
+  ⚠ the one people forget: a CSV export. A cell beginning with
+    `=` is a formula when opened in a spreadsheet — a genuine
+    remote-code path through an innocuous export feature.
+
+FILE UPLOADS — a boundary with its own rules
+  check the actual content type, not the extension · cap the
+  size · store outside the web root or in object storage ·
+  ⭐ NEVER TRUST THE FILENAME (path traversal) and never serve
+  it back from a guessable URL.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Craft 20</span>
+  <h2>Secrets</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Rules that are boring and non-negotiable</div>
+<pre><code>□  NEVER IN THE REPOSITORY. ⭐ AND GIT HISTORY IS FOREVER — a
+   secret committed and then removed in the next commit is
+   still published. The only remedy is rotation.
+□  NEVER IN THE FRONTEND BUNDLE. Anything with a NEXT_PUBLIC_
+   prefix is embedded and readable by every visitor.
+□  NEVER IN LOGS, error messages, or an exception payload.
+□  NEVER IN A URL or query string — they land in server logs,
+   browser history and proxy logs.
+□  DIFFERENT SECRETS PER ENVIRONMENT. A shared secret means dev
+   can read production.
+□  A ROTATION PATH THAT EXISTS AND HAS BEEN TESTED. ⭐ "We
+   cannot rotate the database password without downtime" is a
+   finding, discovered at the worst moment.
+□  LEAST PRIVILEGE. The AI service does not need write access
+   to the employee table.
+
+⭐ AND THE ASSUMPTION WORTH MAKING: ASSUME EVERY SECRET WILL
+  LEAK EVENTUALLY. Design so that a leak is survivable —
+  scoped credentials, short lifetimes, rotation you can perform
+  on a Tuesday afternoon. That is a very different posture from
+  hoping it does not happen.
+
+⚠ AND ONE SPECIFIC TO THIS ERA: DO NOT PASTE A REAL .env, A
+  CONNECTION STRING, A TOKEN OR LIVE EMPLOYEE DATA INTO AN AI
+  TOOL. It has left your boundary. Redact first, every time.</code></pre>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Craft 21</span>
+  <h2>Dependencies</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>You own what you install</h4><p>Including everything it installs. A dependency is code running with your privileges, chosen by someone you have never met.</p></div>
+  <div class="card"><h4>Scan and actually update</h4><p>Automated scanning in CI, plus a habit of merging the updates. <strong>Most breaches use a known flaw with a patch available.</strong></p></div>
+  <div class="card"><h4>Commit the lock file</h4><p>Reproducible installs are a security property, not just convenience — it is what stops a fresh install pulling a newly compromised version.</p></div>
+  <div class="card"><h4>Check before adding</h4><p>Maintained? Reasonable download count? Sensible dependency tree? <strong>And is the name spelled correctly</strong> — typosquatting is a real and cheap attack.</p></div>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">Craft 22</span>
+  <h2>Security in generated code</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">The specific hazard</span>
+  <p>A model produces <strong>plausible</strong> security code. Plausible authentication looks exactly
+  like correct authentication — same shape, same names, same confident structure — and the difference
+  is invisible without reading it carefully.</p>
+  <p>Worse, it reproduces patterns from its training data, which includes an enormous amount of
+  tutorial code where the auth check was omitted "for clarity".</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">What to check, specifically</div>
+<pre><code>□  IS THERE AN OWNERSHIP CHECK, or only authentication?
+   ⭐ the single most likely omission.
+□  IS ANYTHING INTERPOLATED into a query, a command, or a path?
+□  DOES THE RESPONSE include fields this caller should not see?
+□  IS AN ERROR EXPOSING internals — a stack trace, a SQL
+   fragment, whether an email exists?
+□  IS VALIDATION PRESENT and does it strip unknown fields?
+□  DID IT ADD A DEPENDENCY, and does that package exist and is
+   it the one you meant?
+□  IS A SECRET HARDCODED, "as a placeholder"?
+□  DID IT WEAKEN SOMETHING TO MAKE A TEST PASS —
+   ⚠ `allow_origins=["*"]`, a disabled check, a widened type,
+   a certificate verification turned off. ⭐ THIS IS THE ONE
+   THAT SHIPS: it was a local workaround that nobody removed.
+
+⭐ AND THE GOOD NEWS, WHICH IS REAL: A MODEL IS AN EXCELLENT
+  SECURITY *REVIEWER*. "What would an attacker try against this
+  endpoint?" and "what does this leak?" are genuinely strong
+  prompts — it is fast at enumerating attack surface, and
+  enumeration is exactly what humans are bad at.
+  ⇒ write the sensitive code yourself; use the model to attack
+    it.</code></pre>
+</div>
+
+<header class="part" id="test">
+  <span class="pn">Part V</span>
+  <h2>Testing</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Craft 23</span>
+  <h2>Why it matters more now</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The argument</span>
+  <p>Tests were always a safety net. When code arrives faster than anyone can fully read it, they
+  become <strong>the mechanism by which you can accept change at all</strong> — the difference
+  between "this looks fine" and "this does not break what worked".</p>
+  <p>And there is a second, less obvious payoff: <strong>a suite you trust is what makes refactoring
+  possible.</strong> Without it, every improvement is a risk, so nobody improves anything, and the
+  codebase ossifies — which is a slower and more expensive failure than any bug.</p>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Craft 24</span>
+  <h2>The pyramid, honestly</h2>
+</header>
+
+<div class="ascii">              ╱╲          E2E — few
+             ╱  ╲         a handful of critical user journeys
+            ╱────╲        slow, brittle, and the only thing that
+           ╱      ╲       proves the system actually works
+          ╱────────╲      INTEGRATION — some
+         ╱          ╲     ⭐ THE BEST VALUE PER TEST in a typical
+        ╱────────────╲    web application: a real request through
+       ╱              ╲   guards, validation, service and a real
+      ╱────────────────╲  test database
+     ╱     UNIT — many   ╲
+    ╱  fast, isolated,     ╲
+   ╱   pure logic           ╲
+  ╱──────────────────────────╲
+
+   WHY THE SHAPE
+     cost and brittleness rise as you go up; confidence that the
+     whole thing works rises too. So you want many cheap tests
+     and a few expensive ones.
+
+   ⚠ AND THE HONEST CORRECTION TO THE CLASSIC PYRAMID: for a
+     CRUD-heavy application, the middle layer deserves MORE
+     weight than the diagram implies. Most real defects here are
+     not in pure logic — they are in the seams: a missing
+     permission check, a wrong join, a validation that did not
+     fire. ⭐ A UNIT TEST OF A MOCKED SERVICE CANNOT SEE ANY OF
+     THOSE.
+
+   THE TEST THAT IS WORTH THE MOST, PER LINE
+     one integration test per endpoint that asserts: the happy
+     path works · an unauthenticated caller gets 401 · a
+     wrong-owner caller gets 403 · invalid input gets 400.
+     ⇒ four assertions that cover the four things most likely to
+       break, and they keep working through refactors.</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Craft 25</span>
+  <h2>What to test, and what not to</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:50%">Worth testing</th><th>Not worth testing</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Business rules</strong> — the risk calculation, eligibility, pricing. The things whose wrongness costs money.</td><td><strong>Framework behaviour.</strong> That NestJS routes a GET, that Prisma saves a row. Those are tested upstream.</td></tr>
+    <tr><td><strong>Permission boundaries</strong> — wrong owner, wrong role, no token. Cheap to write, catastrophic to miss.</td><td><strong>Getters, mappers, trivial pass-throughs.</strong> Coverage without confidence.</td></tr>
+    <tr><td><strong>Edge cases you found once</strong> — every bug becomes a test, so the class cannot return.</td><td><strong>Implementation details.</strong> A test asserting <em>how</em> a result was computed breaks on every refactor and blocks improvement.</td></tr>
+    <tr><td><strong>Data transformations</strong> — anything with rounding, timezones, currency, or a join that could fan out.</td><td><strong>Exact UI markup.</strong> Test behaviour ("the error appears"), not structure.</td></tr>
+    <tr><td><strong>The contract</strong> — response shape, status codes, error format. What callers depend on.</td><td><strong>Third-party libraries.</strong> Test <em>your</em> use of them, at the seam.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The rule that keeps a suite valuable</span>
+  <p><strong>Test behaviour, not implementation.</strong> A good test survives a refactor and fails
+  when the behaviour changes. A test that must be rewritten every time you tidy the code is a tax on
+  improvement, and eventually the team stops tidying — which is exactly the outcome tests were
+  supposed to prevent.</p>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Craft 26</span>
+  <h2>Mocking</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Mock the boundary, not your own code</div>
+<pre><code>✅ WORTH MOCKING
+  · third-party APIs — you cannot call a payment provider in CI
+  · the LLM provider — non-deterministic, metered, and slow
+  · time and randomness — ⭐ freeze the clock, or a test fails
+    at midnight, on the 29th of February, or in another timezone
+  · email, SMS, webhooks — anything with an outside side effect
+
+⚠ NOT WORTH MOCKING — AND THIS IS THE COMMON MISTAKE
+  · YOUR OWN DATABASE. Use a real test database. ⭐ MOCKING
+    PRISMA MEANS YOUR TESTS ASSERT THAT YOU CALLED PRISMA THE
+    WAY YOU THOUGHT YOU SHOULD — a test of your assumptions,
+    not of the query. Wrong joins, constraint violations and
+    fan-out are exactly what it cannot see.
+  · your own services, in an integration test. The seams between
+    them are where the defects live.
+
+⭐ THE FAILURE MODE OF OVER-MOCKING: every test passes and the
+  application is broken, because each unit was verified against
+  a fake version of its neighbours. This is worse than no tests,
+  because it produces confidence.
+
+⭐ AND THE RULE FOR THE MOCKS YOU DO WRITE: A MOCK MUST BEHAVE
+  LIKE THE REAL THING WHEN THE REAL THING MISBEHAVES. If the
+  provider can time out, return a 429, or return malformed
+  output, your mock should be able to do all three — otherwise
+  you have only tested the happy path of your error handling.</code></pre>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Craft 27</span>
+  <h2>Coverage, and what it does not mean</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A useful signal and a terrible target</div>
+<pre><code>WHAT COVERAGE MEASURES: which lines executed during the test
+run.
+⭐ WHAT IT DOES NOT MEASURE: whether anything was ASSERTED.
+  A test that calls a function and asserts nothing produces
+  100% coverage of it. Coverage is a measure of execution, not
+  of verification.
+
+⚠ SO A COVERAGE TARGET IS A GOODHART PROBLEM: mandate 90% and
+  you get tests written to touch lines — trivial getters,
+  assertion-free calls — while the branch that actually matters
+  stays untested.
+
+⭐ THE USEFUL WAY TO READ IT: AS A MAP OF WHAT IS UNTESTED, NOT
+  AS A SCORE. Open the report and look at which files are dark.
+  If the risk engine is at 20% and the DTO mappers are at 100%,
+  the number is fine and the situation is not.
+
+WHERE COVERAGE GENUINELY MATTERS
+  the code whose failure is expensive: money, permissions, the
+  risk calculation, anything a decision is made from.
+  ⇒ and there, aim at BRANCH coverage rather than line coverage
+    — the untested branch is the one with the bug in it.</code></pre>
+</div>
+
+<header class="mod" id="e6">
+  <span class="mn">Craft 28</span>
+  <h2>Testing AI features</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">You cannot assert equality on a non-deterministic output</div>
+<pre><code>⚠ WHAT DOES NOT WORK: expect(output).toBe("...").
+  The same prompt can produce different text. A test asserting
+  exact output fails randomly, gets marked flaky, and is
+  eventually deleted.
+
+WHAT TO ASSERT INSTEAD — in order of preference
+  ① THE STRUCTURE. If the output is schema-constrained, assert
+    it validates, that the enum is one of the allowed values,
+    that required fields are present. ⭐ THIS IS DETERMINISTIC
+    AND IT IS WHY STRUCTURED OUTPUT MATTERS FOR TESTABILITY.
+  ② THE PROPERTIES. Length within bounds · no forbidden content
+    · it cites only chunk ids that were actually in the context
+    — that last one is a dozen lines and converts an invisible
+    hallucination into a caught one.
+  ③ THE BEHAVIOUR AROUND IT. Timeout handled · retry on 429 ·
+    the page still renders when the provider is down. ⭐ MOST OF
+    WHAT CAN BREAK IN AN AI FEATURE IS ORDINARY ENGINEERING,
+    and all of it is deterministically testable.
+
+AND SEPARATELY FROM TESTS: AN EVAL SET
+  20–50 graded examples, run on every prompt or model change,
+  producing a score.
+  ⭐ TESTS ANSWER "IS IT BROKEN?" — EVALS ANSWER "DID IT GET
+    BETTER?" You need both, and they are different artefacts.
+  ⚠ WITHOUT AN EVAL SET, NOBODY WILL DARE TOUCH THE PROMPT —
+    which is how a prompt with a superstition in it stays frozen
+    in production for a year.
+
+⭐ AND THE CIRCULARITY WARNING, ONE LAST TIME: do not verify
+  generated code with generated tests alone. Both encode the
+  same guess, agree with each other, and tell you nothing.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume III · craft vocabulary</div>
+  <dl>
+    <dt>blocking comment</dt><dd>A review comment that must be resolved before merge, as opposed to a suggestion or nit.</dd>
+    <dt>silent behaviour change</dt><dd>A refactor that also alters a default, an error case or a response shape. Visible only in the diff.</dd>
+    <dt>bisect</dt><dd>Halving the search space — in the request path, in time, or in scope.</dd>
+    <dt>correlation id</dt><dd>One id logged by every service handling a request, so the whole path can be reconstructed.</dd>
+    <dt>structured logging</dt><dd>Logging fields rather than sentences, so logs are filterable at volume.</dd>
+    <dt>post-mortem</dt><dd>A blameless review asking what made the failure possible, with three concrete outputs.</dd>
+    <dt>p95 / p99</dt><dd>The latency the slowest 5% or 1% experience. Where the pain lives; averages hide it.</dd>
+    <dt>N+1</dt><dd>One query for a list plus one per item. The most common performance defect anywhere.</dd>
+    <dt>the knee</dt><dd>The load at which latency stops rising linearly. Your real capacity number.</dd>
+    <dt>memory leak</dt><dd>Something that accumulates and is never released. Memory climbs; restarts "fix" it.</dd>
+    <dt>mass assignment</dt><dd>Accepting unknown request fields and writing them. Prevented by stripping unknown keys.</dd>
+    <dt>allow-list</dt><dd>Enumerate what is acceptable rather than what is forbidden. You cannot enumerate all bad input.</dd>
+    <dt>path traversal</dt><dd>A supplied filename containing <code>../</code> to escape its directory.</dd>
+    <dt>CSV injection</dt><dd>A cell starting with <code>=</code> becoming a formula in a spreadsheet.</dd>
+    <dt>least privilege</dt><dd>Every credential has the narrowest access that works.</dd>
+    <dt>test double / mock</dt><dd>A stand-in for a real dependency. Mock the boundary, not your own database.</dd>
+    <dt>branch coverage</dt><dd>Whether both sides of each condition ran — more meaningful than line coverage.</dd>
+    <dt>flaky test</dt><dd>A test that fails intermittently. Usually time, ordering, shared state, or asserting on non-deterministic output.</dd>
+    <dt>eval set</dt><dd>Graded examples run on every AI change. Answers "did it get better?", which tests cannot.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume IV · CS foundations &amp; the stack</h4><p>Complexity, data structures, database optimisation and how a request actually travels — the layer the performance section stands on.</p></div>
+  <div class="card"><h4>Volume V · Ship it &amp; run it</h4><p>CI/CD, containers, monitoring and IaC — where the tests run and the incidents are detected.</p></div>
+  <div class="card"><h4>Volume VIII · Thinking &amp; capstone</h4><p>Decision making, decomposition and communication. Reviewing well is mostly a communication skill.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 12–16, with the longer checklists and code examples in the originals.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>A note on the security section.</strong> It covers defensive engineering for your own
+  application — validation, access control, secrets, dependency hygiene. It is deliberately
+  organised around what actually causes incidents in business software rather than around exotic
+  attack techniques, because misconfiguration and missing authorisation account for far more real
+  damage.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

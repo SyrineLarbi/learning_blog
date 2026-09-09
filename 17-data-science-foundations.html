@@ -1,0 +1,1530 @@
+<title>From Zero to Data Scientist</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=Fira+Mono:wght@400;500;700&display=swap">
+
+<style>
+/* ============================================================
+   FROM ZERO TO DATA SCIENTIST — the foundations
+   Series identity: warm-neutral graphite ground, one accent
+   per file. This file: plum.
+   ============================================================ */
+
+:root {
+  --ground:      #F5F4F2;
+  --ground-2:    #FFFFFF;
+  --panel:       #EAE8E6;
+  --panel-2:     #DFDCDA;
+  --ink:         #17171A;
+  --ink-2:       #45444A;
+  --ink-3:       #706E77;
+  --rule:        #CFCCCA;
+  --rule-2:      #E6E3E1;
+  --accent:      #7A2D6B;
+  --accent-soft: #F6E6F3;
+  --accent-ink:  #5C1E50;
+  --good:        #7A2D6B;
+  --good-soft:   #F6E6F3;
+  --warn:        #8A5A0A;
+  --warn-soft:   #F6EEDD;
+  --bad:         #A6232F;
+  --bad-soft:    #F9E6E7;
+  --shadow:      0 1px 2px rgba(23,23,26,.06), 0 10px 26px -18px rgba(23,23,26,.22);
+
+  --measure: 69ch;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:    "Spectral", Georgia, "Times New Roman", serif;
+  --mono:    "Fira Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #111013;
+    --ground-2:    #17161A;
+    --panel:       #1D1C21;
+    --panel-2:     #26242B;
+    --ink:         #ECEAEF;
+    --ink-2:       #B6B3BD;
+    --ink-3:       #85828D;
+    --rule:        #33313A;
+    --rule-2:      #26242B;
+    --accent:      #DB94CC;
+    --accent-soft: #2C1428;
+    --accent-ink:  #E9B6DE;
+    --good:        #DB94CC;
+    --good-soft:   #2C1428;
+    --warn:        #E2AF4A;
+    --warn-soft:   #2C2413;
+    --bad:         #EE8189;
+    --bad-soft:    #2E1518;
+    --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #111013;
+  --ground-2:    #17161A;
+  --panel:       #1D1C21;
+  --panel-2:     #26242B;
+  --ink:         #ECEAEF;
+  --ink-2:       #B6B3BD;
+  --ink-3:       #85828D;
+  --rule:        #33313A;
+  --rule-2:      #26242B;
+  --accent:      #DB94CC;
+  --accent-soft: #2C1428;
+  --accent-ink:  #E9B6DE;
+  --good:        #DB94CC;
+  --good-soft:   #2C1428;
+  --warn:        #E2AF4A;
+  --warn-soft:   #2C2413;
+  --bad:         #EE8189;
+  --bad-soft:    #2E1518;
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 17.5px; line-height: 1.58; -webkit-font-smoothing: antialiased; }
+
+.shell { display: grid; grid-template-columns: 274px minmax(0,1fr); align-items: start; max-width: 1500px; margin: 0 auto; }
+.rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 60px 26px; border-right: 1px solid var(--rule); background: var(--ground); font-family: var(--display); font-size: 12.5px; }
+.series { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 2px 8px; display: inline-block; margin-bottom: 10px; }
+.rail-brand { font-weight: 700; font-size: 15.5px; letter-spacing: -.02em; line-height: 1.15; }
+.rail-sub { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding: 5px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 12px; }
+.rail nav { display: flex; flex-direction: column; gap: 1px; }
+.rail-group { font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 5px; }
+.rail-group.hot { color: var(--accent); }
+.rail a { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 7px; padding: 4px 7px 4px 5px; border-radius: 3px; color: var(--ink-2); text-decoration: none; line-height: 1.3; border-left: 2px solid transparent; font-weight: 600; }
+.rail a:hover { background: var(--panel); color: var(--ink); }
+.rail a .n { font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-3); padding-top: 2px; }
+.rail a.on { background: var(--accent-soft); color: var(--accent-ink); border-left-color: var(--accent); }
+.rail a.on .n { color: var(--accent); }
+.rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.doc { padding: 0 clamp(18px,4.5vw,70px) 135px; min-width: 0; }
+.doc > * { max-width: var(--measure); }
+.doc > .wide, .doc > .hero, .doc > .part, .doc > .mod, .doc > .band, .doc > .tw, .doc > .grid2, .doc > .cols { max-width: none; }
+
+h1,h2,h3,h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
+h2 { font-size: clamp(25px,3.1vw,35px); font-weight: 700; }
+h3 { font-size: 20px; font-weight: 700; margin: 42px 0 12px; padding-top: 13px; border-top: 1px solid var(--rule-2); }
+h4 { font-size: 15.5px; font-weight: 700; margin: 26px 0 8px; }
+p { margin: 0 0 1em; }
+strong { font-weight: 600; }
+a { color: var(--accent-ink); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 9px; }
+.lede { font-size: 19.5px; line-height: 1.46; color: var(--ink-2); }
+.small { font-size: 13.5px; color: var(--ink-2); }
+code { font-family: var(--mono); font-size: .85em; background: var(--panel); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--rule-2); }
+ul, ol { margin: 0 0 1em; padding-left: 1.28em; }
+li { margin-bottom: .38em; }
+ol.proc { list-style: none; padding-left: 0; counter-reset: p; }
+ol.proc > li { counter-increment: p; position: relative; padding-left: 40px; margin-bottom: 1.05em; }
+ol.proc > li::before { content: counter(p, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--rule); background: var(--ground-2); border-radius: 3px; padding: 2px 5px; }
+
+.hero { padding: clamp(36px,6.5vw,80px) 0 40px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; }
+.hero h1 { font-size: clamp(34px,6.2vw,68px); font-weight: 700; letter-spacing: -.04em; line-height: .99; margin-bottom: 20px; max-width: 21ch; }
+.hero h1 .thin { font-weight: 600; color: var(--ink-3); }
+.hero .lede { max-width: 62ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 22px; margin-top: 26px; padding-top: 17px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.hero-meta b { color: var(--ink-2); font-weight: 500; }
+
+.part { margin: 100px 0 38px; padding: 23px 0 19px; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.part .pn { font-family: var(--mono); font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 9px; }
+.part h2 { font-size: clamp(29px,4.2vw,46px); max-width: 24ch; }
+.part .lede { margin-top: 14px; max-width: 62ch; }
+
+.mod { margin: 78px 0 26px; padding: 14px 17px 16px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--ground-2); box-shadow: var(--shadow); scroll-margin-top: 14px; }
+.mod .mn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px; }
+.mod h2 { font-size: clamp(22px,2.7vw,31px); max-width: 30ch; }
+.mod .lede { font-size: 16.5px; margin: 9px 0 0; max-width: 60ch; }
+.band { margin: 78px 0 26px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.band h2 { max-width: 26ch; }
+.band .lede { margin-top: 12px; max-width: 62ch; }
+
+.sheet { border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 9px; padding: 7px 13px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+.sheet > .foot { padding: 10px 14px 12px; border-top: 1px solid var(--rule-2); background: var(--panel); font-size: 13.5px; color: var(--ink-2); }
+.sheet > .foot p:last-child { margin-bottom: 0; }
+pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; overflow-x: auto; padding: 14px 15px; background: var(--ground-2); color: var(--ink); tab-size: 2; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+.note, .warn, .bad, .good { border: 1px solid var(--rule); border-left-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 14px 17px 15px; margin: 22px 0; font-size: 16.5px; }
+.note { border-left-color: var(--accent); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); border-width: 2px; border-left-width: 4px; }
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; margin-bottom: 6px; }
+.note .tag { color: var(--accent); } .warn .tag { color: var(--warn); }
+.bad .tag { color: var(--bad); } .good .tag { color: var(--good); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child { margin-bottom: 0; }
+
+.ex { border: 1px solid var(--accent); border-radius: 4px; background: var(--ground-2); margin: 24px 0; overflow: hidden; }
+.ex > .q { padding: 13px 16px 14px; border-bottom: 1px dashed var(--rule); }
+.ex .qt { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+.ex > .q p:last-child { margin-bottom: 0; }
+.ex summary { cursor: pointer; list-style: none; padding: 10px 16px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-soft); display: flex; align-items: center; gap: 9px; }
+.ex summary::-webkit-details-marker { display: none; }
+.ex summary::before { content: "\25B8"; color: var(--accent); transition: transform .15s ease; }
+.ex details[open] summary::before { transform: rotate(90deg); }
+.ex summary:hover { background: var(--panel-2); }
+.ex summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.ex .sol { padding: 16px; border-top: 1px solid var(--rule); font-size: 16.5px; }
+.ex .sol > *:first-child { margin-top: 0; }
+.ex .sol > *:last-child { margin-bottom: 0; }
+.ex .sol pre { border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); }
+
+.exit { border: 1px solid var(--accent); border-top-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 16px 18px 17px; margin: 28px 0; }
+.exit .tag { color: var(--accent); }
+.exit ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 15.5px; }
+.exit li { position: relative; padding-left: 26px; margin-bottom: .45em; }
+.exit li::before { content: "\2610"; position: absolute; left: 0; top: -1px; font-family: var(--mono); font-size: 15px; color: var(--accent); }
+
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-family: var(--display); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); vertical-align: top; line-height: 1.4; }
+thead th { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; border-bottom: 1px solid var(--rule); }
+tbody tr:last-child td { border-bottom: 0; }
+tr.sec-row td { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td code { font-size: 12px; }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; } .mid { color: var(--warn); font-weight: 600; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(252px,1fr)); gap: 14px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 4px; padding: 13px 15px 14px; background: var(--ground-2); font-size: 15px; }
+.card h4 { margin: 0 0 6px; } .card p:last-child { margin-bottom: 0; }
+.ascii { font-family: var(--mono); font-size: 12px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 15px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+.disclaimer { margin: 26px 0 0; padding: 12px 15px; border: 1px dashed var(--rule); border-radius: 4px; background: var(--panel); font-size: 13px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 36px 0; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px clamp(18px,4vw,36px) 22px; }
+  .rail nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 2px 15px; }
+  .rail-group { grid-column: 1 / -1; }
+  .doc { padding-top: 6px; }
+  .part { margin-top: 66px; } .mod, .band { margin-top: 54px; }
+}
+@media (max-width: 520px) { body { font-size: 16.5px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<aside class="rail">
+  <span class="series">Series · 7 of 8</span>
+  <div class="rail-brand">From Zero to<br>Data Scientist</div>
+  <div class="rail-sub">Foundations · beginner → expert</div>
+  <nav id="toc">
+    <a href="#open"><span class="n">§</span><span>Start here</span></a>
+
+    <div class="rail-group hot">I · The map</div>
+    <a href="#f1"><span class="n">01</span><span>What the job is</span></a>
+    <a href="#f2"><span class="n">02</span><span>The four roles</span></a>
+
+    <div class="rail-group">II · The taxonomy</div>
+    <a href="#f3"><span class="n">03</span><span>Supervised &amp; unsupervised</span></a>
+    <a href="#f4"><span class="n">04</span><span>The task types</span></a>
+    <a href="#f5"><span class="n">05</span><span>Which do I have?</span></a>
+
+    <div class="rail-group">III · How learning works</div>
+    <a href="#f6"><span class="n">06</span><span>What a model <em>is</em></span></a>
+    <a href="#f7"><span class="n">07</span><span>Loss &amp; optimisation</span></a>
+    <a href="#f8"><span class="n">08</span><span>Overfitting</span></a>
+    <a href="#f9"><span class="n">09</span><span>Train, validate, test</span></a>
+
+    <div class="rail-group hot">IV · The models</div>
+    <a href="#m1"><span class="n">10</span><span>Linear &amp; logistic</span></a>
+    <a href="#m2"><span class="n">11</span><span>Trees</span></a>
+    <a href="#m3"><span class="n">12</span><span>Forests &amp; boosting</span></a>
+    <a href="#m4"><span class="n">13</span><span>k-NN, SVM, Naive Bayes</span></a>
+    <a href="#m5"><span class="n">14</span><span>Clustering &amp; PCA</span></a>
+    <a href="#m6"><span class="n">15</span><span>Neural networks</span></a>
+    <a href="#m7"><span class="n">16</span><span>The choosing table</span></a>
+
+    <div class="rail-group">V · What you need</div>
+    <a href="#f10"><span class="n">17</span><span>The maths, honestly</span></a>
+    <a href="#f11"><span class="n">18</span><span>The tooling</span></a>
+
+    <div class="rail-group hot">VI · The ladder</div>
+    <a href="#f12"><span class="n">19</span><span>Beginner → expert</span></a>
+    <a href="#f13"><span class="n">20</span><span>The six-month plan</span></a>
+  </nav>
+</aside>
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Foundations · 7 of 8 · data science</p>
+  <h1>Everything the other files assume you already know. <span class="thin">Taught, not listed.</span></h1>
+  <p class="lede">Supervised and unsupervised. What a model actually <em>is</em>. Why overfitting
+  happens. Every model family explained by how it decides, not by a table row. The maths you genuinely
+  need and the maths you can skip. And a ladder from beginner to expert with what defines each rung.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · nothing</span>
+    <span><b>Maths</b> · explained, not derived</span>
+    <span><b>Ends with</b> · a 5-level ladder and a 6-month plan</span>
+  </div>
+</header>
+
+<div class="good">
+  <span class="tag">Where this sits</span>
+  <p>This is the file to read <strong>first</strong>. The <em>data science guide</em> teaches judgement
+  — framing, leakage, validation design — and assumes this vocabulary. The <em>cheat sheet</em> is a
+  reference you look things up in. This one teaches the concepts from zero.</p>
+  <p>Read it once straight through without stopping. Then come back to Part IV whenever you need to
+  choose a model, and to Part VI whenever you want to know what to learn next.</p>
+</div>
+
+<header class="part" id="mapp">
+  <span class="pn">Part I</span>
+  <h2>The map</h2>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">Foundation 01</span>
+  <h2>What the job actually is</h2>
+</header>
+
+<p>Data science is <strong>using data to answer questions and make predictions that change
+decisions</strong>. That is the whole thing. Everything else — the algorithms, the libraries, the
+statistics — is machinery in service of it.</p>
+
+<div class="sheet">
+  <div class="cap">The four levels — and which one a question is asking for</div>
+<pre><code>DESCRIPTIVE    "what happened?"
+               revenue by month, churn rate last quarter
+               → counting and aggregation. This is analytics.
+
+DIAGNOSTIC     "why did it happen?"
+               margin fell 2 points — which driver?
+               → decomposition, segmentation, causal reasoning
+
+PREDICTIVE     "what will happen?"
+               which customers will churn next month?
+               → THIS IS WHERE MODELS LIVE
+
+PRESCRIPTIVE   "what should we do?"
+               which customers should we contact, given a budget
+               of 200 calls and these costs?
+               → optimisation on top of a prediction
+
+⭐ MOST REQUESTS ARRIVE PHRASED AS PREDICTIVE AND ARE ACTUALLY
+  DIAGNOSTIC. "Can you predict churn?" usually means "why are we
+  losing customers, and what do we do?" Building a predictor for a
+  diagnostic question is the most common wasted quarter in the field.
+
+⚠ AND PRESCRIPTIVE IS NOT PREDICTIVE. "Who will churn" is a
+  prediction. "Will this discount stop them" is causal — a different
+  question, needing a different method and different data. A churn
+  model cannot answer it.</code></pre>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">Foundation 02</span>
+  <h2>The four roles, and what each owns</h2>
+  <p class="lede">The titles are used inconsistently everywhere. These are the real distinctions.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Role</th><th style="width:26%">Owns</th><th>Day to day</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Data analyst</strong></td>
+      <td>Descriptive and diagnostic. What happened and why.</td>
+      <td>SQL, dashboards, metric definitions, investigating why a number moved. The most
+      business-adjacent role and often the most influential.</td>
+    </tr>
+    <tr>
+      <td><strong>Data scientist</strong></td>
+      <td>Predictive and inferential. Models, experiments, causal claims.</td>
+      <td>Framing problems, feature engineering, training and evaluating models, designing A/B tests.
+      Heavily statistical.</td>
+    </tr>
+    <tr>
+      <td><strong>ML engineer</strong></td>
+      <td>Models <em>in production</em>. Serving, scale, reliability.</td>
+      <td>Pipelines, deployment, latency, monitoring, retraining. More software engineering than
+      statistics.</td>
+    </tr>
+    <tr>
+      <td><strong>AI engineer</strong></td>
+      <td>Products built on models <em>somebody else trained</em>.</td>
+      <td>Prompting, retrieval, agents, evals, cost. Newest of the four; see the companion foundations
+      file.</td>
+    </tr>
+    <tr>
+      <td><span class="small">also:</span> <strong>Data engineer</strong></td>
+      <td>The data getting there at all.</td>
+      <td>Pipelines, warehouses, ingestion. Everyone above depends on them, and the dependency is
+      usually under-appreciated.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The honest version</span>
+  <p>In a company under about 200 people, <strong>one person does all of it</strong> and the title is
+  arbitrary. In a large company the boundaries are real and political. Read job descriptions for the
+  <em>verbs</em>, not the title: "build dashboards" and "deploy models" and "design experiments" are
+  three different jobs that all get called data scientist.</p>
+</div>
+
+<header class="part" id="tax">
+  <span class="pn">Part II</span>
+  <h2>The taxonomy</h2>
+  <p class="lede">The vocabulary everything else is built on. If you learn nothing else from this
+  file, learn this part.</p>
+</header>
+
+<header class="mod" id="f3">
+  <span class="mn">Foundation 03 · the core distinction</span>
+  <h2>Supervised, unsupervised, and the others</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The learning types — separated by one question: do you have answers?</div>
+<pre><code>SUPERVISED LEARNING          ⭐ ~90% of business machine learning
+  You have INPUTS and the CORRECT ANSWERS for historical examples.
+  The model learns the mapping from one to the other.
+
+    inputs (features)                    answer (label / target)
+    ─────────────────────────────────    ───────────────────────
+    tenure, salary, dept, last promo  →  left within 6 months? YES
+    tenure, salary, dept, last promo  →  left within 6 months? NO
+    ...5,000 more rows with answers...
+
+  then, for a NEW person with no answer yet, predict it.
+
+  ⭐ THE DEFINING FEATURE: you can MEASURE whether it is right,
+    because you held back some rows whose answers you know.
+    This is why supervised learning dominates — it is checkable.
+
+UNSUPERVISED LEARNING
+  You have inputs and NO answers. The model finds structure.
+
+    5,000 customers × 20 behavioural columns, no labels
+      → "there appear to be four distinct groups"
+      → but nobody said what the right grouping IS
+
+  ⚠ THERE IS NO SCORE TO OPTIMISE AND NO TEST SET. You cannot be
+    "right". You can only be USEFUL — which is judged by whether a
+    human can name the groups and act differently on them.
+  used for: segmentation, anomaly detection, compressing many
+  columns into few, exploring data you don't understand yet
+
+SEMI-SUPERVISED
+  A few labelled examples, many unlabelled. Use the labelled ones to
+  bootstrap. Common when labelling is expensive (medical images).
+
+SELF-SUPERVISED
+  Labels created automatically FROM the data itself — hide a word,
+  predict it; hide part of an image, reconstruct it.
+  ⭐ THIS IS HOW LLMs ARE TRAINED. No human labelled the internet;
+    the "label" is just the next word. It looks unsupervised from
+    the outside and is mechanically supervised.
+
+REINFORCEMENT LEARNING
+  No labels. An AGENT takes ACTIONS in an ENVIRONMENT and receives
+  REWARDS, learning a policy that maximises reward over time.
+    game playing · robotics · some recommendation and pricing
+  ⚠ RARE IN ORDINARY BUSINESS DATA SCIENCE. It needs an environment
+    you can interact with cheaply and repeatedly, which most business
+    problems do not have. Don't feel behind for not using it.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The question that classifies any problem</span>
+  <p><strong>"For historical examples, do I know the answer?"</strong></p>
+  <p><strong>Yes</strong> → supervised. Now: is the answer a category or a number? (Next section.)
+  <br><strong>No, and I want structure</strong> → unsupervised.
+  <br><strong>No, but I could get some cheaply</strong> → <em>get them</em>. Labelling 500 examples
+  by hand is often a day's work and converts an unmeasurable problem into a measurable one. This is
+  under-used and almost always worth it.</p>
+</div>
+
+<header class="mod" id="f4">
+  <span class="mn">Foundation 04</span>
+  <h2>The task types</h2>
+  <p class="lede">Within supervised and unsupervised, the shape of the <em>output</em> decides
+  everything downstream: which models apply, which metrics mean anything, how you validate.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Task</th><th style="width:24%">Output</th><th>Example · and the metric family</th></tr></thead>
+  <tbody>
+    <tr class="sec-row"><td colspan="3">Supervised</td></tr>
+    <tr>
+      <td><strong>Binary classification</strong></td>
+      <td>One of two categories, usually with a probability</td>
+      <td>Will this customer churn? Is this fraud? <br><span class="small">→ precision, recall, PR-AUC. <strong>Not</strong> accuracy if the classes are imbalanced.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Multi-class</strong></td>
+      <td>One of N categories</td>
+      <td>Which of 12 support topics is this ticket? <br><span class="small">→ per-class precision/recall, macro vs weighted F1, a confusion matrix.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Multi-label</strong></td>
+      <td>Any number of categories at once</td>
+      <td>Which tags apply to this article? <br><span class="small">→ per-label metrics. Genuinely different from multi-class and often confused with it.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Regression</strong></td>
+      <td>A continuous number</td>
+      <td>What will this house sell for? How long will delivery take? <br><span class="small">→ MAE, RMSE, and a percentage error only if the target never approaches zero.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Ranking</strong></td>
+      <td>An ordering</td>
+      <td>Which 10 products to show first. <br><span class="small">→ NDCG, precision@k. Position matters and accuracy cannot express that.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Forecasting</strong></td>
+      <td>Future values of a series</td>
+      <td>Demand next month. <br><span class="small">→ MAE/WAPE, and you must beat the seasonal-naive baseline. Special rules — see the guide.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Survival / time-to-event</strong></td>
+      <td>How long until something happens</td>
+      <td>Time until churn, until failure. <br><span class="small">→ Handles the fact that some cases <em>haven't happened yet</em> (censoring), which ordinary regression gets badly wrong.</span></td>
+    </tr>
+    <tr class="sec-row"><td colspan="3">Unsupervised</td></tr>
+    <tr>
+      <td><strong>Clustering</strong></td>
+      <td>Group assignments</td>
+      <td>Customer segments. <br><span class="small">→ silhouette score for geometry, but the real test is whether a human can name the groups.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Dimensionality reduction</strong></td>
+      <td>Fewer columns, most of the information</td>
+      <td>Compress 200 features to 10 for visualisation or speed. <br><span class="small">→ explained variance.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Anomaly detection</strong></td>
+      <td>Normal / unusual</td>
+      <td>Fraud with no labels, equipment about to fail. <br><span class="small">→ hard to evaluate without labels; usually validated by human review of the flagged set.</span></td>
+    </tr>
+    <tr>
+      <td><strong>Association</strong></td>
+      <td>Co-occurrence rules</td>
+      <td>"People who buy X also buy Y." <br><span class="small">→ support, confidence, lift.</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The distinction beginners get wrong most often</span>
+  <p><strong>Classification vs regression is decided by the <em>target</em>, not the features.</strong>
+  Predicting a customer's spend next month from categorical inputs is <em>regression</em> (the answer
+  is a number). Predicting which of three tiers they fall into from numeric inputs is
+  <em>classification</em> (the answer is a category).</p>
+  <p>And a related trap: <strong>turning a number into buckets to "make it a classification
+  problem" throws information away.</strong> Sometimes it is right — because the decision is
+  genuinely a threshold — but do it deliberately, not because classification feels easier.</p>
+</div>
+
+<header class="mod" id="f5">
+  <span class="mn">Foundation 05</span>
+  <h2>Which do I have?</h2>
+</header>
+
+<div class="ascii">   START: what does the business actually want?
+        │
+        ├─ "tell me what happened" ──────────► not a model. SQL and a chart.
+        │
+        ├─ "tell me why" ───────────────────► diagnosis. maybe a model as
+        │                                      evidence, but the work is
+        │                                      decomposition and reasoning.
+        │
+        ├─ "tell me what will happen" ──────► PREDICTION. continue ↓
+        │
+        └─ "tell me what happens IF WE ACT" ► CAUSAL. an experiment, or a
+                                               quasi-experimental design.
+                                               ⚠ NOT a prediction model.
+
+   PREDICTION → do I have historical answers?
+        │
+        ├─ NO  ──► can I label 300–500 by hand in a day?
+        │            ├─ yes ──► DO IT. supervised is far more tractable.
+        │            └─ no  ──► unsupervised: cluster, or anomaly detect,
+        │                        and accept that "right" is undefined.
+        │
+        └─ YES ──► what shape is the answer?
+                     ├─ category ─────────► CLASSIFICATION
+                     ├─ number ───────────► REGRESSION
+                     ├─ an ordering ──────► RANKING
+                     ├─ future of a series► FORECASTING
+                     └─ time until event ─► SURVIVAL
+
+   ⭐ THEN, BEFORE ANYTHING ELSE: what is the BASELINE, and what does
+     each kind of error COST? Those two set your metric — and they are
+     the two questions beginners skip and seniors ask first.</div>
+
+<header class="part" id="learn">
+  <span class="pn">Part III</span>
+  <h2>How learning actually works</h2>
+  <p class="lede">Four ideas. Once you have these, every algorithm in Part IV is a variation on the
+  same theme.</p>
+</header>
+
+<header class="mod" id="f6">
+  <span class="mn">Foundation 06</span>
+  <h2>What a model <em>is</em></h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A model is a function with adjustable numbers in it</div>
+<pre><code>That is the entire concept. Everything else is detail.
+
+  a FUNCTION      takes features in, produces a prediction out
+  with PARAMETERS numbers inside it that can be changed
+                  (weights, split points, coefficients...)
+
+  the simplest possible example — predicting salary from years:
+
+      prediction  =  w × years  +  b
+
+  w and b are the PARAMETERS. "Training" means finding the values of
+  w and b that make the predictions closest to the real answers in
+  your historical data. Nothing more mystical than that.
+
+  a gradient-boosted model has thousands of split points instead of
+  two numbers. a neural network has millions of weights. THE IDEA IS
+  IDENTICAL: adjustable numbers, tuned to fit examples.
+
+⭐ PARAMETERS vs HYPERPARAMETERS — a distinction that confuses
+  everyone once and then never again:
+
+    PARAMETERS       learned FROM the data, by training
+                     w and b · tree split points · network weights
+                     you never set these by hand
+
+    HYPERPARAMETERS  chosen BY YOU, before training
+                     how deep the trees · learning rate · how many
+                     trees · k in k-means
+                     "hyperparameter tuning" = searching for good
+                     values of these, usually by trying combinations
+                     and scoring each on validation data</code></pre>
+</div>
+
+<header class="mod" id="f7">
+  <span class="mn">Foundation 07</span>
+  <h2>Loss and optimisation</h2>
+  <p class="lede">How the machine knows it is wrong, and what it does about it.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The loop that trains every model</div>
+<pre><code>1  PREDICT     run the current parameters over the training examples
+2  MEASURE     compute the LOSS — one number saying how wrong you are
+3  ADJUST      change the parameters to make the loss smaller
+4  REPEAT      until it stops improving
+
+THE LOSS FUNCTION is how "wrong" is defined, and the choice matters:
+
+  MEAN SQUARED ERROR      average of (prediction − truth)²
+  (regression)            squaring means BIG errors hurt
+                          disproportionately — so the model works
+                          hard to avoid large misses and tolerates
+                          many small ones
+
+  MEAN ABSOLUTE ERROR     average of |prediction − truth|
+  (regression)            all errors count linearly. more robust to
+                          outliers. use when a few extreme values
+                          shouldn't dominate.
+
+  CROSS-ENTROPY           punishes CONFIDENT WRONG answers hardest.
+  (classification)        saying "95% sure" and being wrong costs far
+                          more than saying "55% sure" and being wrong.
+                          this is what makes probabilities meaningful.
+
+⭐ THE LOSS IS A DESIGN DECISION, NOT A DEFAULT. It encodes what you
+  consider a bad mistake. Choosing MSE says large errors are
+  disproportionately bad. Sometimes that is true and sometimes it is
+  just the library's default doing your thinking.
+
+HOW "ADJUST" WORKS — gradient descent, in plain language
+  imagine the loss as a landscape and the parameters as your position.
+  the GRADIENT is the direction of steepest uphill. so you step in the
+  OPPOSITE direction, a little, and repeat.
+
+    "a little" = the LEARNING RATE
+      too big  → you overshoot the valley and bounce, or diverge
+      too small → you crawl, or stall on a slope
+
+  ⭐ THE LEARNING RATE IS THE MOST IMPORTANT HYPERPARAMETER in
+    anything trained this way. When a model won't learn, suspect it
+    before you suspect the architecture or the data.
+
+  ⚠ NOT ALL MODELS TRAIN THIS WAY. Decision trees don't do gradient
+    descent — they search for good split points directly. k-NN doesn't
+    train at all. The loop above is the dominant pattern, not the only
+    one.</code></pre>
+</div>
+
+<header class="mod" id="f8">
+  <span class="mn">Foundation 08 · the central problem</span>
+  <h2>Overfitting</h2>
+  <p class="lede">The single most important concept in machine learning, and the reason validation
+  exists.</p>
+</header>
+
+<div class="ascii">   THE GOAL IS NOT TO FIT THE TRAINING DATA.
+   THE GOAL IS TO PREDICT DATA YOU HAVE NEVER SEEN.
+
+   Those pull in opposite directions past a point, and that tension
+   is the whole discipline.
+
+   UNDERFIT              GOOD FIT               OVERFIT
+   too simple            captures the pattern   memorised the noise
+
+     ·   ·                 ·   ·                  ·   ·
+   ────────              ╭──╯ ╰──╮              ╭╮ ╱╲ ╭╮
+     ·   ·               ·       ·              ╰╯·  ╲╯╰·
+                                                  (passes through
+   misses the real       generalises              EVERY point)
+   pattern
+
+   train error  HIGH     train error  low        train error ~ZERO
+   test error   HIGH     test error   low        test error  HIGH
+
+   ⭐ THE DIAGNOSTIC IS THE GAP between train and test error —
+     not the level of either one on its own.
+
+   WHY OVERFITTING HAPPENS
+     a flexible model can always find SOME pattern, including in pure
+     noise. with enough parameters it can memorise the training set
+     exactly — and memorising is not learning, because the noise in
+     your sample is not in the next sample.
+
+   THE FIXES
+     MORE DATA           ⭐ the only one with no downside. harder to
+                           memorise a million rows than a thousand.
+     SIMPLER MODEL       fewer parameters, shallower trees
+     REGULARISATION      a penalty on complexity, added to the loss —
+                         the model must "pay" for using a parameter
+     EARLY STOPPING      stop training when validation error starts
+                         rising, even though training error is still
+                         falling. the cheapest and most effective.
+     MORE FEATURES?      ⚠ NO. usually makes it worse. more columns
+                         means more ways to find a spurious pattern.
+
+   ⚠ AND THE ONE THAT ISN'T OVERFITTING AT ALL: if your test score is
+     great and PRODUCTION is bad, that is usually LEAKAGE, not
+     overfitting. Different problem, different fix — see the guide.</div>
+
+<header class="mod" id="f9">
+  <span class="mn">Foundation 09</span>
+  <h2>Train, validate, test</h2>
+  <p class="lede">The mechanism that makes an honest number possible.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three sets, three jobs</div>
+<pre><code>  ┌──────────── all your labelled data ────────────┐
+  │  TRAIN  60%     │ VALIDATION 20% │   TEST 20%  │
+  └─────────────────┴────────────────┴─────────────┘
+
+  TRAIN       the model fits its parameters on this
+  VALIDATION  YOU use this to choose: which model, which
+              hyperparameters, which features, which threshold
+  TEST        touched ONCE, at the very end, to report an honest
+              number. never used to decide anything.
+
+⭐ WHY THREE AND NOT TWO: every time you look at a set and change
+  something because of what you saw, you have used it to make a
+  decision — and it stops being an unbiased estimate. Try twenty
+  hyperparameter combinations against your test set and the best one
+  looks good partly by luck. That luck does not repeat in production.
+
+⚠ IF YOU TUNE AGAINST THE TEST SET, IT IS NO LONGER A TEST SET.
+  Every peek leaks a little, and you cannot tell how much.
+
+CROSS-VALIDATION — when you don't have enough data to give 20% away
+  split into k parts (usually 5). train on 4, test on 1. rotate.
+  average the 5 scores.
+
+    fold 1  [test][train][train][train][train]
+    fold 2  [train][test][train][train][train]
+    fold 3  [train][train][test][train][train]   ... etc
+
+  + uses all the data, and the SPREAD across folds tells you how
+    stable the estimate is — which a single split cannot.
+  − k times the compute.
+
+  STRATIFIED k-fold: keeps the class balance the same in every fold.
+  ⭐ the default for classification. Without it, a rare class can be
+    absent from a fold entirely.
+
+⚠ AND THE RULE THAT CATCHES EVERYONE ONCE: any transformation that
+  LEARNS from data — a scaler, an imputer, an encoder, feature
+  selection — must be fitted INSIDE the fold, on the training part
+  only. Fitting it on everything first leaks information from the
+  test rows into training. Use a pipeline object so it is
+  structurally impossible to get wrong.</code></pre>
+</div>
+
+<header class="part" id="models">
+  <span class="pn">Part IV · the part you came for</span>
+  <h2>The models</h2>
+  <p class="lede">Each one explained by <em>how it actually decides</em> — because once you can
+  picture the mechanism, when-to-use follows on its own instead of being memorised.</p>
+</header>
+
+<header class="mod" id="m1">
+  <span class="mn">Model 10</span>
+  <h2>Linear and logistic regression</h2>
+  <p class="lede">The foundation everything else is measured against.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Linear regression · how it decides</div>
+<pre><code>  prediction = w₁·feature₁ + w₂·feature₂ + ... + b
+
+Each feature gets a WEIGHT. The prediction is a weighted sum. That is
+all. Training finds the weights that minimise squared error.
+
+WHAT THE WEIGHTS MEAN — and this is why the model matters
+  "w₁ = 2,400" means: holding everything else constant, one more unit
+  of feature₁ is associated with 2,400 more of the target.
+  ⭐ You can read the model. Nothing else on this list gives you that
+    as directly.
+
+GOOD AT           interpretability · small data · a baseline ·
+                  anywhere you must explain the model to a regulator
+BAD AT            non-linear relationships · interactions between
+                  features (unless you create them by hand) ·
+                  outliers drag the line badly
+KNOBS             regularisation strength (below)
+ASSUMES           roughly linear relationship, roughly constant error
+                  variance, errors roughly independent
+
+REGULARISATION — the two you must know
+  RIDGE (L2)   penalty on the SQUARE of each weight
+               → shrinks all weights toward zero, none to exactly zero
+               → good when many features are correlated
+  LASSO (L1)   penalty on the ABSOLUTE VALUE of each weight
+               → drives some weights to EXACTLY zero
+               → so it performs FEATURE SELECTION for you
+  ELASTIC NET  both. the sensible default when unsure.
+  ⚠ all three require SCALING the features first, or the penalty
+    punishes whichever feature happens to have big units.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Logistic regression · the same idea, for categories</div>
+<pre><code>Despite the name it is CLASSIFICATION, not regression.
+
+  step 1   compute a weighted sum, exactly like linear regression
+  step 2   squash it into 0–1 with the logistic (sigmoid) function
+
+           1.0 ┤          ╭─────────
+               │        ╭─╯
+           0.5 ┤    ╭───╯
+               │  ╭─╯
+           0.0 ┤──╯
+               └──────────────────────
+                     weighted sum
+
+  the output is a PROBABILITY. you then apply a THRESHOLD to turn it
+  into a decision — and 0.5 is an arbitrary default, not a right
+  answer. Choose it from what each error costs.
+
+⭐ WHY IT REMAINS THE FIRST THING TO TRY, ALWAYS
+  fast · interpretable (as odds ratios) · well-calibrated
+  probabilities out of the box · impossible to overfit badly with
+  regularisation · and it tells you IMMEDIATELY whether there is
+  signal in your features at all.
+  If logistic regression gets 0.79 and boosting gets 0.81, take the
+  one you can explain.
+
+READING THE COEFFICIENTS
+  they are in LOG-ODDS, which nobody thinks in. exponentiate them and
+  you get ODDS RATIOS: "e^w = 1.6" means the odds multiply by 1.6 per
+  unit. That is the sentence you say to a stakeholder.</code></pre>
+</div>
+
+<header class="mod" id="m2">
+  <span class="mn">Model 11</span>
+  <h2>Decision trees</h2>
+</header>
+
+<div class="ascii">   HOW IT DECIDES — a flowchart it learned by itself
+
+                  tenure < 18 months?
+                    ╱              ╲
+                 yes                no
+                  │                  │
+        last promo > 2y?         dept = Sales?
+           ╱        ╲               ╱      ╲
+        yes          no          yes        no
+         │            │           │          │
+      LEAVES       STAYS       LEAVES      STAYS
+       (78%)       (61%)       (55%)       (91%)
+
+   HOW IT LEARNS
+     at each node, try every feature and every possible split point.
+     pick the one that best SEPARATES the classes — measured by Gini
+     impurity or entropy, which both just mean "how mixed is this
+     group". repeat on each side. stop when a rule says to.
+
+   GOOD AT      interpretability you can SHOW someone · captures
+                interactions automatically (a split inside a split IS
+                an interaction) · no scaling needed · handles mixed
+                data types · handles missing values in most libraries
+   BAD AT       ⚠ OVERFITS SEVERELY on its own — an unconstrained tree
+                will split until every leaf is one row, which is pure
+                memorisation
+                ⚠ UNSTABLE — change a few rows and you get a visibly
+                different tree, which makes it feel arbitrary
+   KNOBS        max depth · min samples per leaf · min impurity
+                decrease. these all limit memorisation.
+
+   ⭐ IN PRACTICE YOU ALMOST NEVER USE A SINGLE TREE FOR PREDICTION.
+     You use it when you need to SHOW the logic to a human, and you
+     use forests or boosting when you need accuracy. Which is exactly
+     what the next section is about.</div>
+
+<header class="mod" id="m3">
+  <span class="mn">Model 12 · the workhorses</span>
+  <h2>Random forests and gradient boosting</h2>
+  <p class="lede">Both are "many trees". They combine them in opposite ways, and the difference
+  explains everything about when to use which.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The contrast that makes both make sense</div>
+<pre><code>RANDOM FOREST — BAGGING · trees built in PARALLEL, independently
+  · train hundreds of trees, each on a random sample of the ROWS
+  · at each split, each tree may only consider a random subset of
+    the COLUMNS
+  · predict by VOTING (classification) or AVERAGING (regression)
+
+  WHY IT WORKS: individual trees overfit in DIFFERENT directions.
+  Averaging cancels the errors out. The two sources of randomness
+  are there to make the trees DISAGREE — correlated trees average
+  to no improvement.
+
+  ⇒ REDUCES VARIANCE. Fixes the overfitting a single tree has.
+
+GRADIENT BOOSTING — trees built in SEQUENCE, each fixing the last
+  · train a weak tree. look at what it got wrong.
+  · train the next tree to predict THOSE ERRORS.
+  · add it in, scaled by the learning rate. repeat, hundreds of times.
+
+  WHY IT WORKS: each tree specialises in the mistakes still
+  remaining. The ensemble incrementally grinds the error down.
+
+  ⇒ REDUCES BIAS. Usually more accurate — and it CAN overfit,
+    because it will keep fitting noise if you let it run.
+
+┌──────────────┬─────────────────────┬────────────────────────────┐
+│              │ RANDOM FOREST       │ GRADIENT BOOSTING          │
+├──────────────┼─────────────────────┼────────────────────────────┤
+│ trees built  │ in parallel         │ in sequence                │
+│ each tree    │ independent         │ fixes the previous ones    │
+│ reduces      │ variance            │ bias                       │
+│ overfits?    │ resistant           │ YES if unchecked           │
+│ tuning       │ forgiving           │ needs care                 │
+│ accuracy     │ very good           │ usually best on tabular    │
+│ parallel?    │ fully               │ sequential by nature       │
+│ ⭐ use when  │ a strong, low-effort│ you want the best tabular  │
+│              │ baseline; little    │ score and can tune         │
+│              │ time to tune        │                            │
+└──────────────┴─────────────────────┴────────────────────────────┘
+
+BOOSTING'S KEY KNOBS — and what each does
+  n_estimators     how many trees. more = more capacity to overfit.
+  learning_rate    how much each tree contributes. LOWER is better
+                   quality but needs MORE trees. classic pairing:
+                   low rate + many trees + early stopping.
+  max_depth        3–8 is typical. deeper trees = more interactions
+                   captured and more overfitting.
+  subsample        fraction of rows per tree. <1 adds randomness and
+                   regularises.
+  ⭐ EARLY STOPPING is the main regulariser: watch validation error
+    and stop when it stops improving. Set n_estimators high and let
+    early stopping decide.
+
+THE THREE IMPLEMENTATIONS
+  XGBoost    the established one. huge ecosystem.
+  LightGBM   faster on large data, grows trees leaf-wise.
+  CatBoost   best handling of categorical features out of the box,
+             and strong defaults — good when you don't want to tune.
+  ⇒ Differences are real but modest. Pick one and learn it properly.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">If you learn one model family properly, make it this one</span>
+  <p><strong>Gradient boosting is the default winner on tabular data</strong> — the shape of most
+  business problems. It handles mixed types, missing values and non-linear relationships natively,
+  needs almost no feature scaling, and beats neural networks on tables more often than not.</p>
+  <p>The realistic pattern for a business project: <em>baseline → logistic regression → gradient
+  boosting → stop.</em> Everything after that is usually diminishing returns compared to fixing your
+  labels, your features, or your framing.</p>
+</div>
+
+<header class="mod" id="m4">
+  <span class="mn">Model 13</span>
+  <h2>k-NN, SVM and Naive Bayes</h2>
+  <p class="lede">Three you should understand, and reach for less often than the textbooks
+  suggest.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Model</th><th style="width:34%">How it decides</th><th>Use / avoid</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>k-nearest neighbours</strong></td>
+      <td>No training at all. To predict, find the <em>k</em> most similar rows in the training data
+      and take their majority vote (or average). "You are like your neighbours."</td>
+      <td><span class="ok">Use:</span> small data, genuinely similarity-shaped problems, a quick
+      sanity baseline. <span class="no">Avoid:</span> large data (prediction is slow — it searches
+      everything), many features (in high dimensions everything is roughly equidistant, so
+      "nearest" stops meaning anything), and unscaled features (the biggest-unit column dominates
+      distance).</td>
+    </tr>
+    <tr>
+      <td><strong>Support vector machine</strong></td>
+      <td>Finds the boundary that separates the classes with the <em>widest possible margin</em> —
+      the most confident separation rather than just any line. The "kernel trick" lets it draw curved
+      boundaries by implicitly mapping into higher dimensions.</td>
+      <td><span class="ok">Use:</span> small-to-medium data, many features, clear separation, text
+      classification. <span class="no">Avoid:</span> large n (training scales badly), and when you
+      need probabilities (its outputs need calibrating). Needs scaling.</td>
+    </tr>
+    <tr>
+      <td><strong>Naive Bayes</strong></td>
+      <td>Applies Bayes' rule, assuming every feature is independent given the class. That assumption
+      is almost always false — hence "naive" — and it works anyway, surprisingly often.</td>
+      <td><span class="ok">Use:</span> text classification (spam, topic), very high dimensions, very
+      little data, or when you need something that trains in milliseconds.
+      <span class="no">Avoid:</span> when features are strongly dependent and you need calibrated
+      probabilities — it tends to be overconfident.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="m5">
+  <span class="mn">Model 14</span>
+  <h2>Clustering and PCA</h2>
+  <p class="lede">The unsupervised workhorses — where there is no right answer to check against.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">k-means · how it decides</div>
+<pre><code>  1  pick k random points as CENTROIDS
+  2  assign every row to its NEAREST centroid
+  3  move each centroid to the CENTRE of its assigned rows
+  4  repeat 2–3 until nothing moves
+
+  that is the whole algorithm. it minimises the total squared
+  distance from points to their centroid.
+
+  ⚠ YOU MUST CHOOSE k IN ADVANCE. The data does not tell you.
+    the "elbow method": plot the total distance against k and look
+    for the bend. it is genuinely fuzzy and often has no clear elbow.
+    the silhouette score is a better-behaved alternative.
+
+  ASSUMES  roughly spherical clusters of roughly similar size.
+           ⚠ it will happily split one elongated cluster in two and
+             merge two adjacent small ones — and report success.
+  NEEDS    scaling. otherwise the column with the largest units
+           defines the distance and therefore the clusters.
+  ALSO     sensitive to the random start — run it several times
+           (k-means++ initialisation does this sensibly).
+
+WHEN k-MEANS ISN'T RIGHT
+  DBSCAN / HDBSCAN   finds clusters of ARBITRARY SHAPE and marks
+                     outliers as noise rather than forcing everything
+                     into a group. no k needed. struggles when
+                     densities vary a lot.
+  HIERARCHICAL       builds a tree of nested clusters — you get a
+                     dendrogram and pick the cut afterwards. doesn't
+                     scale to large n.
+  GAUSSIAN MIXTURE   soft assignment: a probability of belonging to
+                     each cluster, rather than a hard label.
+
+⭐ THE ONLY EVALUATION THAT MATTERS: can a domain expert NAME each
+  cluster and act differently on it? A statistically tidy
+  segmentation nobody can describe is a colouring, not a segmentation.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">PCA · compressing many columns into few</div>
+<pre><code>Finds new axes ("components") along which the data varies MOST, and
+lets you keep only the first few.
+
+  200 correlated features → 10 components holding, say, 85% of the
+  variation. Same information, a twentieth of the columns.
+
+USE FOR      speeding up training · removing collinearity ·
+             visualising high-dimensional data in 2D · denoising
+COSTS        ⚠ INTERPRETABILITY. A component is a blend of all
+             original features — "component 1" has no business
+             meaning, so you can no longer say which variable
+             mattered.
+NEEDS        scaling first, always. PCA follows variance, and an
+             unscaled large-unit column will dominate every component.
+LINEAR ONLY  it can only find linear structure.
+
+⚠ t-SNE AND UMAP are for LOOKING, not measuring. They produce
+  beautiful 2D plots of high-dimensional data — but distances between
+  clusters in the plot are not meaningful, the layout changes with
+  the random seed, and you must never cluster on their output and
+  treat the result as real structure.</code></pre>
+</div>
+
+<header class="mod" id="m6">
+  <span class="mn">Model 15</span>
+  <h2>Neural networks</h2>
+  <p class="lede">What they are, in one page — and the honest answer about when to use one.</p>
+</header>
+
+<div class="ascii">   A STACK OF LAYERS. Each layer does two things:
+
+     1  a weighted sum of its inputs        (the learnable part)
+     2  a NON-LINEAR function of that       (what makes depth useful)
+
+   input ──►[ layer ]──►[ layer ]──►[ layer ]──► output
+              w,b          w,b          w,b
+
+   ⭐ WITHOUT THE NON-LINEARITY the whole stack collapses to a single
+     linear function no matter how many layers. The activation is not
+     a detail — it is the entire reason depth buys anything.
+
+   TRAINING is the same loop as everything else:
+     forward pass → loss → BACKPROPAGATION (the chain rule, working
+     out each weight's contribution to the error) → gradient descent
+     step → repeat, over batches, for several epochs.
+
+   THE VOCABULARY
+     epoch       one full pass over the training data
+     batch       how many examples per parameter update
+     activation  ReLU is the default in hidden layers. sigmoid /
+                 softmax at the output for probabilities.
+     dropout     randomly ignore some neurons during training so the
+                 network can't rely on any one path — regularisation
+     ⭐ learning rate  still the most important hyperparameter
+
+   THE ARCHITECTURES, AND WHAT EACH IS FOR
+     MLP          plain stacked layers. generic vectors.
+     CNN          images. convolutions share weights across positions,
+                  so a pattern learned in one place is recognised
+                  everywhere. far fewer parameters than an MLP.
+     RNN / LSTM   sequences, historically. processes in order, so it
+                  can't parallelise and struggles with long
+                  dependencies. LARGELY SUPERSEDED.
+     TRANSFORMER  every position attends to every other, weighted by
+                  learned relevance. parallelisable, handles long
+                  range. ⭐ THIS IS WHAT AN LLM IS.
+
+   TRANSFER LEARNING — the only practical path for most teams
+     almost nobody trains from scratch. take a model pre-trained on
+     an enormous corpus, freeze most of it, and train a small head on
+     your data. works with hundreds of examples rather than millions.
+     ⇒ "we don't have enough data for deep learning" is usually
+       FALSE. You don't need enough to learn vision or language from
+       nothing — only enough to ADAPT something that already has.</div>
+
+<div class="warn">
+  <span class="tag">The honest position on neural networks</span>
+  <p><strong>On tabular data — a CSV of columns — gradient boosting usually wins.</strong> Not
+  marginally, and not only on small data. Boosting handles mixed types and missing values natively,
+  trains in minutes on a laptop, needs almost no tuning to be good, and hands you feature importances.
+  A neural network on the same table needs more preprocessing, more tuning, more compute, and
+  typically lands at similar or worse performance.</p>
+  <p><strong>Reach for deep learning when the input has structure a network can exploit</strong> —
+  spatial (images), sequential (text, audio), relational (graphs) — or when you can start from a
+  pre-trained model. Not because it is more advanced.</p>
+</div>
+
+<header class="mod" id="m7">
+  <span class="mn">Model 16</span>
+  <h2>The choosing table</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">If your situation is…</th><th>Start with</th></tr></thead>
+  <tbody>
+    <tr><td>Anything, at the very beginning</td><td><strong>The non-model baseline</strong> — the current rule, the majority class, last period's value. Always.</td></tr>
+    <tr><td>Tabular, labelled, and you want a number for whether signal exists</td><td><strong>Logistic / linear regression.</strong> Fast, interpretable, and it sets the bar.</td></tr>
+    <tr><td>Tabular, labelled, and you want the best score</td><td><strong>Gradient boosting.</strong> This is where most business projects end.</td></tr>
+    <tr><td>Tabular, and you have almost no time to tune</td><td><strong>Random forest.</strong> Forgiving defaults, hard to get badly wrong.</td></tr>
+    <tr><td>You must <em>show</em> the logic to a person or a regulator</td><td><strong>A single decision tree</strong>, or <strong>logistic regression</strong> with odds ratios.</td></tr>
+    <tr><td>Text classification with labels</td><td><strong>TF-IDF + linear model</strong> or <strong>Naive Bayes</strong> as a baseline; a fine-tuned small transformer if you need more.</td></tr>
+    <tr><td>Images, audio, or text generation</td><td><strong>A pre-trained neural network</strong>, adapted. Never from scratch.</td></tr>
+    <tr><td>No labels, and you want groups</td><td><strong>k-means</strong> if clusters are likely round; <strong>HDBSCAN</strong> if shapes are irregular or you want outliers identified.</td></tr>
+    <tr><td>No labels, and you want fewer columns</td><td><strong>PCA.</strong></td></tr>
+    <tr><td>Predicting the future of a series</td><td><strong>Seasonal naive first</strong>, then ETS or Prophet, then boosting with lag features.</td></tr>
+    <tr><td>Time until an event, and some cases haven't happened yet</td><td><strong>Survival analysis</strong> — not ordinary regression, which mishandles censoring badly.</td></tr>
+    <tr><td>Very few labels, but many unlabelled rows</td><td><strong>Label 300–500 by hand</strong> and go supervised. Almost always worth the day.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="need">
+  <span class="pn">Part V</span>
+  <h2>What you actually need</h2>
+  <p class="lede">The two questions every beginner asks, answered honestly rather than
+  aspirationally.</p>
+</header>
+
+<header class="mod" id="f10">
+  <span class="mn">Foundation 17</span>
+  <h2>The maths, honestly</h2>
+  <p class="lede">Far less than the internet implies — but the parts you need, you need
+  properly.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Area</th><th style="width:14%">Depth needed</th><th>What that means concretely</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Descriptive statistics</strong></td>
+      <td><span class="ok">Deep</span></td>
+      <td>Mean vs median vs percentiles and when each lies. Distributions and skew. Variance. You will
+      use this <em>every single day</em> — more than any other item on this list.</td>
+    </tr>
+    <tr>
+      <td><strong>Probability</strong></td>
+      <td><span class="ok">Solid</span></td>
+      <td>Conditional probability, independence, Bayes' rule, expected value. <strong>Base rates
+      especially</strong> — the false-positive paradox is the most practically important piece of
+      probability in the job.</td>
+    </tr>
+    <tr>
+      <td><strong>Inferential statistics</strong></td>
+      <td><span class="ok">Solid</span></td>
+      <td>What a p-value <em>is</em> and is not. Confidence intervals. Type I/II error and power.
+      Multiple comparisons. You need to <em>reason</em> with these, not derive them.</td>
+    </tr>
+    <tr>
+      <td><strong>Linear algebra</strong></td>
+      <td><span class="mid">Conceptual</span></td>
+      <td>What a vector and a matrix are; that a dot product measures alignment; that multiplying by a
+      matrix transforms space. <strong>You will not compute an eigenvector by hand.</strong> You need
+      the intuition so PCA and embeddings are not magic.</td>
+    </tr>
+    <tr>
+      <td><strong>Calculus</strong></td>
+      <td><span class="mid">Conceptual</span></td>
+      <td>That a derivative is a slope, and gradient descent walks downhill on it. That is genuinely
+      enough for applied work. You will never differentiate anything by hand in this job.</td>
+    </tr>
+    <tr>
+      <td><strong>Optimisation</strong></td>
+      <td><span class="mid">Conceptual</span></td>
+      <td>Local vs global minima, learning rate, convergence. Enough to debug "it isn't learning".</td>
+    </tr>
+    <tr>
+      <td><strong>Experimental design</strong></td>
+      <td><span class="ok">Solid</span></td>
+      <td>Randomisation, sample size, power, guardrails. Frequently the highest-value thing you
+      know — and it is more logic than maths.</td>
+    </tr>
+    <tr>
+      <td><strong>Measure theory, real analysis, matrix calculus</strong></td>
+      <td><span class="no">Skip</span></td>
+      <td>For research. Not for applied work. Nobody at a normal company will ever ask.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The honest summary</span>
+  <p><strong>Statistics deep, probability solid, linear algebra and calculus conceptual.</strong> A
+  strong grasp of distributions, base rates and experimental design will take you further than a
+  weak grasp of eigendecomposition.</p>
+  <p>The failure mode to avoid is spending six months on mathematics before touching data. <strong>Learn
+  the maths as the problems demand it</strong> — you will retain it, and you will learn the parts that
+  actually recur rather than the parts a textbook happens to order first.</p>
+</div>
+
+<header class="mod" id="f11">
+  <span class="mn">Foundation 18</span>
+  <h2>The tooling</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Tool</th><th style="width:14%">Priority</th><th>What it is for</th></tr></thead>
+  <tbody>
+    <tr><td><strong>SQL</strong></td><td><span class="ok">First</span></td><td>Getting the data. Underrated by beginners and used more than anything else on this list. Learn joins, group by, window functions, and CTEs properly.</td></tr>
+    <tr><td><strong>Python</strong></td><td><span class="ok">First</span></td><td>The language. You need functions, loops, dicts and lists — not advanced OOP or metaprogramming.</td></tr>
+    <tr><td><strong>pandas</strong></td><td><span class="ok">First</span></td><td>Tabular manipulation. <code>groupby</code>, <code>merge</code>, <code>pivot</code>, reshaping. <strong>Check the row count after every merge</strong> — silent fan-out is the classic pandas bug.</td></tr>
+    <tr><td><strong>scikit-learn</strong></td><td><span class="ok">First</span></td><td>Classical ML. Its <code>Pipeline</code> object is the thing that makes leakage structurally impossible — learn it early.</td></tr>
+    <tr><td><strong>matplotlib / seaborn</strong></td><td><span class="ok">First</span></td><td>Plots for yourself. You will make hundreds while exploring.</td></tr>
+    <tr><td><strong>Jupyter</strong></td><td><span class="mid">Early</span></td><td>Exploration. <span class="no">Not</span> for anything that runs twice — see below.</td></tr>
+    <tr><td><strong>Git</strong></td><td><span class="mid">Early</span></td><td>Commit, branch, diff. You do not need to rebase.</td></tr>
+    <tr><td><strong>XGBoost / LightGBM</strong></td><td><span class="mid">Soon</span></td><td>Where your accuracy will come from on tabular problems.</td></tr>
+    <tr><td><strong>statsmodels</strong></td><td><span class="mid">Soon</span></td><td>When you need proper statistical output — p-values, confidence intervals, diagnostics — rather than just predictions.</td></tr>
+    <tr><td><strong>A BI tool</strong></td><td><span class="mid">Later</span></td><td>Power BI, Tableau, Looker. Whichever your employer uses; the concepts transfer in a week.</td></tr>
+    <tr><td><strong>Docker, cloud, MLflow, Airflow</strong></td><td><span class="no">Later</span></td><td>Real and learned on the job. Do not front-load these — they are the classic way to spend six months not doing data science.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The notebook trap</span>
+  <p>Notebooks are excellent for exploring and terrible for anything that must run again. Cells run out
+  of order, state persists invisibly, and the thing that worked yesterday cannot be reproduced.</p>
+  <p><strong>The rule: explore in a notebook, then move anything that has to run twice into a
+  <code>.py</code> file with functions.</strong> The moment you find yourself scrolling up to re-run a
+  cell, that logic wants to be a function.</p>
+</div>
+
+<header class="part" id="ladder">
+  <span class="pn">Part VI · what you asked for</span>
+  <h2>Beginner to expert</h2>
+  <p class="lede">Five rungs. What you can do at each, what you cannot yet, and the specific thing
+  that gets you to the next one.</p>
+</header>
+
+<header class="mod" id="f12">
+  <span class="mn">Foundation 19</span>
+  <h2>The ladder</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Level 1 · Beginner — "I can follow a tutorial"</div>
+<pre><code>CAN DO      load a CSV · fit a model with sklearn · print an accuracy
+            score · make a chart
+CANNOT YET  tell whether that score means anything
+THE GAP     you are running steps, not making decisions. Every choice
+            — the metric, the split, the model — came from the
+            tutorial, not from the problem.
+
+⭐ WHAT MOVES YOU UP: take a dataset with NO tutorial attached and
+  answer a question somebody actually asked. The discomfort of having
+  no cell to copy is the learning.
+
+TYPICAL: a few weeks to a few months.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 2 · Practitioner — "I can build a model that works"</div>
+<pre><code>CAN DO      clean data · engineer features · choose a sensible model ·
+            cross-validate · report the right metric · explain a
+            confusion matrix
+CANNOT YET  reliably notice when a great score is a lie
+THE GAP     ⭐ LEAKAGE. This is the rung almost everyone gets stuck on,
+            and the symptom is a model that is excellent offline and
+            useless in production.
+
+⭐ WHAT MOVES YOU UP: ship something and watch it fail. Then learn
+  the prediction-time question — "would this value exist, with this
+  value, at prediction time?" — and apply it to every feature you
+  ever build again.
+
+TYPICAL: 6–18 months. Most self-taught people plateau here, and the
+thing that ends the plateau is contact with production.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 3 · Independent — "I can be given a vague problem"</div>
+<pre><code>CAN DO      turn "we're losing customers" into a target, a unit, a
+            baseline and a metric · design a validation split that
+            matches deployment · spot leakage before it bites ·
+            choose a threshold from the cost of errors · do error
+            analysis · present to non-technical people
+CANNOT YET  judge which problems are worth solving at all
+THE GAP     you can execute any project handed to you. You are not
+            yet the person deciding which projects exist.
+
+⭐ WHAT MOVES YOU UP: start saying no. Recommend against a model
+  when a rule would do, or when the data cannot support the question.
+  The first time you do this and are right, you have changed rung.
+
+TYPICAL: 2–4 years. This is a solidly employable, well-paid level and
+many good data scientists stay here happily.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 4 · Senior — "I decide what gets built"</div>
+<pre><code>CAN DO      everything above, plus: reframe the question the business
+            asked into the one it needed · estimate value before
+            building · recognise a causal question and refuse to
+            answer it with a predictive model · design the human
+            review surface · own something in production and monitor
+            it · mentor
+CANNOT YET  change how the organisation makes decisions
+THE GAP     your judgement is trusted on your own projects. It is not
+            yet the standard others work to.
+
+⭐ WHAT MOVES YOU UP: influence without authority. Getting three
+  teams to agree one definition of "active customer" is a political
+  problem, not a technical one, and no amount of modelling skill
+  helps.
+
+TYPICAL: 4–8 years. The transition is from THROUGHPUT to JUDGEMENT —
+and it is genuinely hard to be recognised for, because senior value
+often shows up as things NOT built.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 5 · Expert / staff — "I change how the org decides"</div>
+<pre><code>CAN DO      set standards others follow · design the measurement
+            system, not just the model · know which of the last ten
+            requests should have been rules · build the platform that
+            makes everyone else faster · say the uncomfortable thing
+            in the room where the decision is made
+
+NOT DEFINED BY  knowing more algorithms. Nobody reaches this rung by
+                learning an eleventh model family.
+
+DEFINED BY      the quality and speed of judgement under uncertainty,
+                and the ability to make other people's judgement
+                better.
+
+TYPICAL: 8+ years, and not everyone wants it — it is substantially
+less hands-on modelling and substantially more conversation.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The honest thing about the ladder</span>
+  <p>Look at what separates each rung: <strong>rung 1→2 is skills. Every rung after that is
+  judgement.</strong> Leakage, framing, knowing when not to model, influence — none of them is an
+  algorithm.</p>
+  <p>Which is why the most common career mistake is spending year three learning a fourth model family
+  instead of learning to frame a problem. <em>Nobody has ever been promoted for knowing CatBoost.</em>
+  People are promoted for being the one whose numbers turn out to be right, and whose projects turn
+  out to matter.</p>
+</div>
+
+<header class="mod" id="f13">
+  <span class="mn">Foundation 20</span>
+  <h2>The six-month plan</h2>
+  <p class="lede">Zero to solidly employable, assuming serious part-time study. Built around
+  finishing things rather than starting them.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:14%">Month</th><th style="width:24%">Focus</th><th>Do this — the doing is the point</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>1</strong></td>
+      <td>Python + SQL</td>
+      <td>Enough Python to manipulate data comfortably. SQL properly: joins, group by, window
+      functions, CTEs. <strong>SQL first if you have to choose</strong> — you will use it more than
+      anything else.</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td>pandas + real messy data</td>
+      <td>Take a government open dataset — real and unpolished. Load it, profile it, find the
+      sentinels and duplicates. <strong>Write down what it cannot answer.</strong> That last habit is
+      worth more than the pandas.</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td>Statistics that gets used</td>
+      <td>Distributions, base rates, p-values and what they are not, confidence intervals,
+      correlation vs causation. Work the base-rate confusion matrix by hand until it is fast.</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td>Your first supervised model, done properly</td>
+      <td>Pick a target. Write the spec: decision, unit, target, baseline, metric, cost of errors.
+      <strong>Build the baseline first.</strong> Then logistic regression. Then boosting. Compare
+      all three.</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td>Validation and leakage</td>
+      <td>Design the split to match deployment. Use a <code>Pipeline</code> so transformers fit
+      inside folds. <strong>Deliberately create a leak, watch the score jump, then fix it</strong> —
+      that memory is worth more than any amount of reading about leakage.</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td>Evaluation, error analysis, communication</td>
+      <td>Threshold from a cost ratio. Convert the score into money. <strong>Read fifty errors by
+      hand and categorise them.</strong> Then write one page, answer first, and show it to someone
+      non-technical.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Then: one portfolio project</h4>
+    <p>Not four half-finished notebooks. One project with a written spec, a baseline, an honest
+    evaluation, an error analysis, and a paragraph on what you would do differently. That beats a
+    higher score every time.</p>
+  </div>
+  <div class="card">
+    <h4>Show the mess</h4>
+    <p>"I found 12% disguised nulls, reconciled to within 0.1% of the published total, and concluded
+    the regional split was unusable" demonstrates more judgement than a flawless model on a clean
+    file. You are hired for what you do when the data is bad.</p>
+  </div>
+  <div class="card">
+    <h4>Don't collect certificates</h4>
+    <p>A finished project with honest evaluation outperforms six course certificates. The certificates
+    prove attendance; the project proves judgement.</p>
+  </div>
+  <div class="card">
+    <h4>Read other people's analyses</h4>
+    <p>Specifically, look for what they <em>didn't</em> check. It is the fastest way to build the
+    instinct for what is missing in your own.</p>
+  </div>
+</div>
+
+<hr class="rule">
+
+<h3>Where to go next</h3>
+
+<p>You now have the vocabulary the rest of the set assumes. <strong>The <em>data science guide</em></strong>
+is the natural next file — it teaches the judgement layer: framing, the prediction-time test, designing
+splits, choosing metrics from costs, error analysis, and when not to model at all. <strong>The
+<em>cheat sheet</em></strong> is where you look things up once you are working.</p>
+
+<p>And the honest closing note: everything in Part IV — every model family, every algorithm — is the
+part that libraries already solved. You can call any of them in one line. What nobody can call in one
+line is deciding what to predict, noticing that your score is a lie, and knowing when the answer is
+"don't build this". That is the job, and it is what the guide is for.</p>
+
+<div class="disclaimer">
+  <p><strong>Companion files.</strong> This is 7 of 8. The <em>data science cheat sheet</em> is the
+  reference (formulas, tests, metric definitions); the <em>data science guide</em> is the judgement
+  course; the <em>data science interview</em> file is the loop. An <em>AI engineering foundations</em>
+  file does the same job for that track — what an LLM is, how it is trained, and its own ladder.</p>
+  <p><strong>Also in this repository:</strong>
+  <code>docs/data-analyst-bootcamp.html</code> for dirty data and ETL,
+  <code>docs/senior-data-science-best-practices/</code>, and
+  <code>docs/datascience-project/</code> for a full project lifecycle.</p>
+</div>
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark() {
+    var best = 0, y = window.scrollY + 145;
+    for (var i = 0; i < targets.length; i++) if (targets[i] && targets[i].offsetTop <= y) best = i;
+    for (var j = 0; j < links.length; j++) links[j].classList.toggle('on', j === best);
+  }
+  var q = false;
+  window.addEventListener('scroll', function () {
+    if (q) return; q = true;
+    requestAnimationFrame(function () { q = false; mark(); });
+  }, { passive: true });
+  mark();
+})();
+</script>

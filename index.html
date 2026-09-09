@@ -1,0 +1,579 @@
+<title>HR Insight Handbook Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F1;
+  --ground-2: #FCFBFA;
+  --panel:    #EBE9E5;
+  --panel-2:  #E1DED8;
+
+  --ink:   #17181A;
+  --ink-2: #3E4147;
+  --ink-3: #71757C;
+
+  --rule:   #D6D3CD;
+  --rule-2: #E5E2DC;
+
+  --accent:      #2C3138;
+  --accent-soft: #E7E6E3;
+
+  /* track colours — each set's spine, used as the card stripe */
+  --t-path:  #6B4A2F;
+  --t-onb:   #0E6A6A;
+  --t-skill: #25608F;
+  --t-intv:  #A32E52;
+  --t-anly:  #9C6412;
+  --t-ds:    #2A6B3C;
+  --t-ai:    #A85018;
+
+  --focus: #2C3138;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #101113;
+    --ground-2: #17181A;
+    --panel:    #1D1F22;
+    --panel-2:  #25282C;
+
+    --ink:   #EAEAEC;
+    --ink-2: #C0C3C8;
+    --ink-3: #868A91;
+
+    --rule:   #31343A;
+    --rule-2: #25282C;
+
+    --accent:      #D6D9DE;
+    --accent-soft: #1E2023;
+
+    --t-path:  #C9A47C;
+    --t-onb:   #5BC2C2;
+    --t-skill: #7FB3DC;
+    --t-intv:  #E68CA5;
+    --t-anly:  #DDA74E;
+    --t-ds:    #7CC194;
+    --t-ai:    #F0A265;
+
+    --focus: #D6D9DE;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #101113;
+  --ground-2: #17181A;
+  --panel:    #1D1F22;
+  --panel-2:  #25282C;
+
+  --ink:   #EAEAEC;
+  --ink-2: #C0C3C8;
+  --ink-3: #868A91;
+
+  --rule:   #31343A;
+  --rule-2: #25282C;
+
+  --accent:      #D6D9DE;
+  --accent-soft: #1E2023;
+
+  --t-path:  #C9A47C;
+  --t-onb:   #5BC2C2;
+  --t-skill: #7FB3DC;
+  --t-intv:  #E68CA5;
+  --t-anly:  #DDA74E;
+  --t-ds:    #7CC194;
+  --t-ai:    #F0A265;
+
+  --focus: #D6D9DE;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+a { color: var(--ink); }
+strong { font-weight: 600; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.018em; }
+p { margin: 0 0 12px; }
+code { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+.wrap { max-width: 1500px; margin: 0 auto; padding: 46px 56px 110px; }
+@media (max-width: 720px) { .wrap { padding: 28px 20px 70px; } }
+
+/* ===== hero ===== */
+.hero { border-bottom: 3px solid var(--ink); padding-bottom: 30px; margin-bottom: 34px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px; }
+.hero h1 { font-size: clamp(38px, 6vw, 68px); font-weight: 800; line-height: 1.0; margin: 0 0 18px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 20.5px; color: var(--ink-2); margin: 0; max-width: 78ch; }
+
+.stats { display: flex; flex-wrap: wrap; gap: 0; margin-top: 28px; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.stat { flex: 1 1 150px; padding: 12px 16px 13px; border-right: 1px solid var(--rule); background: var(--ground-2); }
+.stat:last-child { border-right: 0; }
+.stat b { display: block; font-family: var(--display); font-weight: 700; font-size: 27px; line-height: 1.1; }
+.stat span { font-family: var(--mono); font-size: 10.8px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ===== the three-step path ===== */
+.pathbox { margin: 34px 0 8px; }
+.path { display: grid; grid-template-columns: repeat(auto-fit, minmax(272px, 1fr)); gap: 12px; margin: 16px 0 0; }
+.step { border: 1px solid var(--rule); border-top: 3px solid var(--stripe, var(--ink-3)); border-radius: 3px; padding: 15px 17px 17px; background: var(--ground-2); text-decoration: none; color: var(--ink-2); display: block; }
+.step:hover { background: var(--panel); }
+.step .sn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--stripe, var(--ink-3)); margin-bottom: 6px; }
+.step b { display: block; font-family: var(--display); font-weight: 700; font-size: 21px; line-height: 1.15; color: var(--ink); margin-bottom: 6px; }
+.step p { font-size: 16.5px; margin: 0; }
+.step.s1 { --stripe: var(--t-path); }
+.step.s2 { --stripe: var(--t-onb); }
+.step.s3 { --stripe: var(--t-skill); }
+
+/* ===== groups ===== */
+.group { margin: 52px 0 0; }
+.group > h2 { font-size: 26px; font-weight: 700; margin: 0 0 4px; padding-bottom: 9px; border-bottom: 2px solid var(--stripe, var(--ink)); display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.group > h2 .gn { font-family: var(--mono); font-size: 11.4px; letter-spacing: .13em; text-transform: uppercase; color: var(--stripe, var(--ink-3)); font-weight: 400; }
+.group > p.gd { font-size: 17.7px; color: var(--ink-2); margin: 11px 0 0; max-width: 84ch; }
+.group.g-path  { --stripe: var(--t-path); }
+.group.g-onb   { --stripe: var(--t-onb); }
+.group.g-skill { --stripe: var(--t-skill); }
+.group.g-intv  { --stripe: var(--t-intv); }
+.group.g-anly  { --stripe: var(--t-anly); }
+.group.g-ds    { --stripe: var(--t-ds); }
+.group.g-ai    { --stripe: var(--t-ai); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; margin: 18px 0 0; }
+.doc {
+  border: 1px solid var(--rule); border-left: 4px solid var(--stripe, var(--ink-3));
+  border-radius: 3px; padding: 14px 16px 15px; background: var(--ground-2);
+  text-decoration: none; color: var(--ink-2); display: flex; flex-direction: column; gap: 7px;
+}
+.doc:hover { background: var(--panel); }
+.doc .dn { font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--stripe, var(--ink-3)); }
+.doc h3 { font-size: 19.4px; font-weight: 600; margin: 0; color: var(--ink); line-height: 1.2; }
+.doc p { font-size: 16.5px; margin: 0; }
+.doc .meta { font-family: var(--mono); font-size: 11.4px; color: var(--ink-3); margin-top: auto; padding-top: 4px; }
+
+/* ===== routes table ===== */
+.tw { overflow-x: auto; margin: 20px 0 0; border: 1px solid var(--rule); border-radius: 3px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 560px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td.route { font-family: var(--mono); font-size: 13.7px; color: var(--ink-2); }
+
+/* ===== notes ===== */
+.note { border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 3px; padding: 13px 16px 14px; margin: 22px 0 0; background: var(--ground-2); font-size: 17.7px; }
+.note .tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.note p:last-child { margin-bottom: 0; }
+.note ul { margin: 8px 0 0; padding-left: 22px; }
+.note li { margin-bottom: 5px; }
+.foot { margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 15.4px; color: var(--ink-3); }
+.foot p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.tw { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">HR Insight AI · engineering documentation</p>
+  <h1>The handbook library. <span class="thin">Twenty-five documents, one reading order.</span></h1>
+  <p class="lede">Everything from what software engineering <em>is</em>, through this project's actual
+  stack, to becoming senior — plus the data-analyst, data-science and AI-engineering tracks and the
+  interview preparation. Every document is self-contained, navigable, and works offline.</p>
+  <div class="stats">
+    <div class="stat"><b>25</b><span>documents</span></div>
+    <div class="stat"><b>49,317</b><span>lines</span></div>
+    <div class="stat"><b>7</b><span>tracks</span></div>
+    <div class="stat"><b>3</b><span>step learning path</span></div>
+    <div class="stat"><b>108</b><span>source markdown files</span></div>
+  </div>
+</header>
+
+<section class="pathbox">
+  <h2 style="font-size:23px;font-weight:700;margin:0 0 4px;">Start here — the three-step path</h2>
+  <p style="font-size:17.7px;color:var(--ink-2);margin:0;max-width:84ch;">If you are new, read these in
+  order. Each step assumes the one before it, and together they take you from no experience to
+  senior-level judgement.</p>
+  <div class="path">
+    <a class="step s1" href="00-foundations-primer.html">
+      <span class="sn">Step 1 · 1 page</span>
+      <b>Foundations</b>
+      <p>What the discipline is — the lifecycle, methodologies, roles, languages, design, career and
+      ethics. Assumes nothing at all.</p>
+    </a>
+    <a class="step s2" href="01-onboarding-foundations.html">
+      <span class="sn">Step 2 · 4 volumes</span>
+      <b>Onboarding handbook</b>
+      <p>This project's stack, taught: runtimes and databases through to NestJS, Next.js, FastAPI and
+      the AI service.</p>
+    </a>
+    <a class="step s3" href="05-skillup-working-with-ai.html">
+      <span class="sn">Step 3 · 8 volumes</span>
+      <b>Skill-upgrading handbook</b>
+      <p>Becoming senior — working with AI, architecture, craft, CS foundations, delivery, cloud, AI
+      strategy, and how seniors think.</p>
+    </a>
+  </div>
+</section>
+
+<section class="group g-path">
+  <h2><span class="gn">Track 0</span> The discipline</h2>
+  <p class="gd">The entry point, and the connective hub — every part points at where the subject
+  continues in the other tracks.</p>
+  <div class="cards">
+    <a class="doc" href="00-foundations-primer.html">
+      <span class="dn">00 · one page</span>
+      <h3>The Discipline Before the Stack</h3>
+      <p>Programming vs engineering · the SDLC and the cost of finding problems late · methodologies ·
+      requirements · roles · client–server and the cloud · languages and universal logic · OOP, SOLID,
+      UML, C4, architecture styles · the career and the code of ethics.</p>
+      <span class="meta">39 sections · 5 modules · 2,059 lines</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-onb">
+  <h2><span class="gn">Track 1 · 4 volumes</span> Onboarding — this project's stack</h2>
+  <p class="gd">The concrete technology HR Insight AI is built from. Tabs at the top of each volume
+  link to the other three.</p>
+  <div class="cards">
+    <a class="doc" href="01-onboarding-foundations.html">
+      <span class="dn">01 · volume I</span>
+      <h3>Foundations &amp; the Two Languages</h3>
+      <p>Runtimes, package managers, ports and env vars · databases, relationships, enough SQL to read
+      · HTTP, methods, status codes, REST · JSON · JavaScript and TypeScript · TypeScript deeper ·
+      Python.</p>
+      <span class="meta">24 sections · KB files 01–06, 39</span>
+    </a>
+    <a class="doc" href="02-onboarding-architecture.html">
+      <span class="dn">02 · volume II</span>
+      <h3>Architecture, Data &amp; the Browser</h3>
+      <p>The three services and one request traced in eleven steps · authentication and authorisation
+      · Prisma schema, client, migrations, v7 changes · React state, effects, keys, forms · Axios
+      interceptors · WebSockets and rooms.</p>
+      <span class="meta">29 sections · KB files 07–10, 32, 33</span>
+    </a>
+    <a class="doc" href="03-onboarding-frameworks.html">
+      <span class="dn">03 · volume III</span>
+      <h3>Frameworks &amp; Patterns</h3>
+      <p>NestJS modules to services and the six-stage request lifecycle · Next.js App Router,
+      rendering modes, data fetching · FastAPI and Pydantic · Ant Design · dependency injection, DTO
+      validation, error handling, project structure.</p>
+      <span class="meta">26 sections · KB files 11–14, 34–37</span>
+    </a>
+    <a class="doc" href="04-onboarding-data-science.html">
+      <span class="dn">04 · volume IV</span>
+      <h3>Data Science &amp; AI</h3>
+      <p>The maths you need · statistics and the base-rate trap · pandas, cleaning, features, EDA ·
+      the ML workflow, splits, leakage, algorithms, evaluation, deployment · deep learning · LLMs, RAG,
+      agents · analytics and dashboards.</p>
+      <span class="meta">28 sections · KB files 15–31</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-skill">
+  <h2><span class="gn">Track 2 · 8 volumes</span> Skill upgrading — becoming senior</h2>
+  <p class="gd">The layer above the stack: judgement, craft and the skills that compound. Read Volume
+  I first regardless of role.</p>
+  <div class="cards">
+    <a class="doc" href="05-skillup-working-with-ai.html">
+      <span class="dn">05 · volume I</span>
+      <h3>Working with AI</h3>
+      <p>What the tools mechanically are · good at / bad at · configuring them for your codebase ·
+      prompt anatomy and context · reading code · pairing · <strong>the six-question review pass</strong>
+      · failures by category · the mindset.</p>
+      <span class="meta">23 sections · KB files 01–06</span>
+    </a>
+    <a class="doc" href="06-skillup-architecture.html">
+      <span class="dn">06 · volume II</span>
+      <h3>Architecture &amp; Design</h3>
+      <p>The eight-move design process · building blocks and what each costs · the patterns worth
+      knowing · layered, clean, DDD, event sourcing, ADRs · API design beyond the basics ·
+      distributed systems and resilience.</p>
+      <span class="meta">26 sections · KB files 07–09, 11, 44</span>
+    </a>
+    <a class="doc" href="07-skillup-craft.html">
+      <span class="dn">07 · volume III</span>
+      <h3>Engineering Craft</h3>
+      <p>Review priorities and feedback that lands · reviewing generated PRs · hypothesis debugging ·
+      incidents and post-mortems · performance by symptom · security by what actually happens ·
+      testing, mocking, coverage.</p>
+      <span class="meta">28 sections · KB files 12–16</span>
+    </a>
+    <a class="doc" href="08-skillup-cs-foundations.html">
+      <span class="dn">08 · volume IV</span>
+      <h3>CS Foundations &amp; the Stack</h3>
+      <p>Big-O without the puzzles · six data structures · algorithm patterns · <strong>one HTTP
+      request in twelve steps</strong> · DNS, TCP, TLS, CORS properly · query plans, indexes, window
+      functions, isolation levels.</p>
+      <span class="meta">28 sections · KB files 10, 41–43, 45</span>
+    </a>
+    <a class="doc" href="09-skillup-ship-and-run.html">
+      <span class="dn">09 · volume V</span>
+      <h3>Ship It and Run It</h3>
+      <p>Git's model and the rescue commands · containers, layers, Compose · pipeline stages ·
+      deployment strategies and the two-versions problem · cloud fundamentals · the three pillars,
+      alerting, health checks, IaC, runbooks.</p>
+      <span class="meta">29 sections · KB files 29–34</span>
+    </a>
+    <a class="doc" href="10-skillup-cloud.html">
+      <span class="dn">10 · volume VI</span>
+      <h3>Cloud Mastery</h3>
+      <p>Both tracks: the four primitives, provider mapping, networking, IAM · where code runs ·
+      managed databases and connection pooling · storage, queues, caching · cost optimisation · ML
+      platforms, serving modes, LLM access.</p>
+      <span class="meta">25 sections · KB files 35–40</span>
+    </a>
+    <a class="doc" href="11-skillup-data-ai.html">
+      <span class="dn">11 · volume VII</span>
+      <h3>Data, AI &amp; Emerging Tech</h3>
+      <p>MLOps and the two drifts · pipeline layers and incremental-load traps · AI-or-not · success
+      metrics and UX · <strong>responsible AI as engineering requirements</strong> · agents,
+      guardrails, MCP · privacy, quantum, Wasm, workflow automation.</p>
+      <span class="meta">33 sections · KB files 17–21, 27, 49–51</span>
+    </a>
+    <a class="doc" href="12-skillup-thinking-capstone.html">
+      <span class="dn">12 · volume VIII</span>
+      <h3>Thinking, Career &amp; Capstone</h3>
+      <p>Decisions, debt, refactor vs rewrite · decomposition and estimation · answer-first writing,
+      RFCs, saying no · learning and deep work · what compounds · <strong>the eight mental models, the
+      pre-code ritual, the five levels</strong>.</p>
+      <span class="meta">31 sections · KB files 22–26, 28, 46–48, 53, 54</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-intv">
+  <h2><span class="gn">Track 3 · 2 documents</span> Interview &amp; reasoning</h2>
+  <p class="gd">Preparing for a fullstack interview, and the reasoning method underneath the four
+  technical rounds.</p>
+  <div class="cards">
+    <a class="doc" href="13-fullstack-interview-playbook.html">
+      <span class="dn">13 · playbook</span>
+      <h3>Three Levels Down</h3>
+      <p>Built around a real CV. Seventeen reasoning competencies · a claim-by-claim map of what will
+      be probed · 35 graded questions with weak/good/senior answers · technical depth across ten
+      chapters · three annotated transcripts · what loses offers.</p>
+      <span class="meta">5,971 lines · the largest document here</span>
+    </a>
+    <a class="doc" href="14-senior-reflex.html">
+      <span class="dn">14 · no code</span>
+      <h3>The Senior Reflex</h3>
+      <p>Coding, design, system design and debugging — what to think, in what order, with no code at
+      all. Thirty-five reflexes, each scenario as <em>the ask → what's tested → what to think → what
+      to do → the tell</em>. Ends with five levels and a practice plan.</p>
+      <span class="meta">35 reflexes · 7 parts</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-anly">
+  <h2><span class="gn">Track 4 · 2 documents</span> Data analyst</h2>
+  <p class="gd">One full corporate project run end to end, and the course on the craft that makes the
+  numbers trustworthy.</p>
+  <div class="cards">
+    <a class="doc" href="15-data-analyst-project-playbook.html">
+      <span class="dn">15 · case study</span>
+      <h3>The MedixDirect Margin Investigation</h3>
+      <p>A pharmaceutical e-commerce margin decline, worked through ten stages: intake, charter, metric
+      specification, reconciliation, decomposition, driver analysis, recommendations and the memo —
+      with the arithmetic verified and the traps named at each stage.</p>
+      <span class="meta">10 stages · 4,965 lines</span>
+    </a>
+    <a class="doc" href="16-data-analyst-bootcamp.html">
+      <span class="dn">16 · course</span>
+      <h3>Raw to Trusted</h3>
+      <p>Eighteen modules of concepts, not code: grain and dimensional modelling · <strong>how to know
+      the data is dirty</strong> · cleaning technique by dirt type · ETL and pipeline operations · the
+      bias catalogue · metric design · visualisation and dashboards.</p>
+      <span class="meta">18 modules · 5,525 lines</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-ds">
+  <h2><span class="gn">Track 5 · 4 documents</span> Data science</h2>
+  <p class="gd">A four-file set: learn it, understand the judgement, look it up, then prepare for the
+  interview.</p>
+  <div class="cards">
+    <a class="doc" href="17-data-science-foundations.html">
+      <span class="dn">17 · start here</span>
+      <h3>From Zero to Data Scientist</h3>
+      <p>The beginner-to-expert ladder: what the job is, supervised and unsupervised learning, when to
+      use which model, the maths you actually need, the workflow, and a five-level progression.</p>
+      <span class="meta">1,531 lines</span>
+    </a>
+    <a class="doc" href="18-data-science-guide.html">
+      <span class="dn">18 · guide</span>
+      <h3>Data Science Guide</h3>
+      <p>The judgement layer — framing problems, evaluation that means something, leakage, base rates,
+      and the reasoning procedures behind good analysis.</p>
+      <span class="meta">1,287 lines</span>
+    </a>
+    <a class="doc" href="19-data-science-cheatsheet.html">
+      <span class="dn">19 · reference</span>
+      <h3>Data Science Cheat Sheet</h3>
+      <p>The lookup layer: 23 sections covering statistics, models, metrics, preprocessing and the
+      decisions each involves.</p>
+      <span class="meta">23 sections</span>
+    </a>
+    <a class="doc" href="20-data-science-interview.html">
+      <span class="dn">20 · interview</span>
+      <h3>Data Science Interview</h3>
+      <p>Eight graded questions with weak, good and senior answers, plus what each is actually
+      scoring.</p>
+      <span class="meta">8 graded questions</span>
+    </a>
+  </div>
+</section>
+
+<section class="group g-ai">
+  <h2><span class="gn">Track 6 · 4 documents</span> AI engineering</h2>
+  <p class="gd">The same four-file shape for building products on foundation models.</p>
+  <div class="cards">
+    <a class="doc" href="21-ai-engineering-foundations.html">
+      <span class="dn">21 · start here</span>
+      <h3>From Zero to AI Engineer</h3>
+      <p>What an LLM is and how it was trained · attention in plain language · why hallucination is
+      structural · every building block by mechanism — prompting, structured output, embeddings, RAG,
+      tools, fine-tuning · a five-rung ladder and a six-month plan.</p>
+      <span class="meta">19 foundations · 6 parts</span>
+    </a>
+    <a class="doc" href="22-ai-engineering-guide.html">
+      <span class="dn">22 · guide</span>
+      <h3>AI Engineering Guide</h3>
+      <p>The judgement layer: trust boundaries, eval-first development, context engineering, cost
+      control, and the reasoning procedures for building on a probabilistic dependency.</p>
+      <span class="meta">1,575 lines</span>
+    </a>
+    <a class="doc" href="23-ai-engineering-cheatsheet.html">
+      <span class="dn">23 · reference</span>
+      <h3>AI Engineering Cheat Sheet</h3>
+      <p>The API-level lookup: 24 sections on models, parameters, caching, tool use, agents,
+      retrieval and evaluation.</p>
+      <span class="meta">24 sections</span>
+    </a>
+    <a class="doc" href="24-ai-engineering-interview.html">
+      <span class="dn">24 · interview</span>
+      <h3>AI Engineering Interview</h3>
+      <p>Ten graded questions covering trust boundaries, evaluation, cost, retrieval debugging and
+      when not to use a model at all.</p>
+      <span class="meta">10 graded questions</span>
+    </a>
+  </div>
+</section>
+
+<section class="group" style="--stripe: var(--ink);">
+  <h2><span class="gn">Reference</span> Routes by role</h2>
+  <p class="gd">Nobody needs all twenty-five. Pick the route that matches what you are doing.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th style="width:23%">If you are…</th><th style="width:40%">Read, in this order</th><th>Why this route</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Completely new</strong></td>
+        <td class="route">00 → 01 → 02 → 03 → 05</td>
+        <td>The discipline, then the stack, then the AI-era working habits. Stop after 03 if you only need to be productive.</td>
+      </tr>
+      <tr>
+        <td><strong>A backend developer</strong></td>
+        <td class="route">01 → 02 → 03 → 06 → 07 → 08 → 09</td>
+        <td>The stack, then architecture, craft, CS foundations and delivery. The four that most affect backend work.</td>
+      </tr>
+      <tr>
+        <td><strong>A frontend developer</strong></td>
+        <td class="route">01 → 02 → 03 → 07 → 14</td>
+        <td>React and Next.js in context, then review and debugging craft, then the reasoning file.</td>
+      </tr>
+      <tr>
+        <td><strong>Interview-preparing</strong></td>
+        <td class="route">14 → 13 → 08 → 12</td>
+        <td><strong>Reasoning method first</strong>, then the loop itself, then the two knowledge gaps that most often read as junior.</td>
+      </tr>
+      <tr>
+        <td><strong>A data analyst</strong></td>
+        <td class="route">16 → 15 → 17 → 19</td>
+        <td>The craft course, then a full project worked end to end, then the statistics underneath.</td>
+      </tr>
+      <tr>
+        <td><strong>A data scientist</strong></td>
+        <td class="route">17 → 18 → 04 → 11 → 19</td>
+        <td>Foundations, judgement, this project's ML layer, then MLOps and responsible AI.</td>
+      </tr>
+      <tr>
+        <td><strong>An AI engineer</strong></td>
+        <td class="route">21 → 22 → 11 → 23 → 24</td>
+        <td>Mechanism, then judgement, then agents and evaluation in production, then the reference.</td>
+      </tr>
+      <tr>
+        <td><strong>Moving toward senior</strong></td>
+        <td class="route">05 → 06 → 07 → 12</td>
+        <td>The AI review discipline, architecture, craft, and the capstone on how seniors actually think.</td>
+      </tr>
+      <tr>
+        <td><strong>Doing DevOps or cloud work</strong></td>
+        <td class="route">09 → 10 → 06</td>
+        <td>Delivery and operations, then cloud in both tracks, then the architecture it serves.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<div class="note">
+  <span class="tag">How to use this folder</span>
+  <p>Every document is a single self-contained HTML file — no build step, no dependencies beyond
+  Google Fonts, and all the cross-links are relative. That means:</p>
+  <ul>
+    <li><strong>Open <code>index.html</code> in a browser</strong> and everything works, straight off
+    disk.</li>
+    <li><strong>Push the folder to GitHub</strong> and enable Pages on it — the links resolve
+    unchanged.</li>
+    <li>Each document has a sticky contents rail that highlights the section you are reading, and
+    respects your system light/dark preference.</li>
+  </ul>
+</div>
+
+<div class="note">
+  <span class="tag">Two corrections carried throughout</span>
+  <p>The source markdown says the backend runs on port <code>3000</code> and that the AI service uses
+  <strong>Groq</strong>. Both changed: the backend moved to <strong>3010</strong> because Docker
+  Desktop holds 3000, and the LLM provider is now the <strong>Claude API</strong>. Where the handbooks
+  and the markdown disagree, the handbooks are current.</p>
+</div>
+
+<div class="foot">
+  <p><strong>Where this comes from.</strong> These 25 documents are the taught, navigable edition of
+  108 markdown files across three knowledge bases — <code>software-engineering-foundations/</code>
+  (15 files), <code>onboarding-knowledge-base/</code> (39) and
+  <code>skill-upgrading-knowledge-base/</code> (54) — plus the standalone playbooks and the data
+  science and AI engineering sets. The originals hold the longer code examples and exercises; these
+  carry the concepts, the mechanisms and the judgement.</p>
+  <p><strong>On what will age.</strong> Framework defaults, provider products and tool names will
+  move. The reasoning will not: how systems fail, where authorisation belongs, what a trade-off costs,
+  and how to tell a real improvement from a plausible one.</p>
+</div>
+
+</div>

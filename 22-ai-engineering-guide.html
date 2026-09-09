@@ -1,0 +1,1574 @@
+<title>Building With Models</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=Fira+Mono:wght@400;500;700&display=swap">
+
+<style>
+/* ============================================================
+   BUILDING WITH MODELS — the AI engineering guide
+   Series identity: warm-neutral graphite ground, one accent
+   per file. This file: crimson.
+   ============================================================ */
+
+:root {
+  --ground:      #F5F4F2;
+  --ground-2:    #FFFFFF;
+  --panel:       #EAE8E6;
+  --panel-2:     #DFDCDA;
+  --ink:         #17171A;
+  --ink-2:       #45444A;
+  --ink-3:       #706E77;
+  --rule:        #CFCCCA;
+  --rule-2:      #E6E3E1;
+  --accent:      #A6234B;
+  --accent-soft: #FAE4EA;
+  --accent-ink:  #7C1637;
+  --good:        #1F6B45;
+  --good-soft:   #E0EFE7;
+  --warn:        #8A5A0A;
+  --warn-soft:   #F6EEDD;
+  --bad:         #7E1620;
+  --bad-soft:    #F6DCDE;
+  --shadow:      0 1px 2px rgba(23,23,26,.06), 0 10px 26px -18px rgba(23,23,26,.22);
+
+  --measure: 69ch;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:    "Spectral", Georgia, "Times New Roman", serif;
+  --mono:    "Fira Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #111013;
+    --ground-2:    #17161A;
+    --panel:       #1D1C21;
+    --panel-2:     #26242B;
+    --ink:         #ECEAEF;
+    --ink-2:       #B6B3BD;
+    --ink-3:       #85828D;
+    --rule:        #33313A;
+    --rule-2:      #26242B;
+    --accent:      #F0879F;
+    --accent-soft: #331420;
+    --accent-ink:  #F7AFC0;
+    --good:        #5CBF8E;
+    --good-soft:   #10281D;
+    --warn:        #E2AF4A;
+    --warn-soft:   #2C2413;
+    --bad:         #F2A0A6;
+    --bad-soft:    #38181C;
+    --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #111013;
+  --ground-2:    #17161A;
+  --panel:       #1D1C21;
+  --panel-2:     #26242B;
+  --ink:         #ECEAEF;
+  --ink-2:       #B6B3BD;
+  --ink-3:       #85828D;
+  --rule:        #33313A;
+  --rule-2:      #26242B;
+  --accent:      #F0879F;
+  --accent-soft: #331420;
+  --accent-ink:  #F7AFC0;
+  --good:        #5CBF8E;
+  --good-soft:   #10281D;
+  --warn:        #E2AF4A;
+  --warn-soft:   #2C2413;
+  --bad:         #F2A0A6;
+  --bad-soft:    #38181C;
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 17.5px; line-height: 1.58; -webkit-font-smoothing: antialiased; }
+
+.shell { display: grid; grid-template-columns: 274px minmax(0,1fr); align-items: start; max-width: 1500px; margin: 0 auto; }
+.rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 60px 26px; border-right: 1px solid var(--rule); background: var(--ground); font-family: var(--display); font-size: 12.5px; }
+.series { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 2px 8px; display: inline-block; margin-bottom: 10px; }
+.rail-brand { font-weight: 700; font-size: 15.5px; letter-spacing: -.02em; line-height: 1.15; }
+.rail-sub { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding: 5px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 12px; }
+.rail nav { display: flex; flex-direction: column; gap: 1px; }
+.rail-group { font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 5px; }
+.rail-group.hot { color: var(--accent); }
+.rail a { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 7px; padding: 4px 7px 4px 5px; border-radius: 3px; color: var(--ink-2); text-decoration: none; line-height: 1.3; border-left: 2px solid transparent; font-weight: 600; }
+.rail a:hover { background: var(--panel); color: var(--ink); }
+.rail a .n { font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-3); padding-top: 2px; }
+.rail a.on { background: var(--accent-soft); color: var(--accent-ink); border-left-color: var(--accent); }
+.rail a.on .n { color: var(--accent); }
+.rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.doc { padding: 0 clamp(18px,4.5vw,70px) 135px; min-width: 0; }
+.doc > * { max-width: var(--measure); }
+.doc > .wide, .doc > .hero, .doc > .part, .doc > .mod, .doc > .band, .doc > .flow, .doc > .tw, .doc > .grid2, .doc > .cols { max-width: none; }
+
+h1,h2,h3,h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
+h2 { font-size: clamp(25px,3.1vw,35px); font-weight: 700; }
+h3 { font-size: 20px; font-weight: 700; margin: 42px 0 12px; padding-top: 13px; border-top: 1px solid var(--rule-2); }
+h4 { font-size: 15.5px; font-weight: 700; margin: 26px 0 8px; }
+p { margin: 0 0 1em; }
+strong { font-weight: 600; }
+a { color: var(--accent-ink); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 9px; }
+.lede { font-size: 19.5px; line-height: 1.46; color: var(--ink-2); }
+.small { font-size: 13.5px; color: var(--ink-2); }
+code { font-family: var(--mono); font-size: .85em; background: var(--panel); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--rule-2); }
+ul, ol { margin: 0 0 1em; padding-left: 1.28em; }
+li { margin-bottom: .38em; }
+ol.proc { list-style: none; padding-left: 0; counter-reset: p; }
+ol.proc > li { counter-increment: p; position: relative; padding-left: 40px; margin-bottom: 1.05em; }
+ol.proc > li::before { content: counter(p, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--rule); background: var(--ground-2); border-radius: 3px; padding: 2px 5px; }
+
+.hero { padding: clamp(36px,6.5vw,80px) 0 40px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; }
+.hero h1 { font-size: clamp(36px,6.6vw,72px); font-weight: 700; letter-spacing: -.04em; line-height: .99; margin-bottom: 20px; max-width: 20ch; }
+.hero h1 .thin { font-weight: 600; color: var(--ink-3); }
+.hero .lede { max-width: 62ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 22px; margin-top: 26px; padding-top: 17px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.hero-meta b { color: var(--ink-2); font-weight: 500; }
+
+.part { margin: 100px 0 38px; padding: 23px 0 19px; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.part .pn { font-family: var(--mono); font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 9px; }
+.part h2 { font-size: clamp(29px,4.2vw,46px); max-width: 24ch; }
+.part .lede { margin-top: 14px; max-width: 62ch; }
+
+.mod { margin: 78px 0 26px; padding: 14px 17px 16px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--ground-2); box-shadow: var(--shadow); scroll-margin-top: 14px; }
+.mod .mn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px; }
+.mod h2 { font-size: clamp(22px,2.7vw,31px); max-width: 30ch; }
+.mod .lede { font-size: 16.5px; margin: 9px 0 0; max-width: 60ch; }
+.band { margin: 78px 0 26px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); scroll-margin-top: 14px; }
+.band h2 { max-width: 26ch; }
+.band .lede { margin-top: 12px; max-width: 62ch; }
+
+.sheet { border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 9px; padding: 7px 13px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+.sheet > .foot { padding: 10px 14px 12px; border-top: 1px solid var(--rule-2); background: var(--panel); font-size: 13.5px; color: var(--ink-2); }
+.sheet > .foot p:last-child { margin-bottom: 0; }
+pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; overflow-x: auto; padding: 14px 15px; background: var(--ground-2); color: var(--ink); tab-size: 2; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px,1fr)); gap: 16px; margin: 20px 0; }
+.cols > .sheet { margin: 0; }
+
+.note, .warn, .bad, .good { border: 1px solid var(--rule); border-left-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 14px 17px 15px; margin: 22px 0; font-size: 16.5px; }
+.note { border-left-color: var(--accent); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); border-width: 2px; border-left-width: 4px; }
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; margin-bottom: 6px; }
+.note .tag { color: var(--accent); } .warn .tag { color: var(--warn); }
+.bad .tag { color: var(--bad); } .good .tag { color: var(--good); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child { margin-bottom: 0; }
+
+.ex { border: 1px solid var(--accent); border-radius: 4px; background: var(--ground-2); margin: 24px 0; overflow: hidden; }
+.ex > .q { padding: 13px 16px 14px; border-bottom: 1px dashed var(--rule); }
+.ex .qt { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+.ex > .q p:last-child { margin-bottom: 0; }
+.ex summary { cursor: pointer; list-style: none; padding: 10px 16px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-soft); display: flex; align-items: center; gap: 9px; }
+.ex summary::-webkit-details-marker { display: none; }
+.ex summary::before { content: "\25B8"; color: var(--accent); transition: transform .15s ease; }
+.ex details[open] summary::before { transform: rotate(90deg); }
+.ex summary:hover { background: var(--panel-2); }
+.ex summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.ex .sol { padding: 16px; border-top: 1px solid var(--rule); font-size: 16.5px; }
+.ex .sol > *:first-child { margin-top: 0; }
+.ex .sol > *:last-child { margin-bottom: 0; }
+.ex .sol pre { border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); }
+
+.exit { border: 1px solid var(--good); border-top-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 16px 18px 17px; margin: 28px 0; }
+.exit .tag { color: var(--good); }
+.exit ul { list-style: none; padding-left: 0; margin-bottom: 0; font-size: 15.5px; }
+.exit li { position: relative; padding-left: 26px; margin-bottom: .45em; }
+.exit li::before { content: "\2610"; position: absolute; left: 0; top: -1px; font-family: var(--mono); font-size: 15px; color: var(--good); }
+
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-family: var(--display); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); vertical-align: top; line-height: 1.4; }
+thead th { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; border-bottom: 1px solid var(--rule); }
+tbody tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td code { font-size: 12px; }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; } .mid { color: var(--warn); font-weight: 600; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(252px,1fr)); gap: 14px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 4px; padding: 13px 15px 14px; background: var(--ground-2); font-size: 15px; }
+.card h4 { margin: 0 0 6px; } .card p:last-child { margin-bottom: 0; }
+.ascii { font-family: var(--mono); font-size: 12px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 15px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+.disclaimer { margin: 26px 0 0; padding: 12px 15px; border: 1px dashed var(--rule); border-radius: 4px; background: var(--panel); font-size: 13px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 36px 0; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px clamp(18px,4vw,36px) 22px; }
+  .rail nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 2px 15px; }
+  .rail-group { grid-column: 1 / -1; }
+  .doc { padding-top: 6px; }
+  .part { margin-top: 66px; } .mod, .band { margin-top: 54px; }
+}
+@media (max-width: 520px) { body { font-size: 16.5px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+
+<aside class="rail">
+  <span class="series">Series · 3 of 4</span>
+  <div class="rail-brand">Building<br>With Models</div>
+  <div class="rail-sub">The AI engineering course</div>
+  <nav id="toc">
+    <a href="#open"><span class="n">§</span><span>How to use this</span></a>
+
+    <div class="rail-group hot">I · How to think</div>
+    <a href="#t1"><span class="n">01</span><span>Is this an AI problem?</span></a>
+    <a href="#t2"><span class="n">02</span><span>Probabilistic systems</span></a>
+    <a href="#t3"><span class="n">03</span><span>Eval-first</span></a>
+    <a href="#t4"><span class="n">04</span><span>Context engineering</span></a>
+    <a href="#t5"><span class="n">05</span><span>Decomposition</span></a>
+    <a href="#t6"><span class="n">06</span><span>Cost &amp; latency as design</span></a>
+    <a href="#t7"><span class="n">07</span><span>Trust boundaries</span></a>
+    <a href="#t8"><span class="n">08</span><span>Failure-mode thinking</span></a>
+    <a href="#t9"><span class="n">09</span><span>The human in the loop</span></a>
+    <a href="#t10"><span class="n">10</span><span>Measuring what matters</span></a>
+
+    <div class="rail-group">II · The build</div>
+    <a href="#m1"><span class="n">11</span><span>The model surface</span></a>
+    <a href="#m2"><span class="n">12</span><span>Prompting in practice</span></a>
+    <a href="#m3"><span class="n">13</span><span>Structure &amp; tools</span></a>
+    <a href="#m4"><span class="n">14</span><span>RAG end to end</span></a>
+    <a href="#m5"><span class="n">15</span><span>Agents</span></a>
+    <a href="#m6"><span class="n">16</span><span>Evals in depth</span></a>
+    <a href="#m7"><span class="n">17</span><span>Cost engineering</span></a>
+    <a href="#m8"><span class="n">18</span><span>Latency</span></a>
+    <a href="#m9"><span class="n">19</span><span>Safety</span></a>
+    <a href="#m10"><span class="n">20</span><span>Observability &amp; ops</span></a>
+    <a href="#m11"><span class="n">21</span><span>Fine-tuning</span></a>
+
+    <div class="rail-group">III · The DS underneath</div>
+    <a href="#d1"><span class="n">22</span><span>When classical wins</span></a>
+    <a href="#d2"><span class="n">23</span><span>Fundamentals you still need</span></a>
+
+    <div class="rail-group">IV · Practice</div>
+    <a href="#p1"><span class="n">24</span><span>What to avoid</span></a>
+    <a href="#p2"><span class="n">25</span><span>The curriculum</span></a>
+  </nav>
+</aside>
+
+<main class="doc">
+
+<header class="hero" id="open">
+  <p class="eyebrow">The course · 3 of 4 · AI engineering</p>
+  <h1>Anyone can call the API. <span class="thin">Building something that keeps working is a different job.</span></h1>
+  <p class="lede">A course in how to think about products built on foundation models — the judgement
+  that decides whether your thing survives real users, real cost and real failure. Ten reasoning
+  procedures, eleven build modules, and the data science underneath.</p>
+  <div class="hero-meta">
+    <span><b>Part I</b> · how to think — the largest part</span>
+    <span><b>Balance</b> · ~75% AI engineering, 25% data science</span>
+    <span><b>API surface</b> · lives in cheat sheet 1, not here</span>
+  </div>
+</header>
+
+<p>There is a specific gap this course exists to close. Following a tutorial gets you a working demo
+in an afternoon — a RAG chatbot, an agent that calls two tools. Then it meets real users and you
+discover that it is confidently wrong about 8% of the time, nobody can tell you whether last week's
+prompt change helped, it costs four times what you projected, and one customer got another
+customer's data because a retrieved document contained an instruction.</p>
+
+<p>None of those are API problems. They are <strong>judgement</strong> problems, and they are what
+this course is about.</p>
+
+<div class="good">
+  <span class="tag">How to use this</span>
+  <p><strong>Part I first, slowly.</strong> Ten reasoning procedures. They contain almost no code and
+  they are the part that transfers when the models change — which they will, twice a year.</p>
+  <p><strong>Then Part II as reference</strong> while you build something. It assumes the API surface
+  from <em>cheat sheet 1</em> and does not repeat it; this is the <em>why</em> and the
+  <em>when</em>.</p>
+  <p><strong>Do the exercises before opening the solution.</strong> Write your answer down. The gap
+  between yours and the reveal is the lesson, and it vanishes if you read the answer first.</p>
+</div>
+
+<header class="part" id="think">
+  <span class="pn">Part I · the largest part</span>
+  <h2>How to think</h2>
+  <p class="lede">Ten procedures you run in your head, in a design review, or at a whiteboard. They
+  are what an interviewer means by "strong AI engineer" when the framework on the job description is
+  one you have never used.</p>
+</header>
+
+<header class="mod" id="t1">
+  <span class="mn">Competency 01 · runs before everything</span>
+  <h2>Is this actually an AI problem?</h2>
+  <p class="lede">The most valuable judgement available, and the one most often skipped because the
+  answer is unfashionable.</p>
+</header>
+
+<p>The industry incentive runs one way: everyone wants to have shipped AI. So the question "should
+this be a model at all?" gets asked rarely and answered defensively. Asking it properly is a
+differentiator, and it will occasionally save a quarter of engineering time.</p>
+
+<h3>The procedure</h3>
+
+<ol class="proc">
+  <li><strong>State the task as input → output, concretely.</strong> Not "AI-powered insights" —
+  "given 40 fields about an employee, produce a paragraph explaining their attrition risk". If you
+  cannot write that sentence, you do not have a specification, you have an aspiration.</li>
+  <li><strong>Ask whether a rule does it.</strong> Genuinely try. Many "AI features" are three
+  <code>if</code> statements with better marketing, and the rule version is faster, free, testable and
+  explainable. If the rule gets 80% of the value, the model has to justify the remaining 20% against
+  real cost.</li>
+  <li><strong>Ask whether classical ML does it.</strong> If the input is tabular and you have labels,
+  a gradient-boosted tree will usually beat an LLM — cheaper, faster, auditable, with feature
+  importances. <a href="#d1">Module 22</a> is entirely this.</li>
+  <li><strong>Ask what "wrong" costs.</strong> Models are wrong sometimes. Not occasionally —
+  <em>structurally</em>. If a wrong answer is unrecoverable and nothing catches it, either add the
+  catcher or do not ship it.</li>
+  <li><strong>Split the computation from the language.</strong> This is the move that makes most AI
+  features safe: <strong>the deterministic system computes; the model narrates.</strong> Calculate
+  margin in SQL, and have the model write the explanation around the number. A hallucination is then a
+  clumsy sentence rather than a wrong figure in a board pack.</li>
+  <li><strong>Name the cheapest version that would still be useful.</strong> Often it is one prompt on
+  one screen, and the agent architecture in the design doc is speculative.</li>
+</ol>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">LLMs are genuinely good at</th><th>LLMs are the wrong tool for</th></tr></thead>
+  <tbody>
+    <tr><td>Unstructured text and images in, judgement out</td><td>Arithmetic, aggregation, anything auditable</td></tr>
+    <tr><td>Summarising, rewriting, explaining, drafting</td><td>Exact reproducibility — same input, same output, forever</td></tr>
+    <tr><td>Extraction into a schema from messy input</td><td>Tabular prediction where you have labels</td></tr>
+    <tr><td>Classification where the categories are fuzzy or numerous</td><td>Classification where a regex or a lookup works</td></tr>
+    <tr><td>Open-ended tasks you cannot enumerate</td><td>Sub-200ms latency or very high volume at low margin</td></tr>
+    <tr><td>Interfaces — turning intent into structured action</td><td>Being the only guard on a destructive action</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="ex">
+  <div class="q">
+    <span class="qt">Exercise 1.1 · 20 minutes</span>
+    <p>A product manager asks for "an AI feature that tells managers which of their people are at risk
+    of leaving, and why." Work through the six steps. What do you actually build?</p>
+  </div>
+  <details>
+    <summary>Show the solution</summary>
+    <div class="sol">
+      <p>The request contains <em>two</em> different problems welded together, and separating them is
+      the whole answer.</p>
+      <h4>1 · Input → output, concretely</h4>
+      <p>"Which people are at risk" — input is tabular employee data, output is a ranked list with
+      scores. "And why" — input is that score plus the contributing factors, output is a paragraph a
+      manager can read.</p>
+      <h4>2–3 · Rule? Classical ML?</h4>
+      <p>The <strong>risk scoring is a classical ML problem, not an LLM problem.</strong> Tabular
+      input, historical labels (who actually left), a need for auditability and feature importances.
+      Gradient boosting. An LLM asked to score attrition from a table would be slower, more expensive,
+      unauditable, and worse.</p>
+      <p>Worth checking the rule baseline first: "flagged if tenure &lt; 12 months and no promotion and
+      manager changed twice" may capture much of the signal. If it does, you now know the model has to
+      beat it, and by how much.</p>
+      <h4>4 · What does wrong cost?</h4>
+      <p>Substantial, and asymmetric. A false positive means a manager has an awkward retention
+      conversation with someone who was happy. A false negative means someone leaves unexpectedly. And
+      there is a category of harm neither metric captures: <strong>this is a prediction about a person,
+      shown to their manager.</strong> That demands a minimum accuracy bar, a review step, and a
+      conversation with HR and legal before it ships. Not a technical decision.</p>
+      <h4>5 · Split computation from language</h4>
+      <p>Here is the architecture the question is really asking for:</p>
+      <pre><code>employee data ──► GRADIENT BOOSTING ──► risk score + SHAP factors
+                  (deterministic,          │
+                   auditable, testable)    │
+                                           ▼
+                                    LLM writes the narrative
+                                    ("tenure and a recent manager
+                                     change are the largest
+                                     contributors...")
+                                           │
+                                           ▼
+                                    manager reads it
+
+⭐ The model NEVER produces the score. It only turns factors
+  the model produced into a sentence. So the worst LLM failure
+  is a badly-worded explanation, not a wrong risk figure.</code></pre>
+      <h4>6 · The cheapest useful version</h4>
+      <p>A ranked list with the top three factors per person, as bullet points, with no LLM at all.
+      Ship that. Add the narrative layer once someone confirms managers actually want prose — often
+      they prefer the bullets, and you have saved the entire LLM surface.</p>
+      <h4>What to say to the PM</h4>
+      <pre><code>Two features, not one.
+
+The scoring is a classical ML problem — tabular data, historical
+labels, and we need to be able to explain it to HR. That's a
+gradient-boosted model, and I'd want a baseline rule first so we
+know whether the model earns its place.
+
+The "why" is the LLM part, and only after we have factors from the
+scoring model to hand it. That keeps the numbers auditable.
+
+Before either: this predicts something about a person and shows it
+to their manager. I'd want HR and legal in the room on what accuracy
+bar we need and what the review step is. That's not a blocker, it's
+just earlier than we'd normally involve them.</code></pre>
+    </div>
+  </details>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Competency 02 · the mental shift</span>
+  <h2>Designing systems that are sometimes wrong</h2>
+  <p class="lede">Every instinct from deterministic software engineering has to be re-derived.</p>
+</header>
+
+<p>Software engineers are trained on systems that are correct or broken. A model is neither: it is
+<em>usually right</em>, in a way that varies with input, and it fails by producing something
+plausible rather than by throwing. That single property invalidates a lot of ordinary practice.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Deterministic instinct</th><th>What replaces it</th></tr></thead>
+  <tbody>
+    <tr><td>"It works" / "it's broken"</td><td><strong>A distribution of quality.</strong> The question is not whether it works but what percentage, on which inputs, and how it fails on the rest.</td></tr>
+    <tr><td>Unit tests with exact assertions</td><td><strong>Evals with a score.</strong> You assert on aggregate quality across a set, not on one exact output.</td></tr>
+    <tr><td>A bug is reproducible</td><td><strong>The same input can produce different output.</strong> Reproduce with a fixed input set, not one case, and expect a rate rather than a yes/no.</td></tr>
+    <tr><td>Fix the bug, it stays fixed</td><td><strong>Fixing one case can break others.</strong> Prompt changes are global. This is why you need a regression set before you start tuning.</td></tr>
+    <tr><td>Errors throw</td><td><strong>Failures are silent and fluent.</strong> A hallucinated citation looks exactly like a real one. You must build the detector.</td></tr>
+    <tr><td>Input validation at the boundary</td><td><strong>Output validation too.</strong> Schema-check, fact-check, guardrail the response — the model's output is untrusted input to the next stage.</td></tr>
+    <tr><td>Refactor freely if tests pass</td><td><strong>Prompt = behaviour.</strong> Reformatting a prompt is a behaviour change. Version it like code and re-run the eval.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The design principle that follows</span>
+  <p><strong>Build the system so that the model being wrong is survivable.</strong> Concretely, four
+  patterns:</p>
+  <p><strong>Constrain the output</strong> so wrong answers are at least well-formed — a schema, an
+  enum, a set of allowed actions. <strong>Verify what you can</strong> programmatically: does the cited
+  document exist, does the SQL parse, is the total within range. <strong>Make it reversible</strong> —
+  drafts a human sends, not emails the model sends. <strong>Show your work</strong> — cite sources so
+  a user can check, which converts an invisible failure into a visible one.</p>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Competency 03 · the discipline</span>
+  <h2>Eval-first</h2>
+  <p class="lede">The single practice that separates a product from a demo. Almost nobody does it
+  early, and everybody who has shipped one wishes they had.</p>
+</header>
+
+<p>Here is the sequence that plays out on nearly every LLM project. You build a prompt. It looks good
+on the three examples you tried. You ship. Users find failures. You change the prompt. It now handles
+those and you have no idea what it broke. Three months in, nobody will touch the prompt because
+nobody can tell whether a change is an improvement.</p>
+
+<p><strong>That is not a discipline problem, it is a measurement problem</strong>, and it is entirely
+preventable by building a twenty-example eval set on day two.</p>
+
+<h3>The procedure</h3>
+
+<ol class="proc">
+  <li><strong>Define what "good" means, in writing, before building.</strong> Not "helpful and
+  accurate". Specific, checkable properties: <em>cites only documents in the context; refuses when the
+  answer isn't there; under 200 words; correct category from the allowed list</em>. Most quality
+  requirements are checkable programmatically once you state them precisely — and stating them
+  precisely is most of the work.</li>
+  <li><strong>Collect 20–50 examples.</strong> Real transcripts if you have them; hard cases you have
+  hit; synthesised only as a last resort, because synthesised examples encode your assumptions about
+  what is hard, which is exactly what you cannot know yet.</li>
+  <li><strong>Split them: train / validation / test.</strong> Tune against train and validation. Score
+  test every round and report <em>that</em> as the headline. Without a held-out split you will
+  hill-climb on noise and overfit the prompt to your own examples.</li>
+  <li><strong>Grade with the cheapest method that works.</strong> Exact match → programmatic check →
+  LLM-as-judge → human. People reach for judges far too early; most requirements are checkable.</li>
+  <li><strong>Wire it into CI.</strong> An eval you run manually is an eval you stop running. A score
+  that appears on every pull request changes the team's behaviour permanently.</li>
+  <li><strong>Change one thing at a time and record the score.</strong> Keep the history. In two
+  months "why is the prompt like that?" has an answer.</li>
+</ol>
+
+<div class="warn">
+  <span class="tag">Trap · the eval that passes while production gets worse</span>
+  <p>Three causes, and you should know which one you have. <strong>The golden set isn't
+  representative</strong> — synthesised, or drawn from an old traffic distribution.
+  <strong>You tuned on the test set</strong> until it stopped being held out. Or <strong>the metric
+  misses what users care about</strong> — you measured factual accuracy and they left because the tone
+  was wrong.</p>
+  <p>The counter is continuous: sample real production traffic into the eval set on a schedule, and
+  keep a test split you look at rarely and never tune against.</p>
+</div>
+
+<div class="ex">
+  <div class="q">
+    <span class="qt">Exercise 3.1 · 25 minutes</span>
+    <p>You have a feature that summarises a customer support thread into three bullet points for the
+    next agent. Design the eval. What do you check, how, and what does "good" mean?</p>
+  </div>
+  <details>
+    <summary>Show the solution</summary>
+    <div class="sol">
+      <p>The instinct is "use an LLM judge to rate summary quality 1–10". That is the expensive,
+      noisy, hardest-to-trust option and it should be the <em>last</em> layer, not the first.</p>
+      <h4>Layer 1 · Programmatic — free, deterministic, catches most regressions</h4>
+      <ul>
+        <li><strong>Exactly three bullets.</strong> Trivially checkable and it will fail more often
+        than you expect.</li>
+        <li><strong>Length bounds</strong> per bullet — a summary that is longer than the thread is a
+        real failure mode.</li>
+        <li><strong>No hallucinated entities.</strong> Extract proper nouns, order numbers, dates,
+        product names from the summary and assert every one appears in the source thread. This is the
+        single highest-value automated check for any summarisation feature and it costs nothing.</li>
+        <li><strong>No PII that wasn't in the source</strong>, and ideally none at all — run a
+        detector.</li>
+        <li><strong>Language matches the thread.</strong> Cheap, and it fails on multilingual traffic.</li>
+      </ul>
+      <h4>Layer 2 · Reference-based — where you have gold summaries</h4>
+      <p>For 20 threads, have a support lead write the ideal summary. Then check <strong>key-fact
+      recall</strong>: list the 3–5 facts the next agent must know (the issue, what was tried, the
+      current state, any promise made) and assert the summary contains each. This is more useful than
+      any similarity score — ROUGE and embedding similarity reward paraphrase, not correctness.</p>
+      <h4>Layer 3 · LLM-as-judge — only for what the above cannot reach</h4>
+      <p>Two things remain genuinely un-programmable: <strong>faithfulness</strong> (does the summary
+      misrepresent what happened?) and <strong>usefulness</strong> (could an agent act on this without
+      reading the thread?). Judge those, with a rubric, one criterion at a time, on a binary or
+      three-point scale — and <strong>validate the judge against ~30 human labels</strong> before
+      trusting it. If judge-human agreement is 65%, your eval is measuring the judge.</p>
+      <h4>Layer 4 · The production signal that beats all of it</h4>
+      <p>Log whether the agent <strong>opened the full thread anyway</strong>. That is a behavioural
+      measure of whether the summary was sufficient, it needs no labelling, and it is closer to the
+      business outcome than any offline score. Pair it with handling time.</p>
+      <h4>What "good" means, written down</h4>
+      <pre><code>MUST (gate — fails the build)
+  · exactly 3 bullets, each 8–30 words
+  · every entity in the summary appears in the source thread
+  · no PII beyond what the source contains
+  · language matches the thread
+
+SHOULD (tracked, alerts on regression)
+  · key-fact recall ≥ 90% on the 20 gold threads
+  · judged faithful ≥ 95% (judge validated at ≥ 80% human agreement)
+  · judged actionable ≥ 85%
+
+PRODUCTION
+  · full-thread open rate after reading the summary — trending down
+  · agent handling time — trending down</code></pre>
+      <p><strong>The transferable lesson:</strong> layer your evals cheapest-first. The entity-check
+      alone catches most hallucination regressions for zero cost, and it would be skipped by anyone who
+      started with a judge.</p>
+    </div>
+  </details>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Competency 04 · the real skill</span>
+  <h2>Context engineering</h2>
+  <p class="lede">"Prompt engineering" was always a misnomer. The job is deciding what information
+  the model sees, in what form, in what order — and the wording is the smallest part of it.</p>
+</header>
+
+<div class="good">
+  <span class="tag">The hierarchy — in order of payoff</span>
+  <pre style="background:var(--ground-2);border:1px solid var(--rule);border-radius:3px;margin:8px 0 0"><code>1  the right CONTEXT          ← biggest win, by a wide margin.
+                               most "bad output" is missing
+                               information, not bad wording.
+2  the right TOOLS            let it go and get what it needs
+3  a constrained OUTPUT SHAPE a schema beats a plea
+4  EXAMPLES for the edge cases
+5  the right EFFORT level
+6  rewording the instruction  ← smallest lever. most fiddled with.</code></pre>
+</div>
+
+<p>When output is bad, the reflex is to rewrite the instruction. Nine times in ten the model did not
+misunderstand — it did not <em>know</em> something. It did not know the customer's tier, that the
+order had already been refunded, what your product calls that feature, or that the user is in
+Germany. No wording fixes an absence.</p>
+
+<h3>The procedure — debugging a bad output</h3>
+
+<ol class="proc">
+  <li><strong>Read the fully rendered prompt.</strong> Not the template — the actual bytes sent, with
+  every variable interpolated. A shocking share of prompt bugs are visible immediately here: an empty
+  variable, a truncated document, an escaped newline, retrieved chunks that are all irrelevant.</li>
+  <li><strong>Ask: could a competent human do this task with only this context?</strong> If not, the
+  problem is context, and no prompt tuning will fix it. This question resolves most cases.</li>
+  <li><strong>Check what got lost.</strong> Was the document truncated? Did retrieval return the wrong
+  chunks? Did conversation history get trimmed and take the crucial turn with it?</li>
+  <li><strong>Check ordering.</strong> Instructions before or after the data matters. Long context
+  gets less attention in the middle — put the critical instruction and the most relevant material
+  near the ends.</li>
+  <li><strong>Only now, change the wording.</strong> And change one thing, re-run the eval, record the
+  score.</li>
+</ol>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Context decision</th><th>The trade-off</th></tr></thead>
+  <tbody>
+    <tr><td><strong>How much to include</strong></td><td>More is not better. Excess context dilutes attention, costs money, and adds latency. Include what a competent human would need — no more.</td></tr>
+    <tr><td><strong>Where to put it</strong></td><td>Stable content first (it is the cache prefix), volatile content last. This is a cost decision <em>and</em> an attention decision at once.</td></tr>
+    <tr><td><strong>How to delimit it</strong></td><td>Explicit markers — <code>&lt;document&gt;…&lt;/document&gt;</code> — with a statement that the content inside is data, not instructions. Also a mild injection defence.</td></tr>
+    <tr><td><strong>Summarise or include raw</strong></td><td>Summarising loses detail you cannot recover; including raw costs tokens. For conversation history, summarise old turns and keep recent ones verbatim.</td></tr>
+    <tr><td><strong>What to do when it won't fit</strong></td><td>In order: retrieve less, compress old turns, use compaction, chunk the task. <strong>Never silently truncate</strong> — that removes information without telling anyone, and the failure looks like a model failure.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Competency 05</span>
+  <h2>Decomposition — pipeline or agent</h2>
+  <p class="lede">Most things built as agents should be pipelines. Knowing when the extra freedom
+  earns its cost is a level marker.</p>
+</header>
+
+<div class="ascii">   THE SPECTRUM — and the cost of each step right
+
+   ONE CALL          you write the prompt. deterministic control flow.
+      │              easiest to eval, cheapest, fastest, most reliable.
+      ▼
+   CHAINED CALLS     you write the sequence. each step evaluable
+      │              separately. still deterministic. ⭐ most production
+      │              LLM value lives here and it is deeply unglamorous.
+      ▼
+   ROUTED / BRANCHED you write the branches; a classifier picks one.
+      │              still bounded. still testable.
+      ▼
+   AGENT             THE MODEL chooses the sequence. unbounded paths,
+                     unbounded cost, and each run is different — which
+                     is exactly what makes it hard to evaluate.
+
+   ⭐ THE TEST: can you enumerate the steps in advance?
+     If yes → pipeline. You get determinism, per-step evals, cheaper
+     runs, and debuggability, for free.
+     If genuinely no → agent, with iteration caps and budgets.</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Pattern</th><th style="width:30%">Use for</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Chain</strong></td><td>Extract → transform → generate</td><td>Each step gets its own eval and its own model. Often the extraction step can run on Haiku while only the final generation needs Opus.</td></tr>
+    <tr><td><strong>Route</strong></td><td>Classify the request, then send it to a specialised prompt</td><td>A cheap classifier plus focused prompts beats one giant prompt trying to handle everything. Also easier to improve one route without touching the others.</td></tr>
+    <tr><td><strong>Parallel + reduce</strong></td><td>Process N documents, then combine</td><td>Latency scales with the slowest, not the sum. The map step is often batchable at 50% cost.</td></tr>
+    <tr><td><strong>Generate then critique</strong></td><td>Quality-critical output</td><td>A second pass reviewing the first catches real errors — but it doubles cost and latency, so measure whether it actually helps before keeping it.</td></tr>
+    <tr><td><strong>Agent</strong></td><td>Open-ended investigation, unknown number of steps</td><td>Cap iterations. Set a token budget. Log every tool call. Accept that evaluation is genuinely harder.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="t6">
+  <span class="mn">Competency 06</span>
+  <h2>Cost and latency as design constraints</h2>
+  <p class="lede">Not optimisations to do later. They are architectural, and retrofitting them means
+  rebuilding.</p>
+</header>
+
+<p>A demo costs nothing because you ran it eleven times. The same design at ten thousand requests a
+day has a monthly bill, and the levers that would have made it cheap — cache-friendly prompt
+structure, a routing step, batchable work — are structural choices you make at the start or not at
+all.</p>
+
+<div class="sheet">
+  <div class="cap">Estimate before you build — the arithmetic takes two minutes</div>
+<pre><code>WORK IT THROUGH, OUT LOUD, AT DESIGN TIME
+
+  requests/day        × tokens in  × input price
+                      + tokens out × output price
+                      = daily cost → × 30 → monthly
+
+  worked example, a support-summary feature:
+    2,000 threads/day
+    ~4,000 input tokens (thread + instructions)
+    ~150 output tokens
+    on Opus 5 ($5 / $25 per MTok):
+      in  2,000 × 4,000  = 8M tok/day  × $5/1M  = $40/day
+      out 2,000 × 150    = 0.3M        × $25/1M = $7.50/day
+      ⇒ ~$47/day ≈ $1,425/month
+
+  NOW APPLY THE LEVERS
+    · the instruction block is identical every time → cache it.
+      if 1,500 of the 4,000 input tokens are the stable prefix,
+      caching them cuts that portion to ~0.1× ⇒ saves ~$13/day
+    · nobody is waiting for a summary → BATCH IT ⇒ 50% off
+    · does summarisation need Opus? measure Sonnet 5 on the eval
+      ⇒ potentially 60% off the remainder
+
+  ⇒ the same feature is plausibly $200–400/month instead of $1,425,
+    and every one of those levers had to be designed in.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The framing that prevents bad optimisation</span>
+  <p><strong>Measure cost per completed task, not per request.</strong> A cheaper model that needs
+  three attempts, or an agent that loops twice as long, is not cheaper. This single reframing kills
+  most of the bad cost decisions people make — particularly the reflex to downgrade the model, which
+  frequently increases total spend by increasing retries and turns.</p>
+</div>
+
+<header class="mod" id="t7">
+  <span class="mn">Competency 07 · the one that matters most</span>
+  <h2>Trust boundaries</h2>
+  <p class="lede">Where the model's output stops being a suggestion and starts being an action — and
+  what must sit at that line.</p>
+</header>
+
+<div class="bad">
+  <span class="tag">The rule</span>
+  <p><strong>Prompts are advisory. Code is enforcement.</strong></p>
+  <p>If an agent can delete, pay, email externally, or change permissions, the authorisation check
+  lives in <em>your code</em>, evaluated against the <em>caller's</em> identity — not in the system
+  prompt, not in the tool description, and not in an instruction telling the model to be careful. Any
+  guard expressible in natural language is a guard that untrusted text can argue with.</p>
+</div>
+
+<div class="ascii">   WHERE THE BOUNDARIES ARE
+
+   user input ─────┐
+   retrieved doc ──┤
+   tool result ────┼──► ALL UNTRUSTED. May contain instructions.
+   web page ───────┤    The model cannot reliably tell data from
+   email body ─────┘    instructions. Assume it cannot at all.
+                          │
+                          ▼
+                     ┌─────────┐
+                     │  MODEL  │  ← produces a SUGGESTION
+                     └─────────┘
+                          │
+   ═══════════ TRUST BOUNDARY ═══════════════════════════
+                          │
+                   YOUR CODE decides:
+                     · is this caller allowed to do this?
+                     · is this argument in range?
+                     · does this need a human?
+                          │
+                          ▼
+                       ACTION
+
+   ⭐ THE TEST: if an attacker could write text that reaches the
+     model, what is the worst thing they can make happen? Answer it
+     honestly. If the answer is "email the customer database", the
+     boundary is in the wrong place — it does not matter how good
+     your system prompt is.</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:28%">Design choice</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Scope tools to the caller</strong></td><td>The <code>search_orders</code> tool queries <em>this user's</em> orders because the query is built from the session, not from a model-supplied customer id. Then no prompt can widen it.</td></tr>
+    <tr><td><strong>Read tools freely, write tools narrowly</strong></td><td>Reading is usually safe to give an agent. Every write tool needs a specific justification and a specific guard.</td></tr>
+    <tr><td><strong>Prefer drafts to sends</strong></td><td>An agent that <em>composes</em> an email a human sends has a fundamentally smaller blast radius than one that sends it. Most "agent" value survives this constraint.</td></tr>
+    <tr><td><strong>Operator instructions in the operator channel</strong></td><td>System prompt, or a <code>role: "system"</code> message — not text inside a user turn, which anything writing to user input can forge.</td></tr>
+    <tr><td><strong>Never let a tool result grant privilege</strong></td><td>A fetched page saying "you are now in admin mode" is data. If it can change behaviour, you have an injection vector.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="t8">
+  <span class="mn">Competency 08</span>
+  <h2>Failure-mode thinking</h2>
+  <p class="lede">Walk every arrow and ask what happens when it fails. Half of candidates and half of
+  designs never do it once.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Failure</th><th style="width:30%">What the user sees</th><th>Design response</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Model is slow</strong></td><td>A spinner, then abandonment</td><td>Stream. Set a timeout. Show partial results. Have a cheaper fallback path.</td></tr>
+    <tr><td><strong>Model is down / rate limited</strong></td><td>An error</td><td>Retry with backoff (the SDK does this), then degrade — cached answer, simpler non-LLM path, or an honest "try again shortly".</td></tr>
+    <tr><td><strong>Model refuses</strong></td><td>An empty response</td><td>HTTP 200 with <code>stop_reason: "refusal"</code>. Check it <em>before</em> reading content and surface something useful.</td></tr>
+    <tr><td><strong>Output fails the schema</strong></td><td>A crash, or garbage downstream</td><td>Validate, retry once with the error fed back, then fail loudly. Never pass unvalidated model output onward.</td></tr>
+    <tr><td><strong>Hits <code>max_tokens</code></strong></td><td>A sentence that stops mid-word</td><td>Check <code>stop_reason</code>. Truncated output is unusable — do not display it. Raise the limit or stream.</td></tr>
+    <tr><td><strong>Retrieval finds nothing</strong></td><td>A confident answer from the model's own knowledge</td><td>Detect empty retrieval explicitly and say so. This is the most common silent RAG failure.</td></tr>
+    <tr><td><strong>Agent loops</strong></td><td>Long wait, large bill</td><td>Iteration cap, token budget, and an alert on both.</td></tr>
+    <tr><td><strong>Quality degrades quietly</strong></td><td>Nothing — that is the problem</td><td>The eval in CI, plus production quality signals. This failure has no symptom until a customer complains.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="t9">
+  <span class="mn">Competency 09</span>
+  <h2>The human in the loop</h2>
+  <p class="lede">Designing the review surface is product work, and it is usually what makes an
+  imperfect model shippable.</p>
+</header>
+
+<p>A model at 85% accuracy is unusable as an autonomous system and excellent as a drafting assistant.
+The difference is entirely in the interface. So the question is not "is the model good enough to
+ship?" but <strong>"what review surface makes this level of accuracy useful?"</strong></p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Draft, don't send</h4>
+    <p>Pre-fill and let a human approve. The most common shape of a genuinely successful AI feature,
+    and it converts model errors into a slightly slower human workflow rather than an incident.</p>
+  </div>
+  <div class="card">
+    <h4>Rank, don't decide</h4>
+    <p>Give a prioritised list rather than an automated action. The human applies context the model
+    does not have, and the cost of a bad ranking is low.</p>
+  </div>
+  <div class="card">
+    <h4>Confidence-gated autonomy</h4>
+    <p>Act automatically above a threshold, route to a human below it. Requires calibrated confidence
+    — and a self-reported "I am 90% sure" from a model is <em>not</em> calibrated confidence.</p>
+  </div>
+  <div class="card">
+    <h4>Make correction cheap and captured</h4>
+    <p>If fixing the output is one click, people will. And <strong>log the correction</strong> — edits
+    are free labelled data and the highest-quality eval source you will ever get.</p>
+  </div>
+</div>
+
+<div class="warn">
+  <span class="tag">Trap · automation bias</span>
+  <p>Humans rubber-stamp. A reviewer shown a plausible AI draft approves it far more readily than they
+  would write it themselves, and the review becomes theatre — which is worse than no review, because
+  it creates the appearance of a control.</p>
+  <p><strong>Counters:</strong> show the <em>evidence</em> alongside the draft so review means checking
+  rather than reading; require an active choice rather than a default-accept; and sample-audit the
+  approved outputs, because an approval rate of 99% tells you the review is not happening.</p>
+</div>
+
+<header class="mod" id="t10">
+  <span class="mn">Competency 10</span>
+  <h2>Measuring what users actually care about</h2>
+  <p class="lede">Offline scores are a proxy. The proxy and the outcome can move in opposite
+  directions.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Layer</th><th style="width:28%">Example</th><th>Property</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Offline eval</strong></td><td>Faithfulness on the golden set</td><td>Fast, cheap, runs in CI, and only as representative as the set.</td></tr>
+    <tr><td><strong>Online quality signal</strong></td><td>Thumbs, edit rate, regeneration rate, copy rate</td><td>Real users, real distribution — but noisy and biased toward the vocal.</td></tr>
+    <tr><td><strong>Behavioural signal</strong></td><td>Did they open the full thread anyway? Did they accept the draft unedited?</td><td><span class="ok">The best of the three.</span> No labelling needed, hard to game, closest to usefulness.</td></tr>
+    <tr><td><strong>Business outcome</strong></td><td>Handling time, resolution rate, conversion, retention</td><td>What you were actually hired to move. Slow, confounded, and the only one that ultimately counts.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">Instrument the behavioural signal on day one</span>
+  <p>It is nearly free and almost nobody does it. <strong>Did the user accept the output unchanged,
+  edit it, regenerate, or abandon?</strong> Those four states tell you more about quality than any
+  offline metric, they arrive continuously, and the edits themselves become your next eval set.</p>
+  <p>The regeneration rate in particular is a superb signal — it is an unambiguous statement that the
+  output was not good enough, given for free, by the user.</p>
+</div>
+
+<div class="exit">
+  <span class="tag">Checklist · Part I, before you move on</span>
+  <ul>
+    <li>You ask "should this be a model at all?" and you can name what a rule or classical ML would do instead.</li>
+    <li>You separate the computation from the narration.</li>
+    <li>You think in distributions of quality, not works/broken.</li>
+    <li>You build a 20-example eval before tuning anything, with a held-out test split.</li>
+    <li>When output is bad you read the fully rendered prompt before rewording it.</li>
+    <li>You can name the test for pipeline vs agent — can you enumerate the steps?</li>
+    <li>You estimate monthly cost at design time, and you know which levers are structural.</li>
+    <li>You can say where the trust boundary is and what enforces it.</li>
+    <li>You walk every arrow and ask what happens when it fails.</li>
+    <li>You design the review surface, not just the model call.</li>
+    <li>You instrument accept / edit / regenerate / abandon from day one.</li>
+  </ul>
+</div>
+
+<header class="part" id="build">
+  <span class="pn">Part II</span>
+  <h2>The build</h2>
+  <p class="lede">Eleven modules on doing it. The API surface itself lives in cheat sheet 1 — this is
+  the <em>why</em>, the <em>when</em>, and the decisions that are hard to reverse.</p>
+</header>
+
+<header class="mod" id="m1">
+  <span class="mn">Module 11</span>
+  <h2>The model surface</h2>
+  <p class="lede">What the knobs actually do to your product, rather than what they are called.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Decision</th><th>How to make it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Which model</strong></td><td>Start with the most capable one. Get it working, build the eval, <em>then</em> measure whether a cheaper model holds quality on your specific task. Starting cheap means you never learn whether the ceiling was the model or your prompt.</td></tr>
+    <tr><td><strong>Effort level</strong></td><td>A property of the route, not a global setting. Coding and long-horizon agentic work repay high effort; classification and chat usually do not. Tune per route on real requests.</td></tr>
+    <tr><td><strong>Thinking display</strong></td><td>If users watch generation, showing summarised reasoning turns a long silence into visible progress. If they do not, leave it off — it is billed either way, so this is purely a UX choice.</td></tr>
+    <tr><td><strong>Streaming</strong></td><td>Default to it for anything user-facing. It does not reduce total time; it changes which number the user experiences from "total" to "time to first token", and that is the one they call speed.</td></tr>
+    <tr><td><strong><code>max_tokens</code></strong></td><td>Generous. Truncated output is wasted output plus a retry. The cost of a high ceiling is zero if the model does not use it.</td></tr>
+    <tr><td><strong>Batch vs live</strong></td><td>Ask "is anyone waiting?" Bulk classification, backfills, enrichment and eval runs are all batchable at half price. Most teams never check.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The architectural decision that pays for years</span>
+  <p><strong>Put every model call behind one internal interface.</strong> One module that owns model
+  selection, retries, logging, token accounting and prompt versioning — and application code that
+  calls <code>summarise(thread)</code> rather than the SDK directly.</p>
+  <p>The payoff: switching models is one file. Adding cost tracking is one file. Adding caching, a
+  fallback, or an eval hook is one file. Teams that scatter <code>messages.create</code> across forty
+  call sites cannot do any of those things without a refactor, and they discover it exactly when they
+  need to move fastest.</p>
+</div>
+
+<header class="mod" id="m2">
+  <span class="mn">Module 12</span>
+  <h2>Prompting in practice</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The anatomy of a production prompt</div>
+<pre><code>SYSTEM  ← frozen. this is the cache prefix.
+  role and task
+  the output contract
+  hard constraints ("never invent a policy number")
+  domain vocabulary the model won't know
+  few-shot examples for the edge cases
+  ⚠ NO dates, NO user names, NO per-request anything
+
+MESSAGES
+  [ stable few-shot or reference material ]   ← still cacheable
+  ─────────── cache breakpoint ───────────
+  retrieved context for THIS query
+  the user's actual question
+  operator instructions as role:"system"     ← not user text
+
+⭐ THE ORDERING IS A COST DECISION AND AN ATTENTION DECISION AT ONCE.
+  Stable first is what makes caching work; critical-material-near-the-
+  ends is what makes long contexts work. They point the same way.</code></pre>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">When output is wrong</th><th>Look here, in this order</th></tr></thead>
+  <tbody>
+    <tr><td>It invented something</td><td>Was the fact in the context at all? Grounding instruction present? Is "I don't know" permitted?</td></tr>
+    <tr><td>Wrong format</td><td>Use a schema instead of asking. This is not a prompting problem.</td></tr>
+    <tr><td>Too long / too short</td><td>State the length as a constraint <em>and</em> show an example at that length. Examples beat adjectives.</td></tr>
+    <tr><td>Inconsistent across runs</td><td>Constrain the output space. Sampling parameters are no longer available on current models, so structure is the lever.</td></tr>
+    <tr><td>Ignores an instruction</td><td>Buried in the middle of a long prompt, or contradicted by another instruction. Read the rendered prompt and look for the conflict.</td></tr>
+    <tr><td>Right sometimes, wrong sometimes</td><td>Add examples covering the failing cases — and put them in the eval set first, or you will not know whether they helped.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">Trap · the prompt that grew</span>
+  <p>Every failure gets a new instruction appended. Six months later the system prompt is 2,000 words
+  of accumulated patches, several contradicting each other, and nobody knows which lines still matter
+  — so nobody dares delete any.</p>
+  <p><strong>The fix is the eval.</strong> With a regression set you can <em>delete</em> lines and see
+  whether the score moves. Prompts need pruning as much as code does, and without a measurement you
+  can only ever add.</p>
+</div>
+
+<header class="mod" id="m3">
+  <span class="mn">Module 13</span>
+  <h2>Structure &amp; tool design</h2>
+</header>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Schema over instruction</h4>
+    <p>"Reply with JSON like this" is a request. A schema is a constraint. Whenever the shape matters,
+    use structured output — you remove an entire class of parsing failure rather than mitigating it.</p>
+  </div>
+  <div class="card">
+    <h4>Enums over free text</h4>
+    <p>If there are seven valid categories, make the field an enum. The model then cannot invent an
+    eighth, and you never write normalisation code for "Urgent", "urgent" and "URGENT!".</p>
+  </div>
+  <div class="card">
+    <h4>The tool description is a prompt</h4>
+    <p>It is how the model decides whether to call it. Vague descriptions cause wrong tool choice.
+    Write them like documentation for a colleague — what it does, when to use it, when not to.</p>
+  </div>
+  <div class="card">
+    <h4>Fewer tools, clearly separated</h4>
+    <p>If two tools could plausibly serve the same request, the model will sometimes pick wrong — and
+    that is a <em>documentation</em> bug, not a model failure. Merge them or sharpen the descriptions.</p>
+  </div>
+  <div class="card">
+    <h4>Tool results are context</h4>
+    <p>A tool returning 400 lines of JSON burns context and buries the signal. Return what the model
+    needs to decide the next step, not everything the API gave you.</p>
+  </div>
+  <div class="card">
+    <h4>Errors are information</h4>
+    <p>Return a tool error as a result the model can read and react to — "no customer with that id" —
+    rather than throwing. The model can then correct itself, which is the whole point of the loop.</p>
+  </div>
+</div>
+
+<header class="mod" id="m4">
+  <span class="mn">Module 14</span>
+  <h2>RAG end to end</h2>
+  <p class="lede">The mechanics are in cheat sheet 1. This is how to build it so it can be
+  <em>debugged</em>.</p>
+</header>
+
+<div class="bad">
+  <span class="tag">Build the measurement before the pipeline</span>
+  <p>The reason most RAG systems are hard to improve is that "the answer was wrong" has four possible
+  causes and no way to tell them apart. Instrument the split from day one:</p>
+  <pre style="background:var(--ground-2);border:1px solid var(--rule);border-radius:3px;margin:8px 0 0"><code>① COVERAGE      is the answer in the corpus AT ALL?
+                 → if no, this is a content problem. No amount of
+                   retrieval tuning will help.
+② RECALL@k      was the right chunk in the retrieved set?
+                 → if no, fix chunking, embeddings, or hybrid search.
+③ PRECISION     did it survive reranking into the final context?
+                 → if no, fix the reranker or k.
+④ FAITHFULNESS  given the right chunk, did the model use it?
+                 → if no, fix the prompt or the grounding instruction.</code></pre>
+  <p style="margin-top:10px">Build 30 question/answer pairs where you know which document holds the
+  answer. Then each of the four is a number you can watch. <strong>Without this split, RAG debugging
+  is guesswork</strong> — and teams spend weeks tuning chunk size when the document was never
+  ingested.</p>
+</div>
+
+<h3>The decisions, ranked by how much they matter</h3>
+
+<ol class="proc">
+  <li><strong>Do you need RAG at all?</strong> Context windows are 1M tokens. If the corpus fits,
+  put it in the prompt and cache it — no vector store, no chunking, no retrieval bugs, and cache reads
+  are ~0.1× input. RAG earns its complexity when the corpus far exceeds the window, changes
+  constantly, or needs per-user access filtering.</li>
+  <li><strong>Chunking, and specifically what you attach to each chunk.</strong> The highest-value
+  cheap win in RAG: <strong>prepend the document title and section heading to every chunk</strong>. A
+  chunk that reads "…must be refrigerated at 2–8 °C" is useless without knowing which product it
+  describes.</li>
+  <li><strong>Hybrid search, if your corpus contains identifiers.</strong> Product codes, error codes,
+  names and part numbers are semantically meaningless — pure vector search misses exact matches. If
+  users search by identifier, hybrid is not an optimisation, it is a requirement.</li>
+  <li><strong>Reranking.</strong> Retrieve ~50, rerank, keep ~5. Usually the largest single accuracy
+  gain available for one extra call, and frequently skipped.</li>
+  <li><strong>Access control at retrieval time.</strong> Filter by permission <em>in the query</em>,
+  not after. And know whether your store pre-filters or post-filters, because post-filtering can
+  return nothing when matching documents exist further down the ranking.</li>
+  <li><strong>Citations, and verifying them.</strong> Require the model to cite chunk ids, then check
+  programmatically that each cited id was actually in the context. An unverifiable citation is the
+  classic hallucination tell, and this check is a dozen lines.</li>
+</ol>
+
+<div class="ex">
+  <div class="q">
+    <span class="qt">Exercise 14.1 · 25 minutes</span>
+    <p>Your RAG assistant over internal policy documents gets a complaint: "I asked about parental
+    leave in Germany and it told me the UK policy." Walk through the diagnosis.</p>
+  </div>
+  <details>
+    <summary>Show the solution</summary>
+    <div class="sol">
+      <p>Do not touch the prompt yet. Walk the four stages in order — the answer is almost always at
+      one specific stage, and each has a different fix.</p>
+      <h4>① Coverage — is there a German parental leave document?</h4>
+      <p>Search the corpus directly, not through the vector store. Surprisingly often the answer is no:
+      the document exists in a different system, was never ingested, or failed ingestion silently.
+      <strong>If coverage is the problem, everything downstream is irrelevant</strong> — and the fix is
+      content, not engineering.</p>
+      <h4>② Recall — was the German chunk retrieved at all?</h4>
+      <p>Log the retrieved chunk ids for that query and look. Three common causes here:</p>
+      <ul>
+        <li><strong>The chunk lost its country.</strong> If the document is "Parental Leave Policy"
+        with a "Germany" section heading, and chunking split mid-section, the chunk text may never say
+        "Germany" — so it does not match a query about Germany. <em>This is the most likely cause</em>,
+        and the fix is prepending title + heading to every chunk.</li>
+        <li><strong>Country should be metadata, not text.</strong> "German parental leave" is a filter
+        plus a similarity question. Extract country at ingestion and filter on it.</li>
+        <li><strong>The UK document dominates semantically</strong> — longer, more detailed, more
+        overlapping vocabulary.</li>
+      </ul>
+      <h4>③ Precision — was it retrieved but ranked out?</h4>
+      <p>If the German chunk was in the top 50 and did not survive reranking into the top 5, that is a
+      reranker problem — or you have no reranker, which is itself the finding.</p>
+      <h4>④ Faithfulness — was it in the context and ignored?</h4>
+      <p>If the German chunk <em>was</em> in the final context and the model answered with UK policy,
+      now it is a prompt problem. Likely causes: no instruction to prefer the most specific match, no
+      instruction to state which jurisdiction it is answering for, or contradictory chunks with nothing
+      telling the model how to choose.</p>
+      <h4>The fixes, in the order I would apply them</h4>
+      <ol>
+        <li><strong>Prepend document title and section heading to every chunk.</strong> Cheap, fixes a
+        whole class of this, and requires re-indexing but no design change.</li>
+        <li><strong>Extract jurisdiction as metadata</strong> and filter on it when the query names a
+        country. This turns a similarity problem into a filter, which is what it always was.</li>
+        <li><strong>Make the model state the jurisdiction in its answer</strong> — "Under the German
+        policy…". That converts a silent wrong answer into one the user can immediately catch, which is
+        worth more than it sounds.</li>
+        <li><strong>Add this exact question to the eval set</strong> with the correct chunk id, so the
+        fix is verified and the regression is caught.</li>
+      </ol>
+      <p><strong>The transferable lesson:</strong> the complaint sounded like a model failure and was
+      almost certainly a chunking failure. Four stages, four different fixes — and the instinct to
+      rewrite the prompt would have addressed the one stage that was probably working.</p>
+    </div>
+  </details>
+</div>
+
+<header class="mod" id="m5">
+  <span class="mn">Module 15</span>
+  <h2>Agents</h2>
+</header>
+
+<div class="warn">
+  <span class="tag">Before you build one</span>
+  <p>Agents are the most over-applied pattern in AI engineering. They are slower, more expensive, less
+  predictable and much harder to evaluate than a pipeline — and most tasks people build agents for can
+  be enumerated in advance, which means they are pipelines.</p>
+  <p>The test from <a href="#t5">competency 05</a>: <strong>can you list the steps?</strong> If yes,
+  write them down and get determinism for free.</p>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">What makes an agent operable</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>An iteration cap</strong></td><td>Non-negotiable. An unbounded loop with a tool that keeps returning results is an unbounded bill and an unbounded wait.</td></tr>
+    <tr><td><strong>A token budget</strong></td><td>Distinct from <code>max_tokens</code>: a task budget tells the model the ceiling so it paces itself and finishes gracefully rather than being cut off mid-task.</td></tr>
+    <tr><td><strong>A full trace</strong></td><td>Every tool call, argument and result, keyed to a run id. Debugging an agent without the trace is impossible — you cannot reproduce the path.</td></tr>
+    <tr><td><strong>A context strategy</strong></td><td>Tool results accumulate forever. Decide up front: clear old results (context editing), summarise them (compaction), or persist outside the window (memory).</td></tr>
+    <tr><td><strong>Scoped tools</strong></td><td>Built from the caller's session, not from model-supplied identifiers. See <a href="#t7">competency 07</a>.</td></tr>
+    <tr><td><strong>A stopping condition the model understands</strong></td><td>"Stop when you have the answer" is vague. Give it an explicit completion tool or a defined output shape so finishing is a positive action rather than running out.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">Evaluating an agent — harder, and different</span>
+  <p>You cannot assert on the exact path, because a valid agent takes different routes to the same
+  answer. So evaluate three things separately: <strong>outcome</strong> (did it get there — the only
+  one that ultimately matters), <strong>efficiency</strong> (how many steps and tokens, tracked as a
+  distribution rather than a mean), and <strong>safety</strong> (did it call anything it should not
+  have — assert on tool calls that must never appear).</p>
+  <p>And log the <em>failures</em> with full traces. Agent failure modes are specific and repetitive —
+  looping between two tools, calling the same read three times, giving up early — and you only see the
+  pattern with traces in front of you.</p>
+</div>
+
+<header class="mod" id="m6">
+  <span class="mn">Module 16</span>
+  <h2>Evals in depth</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The layered eval — cheapest first, always</div>
+<pre><code>LAYER 1 · PROGRAMMATIC       free · deterministic · runs in CI
+  schema valid? · length in range? · required fields present?
+  every cited id was in the context? · no PII? · language matches?
+  every named entity appears in the source?    ⭐ the single best
+    automated hallucination check for summarisation and extraction
+
+LAYER 2 · REFERENCE-BASED    cheap · needs gold answers
+  exact / fuzzy match for classification and extraction
+  KEY-FACT RECALL for generation: list the 3–5 facts that must appear,
+  assert each. More useful than any text-similarity score, which
+  rewards paraphrase rather than correctness.
+
+LAYER 3 · LLM-AS-JUDGE       costs a call · MUST BE VALIDATED
+  only for what layers 1–2 genuinely cannot reach: faithfulness,
+  tone, usefulness.
+  · give it a RUBRIC with separate criteria, not "is this good?"
+  · ask for a score AND A REASON — the reason is how you debug it
+  · BINARY or 3-point. 1–10 scales are noise; no two runs agree on 7.
+  · validate against ~30 human labels and report the agreement rate.
+    below ~80% agreement your eval is measuring the judge.
+  · randomise A/B order — judges favour the first option
+  · never judge with the prompt that generated the output
+
+LAYER 4 · HUMAN              expensive · the calibration for everything
+  sample it. don't skip it entirely.
+
+LAYER 5 · PRODUCTION         the real answer
+  accept / edit / regenerate / abandon rates. behavioural, continuous,
+  unfakeable, and closest to the outcome you were hired to move.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The eval that earns its keep in CI</span>
+  <p>Thirty examples, layer-1 checks as a <strong>gate</strong> (the build fails), layer-2 and layer-3
+  as <strong>tracked scores</strong> with an alert on regression. Runs in about a minute, costs
+  pennies, and changes the team's behaviour permanently — because a prompt change now shows a number
+  on the pull request.</p>
+  <p>An eval you run manually is an eval you stop running.</p>
+</div>
+
+<header class="mod" id="m7">
+  <span class="mn">Module 17</span>
+  <h2>Cost engineering</h2>
+</header>
+
+<p>The lever order is in cheat sheet 1. What belongs here is the <em>discipline</em>: cost problems
+are almost always <strong>measurement</strong> problems first.</p>
+
+<div class="sheet">
+  <div class="cap">The procedure when someone says "the bill is too high"</div>
+<pre><code>1  GET THE TOKEN PROFILE FIRST. Which route, which model, input vs
+   output vs cached, per feature. Without this every conversation is
+   speculation and every fix is a guess.
+   → if you cannot answer "which feature is the bill?", that is the
+     first thing to fix, not the cost.
+
+2  FREE WINS BEFORE TRADE-OFFS
+   caching → input hygiene → output hygiene → loop hygiene → batch
+   ⭐ caching is almost always the largest single win, and it costs
+     no quality at all.
+
+3  THEN TRADE-OFFS, MEASURED ONE AT A TIME
+   effort → model choice → cascade (last, because caches are
+   model-scoped and a cascade forfeits reuse across its models)
+
+4  JUDGE COST PER COMPLETED TASK
+   a cheaper call that needs three retries is not cheaper.
+
+5  RE-RUN THE EVAL AFTER EVERY CHANGE
+   a cost saving that silently degrades quality is a quality
+   regression you chose to pay for.</code></pre>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">Symptom</th><th>Usual cause</th></tr></thead>
+  <tbody>
+    <tr><td>Cache hit rate near zero</td><td>A silent invalidator — a timestamp, a UUID, an unsorted serialisation, or a per-user tool set in the prefix.</td></tr>
+    <tr><td>Input tokens growing over time</td><td>Conversation history never trimmed, or retrieval returning more chunks than it used to.</td></tr>
+    <tr><td>Output tokens far above expectation</td><td>No length constraint. "Be concise" is weaker than an example at the target length, and weaker still than a schema.</td></tr>
+    <tr><td>Spend spikes on some days</td><td>An agent loop with no cap, a retry storm, or one user pasting very large inputs.</td></tr>
+    <tr><td>Cost per task rising while cost per call falls</td><td>You downgraded the model and it now needs more turns. The classic false economy.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="m8">
+  <span class="mn">Module 18</span>
+  <h2>Latency</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Set a budget, then allocate it</div>
+<pre><code>"2 s to first token, 8 s to complete."
+
+  retrieval        300 ms
+  rerank           200 ms
+  prompt assembly   50 ms
+  model TTFT      1,400 ms
+  ─────────────────────────
+  budget to first token 1,950 ms ✓
+
+⭐ A BUDGET ENDS THE ARGUMENT about whether the system is "slow" —
+  it is inside budget or it is not, and the table says which stage
+  to attack.
+
+THE LEVERS, ranked by effect per unit of effort
+  1 STREAM                collapses perceived latency to TTFT
+  2 lower EFFORT          fewer thinking tokens, directly faster
+  3 shorten the OUTPUT    output is generated SERIALLY — it is often
+                          the dominant term
+  4 CACHE the prefix      cuts TTFT, not just cost
+  5 PARALLELISE           independent calls and independent tool
+                          calls concurrently. sequential awaits are
+                          the commonest avoidable latency in LLM apps.
+  6 smaller MODEL         measure on your eval before switching
+  7 DO IT OFFLINE         the fastest call already happened —
+                          precompute at write time</code></pre>
+</div>
+
+<header class="mod" id="m9">
+  <span class="mn">Module 19</span>
+  <h2>Safety</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">The threat model in one paragraph</span>
+  <p>Anything that reaches the model can carry instructions, and the model cannot reliably distinguish
+  data from instructions. A retrieved document, a fetched web page, an email body, a filename, a tool
+  result, a PDF — all untrusted. <strong>So the question is never "how do I stop injection?" but
+  "what is the worst thing an attacker could make happen, and is that acceptable?"</strong></p>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Layer</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Input guardrails</strong></td><td>Length caps, content filters, PII redaction before the call. Cheap, and they bound the damage rather than preventing it.</td></tr>
+    <tr><td><strong>Delimiting &amp; framing</strong></td><td>Explicit markers around untrusted content plus a statement that it is data. Real but partial — treat it as friction, not a control.</td></tr>
+    <tr><td><strong>The operator channel</strong></td><td>Instructions in <code>system</code> or a <code>role: "system"</code> message, which user text cannot forge. Structurally better than embedding operator text in a user turn.</td></tr>
+    <tr><td><strong>Output guardrails</strong></td><td>Schema validation, PII detection, citation verification, a policy check on anything before it is shown or sent.</td></tr>
+    <tr><td><strong>⭐ Authorisation in code</strong></td><td><strong>The only real control.</strong> Tools scoped to the caller, permissions checked against the session, destructive actions gated. Everything above is defence in depth; this is the boundary.</td></tr>
+    <tr><td><strong>Blast-radius design</strong></td><td>Drafts instead of sends. Read tools freely, write tools narrowly. Reversible actions preferred. This is what makes the residual risk acceptable.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="m10">
+  <span class="mn">Module 20</span>
+  <h2>Observability &amp; ops</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What you will wish you had logged</div>
+<pre><code>PER CALL
+  request id · route/feature · model · PROMPT VERSION ⭐
+  · tool set version · all four token counts · latency (TTFT + total)
+  · stop_reason · tool calls made · loop iterations
+  · RETRIEVED DOC IDS ⭐ · programmatic check results
+  · the user signal: accepted / edited / regenerated / abandoned
+
+⭐ THE TWO PEOPLE ALWAYS MISS are prompt version and retrieved doc
+  ids. Without them a quality regression is unreproducible — you
+  cannot tell whether the prompt changed, the corpus changed, or the
+  model changed. With them, the answer is a query.
+
+ALERT ON
+  error rate · REFUSAL RATE · p95 latency · spend per hour
+  · CACHE HIT RATE (a drop to zero means someone just shipped a
+    silent invalidator) · eval score on the CI golden set
+  · agent iteration count p95
+
+⚠ DECIDE DELIBERATELY whether you store prompt and response TEXT.
+  Invaluable for debugging, and a data-protection surface. If you
+  store it, store it where that data is allowed to live, and set a
+  retention period. This is a decision, not a default.</code></pre>
+</div>
+
+<header class="mod" id="m11">
+  <span class="mn">Module 21</span>
+  <h2>Fine-tuning</h2>
+  <p class="lede">Covered in depth in cheat sheet 1. Here: the judgement about whether to start.</p>
+</header>
+
+<div class="good">
+  <span class="tag">The three questions that settle it</span>
+  <p><strong>1 · Can a strong prompt get it right <em>sometimes</em>?</strong> If not, fine-tuning
+  will not fix it either — fine-tuning makes a model do reliably what it can already do occasionally.
+  It does not add capability.</p>
+  <p><strong>2 · Is this a knowledge problem or a behaviour problem?</strong> Knowledge → RAG, always.
+  Facts baked into weights are uncitable, stale on change, and unverifiable. Behaviour — style, format,
+  domain conventions — is what fine-tuning is genuinely for.</p>
+  <p><strong>3 · Is the volume high enough that the saving is real?</strong> The engineering cost is
+  weeks, the data cost dominates, and the base model will improve underneath you — prompt-based systems
+  inherit that for free, fine-tuned ones do not.</p>
+</div>
+
+<header class="part" id="ds">
+  <span class="pn">Part III</span>
+  <h2>The data science underneath</h2>
+  <p class="lede">Two modules. An AI engineer who cannot recognise a classical ML problem will build
+  an LLM solution to it — and that is one of the more expensive mistakes available.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Module 22</span>
+  <h2>When classical ML wins</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">Signal</th><th>Why it points away from an LLM</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The input is a table</strong></td><td>Gradient boosting handles mixed types, missing values and non-linearity natively, and beats both LLMs and neural networks on tabular data more often than not.</td></tr>
+    <tr><td><strong>You have historical labels</strong></td><td>Then you can <em>train</em> and <em>measure</em>. That is strictly more reliable than prompting a general model to guess.</td></tr>
+    <tr><td><strong>The output is a number or a class</strong></td><td>Not language. If nothing needs to be <em>written</em>, the language model's core capability is unused.</td></tr>
+    <tr><td><strong>It must be auditable</strong></td><td>Feature importances and coefficients are explainable to a regulator. "The model said so" is not.</td></tr>
+    <tr><td><strong>High volume, low margin</strong></td><td>A trained model costs microseconds per prediction. An LLM call costs cents and hundreds of milliseconds.</td></tr>
+    <tr><td><strong>Same input must give same output</strong></td><td>Deterministic. LLM output is not guaranteed identical even at fixed settings.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The hybrid that is usually right</span>
+  <p><strong>Classical model computes; LLM communicates.</strong> The boosted model produces the score
+  and the contributing factors; the LLM turns those factors into a paragraph a human reads. You get
+  auditable numbers <em>and</em> natural explanation, and the worst LLM failure is a clumsy sentence
+  rather than a wrong figure.</p>
+  <p>This pattern covers a very large share of real "AI features" in business software, and recognising
+  it is a strong signal in a design conversation.</p>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Module 23</span>
+  <h2>The fundamentals you still need</h2>
+  <p class="lede">Five ideas from data science that apply directly to LLM systems, and that AI
+  engineers routinely rediscover the hard way.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Concept</th><th>How it shows up in AI engineering</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Leakage</strong></td>
+      <td>Your eval set contains examples that were in the few-shot prompt. Or your golden answers were
+      written by looking at the model's output. Both make the score meaningless in exactly the way a
+      leaked feature does.</td>
+    </tr>
+    <tr>
+      <td><strong>Train/test discipline</strong></td>
+      <td>Tuning a prompt against the same set you report on is overfitting. Hold out a test split,
+      score it every round, and never tune against it.</td>
+    </tr>
+    <tr>
+      <td><strong>Base rates</strong></td>
+      <td>A classifier or guardrail flagging a rare event will produce mostly false positives — the
+      false-positive paradox applies identically to an LLM-based detector. Report precision, and tell
+      the stakeholder before they act on the list.</td>
+    </tr>
+    <tr>
+      <td><strong>Distribution shift</strong></td>
+      <td>Your prompt was tuned on last quarter's queries. Users changed. Nothing errors, quality
+      decays. This is drift, and the counter is sampling production traffic into the eval set
+      continuously.</td>
+    </tr>
+    <tr>
+      <td><strong>The baseline</strong></td>
+      <td>Before claiming the LLM helps, know what the simple version scores — the keyword search, the
+      rule, the template. A surprising number of LLM features do not beat a well-written template, and
+      nobody checked.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="practice">
+  <span class="pn">Part IV</span>
+  <h2>Practice</h2>
+</header>
+
+<header class="band" id="p1">
+  <h2>What to avoid</h2>
+  <p class="lede">Twenty failures, grouped. Most are things a competent engineer does — which is why
+  they are worth naming in advance.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Mistake</th><th style="width:36%">Why it costs you</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr class="sec-row"><td colspan="3">Judgement</td></tr>
+    <tr><td><strong>Using an LLM where a rule works</strong></td><td>Slower, costlier, non-deterministic, unauditable — for a job an <code>if</code> did.</td><td><a href="#t1">Competency 01</a>.</td></tr>
+    <tr><td><strong>Letting the model compute</strong></td><td>A hallucinated number in a report is unrecoverable damage.</td><td>Deterministic system computes; model narrates.</td></tr>
+    <tr><td><strong>Building an agent for a pipeline</strong></td><td>Unbounded cost, unpredictable paths, and evaluation becomes genuinely hard.</td><td>Can you enumerate the steps? Then enumerate them.</td></tr>
+    <tr><td><strong>Fine-tuning for knowledge</strong></td><td>Uncitable, stale on change, weeks of work. It is a retrieval problem.</td><td>The ladder in <a href="#m11">module 21</a>.</td></tr>
+    <tr class="sec-row"><td colspan="3">Measurement</td></tr>
+    <tr><td><strong>No eval</strong></td><td>You cannot tell whether a change helped, so eventually nobody dares change anything.</td><td>Twenty examples on day two, in CI.</td></tr>
+    <tr><td><strong>Tuning on the test set</strong></td><td>It stops being a test set at the first peek. Your reported number is optimistic by an unknown amount.</td><td>Three-way split; test scored, never tuned.</td></tr>
+    <tr><td><strong>Judge without validation</strong></td><td>You are measuring the judge, confidently, with a number.</td><td>~30 human labels; report agreement.</td></tr>
+    <tr><td><strong>Only offline metrics</strong></td><td>Eval passes, users leave. The proxy and the outcome diverge.</td><td>Instrument accept/edit/regenerate/abandon.</td></tr>
+    <tr><td><strong>No baseline</strong></td><td>Nobody knows whether the feature beats a template.</td><td>Measure the simple version first.</td></tr>
+    <tr class="sec-row"><td colspan="3">Engineering</td></tr>
+    <tr><td><strong>SDK calls scattered everywhere</strong></td><td>Switching models, adding caching, logging or evals each become a refactor.</td><td>One internal interface.</td></tr>
+    <tr><td><strong>Volatile content in the prefix</strong></td><td>Cache hit rate zero; bill several times higher than necessary.</td><td>Frozen system prompt; volatile last.</td></tr>
+    <tr><td><strong>No length constraint</strong></td><td>Output tokens are the expensive, serial half.</td><td>Constrain, and show an example at length.</td></tr>
+    <tr><td><strong>Ignoring <code>stop_reason</code></strong></td><td>You display truncated output, or treat a refusal as an empty success.</td><td>Branch on it before reading content.</td></tr>
+    <tr><td><strong>Unvalidated model output passed downstream</strong></td><td>Model output is untrusted input to the next stage.</td><td>Schema-validate, then retry once with the error fed back.</td></tr>
+    <tr><td><strong>Uncapped agent loop</strong></td><td>Unbounded bill, unbounded wait.</td><td>Iteration cap plus a token budget.</td></tr>
+    <tr class="sec-row"><td colspan="3">Safety &amp; ops</td></tr>
+    <tr><td><strong>Guarding in the prompt</strong></td><td>Any guard expressible in language is one untrusted text can argue with.</td><td>Authorisation in code, against the caller.</td></tr>
+    <tr><td><strong>Trusting tool results</strong></td><td>A fetched page is untrusted content that reached the model.</td><td>Never let a tool result grant privilege.</td></tr>
+    <tr><td><strong>Sending, not drafting</strong></td><td>Turns a model error into an external incident.</td><td>Human approves anything irreversible.</td></tr>
+    <tr><td><strong>Not logging prompt version and doc ids</strong></td><td>Quality regressions become unreproducible.</td><td>Log both, per call.</td></tr>
+    <tr><td><strong>Review theatre</strong></td><td>99% approval means the review is not happening.</td><td>Show evidence, require an active choice, sample-audit.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="band" id="p2">
+  <h2>The curriculum</h2>
+  <p class="lede">Eight weeks, built around shipping one thing properly rather than reading about
+  eleven.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:12%">Week</th><th style="width:26%">Focus</th><th>Build this — not just read it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1</strong></td><td>Part I, and the API surface</td><td>Read Part I. Then make ten calls: system prompts, structured output, streaming. Deliberately trigger a 400 by sending <code>budget_tokens</code> so the drift becomes muscle memory.</td></tr>
+    <tr><td><strong>2</strong></td><td>One real feature, simplest tier</td><td>Pick something small and genuine — summarise, classify, extract. One call. Ship it behind a flag. <strong>Resist the agent.</strong></td></tr>
+    <tr><td><strong>3</strong></td><td><strong>Evals</strong></td><td>Twenty examples for that feature. Layer-1 programmatic checks. Wire it into CI. <em>Then</em> improve the prompt and watch the number move. This is the week that changes how you work.</td></tr>
+    <tr><td><strong>4</strong></td><td>Cost &amp; caching</td><td>Instrument all four token counts per call. Restructure the prompt for caching and verify <code>cache_read_input_tokens</code> is non-zero. Compute the monthly bill at 10× volume.</td></tr>
+    <tr><td><strong>5</strong></td><td>Retrieval</td><td>Build RAG over a corpus you know well. <strong>Build the four-stage measurement first</strong> — coverage, recall, precision, faithfulness — then tune. Add hybrid search and a reranker and measure each.</td></tr>
+    <tr><td><strong>6</strong></td><td>Tools &amp; one agent</td><td>Two tools with the Tool Runner. Then a small agent with an iteration cap and a full trace. Break it deliberately: make a tool fail, make it loop, hit <code>pause_turn</code>.</td></tr>
+    <tr><td><strong>7</strong></td><td>Safety &amp; ops</td><td>Try to prompt-inject your own system through a retrieved document. Fix it at the authorisation layer, not the prompt. Add tracing, then a dashboard with spend, latency, refusal rate and cache hit rate.</td></tr>
+    <tr><td><strong>8</strong></td><td>Judgement</td><td>Take something you built and write the honest post-mortem: what would break at 100× traffic, what a hostile user could do, what you cannot measure, what you would remove.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Portfolio: show the measurement</h4>
+    <p>An eval harness with a documented golden set, a before/after score, and a written analysis of
+    the failure modes beats a slicker demo. Almost nobody shows this, and it is exactly what
+    distinguishes someone who has shipped from someone who has followed a tutorial.</p>
+  </div>
+  <div class="card">
+    <h4>Portfolio: show the cost</h4>
+    <p>"This costs $0.004 per request, $240/month at current volume, and here are the three levers I
+    used to get it there from $900." Real engineering, and rarer than it should be.</p>
+  </div>
+  <div class="card">
+    <h4>Portfolio: show a failure</h4>
+    <p>A documented case where the model was confidently wrong, why, and what you changed in the
+    system so it is caught next time. Judgement is more persuasive than polish.</p>
+  </div>
+  <div class="card">
+    <h4>Don't collect frameworks</h4>
+    <p>The orchestration library will change. The judgement in Part I will not. Tooling anxiety
+    consumes the time that should go into evals, retrieval quality and cost — which is what the work
+    actually is.</p>
+  </div>
+</div>
+
+<hr class="rule">
+
+<h3>One last thing</h3>
+
+<p>Of the twenty-five modules here, four are about the API and one is about fine-tuning. The rest are
+about deciding what to build, proving it works, keeping it affordable, and making it safe when
+something hostile reaches it. That ratio is the job.</p>
+
+<p>The models will change — twice a year, in ways that invalidate specific paragraphs of cheat sheet
+1. What will not change is that somebody has to decide whether this should be a model at all, build
+the measurement before the feature, put the authorisation in code, and design the surface where a
+human catches what the model got wrong.</p>
+
+<div class="disclaimer">
+  <p><strong>Companion files.</strong> This is 3 of 5. The <em>AI engineering cheat sheet</em> holds
+  the API surface, RAG mechanics, embeddings, vector databases, fine-tuning methods and the stale-API
+  unlearn list. The <em>data science cheat sheet</em> holds statistics, modelling, deep learning and
+  evaluation metrics. A <em>data science guide</em> and an <em>interview preparation</em> file complete
+  the set.</p>
+  <p><strong>Already in this repository:</strong> <code>prep/phase-9-llm-product-engineering/</code>
+  for Claude API engineering, LLM reporting patterns and evals;
+  <code>docs/senior-data-science-best-practices/08-llm-and-rag-best-practices.md</code>;
+  <code>interview/round-5-ml-and-llm-product-round/</code> and
+  <code>interview/question-banks/07-llm-product.md</code>.</p>
+</div>
+
+
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark() {
+    var best = 0, y = window.scrollY + 145;
+    for (var i = 0; i < targets.length; i++) if (targets[i] && targets[i].offsetTop <= y) best = i;
+    for (var j = 0; j < links.length; j++) links[j].classList.toggle('on', j === best);
+  }
+  var q = false;
+  window.addEventListener('scroll', function () {
+    if (q) return; q = true;
+    requestAnimationFrame(function () { q = false; mark(); });
+  }, { passive: true });
+  mark();
+})();
+</script>

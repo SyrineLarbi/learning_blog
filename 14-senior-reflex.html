@@ -1,0 +1,2014 @@
+<title>The Senior Reflex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&family=Azeret+Mono:wght@400;500&display=swap">
+
+<style>
+/* ============ tokens · light is the bare :root ============ */
+:root {
+  --display: "Syne", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Faustina", Georgia, "Times New Roman", serif;
+  --mono: "Azeret Mono", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3ED;
+  --ground-2: #FBFAF6;
+  --panel:    #ECEBE2;
+  --panel-2:  #E4E3D7;
+
+  --ink:   #191A14;
+  --ink-2: #3E4034;
+  --ink-3: #6E7161;
+
+  --rule:   #D4D3C4;
+  --rule-2: #E3E2D6;
+
+  --accent:      #4E5C1C;
+  --accent-soft: #EDF0DB;
+  --accent-deep: #313A11;
+
+  --bad:      #A33327;
+  --bad-soft: #F8E8E4;
+  --warn:      #9A6B10;
+  --warn-soft: #F8EEDA;
+
+  --t1: #6E7161;   /* beginner  */
+  --t2: #7C8C34;   /* mid       */
+  --t3: #4E5C1C;   /* senior    */
+  --t1-soft: #EDECE3;
+  --t2-soft: #F1F3E2;
+  --t3-soft: #E6EBD2;
+
+  --focus: #7C8C34;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #12130E;
+    --ground-2: #191A14;
+    --panel:    #1E2018;
+    --panel-2:  #262920;
+
+    --ink:   #E9EAE0;
+    --ink-2: #C2C4B4;
+    --ink-3: #8B8E7C;
+
+    --rule:   #333629;
+    --rule-2: #262920;
+
+    --accent:      #AFC456;
+    --accent-soft: #232715;
+    --accent-deep: #C9DA80;
+
+    --bad:      #E08D7F;
+    --bad-soft: #2A1713;
+    --warn:      #D6A84E;
+    --warn-soft: #271D0D;
+
+    --t1: #8B8E7C;
+    --t2: #A2B455;
+    --t3: #C9DA80;
+    --t1-soft: #1C1E17;
+    --t2-soft: #20240F;
+    --t3-soft: #262B12;
+
+    --focus: #AFC456;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #12130E;
+  --ground-2: #191A14;
+  --panel:    #1E2018;
+  --panel-2:  #262920;
+
+  --ink:   #E9EAE0;
+  --ink-2: #C2C4B4;
+  --ink-3: #8B8E7C;
+
+  --rule:   #333629;
+  --rule-2: #262920;
+
+  --accent:      #AFC456;
+  --accent-soft: #232715;
+  --accent-deep: #C9DA80;
+
+  --bad:      #E08D7F;
+  --bad-soft: #2A1713;
+  --warn:      #D6A84E;
+  --warn-soft: #271D0D;
+
+  --t1: #8B8E7C;
+  --t2: #A2B455;
+  --t3: #C9DA80;
+  --t1-soft: #1C1E17;
+  --t2-soft: #20240F;
+  --t3-soft: #262B12;
+
+  --focus: #AFC456;
+}
+
+/* ============ base ============ */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16.5px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.012em; }
+p { margin: 0 0 13px; }
+code, kbd { font-family: var(--mono); font-size: .855em; background: var(--panel); padding: 1px 4px; border-radius: 3px; }
+
+/* ============ shell ============ */
+.shell { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 0; max-width: 1180px; margin: 0 auto; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 26px 16px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 11px; line-height: 1.35;
+}
+.rail-title { font-family: var(--display); font-weight: 800; font-size: 14px; letter-spacing: -.01em; margin: 0 0 3px; }
+.rail-sub { color: var(--ink-3); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; margin: 0 0 20px; }
+.rail-group { color: var(--ink-3); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; margin: 18px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail-group.hot { color: var(--accent); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 7px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; border-radius: 0 3px 3px 0; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 500; }
+.rail a .n { color: var(--ink-3); margin-right: 6px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 40px 46px 100px; max-width: 74ch; }
+.doc > * { max-width: 68ch; }
+.doc > .tw, .doc > .ascii, .doc > .scen, .doc > .levels, .doc > .grid2, .doc > .sheet { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 20px 20px 24px; }
+  .doc { padding: 26px 20px 70px; }
+}
+
+/* ============ hero ============ */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 26px; margin-bottom: 34px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.04; margin: 0 0 16px; }
+.hero h1 .thin { font-weight: 600; color: var(--ink-3); }
+.lede { font-size: 17.5px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 24px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.hero-meta b { color: var(--ink-2); font-weight: 500; }
+
+/* ============ structure ============ */
+.part { margin: 62px 0 26px; padding-top: 22px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.part h2 { font-size: 30px; font-weight: 800; margin: 0 0 10px; }
+.part .lede { font-size: 16.5px; }
+
+.mod { margin: 44px 0 16px; padding-top: 16px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.mod h2 { font-size: 22px; font-weight: 700; margin: 0 0 8px; }
+.mod .lede { font-size: 16px; margin-bottom: 0; }
+
+h3 { font-size: 17px; font-weight: 700; margin: 26px 0 9px; }
+h4 { font-size: 15px; font-weight: 700; margin: 0 0 6px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 34px 0; }
+
+/* ============ scenario block — the signature component ============ */
+.scen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 3px; background: var(--ground-2); margin: 24px 0; overflow: hidden; }
+.scen > .ask { padding: 13px 17px 14px; border-bottom: 1px solid var(--rule); background: var(--panel); }
+.scen > .ask .k { font-family: var(--mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 5px; }
+.scen > .ask p { font-family: var(--display); font-weight: 700; font-size: 16.5px; line-height: 1.34; margin: 0; }
+.scen .band { padding: 12px 17px 13px; border-bottom: 1px solid var(--rule-2); }
+.scen .band:last-child { border-bottom: 0; }
+.scen .band > .k { font-family: var(--mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 7px; }
+.scen .band.think { background: var(--accent-soft); }
+.scen .band.think > .k { color: var(--accent); }
+.scen .band.tell { background: var(--warn-soft); }
+.scen .band.tell > .k { color: var(--warn); }
+.scen .band p:last-child, .scen .band ol:last-child, .scen .band ul:last-child { margin-bottom: 0; }
+.scen .band ol, .scen .band ul { margin: 0 0 10px; padding-left: 20px; }
+.scen .band li { margin-bottom: 6px; }
+.scen .band li::marker { color: var(--accent); font-family: var(--mono); font-size: .82em; }
+.scen p, .scen li { font-size: 15.5px; }
+
+/* ============ level strip ============ */
+.levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 12px; margin: 24px 0; }
+.lev { border: 1px solid var(--rule); border-radius: 3px; padding: 12px 14px 13px; font-size: 14.5px; }
+.lev .k { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: 7px; font-weight: 500; }
+.lev p:last-child { margin-bottom: 0; }
+.lev.a { background: var(--t1-soft); border-color: var(--rule); } .lev.a .k { color: var(--t1); }
+.lev.b { background: var(--t2-soft); } .lev.b .k { color: var(--t2); }
+.lev.c { background: var(--t3-soft); } .lev.c .k { color: var(--t3); }
+
+/* ============ callouts ============ */
+.note, .warn, .bad, .good {
+  border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 3px;
+  padding: 12px 15px 13px; margin: 20px 0; font-size: 15.5px; background: var(--ground-2);
+}
+.note { border-left-color: var(--ink-3); }
+.good { border-left-color: var(--accent); background: var(--accent-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--accent); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child { margin-bottom: 0; }
+
+/* ============ mono sheets & diagrams ============ */
+.sheet { border: 1px solid var(--rule); border-radius: 3px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 9px; padding: 7px 13px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 12px; line-height: 1.44; overflow-x: auto; padding: 14px 15px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 12px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 15px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); margin: 22px 0; color: var(--ink-2); }
+
+/* ============ tables ============ */
+.tw { overflow-x: auto; margin: 22px 0; border: 1px solid var(--rule); border-radius: 3px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 480px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 13px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 500; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+.ok { color: var(--accent); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ============ lists, cards, misc ============ */
+ul, ol { margin: 0 0 14px; padding-left: 22px; }
+li { margin-bottom: 7px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); gap: 12px; margin: 22px 0; }
+.card { border: 1px solid var(--rule); border-radius: 3px; padding: 12px 14px 13px; background: var(--ground-2); font-size: 14.5px; }
+.card p:last-child { margin-bottom: 0; }
+.q { font-family: var(--display); font-weight: 700; font-size: 16px; color: var(--ink); margin: 22px 0 8px; }
+.disclaimer { margin: 30px 0 0; padding: 12px 15px; border: 1px dashed var(--rule); border-radius: 3px; background: var(--panel); font-size: 13.5px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">The Senior Reflex</p>
+  <p class="rail-sub">Fullstack · AI · 4 rounds</p>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group hot">I · The frame</div>
+  <a href="#r1"><span class="n">01</span>The difference</a>
+  <a href="#r2"><span class="n">02</span>The four reflexes</a>
+
+  <div class="rail-group hot">II · Coding</div>
+  <a href="#c1"><span class="n">03</span>What's scored</a>
+  <a href="#c2"><span class="n">04</span>Before you type</a>
+  <a href="#c3"><span class="n">05</span>Decomposition</a>
+  <a href="#c4"><span class="n">06</span>The edge catalogue</a>
+  <a href="#c5"><span class="n">07</span>Errors as design</a>
+  <a href="#c6"><span class="n">08</span>Scenarios</a>
+  <a href="#c7"><span class="n">09</span>The ladder</a>
+
+  <div class="rail-group hot">III · Design</div>
+  <a href="#d1"><span class="n">10</span>The method</a>
+  <a href="#d2"><span class="n">11</span>API thinking</a>
+  <a href="#d3"><span class="n">12</span>Data model thinking</a>
+  <a href="#d4"><span class="n">13</span>Frontend state</a>
+  <a href="#d5"><span class="n">14</span>The security reflex</a>
+  <a href="#d6"><span class="n">15</span>Worked: the export</a>
+  <a href="#d7"><span class="n">16</span>Scenarios</a>
+  <a href="#d8"><span class="n">17</span>The ladder</a>
+
+  <div class="rail-group hot">IV · System design</div>
+  <a href="#s1"><span class="n">18</span>The method</a>
+  <a href="#s2"><span class="n">19</span>Estimating</a>
+  <a href="#s3"><span class="n">20</span>Finding the bottleneck</a>
+  <a href="#s4"><span class="n">21</span>The seven levers</a>
+  <a href="#s5"><span class="n">22</span>The AI layer</a>
+  <a href="#s6"><span class="n">23</span>Scenarios</a>
+  <a href="#s7"><span class="n">24</span>The ladder</a>
+
+  <div class="rail-group hot">V · Debugging</div>
+  <a href="#b1"><span class="n">25</span>Hypothesis, not guessing</a>
+  <a href="#b2"><span class="n">26</span>Three bisections</a>
+  <a href="#b3"><span class="n">27</span>The bug taxonomy</a>
+  <a href="#b4"><span class="n">28</span>Production incidents</a>
+  <a href="#b5"><span class="n">29</span>Scenarios</a>
+  <a href="#b6"><span class="n">30</span>The ladder</a>
+
+  <div class="rail-group">VI · Foundations</div>
+  <a href="#f1"><span class="n">31</span>Code that ages well</a>
+  <a href="#f2"><span class="n">32</span>Hard to do wrong</a>
+  <a href="#f3"><span class="n">33</span>Reviewing yourself</a>
+
+  <div class="rail-group hot">VII · The path</div>
+  <a href="#l1"><span class="n">34</span>Five levels</a>
+  <a href="#l2"><span class="n">35</span>The practice plan</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">A reasoning manual · fullstack &amp; AI engineering · no code</p>
+  <h1>Think it through before you touch the keyboard. <span class="thin">Four rounds, thirty-five reflexes.</span></h1>
+  <p class="lede">Coding, design, system design, debugging. For each one: what is actually being
+  tested, what to think in what order, what to do about it, and what separates the beginner's answer
+  from the senior's. Not a single line of code — the thinking is the whole subject.</p>
+  <div class="hero-meta">
+    <span><b>Format</b> · scenario → think → do → the tell</span>
+    <span><b>Applies to</b> · interviews and real work equally</span>
+    <span><b>Ends with</b> · five levels and a practice plan</span>
+  </div>
+</header>
+
+<div class="good">
+  <span class="tag">Why this file exists</span>
+  <p>Almost everything written for engineers teaches <em>what</em> — syntax, frameworks, algorithms.
+  Very little teaches <strong>the order in which to think</strong>, which is the thing that actually
+  separates people at the same level of knowledge.</p>
+  <p>Two engineers who know exactly the same amount produce completely different work, because one
+  asks four questions before starting and the other starts. This file is those questions.</p>
+</div>
+
+<header class="part" id="frame">
+  <span class="pn">Part I</span>
+  <h2>The frame</h2>
+</header>
+
+<header class="mod" id="r1">
+  <span class="mn">Reflex 01 · the premise</span>
+  <h2>What the difference actually is</h2>
+</header>
+
+<p>The gap between a junior and a senior is almost never knowledge of the language. It is <strong>what
+they consider before committing</strong>, and it shows up as four habits.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">The habit</th><th style="width:34%">Junior</th><th>Senior</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Where they start</strong></td>
+      <td>With the solution. The request is treated as complete and correct.</td>
+      <td>With the <strong>problem behind the request</strong>. Half of all requests are a proposed solution wearing the costume of a requirement.</td>
+    </tr>
+    <tr>
+      <td><strong>What they optimise</strong></td>
+      <td>Getting it working. Success = it runs.</td>
+      <td>Getting it <strong>working, safe, and cheap to change</strong>. Success = it survives contact with users, and the next person can modify it.</td>
+    </tr>
+    <tr>
+      <td><strong>What they imagine</strong></td>
+      <td>The happy path.</td>
+      <td>The <strong>failure paths first</strong>. What happens on the retry, the empty list, the hostile input, the 3 a.m. outage.</td>
+    </tr>
+    <tr>
+      <td><strong>How they decide</strong></td>
+      <td>Picks the option they know. Cannot say why not the others.</td>
+      <td>Names two options, picks one, and <strong>states what that choice costs</strong>. The cost sentence is the signal.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The compressed version</span>
+  <p><strong>A junior asks "how do I build this?" A senior asks "what happens when this goes wrong,
+  who is hurt, and how do I make that impossible rather than unlikely?"</strong></p>
+  <p>Everything in this file is a longer form of that sentence.</p>
+</div>
+
+<header class="mod" id="r2">
+  <span class="mn">Reflex 02 · runs in every round</span>
+  <h2>The four reflexes</h2>
+  <p class="lede">These fire before anything else, in every scenario in this document. If you learn
+  nothing else here, learn the order.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The order, every time</div>
+<pre><code>①  WHAT IS THIS FOR?              ← the problem behind the request
+
+     Never accept a task at face value. Ask what the person is
+     trying to achieve, because the stated solution is often a
+     worse answer to a better question.
+
+       asked:   "add a CSV export button"
+       actual:  "finance re-types these numbers every Monday"
+       ⇒ a scheduled email, or a read-only view they can filter,
+         may be the real answer — and is less work.
+
+     ⭐ THE SENIOR MOVE IS TO SOLVE THE PROBLEM, NOT THE REQUEST.
+       Sometimes the best version of a feature is a smaller one.
+
+②  WHAT DO I NOT KNOW YET?        ← the four unknowns
+
+     SCALE      how many? how often? how big does the biggest
+                one get? today, and in a year?
+     OWNERSHIP  whose data is this? who is allowed to see it,
+                and who is allowed to change it?
+     FAILURE    what happens when this fails halfway through?
+     DONE       how will we know it worked? what does the person
+                do next with the result?
+
+     ⚠ ASSUMING is fine. Assuming SILENTLY is not. Say the
+       assumption out loud so it can be corrected cheaply.
+
+③  WHAT BREAKS, AND WHO NOTICES?  ← blast radius
+
+     if this is wrong: is it a cosmetic glitch, a wrong number in
+     someone's decision, money moving incorrectly, or private
+     data reaching the wrong person?
+
+     ⭐ THE ANSWER SETS HOW MUCH CARE THE TASK DESERVES. Not all
+       code deserves the same rigour, and pretending it does is
+       its own failure — you spend your care in the wrong place.
+
+④  WHAT AM I TRADING?             ← the sentence
+
+     "I chose ___ over ___ because ___, and it costs me ___."
+
+     If you cannot fill in the last blank, you have not made a
+     decision — you have made a default. Every real engineering
+     choice costs something. Naming the cost is what makes it
+     a choice.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">Use it out loud</span>
+  <p>In an interview, these four reflexes are literally what is being scored — <strong>clarify, name
+  the unknowns, state the blast radius, articulate the trade-off</strong>. In real work they are what
+  stops you building the wrong thing carefully.</p>
+  <p>They cost about ninety seconds. They routinely save days.</p>
+</div>
+
+<header class="part" id="coding">
+  <span class="pn">Part II</span>
+  <h2>The coding round</h2>
+  <p class="lede">Implementation thinking: how to go from a stated task to code that is correct at the
+  edges and readable in six months. Concepts only.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Coding 03</span>
+  <h2>What is actually being scored</h2>
+</header>
+
+<p>Almost nobody fails a coding round because their solution was slightly slower than optimal. They
+fail on things that are entirely within their control:</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:32%">What people think is scored</th><th>What is actually scored</th></tr></thead>
+  <tbody>
+    <tr><td>Getting the optimal algorithm</td><td><strong>Whether you understood the problem before starting.</strong> A correct solution to the wrong problem scores zero.</td></tr>
+    <tr><td>Speed of typing</td><td><strong>Whether you said what you were doing.</strong> Silence is unreadable; the interviewer cannot score thinking they cannot hear.</td></tr>
+    <tr><td>Knowing the library function</td><td><strong>Whether you handled the empty case, the duplicate case, and the too-large case.</strong></td></tr>
+    <tr><td>Finishing</td><td><strong>Whether you knew what was left and could say it.</strong> "I've handled the main path; the two things missing are X and Y" beats a silent unfinished screen every time.</td></tr>
+    <tr><td>Never being wrong</td><td><strong>How you respond when challenged.</strong> Defending a wrong answer is fatal; hearing it, checking it, and adjusting is a strong positive.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The same list applies at work</span>
+  <p>Every row is also true of a pull request. Nobody rejects a PR for being 5&nbsp;% slower than
+  possible. They reject it because it handles no failures, because nobody can tell what it does, or
+  because it silently changed a behaviour somebody depended on.</p>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Coding 04</span>
+  <h2>Before you type</h2>
+  <p class="lede">Ninety seconds that change the outcome of the next hour.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The pre-typing checklist</div>
+<pre><code>1  RESTATE THE TASK IN YOUR OWN WORDS
+   "So: given a list of shifts, I return the ones that overlap.
+   Is that right?"
+   ⇒ catches a misunderstanding while it is still free. This is
+     the single highest-value ten seconds in the round.
+
+2  ASK FOR ONE CONCRETE EXAMPLE — INPUT AND EXPECTED OUTPUT
+   ⭐ Ambiguity hides in prose and dies in examples. "Sort the
+     users" — by what? ascending? what about ties? An example
+     answers all three without a conversation.
+
+3  NAME THE SHAPE OF THE DATA
+   what comes in, what goes out, what types, what is optional,
+   what is guaranteed. Most bugs are shape bugs: something was
+   null, or was an array of one thing rather than the thing.
+
+4  NAME THE CONSTRAINT
+   how big can the input get? is this called once or in a loop?
+   does it run in a request, or a background job?
+   ⇒ this decides whether a simple approach is fine (usually) or
+     whether you genuinely need a better one (rarely, but say so).
+
+5  SAY THE APPROACH IN ONE SENTENCE BEFORE WRITING IT
+   "I'll sort by start time, then walk the list comparing each to
+   the previous."
+   ⇒ if the approach is wrong, you have lost one sentence rather
+     than twenty minutes. And you have shown the reasoning that
+     the code alone would not.
+
+6  ASK ABOUT THE EDGES YOU ALREADY SUSPECT
+   "What should happen if the list is empty — an empty result or
+   an error?" ⇒ shows you are already thinking past the happy path.</code></pre>
+</div>
+
+<div class="note">
+  <span class="tag">The one habit worth stealing</span>
+  <p><strong>Write down the example before the solution.</strong> Two or three concrete input/output
+  pairs on the side of the screen. They pin the specification, catch the misunderstanding, and become
+  your test cases for free.</p>
+  <p>People who do this look organised. What they actually are is <em>unlikely to solve the wrong
+  problem</em>.</p>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Coding 05</span>
+  <h2>Decomposition — where the cuts go</h2>
+  <p class="lede">Splitting a problem is a skill with rules, not a matter of taste.</p>
+</header>
+
+<div class="ascii">   THE THREE CUTS THAT ALWAYS WORK
+
+   ① SEPARATE GETTING THE DATA FROM DECIDING ABOUT IT
+
+       fetch ──► decide ──► act
+        I/O      pure       I/O
+
+     the middle piece — the decision — has no database, no network,
+     no clock, no randomness. It is the part with the actual
+     business rules in it.
+
+     ⭐ WHY THIS IS THE MOST VALUABLE CUT IN SOFTWARE:
+       · the decision becomes testable without any setup at all
+       · the rule becomes readable — it is not buried in plumbing
+       · the rule becomes reusable in a job, an endpoint, a script
+       · and when the rule is wrong, you know exactly where to look
+
+     ⚠ THE SMELL THAT SAYS YOU HAVEN'T DONE IT: to test the rule,
+       you must create a user, a database row, and a fake request.
+       That difficulty is not a testing problem. It is a design
+       problem announcing itself.
+
+   ② SEPARATE THE STEPS OF A PIPELINE
+
+     "parse → validate → transform → persist → notify"
+     each step has one input shape and one output shape. You can
+     name each one in three words. If you cannot name it in three
+     words, it is doing two things.
+
+   ③ SEPARATE THE THING THAT CHANGES FROM THE THING THAT DOESN'T
+
+     the shape of a report changes constantly; the way we fetch
+     and paginate does not. Put a seam there and the churn lands
+     in one small place instead of smeared everywhere.
+
+   HOW BIG SHOULD A PIECE BE?
+     ⭐ the honest rule: SMALL ENOUGH THAT ITS NAME IS ACCURATE.
+       if the name needs "and" in it, cut again. if you cannot name
+       it at all, you do not yet understand what it does.
+     ⚠ and the opposite failure is real: five files of two lines
+       each, so that following the logic means opening all five.
+       Indirection is a cost. Pay it where something varies.</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Coding 06 · print this one</span>
+  <h2>The edge catalogue</h2>
+  <p class="lede">Run this list against any function you write. It takes twenty seconds and it is
+  where most bugs live.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Nine questions, in order of how often they bite</div>
+<pre><code>1  ZERO      empty list · empty string · no results · no rows.
+             ⭐ THE MOST COMMON PRODUCTION BUG IN EXISTENCE, and
+               it has a nasty variant: dividing by a count that is
+               zero, or averaging nothing and showing "NaN%" to a
+               customer.
+
+2  ONE       a single item. breaks anything that compares each
+             element to the next, and anything that says "and"
+             between items.
+
+3  MANY      more than fits on a screen, in memory, or in one
+             request. does this paginate? does it stream? or does
+             it quietly load 400,000 rows to count them?
+
+4  NULL      the value that is absent versus the value that is
+             zero versus the value that is empty.
+             ⭐ THESE THREE ARE DIFFERENT and treating them the
+               same is how "0" becomes "not set" and a real
+               discount of zero disappears.
+
+5  DUPLICATE the same item twice. the same request twice.
+             ⚠ THE SECOND ONE IS IDEMPOTENCY, and it is not
+               hypothetical: users double-click, phones retry,
+               and every queue in existence can deliver twice.
+
+6  ORDER     is the input sorted? is it guaranteed? does the
+             output order matter to anyone? are ties resolved
+             the same way every run, or arbitrarily?
+
+7  CONCURRENT two people doing this at the same instant. the
+             classic: both read a balance of 100, both subtract
+             80, both write. one withdrawal vanishes.
+             ⭐ THE FIX IS ALMOST NEVER IN YOUR CODE — it is a
+               constraint or a lock in the database.
+
+8  HOSTILE   the input is a lie. too long, wrong type, a script
+             tag, a path with "../" in it, an id belonging to
+             somebody else.
+             ⭐ THE LAST ONE IS THE ONE PEOPLE MISS: a perfectly
+               valid id that this user has no right to.
+
+9  PARTIAL   it worked halfway and then died. did you charge the
+             card and fail to record the order? is the retry
+             safe? can you tell, afterwards, what state it is in?
+
+⭐ THE COMPRESSION: ZERO · ONE · MANY · NULL · TWICE · ORDER ·
+  RACE · LIE · HALFWAY. Nine words. Say them to yourself over any
+  function and you will out-think most reviewers.</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Coding 07</span>
+  <h2>Errors as design, not decoration</h2>
+</header>
+
+<p>Error handling is where juniors reach for a reflex — wrap it, log it, move on — and where seniors
+make a decision. The decision starts by classifying the failure, because the four classes deserve
+four different responses.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Class</th><th style="width:28%">Examples</th><th>The right response</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The caller's fault</strong></td><td>Bad input, missing field, invalid state transition</td><td><strong>Reject immediately and explain precisely.</strong> Never retry — it will fail identically forever. The message must say what is wrong and what to do.</td></tr>
+    <tr><td><strong>Temporary</strong></td><td>Network blip, timeout, deadlock, rate limit, 503</td><td><strong>Retry — with backoff, a cap, and jitter.</strong> Retrying instantly and forever is how one slow service takes down four others.</td></tr>
+    <tr><td><strong>Permanent, ours</strong></td><td>A bug, a missing column, a bad deploy</td><td><strong>Fail loudly and stop.</strong> Do not swallow it. An error that is caught and logged at level "info" is a bug you will find in six months via a customer.</td></tr>
+    <tr><td><strong>Degraded</strong></td><td>The recommendations service is down, but the page can still render</td><td><strong>Continue without it, visibly.</strong> Show the page, hide the panel, record that it happened. The senior distinction: the user is told what is missing rather than shown a wrong-looking page.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The three catastrophic habits</span>
+  <p><strong>Catching everything and continuing.</strong> A blanket catch that logs and proceeds turns
+  a loud failure into silent wrong data — the most expensive kind, because nobody knows to look.</p>
+  <p><strong>Retrying a non-retryable error.</strong> Amplifies load at exactly the worst moment,
+  and for the caller's-fault class it can never succeed.</p>
+  <p><strong>Leaking the internals.</strong> A stack trace or SQL fragment in a user-facing message is
+  a security finding, not a debugging convenience. Log the detail; return an identifier.</p>
+</div>
+
+<div class="good">
+  <span class="tag">The senior sentence</span>
+  <p>"<strong>What is the state of the world if this fails right here?</strong>" — asked at each line
+  that touches something outside the process. Money moved but no record; email sent twice; file
+  written but not registered. If a failure at that point leaves the system inconsistent, that is where
+  a transaction, an idempotency key, or a reversal belongs.</p>
+</div>
+
+<header class="mod" id="c6">
+  <span class="mn">Coding 08</span>
+  <h2>Scenarios — what to think</h2>
+</header>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Write a function that returns each employee's average performance score."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you notice that the deceptively simple ask contains four undefined decisions — and whether you surface them instead of picking silently.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Zero.</strong> An employee with no scores — is that <code>0</code>, <code>null</code>, or omitted? These are three different products. Zero is a lie; null is honest; omitting them hides people.</li>
+      <li><strong>Null.</strong> A score that is missing versus a score of zero. If you average them the same way, one absent review permanently drags someone's number down.</li>
+      <li><strong>Grain.</strong> Average per employee, or per employee per year? "Their average" quietly compares a ten-year veteran with a new joiner.</li>
+      <li><strong>Rounding.</strong> Where, and to what? If this number appears in two places and is rounded differently, someone will file a bug and be right.</li>
+    </ol></div>
+  <div class="band"><span class="k">What to do</span><p>Ask the first two before writing anything; state assumptions for the second two. Then separate <em>fetching the scores</em> from <em>computing the average</em>, so the rule is testable with a plain list and no database.</p></div>
+  <div class="band tell"><span class="k">The tell</span><p>The weak answer computes a mean. The strong one says: "Before I write this — what should an employee with no reviews show? I'd argue for <em>no score</em> rather than zero, because zero reads as a bad review rather than a missing one."</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"This endpoint is slow. Make it faster."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you measure before you optimise. Guessing at performance is the most reliable way to spend a week making something 2&nbsp;% faster.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Slow for whom, and how slow?</strong> Average or the worst 1&nbsp;%? Everyone, or one customer with far more data than the rest? These have completely different causes.</li>
+      <li><strong>Where does the time actually go?</strong> Almost always one of four places: too many database round-trips, one bad query, work done per-row that should be done once, or waiting on another service.</li>
+      <li><strong>The N+1 reflex.</strong> If the response contains a list and each item needed its own lookup, that is the answer, and it is the answer far more often than anything exotic.</li>
+      <li><strong>Is the work necessary at all?</strong> The fastest query is the one you don't run. Can it be cached, precomputed, paginated, or simply not returned?</li>
+    </ol></div>
+  <div class="band"><span class="k">What to do</span><p>Get one real trace before touching anything. Fix the largest contributor, measure again, stop when it is fast enough — not when it is elegant.</p></div>
+  <div class="band tell"><span class="k">The tell</span><p>Weak: "I'd add a cache." Strong: "I'd look at where the time goes first — if it's 200 queries for 200 rows, a cache hides an N+1 instead of removing it, and the cache then becomes a second problem to keep correct."</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Add a button that triggers a re-scoring of all candidates."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether "a button" registers as <em>a long, expensive, repeatable, concurrent operation</em> rather than as a click handler.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>How long?</strong> If it can exceed a few seconds it cannot live in a request. It is a job: accept, enqueue, report progress, notify.</li>
+      <li><strong>Twice.</strong> Someone will click it twice, and someone else will click it while it is already running. Do you queue two, ignore the second, or corrupt something?</li>
+      <li><strong>Halfway.</strong> If it dies at candidate 4,000 of 9,000 — is the world half-updated? Can it resume, or must it restart?</li>
+      <li><strong>Who may press it?</strong> A button that re-scores everyone is an expensive, destructive-ish action. It needs a permission, and it needs an audit record of who pressed it and when.</li>
+      <li><strong>Cost.</strong> If scoring calls a model, this button has a price. Nine thousand calls at a fraction of a cent each is a real number, and it should be shown before confirmation rather than discovered on the invoice.</li>
+    </ol></div>
+  <div class="band"><span class="k">What to do</span><p>Job from the start, an idempotency guard on "already running", progress the user can see, resumability, a permission, an audit row, and an estimated cost in the confirmation.</p></div>
+  <div class="band tell"><span class="k">The tell</span><p>Naming <em>double-click</em> and <em>halfway</em> unprompted is the senior signal. Both are certainties, not risks.</p></div>
+</div>
+
+<header class="mod" id="c7">
+  <span class="mn">Coding 09</span>
+  <h2>The coding ladder</h2>
+</header>
+
+<div class="levels">
+  <div class="lev a"><span class="k">Beginner</span>
+    <p>Writes code that works on the example given. Handles the happy path. Names things after what
+    they contain (<code>data</code>, <code>result</code>). Finds bugs by re-reading.</p></div>
+  <div class="lev b"><span class="k">Mid</span>
+    <p>Handles the obvious edges, splits functions sensibly, writes tests for the main paths. Names
+    things after what they mean. Reaches for the abstraction slightly too early.</p></div>
+  <div class="lev c"><span class="k">Senior</span>
+    <p>Asks before writing. Separates decisions from I/O by habit. Treats the edge catalogue as
+    reflex. Writes the <em>boring</em> version deliberately, and can say what it costs and when it
+    would need to change.</p></div>
+</div>
+
+<div class="note">
+  <span class="tag">What moves you up</span>
+  <p><strong>Beginner → mid:</strong> run the edge catalogue on everything you write, for a month,
+  out loud. It converts a checklist into a reflex.</p>
+  <p><strong>Mid → senior:</strong> stop writing until you can state, in one sentence, what problem
+  the code solves and what it costs. And start <em>removing</em> abstractions that only have one
+  caller — the mid-level failure mode is cleverness, not ignorance.</p>
+</div>
+
+<header class="part" id="design">
+  <span class="pn">Part III</span>
+  <h2>The design round</h2>
+  <p class="lede">Feature design — one level above code and one below architecture. "Design a
+  notifications feature." "Design the export." This is where senior thinking is most visible, and
+  where it is most often absent.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Design 10</span>
+  <h2>The method — seven moves</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">In this order, always</div>
+<pre><code>①  WHO IS THIS FOR, AND WHAT ARE THEY DOING WHEN THEY USE IT?
+    a feature has a person and a moment. "An HR manager, on the
+    Monday of review week, with 40 tabs open."
+    ⇒ this decides more design questions than any technical fact:
+      how much they will read, whether they can wait, whether
+      they are on a phone, what they already know.
+
+②  WHAT IS THE SMALLEST VERSION THAT IS ACTUALLY USEFUL?
+    ⭐ the strongest design move available to you is DELETING
+      SCOPE. Not "phase two" — genuinely asking whether the
+      feature is useful without half of what was requested.
+    ⇒ and the honest form: "here is what I'd cut first if we're
+      short on time, and here's what I would not cut."
+
+③  WHAT ARE THE NOUNS?
+    the entities, their relationships, and — critically — the
+    GRAIN. one row per what? per employee? per employee per
+    month? per event?
+    ⚠ getting the grain wrong is the most expensive design error
+      there is, because everything downstream inherits it and
+      the fix is a migration.
+
+④  WHAT ARE THE STATES?
+    draft → submitted → approved → paid. list them explicitly.
+    then ask the question everyone forgets: WHICH TRANSITIONS ARE
+    ILLEGAL, and what stops them?
+    ⇒ "approved → draft" is usually a bug, and if only the UI
+      prevents it, it is not prevented.
+
+⑤  WHO CAN SEE IT, AND WHO CAN CHANGE IT?
+    for EVERY field, not the feature as a whole. Salary and job
+    title live on the same record and have completely different
+    audiences.
+    ⭐ see reflex 14 — this is the move most often skipped, and
+      the one that produces the worst outcomes when skipped.
+
+⑥  WHAT HAPPENS WHEN IT FAILS OR IS SLOW?
+    the empty state, the loading state, the error state, the
+    partial state. These are DESIGN, not polish — a feature
+    without an empty state is a feature that looks broken on
+    day one, before any real data exists.
+
+⑦  HOW WILL WE KNOW IT WORKS?
+    what gets logged, what gets measured, what would tell us
+    nobody uses it. A feature nobody can observe cannot be
+    improved, and cannot be retired.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Design 11</span>
+  <h2>API thinking</h2>
+  <p class="lede">An API is a promise you will have to keep after you have forgotten making it.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Question</th><th>What to think</th></tr></thead>
+  <tbody>
+    <tr><td><strong>What are the nouns?</strong></td><td>Endpoints should be things, not procedures. When you find yourself inventing verbs, you have usually missed a noun — <em>"cancel an order"</em> is often better modelled as a <em>cancellation</em> that gets created, because then it has a time, an author and a reason.</td></tr>
+    <tr><td><strong>Is it safe to call twice?</strong></td><td>The single most important API question. Reads are naturally safe; creates are not. A create that moves money or sends a message needs a caller-supplied key so the second attempt returns the first result rather than doing it again. <strong>Networks retry whether or not you designed for it.</strong></td></tr>
+    <tr><td><strong>What does it return when there are 50,000?</strong></td><td>Every list endpoint is a future incident. Pagination is not a feature to add later — the shape of the response is a contract, and adding a wrapper afterwards breaks every caller.</td></tr>
+    <tr><td><strong>What does failure look like?</strong></td><td>Errors are part of the interface. A machine-readable code, a human-readable message, and enough structure to know which field was wrong. "500: something went wrong" makes every integration a support ticket.</td></tr>
+    <tr><td><strong>What can never change?</strong></td><td>Removing a field, renaming one, narrowing a type, or making an optional field required — all breaking. Adding an optional field is not. <strong>Know which category you are in before shipping</strong>, because the answer decides whether this is a deploy or a migration with notice.</td></tr>
+    <tr><td><strong>Whose data can this reach?</strong></td><td>Every endpoint that takes an id must answer: what if the id belongs to someone else? The answer must live in code that runs on every path, not in the UI that generated the link.</td></tr>
+    <tr><td><strong>How long can it take?</strong></td><td>Anything unbounded — a report, an import, a model call over many records — does not belong in a request/response cycle. Accept it, return a handle, do the work elsewhere, tell the user when it lands.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Design 12</span>
+  <h2>Data model thinking</h2>
+  <p class="lede">The schema outlives the code that reads it. It is the most permanent decision in the
+  feature, so it earns the most thought.</p>
+</header>
+
+<div class="ascii">   THE SIX QUESTIONS, IN ORDER
+
+   ① WHAT IS ONE ROW?
+     say it in a sentence: "one row is one employee's score for
+     one review cycle." if the sentence needs an "or", the table
+     is two tables.
+
+   ② WHAT MAKES A ROW UNIQUE?
+     and is that enforced by the database, or merely believed?
+     ⭐ IF IT IS NOT A CONSTRAINT, DUPLICATES ARE ALREADY THERE.
+       Not "will be" — are. Application-level uniqueness checks
+       lose every race they enter.
+
+   ③ WHAT MUST ALWAYS BE TRUE?
+     an invariant: "a payment never exceeds its invoice", "an
+     end date is never before its start date".
+     ⇒ then decide WHERE it is enforced. The database enforces it
+       for every writer forever, including the migration script
+       and the person with a psql prompt. The application enforces
+       it for the paths that remembered to.
+
+   ④ DO WE NEED TO KNOW WHAT WAS TRUE THEN?
+     ⭐ THE MOST-MISSED QUESTION IN DATA MODELLING.
+     if you overwrite an employee's department, every historical
+     report silently rewrites itself, and last quarter's numbers
+     change. Sometimes that is fine. Sometimes it is a compliance
+     incident. DECIDE — do not default.
+     ⇒ the answers: overwrite (no history), keep versions with
+       valid-from/valid-to, or keep an append-only event log and
+       derive the current state.
+
+   ⑤ WHAT IS THE DELETION STORY?
+     hard delete, soft delete, or anonymise? what happens to the
+     children? and — separately — what does a legal erasure
+     request require, which is not the same as a delete button.
+     ⚠ soft delete is a trap you must design for: EVERY query now
+       needs the filter, and the one that forgets it is a leak.
+
+   ⑥ WHAT WILL BE ASKED OF THIS DATA?
+     model for the questions, not just the entities. If the entire
+     product asks "what changed this month", a model that stores
+     only the current state cannot answer it at any price.</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Design 13</span>
+  <h2>Frontend state thinking</h2>
+</header>
+
+<p>Most frontend complexity is not visual. It is <strong>the same fact existing in two places and
+disagreeing</strong>. So the design question is always: where does this truth live, and who is allowed
+to change it?</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Kind of state</th><th style="width:24%">Where it belongs</th><th>The failure when it's wrong</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Server data</strong></td><td>Fetched, cached, revalidated — never copied into local state "so we can edit it"</td><td>The copy goes stale, the user edits a ghost, and the save overwrites someone else's change.</td></tr>
+    <tr><td><strong>URL state</strong></td><td>Filters, tabs, page number, the selected row</td><td>Kept in memory instead: the user cannot share the link, cannot bookmark, and the back button does something surprising.</td></tr>
+    <tr><td><strong>Form state</strong></td><td>Local to the form until submitted</td><td>Lifted too high, so every keystroke re-renders half the page.</td></tr>
+    <tr><td><strong>Ephemeral UI</strong></td><td>As local as possible — a menu's open/closed</td><td>In a global store, where it becomes everyone's problem forever.</td></tr>
+    <tr><td><strong>Derived values</strong></td><td>Computed at render from the above</td><td>Stored as its own state and updated by hand — the classic source of "the total doesn't match the rows".</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The four states every screen has</span>
+  <p><strong>Empty · loading · error · loaded.</strong> Designing only the fourth is the most common
+  gap between a demo and a product. The empty state is the first thing every new user sees, and it is
+  the best onboarding surface you will ever get. The error state is where trust is won or lost.</p>
+  <p>And a fifth for anything asynchronous: <strong>stale</strong> — you have data, but it may no
+  longer be true. Showing it with a quiet marker beats a spinner over content the user could have been
+  reading.</p>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Design 14 · the one people skip</span>
+  <h2>The security reflex</h2>
+  <p class="lede">Not a phase, not a review at the end. Four questions asked <em>while</em> designing,
+  every time.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Ask these of every feature, before it is built</div>
+<pre><code>①  WHO IS ALLOWED TO SEE THIS — PER FIELD, NOT PER PAGE?
+
+    an employee record contains a name (everyone), a manager
+    (most people), a salary (few), a disciplinary note (fewer),
+    and a health accommodation (almost nobody).
+    ⚠ ONE ENDPOINT RETURNING "THE EMPLOYEE" RETURNS ALL OF IT.
+      The UI hiding a column is not access control — it is a
+      suggestion, and the network tab ignores suggestions.
+
+②  WHERE IS THE CHECK, AND DOES EVERY PATH GO THROUGH IT?
+
+    ⭐ THE ONLY QUESTION THAT MATTERS: is the rule enforced in
+      one place that every caller must pass through, or repeated
+      in each handler by convention?
+    the second always drifts. A new endpoint gets written on a
+    Friday, and the check is the thing that gets forgotten.
+
+③  WHAT DOES A VALID REQUEST FROM THE WRONG PERSON LOOK LIKE?
+
+    this is the vulnerability people actually ship. Not injection
+    — just a correctly-formed request with someone else's id in
+    it, from a logged-in user, that the code happily serves.
+    ⇒ every id from the outside is a CLAIM, not a fact. It must
+      be checked against the caller on the server, on every path.
+
+④  WHAT ESCAPES THE SYSTEM?
+
+    exports, downloads, emails, webhooks, logs, error messages,
+    analytics events, and anything sent to a third party.
+    ⭐ THE MOMENT DATA LEAVES YOUR PERMISSION SYSTEM, YOUR
+      PERMISSION SYSTEM STOPS PROTECTING IT. A file, a link, a
+      log line and an email have no idea who is allowed to read
+      them.
+    ⚠ and the modern addition: text pasted into a model prompt
+      has left the building too — see reflex 22.</code></pre>
+</div>
+
+<div class="bad">
+  <span class="tag">The two sentences worth memorising</span>
+  <p><strong>The UI is not a security boundary.</strong> Hidden buttons, disabled fields and
+  client-side role checks are usability, not protection. Anything the browser can do, a person can do
+  without the browser.</p>
+  <p><strong>Authorisation belongs in code, not in prompts or config the user can influence.</strong>
+  If the only thing preventing an action is an instruction written in English, it is not prevented.</p>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">Design 15 · worked in full</span>
+  <h2>The export — one feature, thought through</h2>
+  <p class="lede">"Let a manager download an employee's full HR record as a PDF." One sentence. Here
+  is the entire senior reasoning, in the order it actually happens.</p>
+</header>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Add a download button that exports an employee's complete HR record."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you can see that a one-sentence request contains a data-protection decision, an unbounded operation, a permission model and a retention policy — and whether you raise them <em>before</em> writing, because every one of them is far more expensive to retrofit.</p></div>
+</div>
+
+<h3>① The first thought is not technical</h3>
+
+<p><strong>What is this actually for?</strong> A manager preparing for a review needs a summary
+they can read in a meeting. A legal team responding to a subject-access request needs everything, in
+a defensible format, with a record that it happened. HR sending a file to an external lawyer needs
+something else again. <strong>These are three different features</strong>, and they differ on the one
+axis that matters — how much data leaves the system.</p>
+
+<p>The senior move is to ask, then to argue for the smallest one that solves the real problem. If the
+answer is "managers keep re-typing these figures", the correct feature might be a printable view with
+no download at all.</p>
+
+<h3>② Then: what is in "complete"?</h3>
+
+<p>"Complete HR record" is not a specification. Name the categories out loud and watch the request
+change: contact details · contract and salary · performance reviews · disciplinary history · sickness
+absence · medical accommodations · background-check results · complaints made <em>about</em> this
+person, and complaints made <em>by</em> them.</p>
+
+<div class="warn">
+  <span class="tag">The question that changes the design</span>
+  <p><strong>Is the person's own manager allowed to see all of that?</strong> In most jurisdictions and
+  most companies, no — sickness and medical accommodation are frequently restricted to HR, and a
+  complaint someone made about their manager must not be exported by that manager.</p>
+  <p>So the export cannot simply be "everything on the record". It must be <strong>everything on the
+  record that this specific requester is entitled to</strong>, assembled per requester rather than
+  once. If you build it as one document and filter for display, you have already built the leak.</p>
+</div>
+
+<h3>③ The download link is the security hole</h3>
+
+<p>This is the part that gets missed, and it is worth stating plainly: <strong>a file containing one
+employee's complete HR record must not sit on a guessable URL.</strong></p>
+
+<div class="sheet">
+  <div class="cap">Why a "temporary file with a link" fails</div>
+<pre><code>THE NAIVE VERSION
+  generate the PDF, save it to storage, return the URL.
+
+WHAT IS NOW TRUE
+  · the URL works for ANYONE who has it, forever. It carries no
+    identity. Whoever holds the string holds the record.
+  · it will be pasted into chat, forwarded, and left in a browser
+    history, an email thread, and a proxy log.
+  · if the name is predictable — an id, a date, a sequence — the
+    other records are reachable by editing the string.
+  · your permission system is no longer involved in any of this.
+
+⭐ THE REFLEX: A LINK IS A CREDENTIAL. Anything reachable by a URL
+  alone is protected only by the secrecy of that URL, and URLs
+  are the least secret thing in a company.
+
+WHAT TO DO INSTEAD — in order of preference
+  1  DON'T PRODUCE A FILE AT ALL. Render it in the app, behind the
+     session, where the permission check runs on every view.
+     ⭐ the strongest answer, and the one nobody proposes.
+  2  SERVE IT THROUGH AN AUTHENTICATED ENDPOINT — the request is
+     checked against the caller every time, and the file itself
+     is never publicly addressable.
+  3  IF IT MUST BE A DIRECT LINK: a pre-signed URL with a short
+     expiry, an unguessable name, single use where the storage
+     supports it, and delivered to the verified account rather
+     than returned in the page.
+
+AND REGARDLESS
+  · the generated file has a LIFETIME. It gets deleted. A bucket
+    of HR PDFs with no expiry is a breach waiting for an audit.
+  · every generation is AUDITED: who, which employee, which
+    fields, when, from where. For this category of data the audit
+    trail is not optional, and it is the first thing anyone asks
+    for afterwards.
+  · the file itself says who it was generated for and when, so a
+    copy found later is traceable.</code></pre>
+</div>
+
+<h3>④ Size is unbounded, so the naive version is a time bomb</h3>
+
+<p>A twenty-year employee's record with attachments is not the same object as a new joiner's. Building
+it inside the request works in development and times out for exactly the people whose records matter
+most. <strong>Build it as a job from the start</strong> — accept, generate, notify — not because it is
+slow today but because the thing that decides its size is outside your control and only grows.</p>
+
+<h3>⑤ Then the ordinary questions, which are still not optional</h3>
+
+<div class="grid2">
+  <div class="card"><h4>Twice</h4><p>Two clicks must not produce two jobs, two files and two audit entries that look like suspicious activity.</p></div>
+  <div class="card"><h4>Halfway</h4><p>If generation dies mid-way, no half-file should be reachable. Write it, verify it, then make it available — never the other order.</p></div>
+  <div class="card"><h4>The employee themselves</h4><p>Do they get told their record was exported? For some data categories that is a requirement, not a courtesy.</p></div>
+  <div class="card"><h4>Leavers</h4><p>Does this work for someone who left? Should it? Retention rules usually say the record persists and the access does not.</p></div>
+</div>
+
+<div class="good">
+  <span class="tag">What the whole example demonstrates</span>
+  <p>Not one line of this is about PDF libraries, and that is the point. The senior contribution to
+  this feature is: <strong>"which of the three features is it", "per-field permissions, assembled per
+  requester", "the link is a credential", "unbounded size means a job", and "this needs an audit trail
+  and a deletion policy"</strong> — all raised in the first ten minutes, when they are free.</p>
+  <p>Raised after it ships, the same five points are a rewrite and possibly an incident report.</p>
+</div>
+
+<header class="mod" id="d7">
+  <span class="mn">Design 16</span>
+  <h2>More scenarios</h2>
+</header>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Design notifications for our app."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you design the <em>system</em> — preferences, delivery, dedup, retries — or just a bell icon.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>What is a notification, as a noun?</strong> An event that happened, a recipient, a reason they are receiving it, a read state, and a channel. Note that <em>event</em> and <em>delivery</em> are two different tables — one event may become an in-app item and an email.</li>
+      <li><strong>Who decides they get it?</strong> Preferences per type and per channel, plus a global off. And a category that ignores preferences — security alerts — which must be explicitly designed rather than accidental.</li>
+      <li><strong>Volume.</strong> An approval flow with 300 items generates 300 notifications and one very angry user. Batching and digests are core design, not an optimisation.</li>
+      <li><strong>Exactly once is a fantasy.</strong> Aim for at-least-once delivery plus deduplication on the recipient's side, because the alternative — at-most-once — silently loses the one that mattered.</li>
+      <li><strong>Leakage.</strong> The preview text goes to a phone's lock screen and an email subject line. "Your termination letter is ready" on a lock screen is a design failure, not an edge case.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>Mentioning the lock-screen preview and the digest unprompted. Both show you are imagining the person receiving it rather than the row being written.</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Add an AI feature that summarises a candidate's fit for a role."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you treat a model as a component with failure modes, or as magic. And whether you notice this particular feature is a decision about a person.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Is it advisory or decisive?</strong> If a human reads it and decides, it is a summary. If it filters, ranks or rejects, it is a decision about someone's employment — with a completely different bar for fairness, explainability, record-keeping and appeal.</li>
+      <li><strong>What goes into the prompt?</strong> A CV contains age proxies, nationality, gender, health information. Anything you send is data leaving your permission boundary, and anything in the prompt can influence the output — including a candidate who writes instructions into their own CV.</li>
+      <li><strong>What comes out — free text or a structure?</strong> Free text cannot be filtered, compared or audited. A constrained shape can, and it removes whole categories of nonsense rather than reducing them.</li>
+      <li><strong>How do you know it is any good?</strong> The answer must be a set of graded examples, not an impression. Without that you cannot tell an improvement from a regression, and you will eventually be asked to prove the thing is not discriminatory.</li>
+      <li><strong>What does the human see?</strong> The summary must be attached to the evidence it came from, so a reviewer can check it rather than trust it. An unsourced paragraph of confident prose is the worst possible surface for a hiring decision.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>Saying "before anything else — is this advising a human or making a decision?" That single question reframes the entire design, and most candidates never ask it.</p></div>
+</div>
+
+<header class="mod" id="d8">
+  <span class="mn">Design 17</span>
+  <h2>The design ladder</h2>
+</header>
+
+<div class="levels">
+  <div class="lev a"><span class="k">Beginner</span>
+    <p>Designs the happy path and the screen. Thinks about permissions when someone mentions them.
+    Answers the question asked.</p></div>
+  <div class="lev b"><span class="k">Mid</span>
+    <p>Designs the states, the schema and the API together. Handles errors and empties. Still tends
+    to accept the requested scope as given.</p></div>
+  <div class="lev c"><span class="k">Senior</span>
+    <p>Starts with the person and the problem, argues scope down, asks per-field permissions
+    unprompted, names what escapes the system, and says what they would cut and why.</p></div>
+</div>
+
+<header class="part" id="system">
+  <span class="pn">Part IV</span>
+  <h2>The system-design round</h2>
+  <p class="lede">The round people fear most, and the one with the most predictable structure. It is
+  not a test of whether you have built a system at that scale. It is a test of whether you can
+  <em>reason</em> about one out loud.</p>
+</header>
+
+<header class="mod" id="s1">
+  <span class="mn">System 18</span>
+  <h2>The method — eight moves in forty-five minutes</h2>
+</header>
+
+<div class="ascii">   THE SHAPE OF A GOOD SYSTEM-DESIGN ROUND
+
+   ①  REQUIREMENTS            5 min   ⭐ never skip this
+       functional: what must it do? name 3–5 things and stop.
+       non-functional: how many users, how fast, how fresh,
+       how available, how private?
+       ⇒ WRITE THEM DOWN VISIBLY. Everything after is judged
+         against this list, including by you.
+       ⇒ and ask what is EXPLICITLY OUT of scope. Cutting scope
+         in the first five minutes is the most senior thing you
+         will do in the whole round.
+
+   ②  SCALE ESTIMATE           3 min
+       users → requests per second → data per day → data in a
+       year. round numbers. see reflex 19.
+       ⇒ this is what tells you whether the answer is "one
+         database" or something more, and it stops you designing
+         a distributed system for 40 requests a minute.
+
+   ③  THE BOX DIAGRAM          5 min
+       client → api → data store, plus whatever is genuinely
+       needed. START SMALL AND ADD UNDER PRESSURE.
+       ⚠ the classic failure is drawing eleven boxes in minute
+         four, none of which you can justify.
+
+   ④  THE DATA MODEL           7 min   ⭐ the highest-signal part
+       entities, relationships, and the access patterns.
+       "we read this a thousand times for every write" changes
+       the design more than any box on the diagram.
+
+   ⑤  THE MAIN FLOW            7 min
+       walk ONE request end to end, in words. what is written,
+       what is read, what is cached, what is queued.
+
+   ⑥  FAILURE                  6 min
+       what happens when each box is down or slow? which parts
+       must be correct and which may be stale? what is the
+       user's experience during a partial outage?
+       ⭐ THIS IS WHERE SENIORITY SHOWS MOST CLEARLY, and where
+         most candidates run out of time — so protect it.
+
+   ⑦  SCALE THE BOTTLENECK     6 min
+       pick the one thing that breaks first and fix that.
+       don't scale everything; that is not a design, it is
+       a list of technologies.
+
+   ⑧  TRADE-OFFS AND WHAT'S NEXT  4 min
+       "here's what I'd build first, here's what I deliberately
+       left out, here's what would break at 10× and what I'd
+       do then."
+
+   ⭐ THE STRUCTURE IS THE SCORE. Two candidates with identical
+     knowledge get different results because one followed this
+     order and one free-associated.</div>
+
+<header class="mod" id="s2">
+  <span class="mn">System 19</span>
+  <h2>Estimating without maths anxiety</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">You need four numbers and one honest habit</div>
+<pre><code>THE HABIT: ROUND VIOLENTLY AND SAY YOU ARE DOING IT.
+  "call it a million users, ten percent daily active, ten
+  actions each — so a million actions a day."
+  ⭐ NOBODY IS CHECKING YOUR ARITHMETIC. They are checking
+    whether you know which quantity decides the design.
+
+THE FOUR NUMBERS THAT MATTER
+  ①  REQUESTS PER SECOND at peak, not average.
+      peak is commonly 2–5× the daily mean, and for anything
+      tied to a working day it is far spikier — everyone opens
+      the dashboard at 9 a.m.
+      a day ≈ 90,000 seconds. so a million actions a day is
+      ~11/second average, and maybe 50/second at peak.
+      ⇒ AND THAT IS A SMALL NUMBER. One ordinary database
+        handles it. Knowing this is what stops you over-building.
+
+  ②  DATA PER DAY, AND PER YEAR.
+      rows × bytes. the point is the order of magnitude:
+      megabytes (irrelevant), gigabytes (fine), terabytes
+      (now storage layout matters), petabytes (different job).
+
+  ③  READ-TO-WRITE RATIO.
+      100:1 → caching and read replicas are the whole answer.
+      1:1 → the write path is the design.
+      ⭐ THIS SINGLE RATIO DETERMINES MORE OF THE ARCHITECTURE
+        THAN ANY OTHER NUMBER, and it is the one most often
+        not asked for.
+
+  ④  HOW STALE MAY IT BE?
+      "must be current to the second" and "yesterday is fine"
+      are different systems with different costs. Ask.
+
+THE LATENCY INTUITIONS WORTH CARRYING
+  memory lookup          nanoseconds     ─ free
+  local network hop      well under 1 ms ─ cheap
+  SSD read               microseconds    ─ cheap
+  database query, simple  1–10 ms        ─ counts
+  cross-region round trip 50–150 ms      ─ expensive, and the
+                                           reason geography is
+                                           an architecture topic
+  LLM call, short         1–5 s          ─ a DIFFERENT UNIT.
+                                           see reflex 22.
+⭐ THE ONE THAT MATTERS MOST: a request that makes 50 sequential
+  database calls at 5 ms each is 250 ms of pure waiting. Round
+  trips, not CPU, are what make ordinary software slow.</code></pre>
+</div>
+
+<header class="mod" id="s3">
+  <span class="mn">System 20</span>
+  <h2>Finding the bottleneck</h2>
+</header>
+
+<p>A system does not "get slow". <strong>One specific resource saturates first</strong>, and everything
+else is a symptom. The senior habit is to name that resource before proposing anything.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Saturating resource</th><th style="width:30%">How it shows up</th><th>What actually helps</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Database connections</strong></td><td>Everything slows at once, including trivial endpoints; timeouts cluster</td><td>Pooling, shorter transactions, moving long work out of the request. <strong>Adding app servers makes this worse</strong>, which is the counter-intuitive one worth knowing.</td></tr>
+    <tr><td><strong>One query</strong></td><td>One endpoint is slow; the rest are fine</td><td>An index, or a rewrite. Cheapest fix in the business, and usually where you should look first.</td></tr>
+    <tr><td><strong>Round trips</strong></td><td>Slow in proportion to how many items are on screen</td><td>Fetch in one query, or in parallel. The N+1 pattern, and it is everywhere.</td></tr>
+    <tr><td><strong>CPU on the app tier</strong></td><td>Slows smoothly with traffic; more instances help linearly</td><td>The easy case — add instances. Genuinely rare in typical business software.</td></tr>
+    <tr><td><strong>A downstream service</strong></td><td>Your latency exactly tracks theirs; your errors are their errors</td><td>Timeouts, a circuit breaker, a cache, or degrading without it. <strong>You cannot fix their speed; you can stop it becoming your outage.</strong></td></tr>
+    <tr><td><strong>Lock contention</strong></td><td>Fine until a threshold, then collapses; worse with more workers</td><td>Shorter transactions, finer locks, or removing the shared row. Adding workers accelerates the collapse.</td></tr>
+    <tr><td><strong>Queue depth</strong></td><td>Nothing is slow; things are just late, and getting later</td><td>More consumers, or less work per item. The important diagnosis: arrival rate exceeds service rate, and no amount of waiting fixes it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="s4">
+  <span class="mn">System 21</span>
+  <h2>The seven levers — and what each costs</h2>
+  <p class="lede">Every scaling technique buys something with something. Naming the price is the
+  entire skill.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Nothing here is free</div>
+<pre><code>①  CACHE          buys: read speed, load reduction
+                  costs: STALENESS + INVALIDATION, which is a
+                    correctness problem you have chosen to take on
+                  ⭐ ask first: "how wrong may this be, and for
+                    how long?" if the answer is "not at all",
+                    a cache is the wrong tool.
+                  ⚠ and a cache in front of a broken query is a
+                    way of hiding the bug until the cache misses.
+
+②  READ REPLICA   buys: read capacity
+                  costs: REPLICATION LAG. write then immediately
+                    read, and the user does not see their own
+                    change. The most common "ghost bug" in the
+                    category.
+
+③  QUEUE          buys: absorbs spikes, decouples, allows retries
+                  costs: the work is now ASYNCHRONOUS — the user
+                    is not told immediately, ordering is not
+                    guaranteed, delivery may happen twice, and
+                    you now need to design the failure path,
+                    the dead-letter path, and the progress UI.
+
+④  DENORMALISE    buys: fast reads without joins
+                  costs: the same fact in two places, which is
+                    a promise to keep them in step forever.
+
+⑤  SHARD          buys: horizontal write capacity
+                  costs: ENORMOUS. cross-shard queries, hot
+                    shards, rebalancing, no easy transactions.
+                  ⭐ almost never the answer in an interview
+                    unless the numbers genuinely demand it —
+                    and proposing it early signals that you have
+                    not estimated.
+
+⑥  CDN / EDGE     buys: latency for static and cacheable content
+                  costs: invalidation, and it does nothing at all
+                    for personalised or authenticated content.
+
+⑦  PRECOMPUTE     buys: instant reads of expensive aggregates
+                  costs: freshness, plus the backfill problem —
+                    when the rule changes, everything computed
+                    under the old rule is wrong and must be
+                    rebuilt.
+
+⭐ THE SENTENCE THAT SCORES: "I'd add a cache here — reads
+  outnumber writes heavily and this data may be a minute stale.
+  What that costs me is a stale window after an edit, so I'd
+  invalidate on write and accept the rare race."
+  Lever · reason · cost · mitigation. Four clauses.</code></pre>
+</div>
+
+<header class="mod" id="s5">
+  <span class="mn">System 22 · what makes this an AI role</span>
+  <h2>The AI layer</h2>
+  <p class="lede">Putting a model in the system changes four properties that every classical
+  assumption depends on.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Property</th><th style="width:30%">Ordinary component</th><th>A model call</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Latency</strong></td><td>Milliseconds, tight distribution</td><td><strong>Seconds, wide distribution</strong> — and it grows with output length. This alone means it usually cannot sit inside a page load. Stream it, or make it a job.</td></tr>
+    <tr><td><strong>Cost</strong></td><td>Effectively free per call</td><td><strong>Metered per token, in and out.</strong> A loop over 10,000 records is a line item. Cost belongs in the design review, not the invoice.</td></tr>
+    <tr><td><strong>Determinism</strong></td><td>Same input, same output</td><td><strong>Same input, different output.</strong> Nothing downstream may assume an exact string, and you cannot test it with equality.</td></tr>
+    <tr><td><strong>Trust</strong></td><td>Correct or throws</td><td><strong>Usually right, occasionally confidently wrong, never signals which.</strong> This is the property that drives the whole architecture.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The four design consequences</div>
+<pre><code>①  THE MODEL IS AN UNTRUSTED, SLOW, EXPENSIVE DEPENDENCY.
+    ⇒ so it gets what any such dependency gets: a timeout, a
+      retry policy, a fallback for when it is down, and a
+      circuit breaker so its bad day is not your outage.
+    ⚠ the fallback question is the one people forget: what does
+      the feature do when the provider is unavailable? "The page
+      breaks" is an answer, but it should be a chosen one.
+
+②  ANYTHING THE MODEL PRODUCES IS AN INPUT, NOT A RESULT.
+    ⭐ treat model output exactly like user input: validate it,
+      constrain it to a shape, and never let it reach a database
+      write, a shell, an email or a payment without a check that
+      runs in code.
+    ⇒ the deterministic system computes; the model narrates.
+      Calculate the number in SQL where it is reproducible, and
+      let the model write the sentence around it. Then the worst
+      hallucination is a clumsy sentence, not a wrong figure in
+      a board pack.
+
+③  ANYTHING IN THE PROMPT CAN INFLUENCE THE OUTPUT.
+    ⭐ PROMPT INJECTION IS NOT A PROMPTING PROBLEM. If a
+      retrieved document, a CV, a support ticket or a web page
+      goes into the context, its author is now speaking to your
+      model.
+    ⇒ THE ONLY REAL DEFENCE IS THE TRUST BOUNDARY: the model's
+      requested actions run with the PERMISSIONS OF THE PERSON
+      IN THE SESSION, enforced in code. Then an injection that
+      succeeds completely still cannot do anything the user
+      could not already do.
+    ⚠ "ignore instructions in the document" in a system prompt
+      is a mitigation, not a boundary. Never the only control.
+
+④  YOU CANNOT IMPROVE WHAT YOU DO NOT MEASURE.
+    ⇒ a set of graded examples, run on every change, is the
+      difference between engineering and vibes. Twenty cases in
+      a file beats an impression, and it is a day's work.
+    ⚠ AND WITHOUT IT, NOBODY WILL DARE TOUCH THE PROMPT — which
+      is how a nine-month-old prompt with a superstition in it
+      ends up frozen in production.
+
+AND THE OPERATIONAL FOUR: log the prompt version, the token
+counts, the stop reason, and the latency. Those four make a
+regression reproducible instead of anecdotal.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The question that reframes most AI features</span>
+  <p><strong>"Is the model advising a human, or acting on its own?"</strong> Advising is a display
+  problem — show the sources, make it checkable, let the human decide. Acting is an authorisation
+  problem, and the entire design changes: every action needs a permission check in code, a record of
+  what was done and why, and a way to undo it.</p>
+  <p>Most teams build the second while thinking about the first.</p>
+</div>
+
+<header class="mod" id="s6">
+  <span class="mn">System 23</span>
+  <h2>Scenarios — what to think</h2>
+</header>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Design a dashboard showing live hiring metrics across the company."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you interrogate the word "live", and whether you notice that read-to-write ratio is the whole design.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>How live is live?</strong> Real-time to the second, or refreshed every few minutes? The second is dramatically cheaper and is almost always sufficient — nobody makes a hiring decision on a five-second-old number.</li>
+      <li><strong>The ratio.</strong> Thousands of reads, a handful of writes. So: precompute the aggregates, cache them, and the "hard" problem largely evaporates.</li>
+      <li><strong>Everyone at 9 a.m.</strong> Traffic is not smooth; it is a working-day spike. Design for the spike, and note that a cache with a fixed expiry causes every viewer to miss simultaneously.</li>
+      <li><strong>Permissions change the numbers.</strong> A regional manager's "total open roles" is not the company's. Either the aggregate is computed per scope, or the dashboard leaks headcount information sideways.</li>
+      <li><strong>What does a stale panel look like?</strong> Show the timestamp. A dashboard that silently displays yesterday's figure as today's is worse than one that says it is behind.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>"Before I design for real-time, how fresh does this actually need to be?" — one question that removes half the system.</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Design a system that screens incoming CVs against open roles."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Classical pipeline thinking plus the AI layer, plus whether you notice the consequence class of the decision.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Advisory or decisive?</strong> First question, before any box on the diagram. If it rejects, this is a regulated-adjacent decision needing explainability, records, human review and an appeal path.</li>
+      <li><strong>It is a pipeline, not a request.</strong> Receive → extract → normalise → match → present. Each stage fails differently and each is separately measurable, which is exactly why it should not be one opaque call.</li>
+      <li><strong>Where does the model earn its cost?</strong> Extraction from messy documents — genuinely hard for rules, easy for a model. Ranking against structured criteria — often better as deterministic rules, which are cheap, auditable and defensible in a way a paragraph is not.</li>
+      <li><strong>Volume and burst.</strong> A job posting closes and 4,000 CVs arrive in an hour. Queue, cap concurrency, batch what can be batched — and know the cost per document before turning it on.</li>
+      <li><strong>Bias is a design requirement here.</strong> Which fields are deliberately excluded, and can you show that the outcome does not correlate with a protected attribute? If you cannot measure it, you cannot answer the question when it is asked — and it will be asked.</li>
+      <li><strong>Injection.</strong> Candidates can and do write instructions into CVs. Anything that reads a document must assume its author is hostile.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>Splitting extraction (model) from ranking (rules) — and saying why. It shows you are placing the model where it is actually better, rather than everywhere.</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Users say the app is slow after we added the AI summary panel."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you understand that a slow dependency inside a page load is an architecture bug, not a tuning problem.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Is the page waiting on it?</strong> If the model call is inside the request, the page is now as slow as the slowest component, and its worst case is measured in seconds.</li>
+      <li><strong>Three fixes, in order.</strong> Render the page without it and fill the panel in afterwards; stream the text so the first words appear immediately; or precompute it when the underlying record changes, so viewing costs nothing.</li>
+      <li><strong>Precompute changes the economics twice.</strong> Cost moves from per-view to per-change — good if it is read often, bad if a record changes hourly and is read once.</li>
+      <li><strong>What if it fails?</strong> The panel is missing and says so. The page must never be blocked by an optional component — that is a decision to make now, not during the provider's next outage.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>"An optional component should never be able to make a required page slow" — stated as a principle, then applied.</p></div>
+</div>
+
+<header class="mod" id="s7">
+  <span class="mn">System 24</span>
+  <h2>The system-design ladder</h2>
+</header>
+
+<div class="levels">
+  <div class="lev a"><span class="k">Beginner</span>
+    <p>Draws boxes named after technologies. Reaches for the complicated answer because it sounds
+    senior. Cannot say what would break first.</p></div>
+  <div class="lev b"><span class="k">Mid</span>
+    <p>Follows the method, estimates roughly, designs a reasonable data model, mentions caching and
+    queues. Tends to add components without naming their cost.</p></div>
+  <div class="lev c"><span class="k">Senior</span>
+    <p>Starts by cutting scope. Estimates first and lets the number choose the design. Names the
+    bottleneck, one lever, and its price. Spends real time on failure, and says what they would not
+    build.</p></div>
+</div>
+
+<div class="warn">
+  <span class="tag">The most common way strong candidates lose this round</span>
+  <p><strong>They design for a scale nobody asked for.</strong> Sharding, event sourcing and a service
+  mesh for a system with fifty requests a second reads as inexperience, not ambition — because the
+  senior signal is knowing that <em>one database and one boring service</em> is the correct answer far
+  more often than the interesting alternative.</p>
+</div>
+
+<header class="part" id="debug">
+  <span class="pn">Part V</span>
+  <h2>The debugging round</h2>
+  <p class="lede">The most honest round there is. You cannot memorise your way through it, and the
+  method is visible in every sentence you say.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Debugging 25</span>
+  <h2>Hypothesis, not guessing</h2>
+</header>
+
+<p>There are exactly two ways to debug. One converges; the other is a random walk that occasionally
+gets lucky and leaves you with no idea why.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Guessing</th><th>Hypothesis testing</th></tr></thead>
+  <tbody>
+    <tr><td>"Maybe it's the cache." Clears the cache.</td><td>"If it were the cache, then a fresh key would work. Let me check one."</td></tr>
+    <tr><td>Changes three things, it works, ships it</td><td>Changes one thing, confirms it explains <strong>everything observed</strong>, then fixes it</td></tr>
+    <tr><td>Cannot say why it works now</td><td>Can state the mechanism from cause to symptom</td></tr>
+    <tr><td>Same bug returns in a month</td><td>Same bug cannot return, and a test now says so</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The loop</div>
+<pre><code>1  REPRODUCE IT
+   ⭐ IF YOU CANNOT REPRODUCE IT, YOU ARE NOT DEBUGGING YET —
+     you are speculating. Getting a reliable reproduction is
+     usually 80% of the work, and the moment you have one the
+     bug is often already obvious.
+   ⚠ and "it doesn't happen locally" is DATA, not an obstacle.
+     Something differs: data, config, timing, concurrency,
+     version, locale, timezone, scale. Find which.
+
+2  STATE WHAT YOU EXPECTED AND WHAT HAPPENED
+   precisely. "It's broken" is not an observation. "It returns
+   an empty array for user 5309, and 12 rows for user 5308" is.
+   ⇒ that difference is usually the entire investigation.
+
+3  FORM ONE HYPOTHESIS THAT EXPLAINS EVERYTHING
+   ⭐ THE TEST OF A GOOD HYPOTHESIS: does it explain ALL the
+     symptoms, including the strange ones? A theory that
+     explains the error but not why it only happens after 6 p.m.
+     is not yet the answer — and the strange detail is usually
+     the most informative one you have.
+
+4  MAKE A PREDICTION THAT COULD BE WRONG
+   "if this is it, then X will be true." then check X.
+   ⚠ a hypothesis you cannot disprove is a belief.
+
+5  CHANGE ONE THING
+   change three, and you learn nothing from the outcome.
+
+6  CONFIRM THE MECHANISM BEFORE FIXING
+   ⭐ "IT WORKS NOW" IS NOT A DIAGNOSIS. If you cannot trace
+     cause to symptom, you may have moved the bug rather than
+     removed it — and it will return under load, which is when
+     it costs the most.
+
+7  ASK WHY IT WAS POSSIBLE
+   the fix repairs this instance. The question repairs the
+   class. Was a check missing, a type too loose, an invariant
+   unenforced? ⇒ this is where a bug becomes a constraint,
+   a type, or a test — and stops having siblings.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Debugging 26</span>
+  <h2>Three bisections</h2>
+  <p class="lede">Halving is the only technique that scales to a problem you do not understand.</p>
+</header>
+
+<div class="ascii">   ① BISECT IN SPACE — where in the path?
+
+     browser → network → server → service → database
+
+     ⭐ THE FASTEST QUESTION IN DEBUGGING: is the data already
+       wrong when it arrives, or does it become wrong here?
+       one look at the payload cuts the search in half, and
+       people skip it constantly.
+
+     then halve again. wrong in the response but right in the
+     database ⇒ it is the serialisation, the mapping, or the
+     permission filter — three places, not the whole system.
+
+   ② BISECT IN TIME — when did it start?
+
+     it worked before, so what changed?
+       a deploy · a config change · a data migration · a
+       dependency update · a certificate · a scheduled job ·
+       someone else's release · a date boundary
+     ⚠ AND THE ONE PEOPLE FORGET: nothing changed in the code,
+       but the DATA crossed a threshold. The first customer with
+       10,000 rows. The first name with an apostrophe. The first
+       month-end that fell on a Sunday.
+     ⭐ "what is different about the cases that fail?" is the
+       highest-yield question in the whole discipline.
+
+   ③ BISECT IN SCOPE — who and what is affected?
+
+     one user or all? one record or every record? one region,
+     one browser, one tenant, one time of day?
+       ALL     → deploy, config, dependency, infrastructure
+       SOME    → data-dependent — the shared property of the
+                 failing set IS the bug
+       ONE     → that record's specific data, or that user's
+                 permissions, or their timezone
+       INTERMITTENT → ⭐ almost always one of five things:
+                 a race, a retry, a cache, a clock, or one bad
+                 instance in a pool. Check which node served it.</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Debugging 27</span>
+  <h2>The bug taxonomy</h2>
+  <p class="lede">Symptoms map to a small number of causes. Recognising the family narrows the search
+  from everything to about three things.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Symptom</th><th>Usual suspects, in order</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Works locally, fails in production</strong></td><td>Config or environment variable · a data difference (volume, encoding, real names) · timezone or locale · a permission that only exists in production · a version drift · a race that only appears with concurrency.</td></tr>
+    <tr><td><strong>Intermittent</strong></td><td>A race condition · a retry making a second attempt · a cache serving one stale copy · clock skew · one unhealthy instance behind a load balancer. <strong>Find which instance served the failure</strong> — that single fact resolves it surprisingly often.</td></tr>
+    <tr><td><strong>Slow, then suddenly much slower</strong></td><td>A threshold was crossed: a query lost its index as the table grew, the connection pool saturated, memory started swapping, or a queue's arrival rate passed its service rate. Nonlinear response means a limit, not a gradual load.</td></tr>
+    <tr><td><strong>Wrong number, no error</strong></td><td>The most dangerous class. A join fanning out and multiplying rows · a filter applied after aggregation instead of before · a timezone shifting rows across a day boundary · nulls dropped silently by an aggregate · a currency or unit mismatch.</td></tr>
+    <tr><td><strong>Memory grows until it dies</strong></td><td>Something accumulates and is never released: an unbounded cache, listeners added per request, an ever-growing array, a query loading everything to count it.</td></tr>
+    <tr><td><strong>Fails only for some users</strong></td><td>Find the shared property of the failing set: a locale, an apostrophe in a name, an unusually large record, a missing optional relation, a role. <strong>The property is the bug.</strong></td></tr>
+    <tr><td><strong>The AI feature got worse</strong></td><td>The prompt changed · the model version changed · the retrieved context changed or grew · the input distribution changed · a truncation is now silently cutting the prompt. Without logged prompt versions and token counts this is unanswerable, which is why those two logs exist.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Debugging 28</span>
+  <h2>Production incidents</h2>
+  <p class="lede">Debugging with an audience, a clock, and users being hurt. The order of operations is
+  different, and the difference is the entire lesson.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Stop the bleeding, then find the cause</div>
+<pre><code>⭐ THE RULE THAT DEFINES INCIDENT RESPONSE:
+  MITIGATE FIRST, DIAGNOSE SECOND.
+  the instinct — "let me just find out why" — is the wrong one
+  while users are affected. Roll back, disable the flag, fail
+  over, shed load. THEN investigate, calmly, with the pressure
+  off. A rollback you can explain later beats a root cause you
+  found while the site was down.
+
+THE FIRST FOUR QUESTIONS
+  1  WHAT IS THE IMPACT? who is affected, how many, how badly.
+     this sets everything else, including whether it is an
+     incident at all.
+  2  WHEN DID IT START? then: what happened at that time.
+  3  WHAT CHANGED? deploys, config, migrations, dependencies,
+     someone else's release.
+  4  CAN WE UNDO IT? if a change caused it, reversing that
+     change is the fastest mitigation available.
+
+WHILE IT IS HAPPENING
+  · ONE person coordinates and communicates. Everyone else
+    investigates. Without this, four people debug the same
+    hypothesis and nobody talks to the business.
+  · WRITE A TIMELINE AS YOU GO. You will not remember it, and
+    the review is only as good as the timeline.
+  · ⚠ DON'T DESTROY THE EVIDENCE. Before restarting the box,
+    capture the logs, the metrics and the state. A restart that
+    "fixes" it also removes your only chance to know why.
+  · say what you know AND what you do not. Confident wrong
+    updates are worse than "still investigating, next update in
+    fifteen minutes".
+
+AFTERWARDS
+  ⭐ THE QUESTION IS "WHAT MADE THIS POSSIBLE?", NOT "WHO DID IT".
+    an environment where the answer is a person produces hidden
+    incidents, and hidden incidents are how small failures
+    become large ones.
+  three outputs, or it did not happen: what we changed to stop
+  the CLASS of failure · what we changed to DETECT it sooner ·
+  what we changed to make it SMALLER next time.
+  ⚠ "we'll be more careful" is not an action item. It is a wish.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Debugging 29</span>
+  <h2>Scenarios — what to think</h2>
+</header>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Some users report the dashboard shows zero for a metric that clearly isn't zero."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Whether you bisect instead of speculate — and whether you recognise the "wrong number, no error" family as the dangerous one.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Scope first.</strong> Which users? What do they share — a region, a role, a tenant, a timezone, a start date? The shared property is very likely the bug itself.</li>
+      <li><strong>Bisect in space.</strong> Run the underlying query directly for one affected user. Right in the database and wrong on screen means it is the API, the permission filter or the frontend. Wrong in the database means it is the query or the data.</li>
+      <li><strong>Suspect the filter.</strong> Zero — rather than a wrong non-zero — usually means something excluded everything: a scope filter, a soft-delete flag, a date range in the wrong timezone, or a join that matched nothing.</li>
+      <li><strong>Then time.</strong> Was it ever right for them? If it broke on a date, find what shipped that day. If it was never right, it is a data or setup difference, not a regression.</li>
+      <li><strong>The class question.</strong> Zero displayed as a legitimate value is the deeper problem — "no data" and "the value is zero" must not look the same on a dashboard, or every future failure of this kind is invisible.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>Asking "what do the affected users have in common?" before touching any code. That one question usually ends the investigation.</p></div>
+</div>
+
+<div class="scen">
+  <div class="ask"><span class="k">The ask</span><p>"Tell me about the hardest bug you've fixed."</p></div>
+  <div class="band"><span class="k">What's really being tested</span><p>Not the bug's difficulty. <strong>The method.</strong> They want to hear the loop from reflex 25 applied to something real.</p></div>
+  <div class="band think"><span class="k">What to think</span>
+    <ol>
+      <li><strong>Pick a bug with a mechanism you can explain</strong> — a race, a fan-out join, a timezone boundary, an N+1 that only mattered at scale. Not "a weird library thing that went away".</li>
+      <li><strong>Structure it in six beats:</strong> the symptom · why the obvious theory was wrong · how you narrowed it · the moment it clicked · the fix · <strong>and what you changed so the class cannot recur.</strong></li>
+      <li><strong>The last beat is the scoring one.</strong> A constraint added, a type tightened, a test written, a check moved to where every path passes through it. Without it, the story ends at "I fixed it", which is a junior ending.</li>
+      <li><strong>Name a wrong turn.</strong> "I spent two hours on the cache because it felt right — the thing that saved me was checking whether the data was already wrong upstream." Honesty about a wrong turn is read as confidence, not weakness.</li>
+    </ol></div>
+  <div class="band tell"><span class="k">The tell</span><p>The story ends with a structural change, not a patch. That single detail separates "fixed a bug" from "owns a system".</p></div>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Debugging 30</span>
+  <h2>The debugging ladder</h2>
+</header>
+
+<div class="levels">
+  <div class="lev a"><span class="k">Beginner</span>
+    <p>Changes things until it works. Cannot say why it works. Fixes the symptom. The bug returns
+    wearing a slightly different hat.</p></div>
+  <div class="lev b"><span class="k">Mid</span>
+    <p>Reproduces, reads logs, bisects, finds the cause. Fixes the instance and writes a test for it.
+    Struggles most with intermittent and cross-service bugs.</p></div>
+  <div class="lev c"><span class="k">Senior</span>
+    <p>Narrows before touching anything, forms disprovable hypotheses, explains the mechanism end to
+    end, and closes with a structural change so the class cannot recur. Mitigates before diagnosing
+    when users are affected.</p></div>
+</div>
+
+<header class="part" id="found">
+  <span class="pn">Part VI</span>
+  <h2>Foundations</h2>
+  <p class="lede">What makes code a good foundation rather than a working one. These are the
+  judgements that decide whether a codebase is pleasant or frightening in two years.</p>
+</header>
+
+<header class="mod" id="f1">
+  <span class="mn">Foundation 31</span>
+  <h2>Code that ages well</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Principle</th><th>What it actually means, as a decision</th></tr></thead>
+  <tbody>
+    <tr><td><strong>One source of truth</strong></td><td>Every fact is stored in exactly one place and derived everywhere else. The moment a value is copied, you have promised to keep two things in step forever — and that promise is broken by the next person, who does not know it exists.</td></tr>
+    <tr><td><strong>Boring beats clever</strong></td><td>Clever code is read far more often than it is written, and by people with less context than you have right now — including you, later. <strong>The best compliment a codebase can receive is that it is unsurprising.</strong></td></tr>
+    <tr><td><strong>Explicit beats implicit</strong></td><td>Magic that saves typing costs comprehension. If a behaviour cannot be traced by reading, it will be debugged by archaeology.</td></tr>
+    <tr><td><strong>Coupling is the real cost</strong></td><td>Not lines of code — <em>how many things must change together</em>. Ask of any change: how many files did I have to open to make one conceptual change? That number is the health metric.</td></tr>
+    <tr><td><strong>Duplication is cheaper than the wrong abstraction</strong></td><td>Two similar things are often two things. Merging them creates a shared piece that must serve both, and it grows flags until nobody dares touch it. <strong>Wait for the third occurrence.</strong></td></tr>
+    <tr><td><strong>Deletable is a feature</strong></td><td>Code you can remove cleanly is code with clear boundaries. If removing a feature means touching fifteen files, the design was wrong before the feature was.</td></tr>
+    <tr><td><strong>Names are the documentation that cannot go stale</strong></td><td>A name that describes what something <em>means</em> rather than what it <em>contains</em> removes the need for the comment. Renaming is the highest-value refactor per minute spent, and the most under-used.</td></tr>
+    <tr><td><strong>Comment the why</strong></td><td>The code says what. Only a comment can say why — why this threshold, why this order, why this apparently redundant check that a well-meaning colleague will otherwise delete in six months.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="f2">
+  <span class="mn">Foundation 32 · the highest-leverage idea here</span>
+  <h2>Make it hard to do wrong</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The principle</span>
+  <p><strong>The best fix is one that makes the mistake impossible, not one that makes it less
+  likely.</strong> Discipline decays: people rotate, deadlines arrive, and the check that lives in
+  everyone's head eventually lives in nobody's.</p>
+  <p>So for every bug, ask: <em>could the system have made this unrepresentable?</em></p>
+</div>
+
+<div class="sheet">
+  <div class="cap">The ladder of prevention, weakest to strongest</div>
+<pre><code>WEAKEST  ↓
+  a comment saying "remember to check X"
+     ⇒ prevents nothing. It is a note to a person who is busy.
+
+  a convention documented on a wiki
+     ⇒ prevents it for people who read it, until they forget.
+
+  a code review that usually catches it
+     ⇒ depends on a human being alert on a Friday afternoon.
+
+  a test that fails when you get it wrong
+     ⇒ real, but only for paths the test covers.
+
+  a lint rule or a CI check
+     ⇒ catches it every time, before merge.
+
+  a TYPE that makes the wrong state unrepresentable
+     ⇒ ⭐ now it cannot be written. "A user id and an org id are
+       both strings" is a bug waiting; two distinct types is a
+       category of bug that no longer exists.
+
+  a single path everything must go through
+     ⇒ one place that applies the permission filter, and no way
+       to query around it. The best structural answer available
+       in most applications.
+
+  a DATABASE CONSTRAINT
+     ⇒ ⭐ STRONGEST. It holds for every writer, forever —
+       including the migration, the background job, the admin
+       script, and the person with a database console at 2 a.m.
+       An application-level rule protects the paths that
+       remembered. A constraint protects everything.
+STRONGEST ↑
+
+⭐ THE HABIT: after every bug, ask WHICH RUNG UP THIS COULD MOVE.
+  Most fixes land on the bottom rung by default. One rung up is
+  usually available for a few minutes' work, and it removes the
+  whole family rather than the instance.</code></pre>
+</div>
+
+<header class="mod" id="f3">
+  <span class="mn">Foundation 33</span>
+  <h2>Reviewing your own work</h2>
+  <p class="lede">The last ten minutes before opening a pull request are the cheapest quality you will
+  ever buy.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Read your own diff as if someone else wrote it</div>
+<pre><code>CORRECTNESS
+  □ run the edge catalogue: zero · one · many · null · twice ·
+    order · race · lie · halfway
+  □ what happens if this fails halfway through?
+  □ does anything here silently swallow an error?
+
+SECURITY
+  □ every id that came from outside — is it checked against the
+    caller, on the server, on THIS path?
+  □ does anything new escape the system? a log line, an export,
+    an email, an error message, a third-party call, a prompt?
+  □ is a permission enforced in code, or only in the UI?
+
+DATA
+  □ does this add a way for the same fact to exist twice?
+  □ is a new invariant enforced by the database or by hope?
+  □ does this change what an existing number means? if so, who
+    is reading that number and do they know?
+
+CLARITY
+  □ would someone with no context understand WHY, not just what?
+  □ is any name inaccurate now? ⇒ rename it; it costs seconds
+    and it is the highest-value edit in the diff
+  □ is there a clever line that a tired person would misread?
+
+BLAST RADIUS
+  □ what breaks if this is wrong, and who notices?
+  □ can it be turned off without a deploy?
+  □ ⭐ CAN IT BE UNDONE? A migration that drops a column, a job
+    that rewrites rows, an email that goes out — these have no
+    undo, and they deserve a different level of care than the
+    rest of the diff. Say so in the description.
+
+⭐ AND THE ONE-LINE VERSION FOR THE DESCRIPTION:
+  what changed · why · what you deliberately did NOT do · what
+  a reviewer should look at hardest. Four sentences that make a
+  review twice as good and half as long.</code></pre>
+</div>
+
+<header class="part" id="path">
+  <span class="pn">Part VII</span>
+  <h2>Beginner to expert</h2>
+</header>
+
+<header class="mod" id="l1">
+  <span class="mn">The path 34</span>
+  <h2>Five levels</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Level 1 · "It works"</div>
+<pre><code>CAN     make the feature do what was asked, on the happy path.
+CANNOT  say what happens when it doesn't.
+GAP     everything is a happy path until production disagrees.
+⭐ MOVES YOU UP: the edge catalogue, applied to everything you
+  write, out loud, for one month.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 2 · "It works properly"</div>
+<pre><code>CAN     handle errors and edges, split code sensibly, write
+        tests, debug by bisecting.
+CANNOT  design the thing before building it.
+GAP     builds exactly what was requested — including when what
+        was requested is the wrong shape.
+⭐ MOVES YOU UP: for the next five tasks, write down the four
+  unknowns (scale · ownership · failure · done) BEFORE starting,
+  and ask about at least one of them.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 3 · "It's designed"</div>
+<pre><code>CAN     design a feature end to end — schema, API, states,
+        permissions, failure. Debug across services. Explain a
+        trade-off with its cost.
+CANNOT  reliably tell which features should not be built.
+GAP     executes well on the wrong thing as happily as the right
+        thing.
+⭐ MOVES YOU UP: two moves. Successfully argue a requested
+  feature DOWN in scope. And ask "who can see this, per field?"
+  on something where nobody else had asked.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 4 · "It's the right thing, and it will last"</div>
+<pre><code>CAN     find the problem behind the request · say no with an
+        alternative · see the security consequence before the
+        feature exists · design so mistakes are unrepresentable ·
+        close bugs at the class level · make other people's work
+        better in review.
+CANNOT  yet change how the team as a whole builds.
+GAP     judgement is trusted on your work, not yet the standard.
+⭐ MOVES YOU UP: build the thing that makes everyone else
+  faster and safer — the single path every query goes through,
+  the eval harness, the constraint that removes a bug family
+  from the codebase permanently.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">Level 5 · "It changes how we build"</div>
+<pre><code>DEFINED BY  not more techniques. By judgement under uncertainty,
+            and by raising everyone else's.
+CAN         set the standard · own the boundary decisions · say
+            which of the last ten proposals should not have been
+            built · make the uncomfortable call in the room where
+            it is made · be right often enough that people ask
+            before building rather than after.
+⚠ NOBODY REACHES THIS RUNG BY LEARNING A FIFTH FRAMEWORK.</code></pre>
+</div>
+
+<div class="good">
+  <span class="tag">The honest shape of it</span>
+  <p><strong>Level 1 → 2 is knowledge. Every level after that is a question you learned to ask before
+  you started.</strong> That is why this file has no code in it, and why the four reflexes are the
+  first thing in it.</p>
+</div>
+
+<header class="mod" id="l2">
+  <span class="mn">The path 35</span>
+  <h2>The practice plan</h2>
+  <p class="lede">Reading this changes nothing. These are the drills that convert it into reflex —
+  each one is small, and each one is repeatable on work you are already doing.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Drill</th><th style="width:16%">Cadence</th><th>What it builds</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The four reflexes, out loud</strong></td><td>Every task, one week</td><td>Purpose, unknowns, blast radius, trade-off. It feels artificial for three days and becomes invisible by day ten.</td></tr>
+    <tr><td><strong>The edge catalogue</strong></td><td>Every function, one month</td><td>Zero · one · many · null · twice · order · race · lie · halfway. The fastest measurable improvement available to most engineers.</td></tr>
+    <tr><td><strong>Design before code</strong></td><td>One paragraph, every feature</td><td>Nouns, states, permissions, failure. Write it in the ticket. It also makes you visibly easier to work with.</td></tr>
+    <tr><td><strong>The cost sentence</strong></td><td>Every decision</td><td>"I chose X over Y because Z, and it costs me W." Say it in the PR description. This is the single most senior-sounding habit there is, because it is a senior habit.</td></tr>
+    <tr><td><strong>Bug post-mortems, privately</strong></td><td>Every bug you fix</td><td>Two lines: what made this possible, and which rung of the prevention ladder the fix could move up to. Do it for a quarter and you will change how you write code.</td></tr>
+    <tr><td><strong>Read one system's design</strong></td><td>Monthly</td><td>Pick a system you use and work out why it is shaped that way. Architecture intuition is pattern exposure, and you can get it by reading rather than by building.</td></tr>
+    <tr><td><strong>Explain something out loud</strong></td><td>Weekly</td><td>To a colleague, a rubber duck, or a document. Almost everything in the four rounds is scored on articulation, and articulation is trained separately from knowledge.</td></tr>
+    <tr><td><strong>One AI feature, measured</strong></td><td>Once, properly</td><td>Build something small with a model in it, then build the twenty-case eval before you tune anything. It teaches the trust boundary and the cost model in a way no reading does.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr class="rule">
+
+<h3>The whole file in eight sentences</h3>
+
+<div class="grid2">
+  <div class="card"><h4>Solve the problem, not the request</h4><p>Half of all tasks are a proposed solution in disguise. Ask what it is for before you build it.</p></div>
+  <div class="card"><h4>Say the assumption out loud</h4><p>Assuming is unavoidable. Assuming silently is what makes it expensive.</p></div>
+  <div class="card"><h4>Imagine the failure first</h4><p>Zero, one, many, null, twice, order, race, lie, halfway. Nine words, most of the bugs.</p></div>
+  <div class="card"><h4>Name what the choice costs</h4><p>A decision without a stated cost is a default wearing a decision's clothes.</p></div>
+  <div class="card"><h4>A link is a credential</h4><p>Anything reachable by URL alone is protected only by the secrecy of a string. And so is anything that leaves the system.</p></div>
+  <div class="card"><h4>Estimate before you architect</h4><p>Most systems are smaller than they feel. One boring database is the right answer far more often than the interesting alternative.</p></div>
+  <div class="card"><h4>Hypothesis, not guessing</h4><p>"It works now" is not a diagnosis. Explain the mechanism, then close the class.</p></div>
+  <div class="card"><h4>Make the mistake impossible</h4><p>Move every fix one rung up the prevention ladder. Constraints outlive discipline.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>Companion files.</strong> The <em>fullstack interview playbook</em> covers the loop
+  itself — 17 competencies, your claims rated, graded questions and annotated transcripts. The
+  <em>AI engineering</em> set (foundations, guide, cheat sheet, interview) covers the model layer in
+  depth: what an LLM is, prompting, retrieval, tools, evals and cost. This file is the layer between
+  them: how to think, in the four rounds, regardless of stack.</p>
+  <p><strong>On scope.</strong> Deliberately no code, no framework specifics and no vendor names —
+  those change; the reasoning does not. Where a number appears (latency intuitions, peak multipliers)
+  it is an order of magnitude for reasoning with, not a benchmark to quote.</p>
+</div>
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {};
+  var targets = [];
+  links.forEach(function (a) {
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

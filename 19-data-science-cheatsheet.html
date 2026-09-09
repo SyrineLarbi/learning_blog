@@ -1,0 +1,1367 @@
+<title>Data Science Cheat Sheet</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Spectral:ital,wght@0,400;0,600;1,400&family=Fira+Mono:wght@400;500;700&display=swap">
+
+<style>
+/* ============================================================
+   DATA SCIENCE CHEAT SHEET
+   Series identity: warm-neutral graphite ground, one accent
+   per file. This file: ochre.
+   ============================================================ */
+
+:root {
+  --ground:      #F5F4F2;
+  --ground-2:    #FFFFFF;
+  --panel:       #EAE8E6;
+  --panel-2:     #DFDCDA;
+  --ink:         #17171A;
+  --ink-2:       #45444A;
+  --ink-3:       #706E77;
+  --rule:        #CFCCCA;
+  --rule-2:      #E6E3E1;
+  --accent:      #8A5A0A;
+  --accent-soft: #F6EEDD;
+  --accent-ink:  #6A4406;
+  --good:        #1F6B45;
+  --good-soft:   #E0EFE7;
+  --warn:        #A6232F;
+  --warn-soft:   #F9E6E7;
+  --bad:         #7E1620;
+  --bad-soft:    #F6DCDE;
+  --shadow:      0 1px 2px rgba(23,23,26,.06), 0 10px 26px -18px rgba(23,23,26,.22);
+
+  --measure: 70ch;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:    "Spectral", Georgia, "Times New Roman", serif;
+  --mono:    "Fira Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #111013;
+    --ground-2:    #17161A;
+    --panel:       #1D1C21;
+    --panel-2:     #26242B;
+    --ink:         #ECEAEF;
+    --ink-2:       #B6B3BD;
+    --ink-3:       #85828D;
+    --rule:        #33313A;
+    --rule-2:      #26242B;
+    --accent:      #E2AF4A;
+    --accent-soft: #2C2413;
+    --accent-ink:  #F2CE83;
+    --good:        #5CBF8E;
+    --good-soft:   #10281D;
+    --warn:        #EE8189;
+    --warn-soft:   #2E1518;
+    --bad:         #F2A0A6;
+    --bad-soft:    #38181C;
+    --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #111013;
+  --ground-2:    #17161A;
+  --panel:       #1D1C21;
+  --panel-2:     #26242B;
+  --ink:         #ECEAEF;
+  --ink-2:       #B6B3BD;
+  --ink-3:       #85828D;
+  --rule:        #33313A;
+  --rule-2:      #26242B;
+  --accent:      #E2AF4A;
+  --accent-soft: #2C2413;
+  --accent-ink:  #F2CE83;
+  --good:        #5CBF8E;
+  --good-soft:   #10281D;
+  --warn:        #EE8189;
+  --warn-soft:   #2E1518;
+  --bad:         #F2A0A6;
+  --bad-soft:    #38181C;
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.8);
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+
+.shell { display: grid; grid-template-columns: 268px minmax(0,1fr); align-items: start; max-width: 1500px; margin: 0 auto; }
+.rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 60px 26px; border-right: 1px solid var(--rule); background: var(--ground); font-family: var(--display); font-size: 12.5px; }
+.series { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 2px 8px; display: inline-block; margin-bottom: 10px; }
+.rail-brand { font-weight: 700; font-size: 15.5px; letter-spacing: -.02em; line-height: 1.15; }
+.rail-sub { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); padding: 5px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 12px; }
+.rail nav { display: flex; flex-direction: column; gap: 1px; }
+.rail-group { font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 5px; }
+.rail a { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 7px; padding: 4px 7px 4px 5px; border-radius: 3px; color: var(--ink-2); text-decoration: none; line-height: 1.3; border-left: 2px solid transparent; font-weight: 600; }
+.rail a:hover { background: var(--panel); color: var(--ink); }
+.rail a .n { font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-3); padding-top: 2px; }
+.rail a.on { background: var(--accent-soft); color: var(--accent-ink); border-left-color: var(--accent); }
+.rail a.on .n { color: var(--accent); }
+.rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.doc { padding: 0 clamp(18px,4vw,64px) 130px; min-width: 0; }
+.doc > * { max-width: var(--measure); }
+.doc > .wide, .doc > .hero, .doc > .sec, .doc > .sheet, .doc > .tw, .doc > .grid2, .doc > .cols { max-width: none; }
+
+h1,h2,h3,h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
+h2 { font-size: clamp(24px,3vw,33px); font-weight: 700; }
+h3 { font-size: 19px; font-weight: 700; margin: 38px 0 12px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+h4 { font-size: 15px; font-weight: 700; margin: 24px 0 7px; }
+p { margin: 0 0 .95em; }
+strong { font-weight: 600; }
+a { color: var(--accent-ink); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 9px; }
+.lede { font-size: 19px; line-height: 1.45; color: var(--ink-2); }
+.small { font-size: 13.5px; color: var(--ink-2); }
+code { font-family: var(--mono); font-size: .85em; background: var(--panel); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--rule-2); }
+ul, ol { margin: 0 0 .95em; padding-left: 1.25em; }
+li { margin-bottom: .35em; }
+
+.hero { padding: clamp(34px,6vw,74px) 0 36px; border-bottom: 1px solid var(--rule); margin-bottom: 34px; }
+.hero h1 { font-size: clamp(34px,6.4vw,68px); font-weight: 700; letter-spacing: -.04em; line-height: .99; margin-bottom: 18px; max-width: 20ch; }
+.hero h1 .thin { font-weight: 600; color: var(--ink-3); }
+.hero .lede { max-width: 62ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 22px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.hero-meta b { color: var(--ink-2); font-weight: 500; }
+
+.sec { margin: 62px 0 24px; padding: 13px 16px 15px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px; background: var(--ground-2); box-shadow: var(--shadow); scroll-margin-top: 14px; }
+.sec .sn { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px; }
+.sec h2 { max-width: 30ch; }
+.sec .lede { font-size: 16px; margin: 8px 0 0; max-width: 60ch; }
+
+.sheet { border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 9px; padding: 7px 13px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+.sheet > .foot { padding: 10px 14px 12px; border-top: 1px solid var(--rule-2); background: var(--panel); font-size: 13.5px; color: var(--ink-2); }
+.sheet > .foot p:last-child { margin-bottom: 0; }
+pre { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; overflow-x: auto; padding: 14px 15px; background: var(--ground-2); color: var(--ink); tab-size: 2; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px,1fr)); gap: 16px; margin: 20px 0; }
+.cols > .sheet { margin: 0; }
+
+.note, .warn, .bad, .good { border: 1px solid var(--rule); border-left-width: 3px; border-radius: 4px; background: var(--ground-2); padding: 13px 16px 14px; margin: 20px 0; font-size: 16px; }
+.note { border-left-color: var(--accent); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); border-width: 2px; border-left-width: 4px; }
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; margin-bottom: 6px; }
+.note .tag { color: var(--accent); }
+.warn .tag { color: var(--warn); }
+.bad .tag  { color: var(--bad); }
+.good .tag { color: var(--good); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child { margin-bottom: 0; }
+
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--ground-2); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-family: var(--display); }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); vertical-align: top; line-height: 1.38; }
+thead th { background: var(--panel-2); font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; border-bottom: 1px solid var(--rule); }
+tbody tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td code { font-size: 12px; }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--warn); font-weight: 600; }
+.mid { color: var(--accent-ink); font-weight: 600; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 14px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 4px; padding: 13px 15px 14px; background: var(--ground-2); font-size: 15px; }
+.card h4 { margin: 0 0 6px; }
+.card p:last-child { margin-bottom: 0; }
+.ascii { font-family: var(--mono); font-size: 12px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 15px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+.disclaimer { margin: 26px 0 0; padding: 12px 15px; border: 1px dashed var(--rule); border-radius: 4px; background: var(--panel); font-size: 13px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 34px 0; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px clamp(18px,4vw,36px) 22px; }
+  .rail nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px,1fr)); gap: 2px 15px; }
+  .rail-group { grid-column: 1 / -1; }
+  .doc { padding-top: 6px; }
+  .sec { margin-top: 48px; }
+}
+@media (max-width: 520px) { body { font-size: 16px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+
+<aside class="rail">
+  <span class="series">Series · 2 of 4</span>
+  <div class="rail-brand">Data Science<br>Cheat Sheet</div>
+  <div class="rail-sub">The concepts, one per topic</div>
+  <nav id="toc">
+    <div class="rail-group">Frame it</div>
+    <a href="#s1"><span class="n">01</span><span>Problem framing</span></a>
+    <a href="#s2"><span class="n">02</span><span>Data &amp; sampling</span></a>
+
+    <div class="rail-group">Statistics</div>
+    <a href="#s3"><span class="n">03</span><span>Distributions</span></a>
+    <a href="#s4"><span class="n">04</span><span>Probability</span></a>
+    <a href="#s5"><span class="n">05</span><span>Inference</span></a>
+    <a href="#s6"><span class="n">06</span><span>Experiments</span></a>
+    <a href="#s7"><span class="n">07</span><span>Causal inference</span></a>
+
+    <div class="rail-group">Modelling</div>
+    <a href="#s8"><span class="n">08</span><span>Features</span></a>
+    <a href="#s9"><span class="n">09</span><span>Leakage</span></a>
+    <a href="#s10"><span class="n">10</span><span>Model families</span></a>
+    <a href="#sdl"><span class="n">11</span><span>Deep learning</span></a>
+    <a href="#s11"><span class="n">12</span><span>Bias &amp; variance</span></a>
+    <a href="#s12"><span class="n">13</span><span>Validation</span></a>
+
+    <div class="rail-group">Evaluation</div>
+    <a href="#s13"><span class="n">14</span><span>Classification</span></a>
+    <a href="#s14"><span class="n">15</span><span>Regression &amp; ranking</span></a>
+    <a href="#s15"><span class="n">16</span><span>Imbalance</span></a>
+    <a href="#s16"><span class="n">17</span><span>Interpretation</span></a>
+
+    <div class="rail-group">In the world</div>
+    <a href="#s17"><span class="n">18</span><span>Time series</span></a>
+    <a href="#s18"><span class="n">19</span><span>Unsupervised</span></a>
+    <a href="#s19"><span class="n">20</span><span>Production &amp; drift</span></a>
+    <a href="#s20"><span class="n">21</span><span>Fairness</span></a>
+
+    <div class="rail-group">Reference</div>
+    <a href="#s21"><span class="n">22</span><span>Mistakes to avoid</span></a>
+    <a href="#s22"><span class="n">23</span><span>Glossary</span></a>
+  </nav>
+</aside>
+
+<main class="doc">
+
+<header class="hero" id="top">
+  <p class="eyebrow">Cheat sheet · 2 of 4 · data science</p>
+  <h1>The model is rarely the hard part. <span class="thin">Framing, leakage and evaluation are.</span></h1>
+  <p class="lede">A dense reference for the concepts a data scientist is expected to hold: statistics
+  without the derivations, the modelling decisions that matter, the evaluation metrics and what each
+  one hides, and the specific mistakes that turn a good score into a useless model.</p>
+  <div class="hero-meta">
+    <span><b>Scope</b> · concepts, not library APIs</span>
+    <span><b>Companion</b> · file 2 of 4</span>
+    <span><b>Bias</b> · toward what breaks in production</span>
+  </div>
+</header>
+
+<div class="good">
+  <span class="tag">The three that cause most real failures</span>
+  <p>If you take three things from this sheet: <strong><a href="#s9">leakage</a></strong> (your model
+  is brilliant offline and useless live), <strong><a href="#s15">the accuracy paradox</a></strong>
+  (95% accurate and predicts nothing), and <strong><a href="#s1">framing</a></strong> (you built a
+  model for a question nobody asked). Everything else is craft; those three are the difference between
+  a project that ships and one that quietly dies.</p>
+</div>
+
+<header class="sec" id="s1">
+  <span class="sn">Section 01</span>
+  <h2>Problem framing</h2>
+  <p class="lede">The step that decides whether any of the rest is worth doing.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">Before any modelling — answer all six</div>
+<pre><code>1  WHAT DECISION does this change, and who makes it?
+     no decision → it's a curiosity, not a project
+2  WHAT IS THE UNIT of prediction? (customer? order? customer-month?)
+     this is the GRAIN, and it decides everything downstream
+3  WHAT IS THE TARGET, precisely? "churn" is not a target.
+     "no purchase in the 90 days after a 30-day observation window" is.
+4  WHEN IS IT PREDICTED, and what is knowable AT THAT MOMENT?
+     ← this single question prevents most leakage
+5  WHAT IS THE BASELINE? (the current rule, the majority class,
+     last year's value). If you can't beat it, you have nothing.
+6  WHAT IS THE COST of a false positive vs a false negative?
+     this — not accuracy — sets your threshold and your metric.
+
+⭐ THE TASK-TYPE QUESTION
+   supervised   you have labels             → classification / regression
+   unsupervised no labels                   → clustering, anomaly, topics
+   ranking      order matters more than value → recommendation, search
+   forecasting  the target is its own past  → time series
+   causal       "what happens IF we act"    → NOT a prediction problem
+                                              (see section 07)</code></pre>
+</div>
+
+<div class="warn">
+  <span class="tag">The most common framing error</span>
+  <p><strong>Building a predictive model when the question is causal.</strong> "Which customers will
+  churn?" is prediction. "Will this discount stop them churning?" is causation, and a churn model
+  cannot answer it — a model that learns "customers who contact support churn less" will happily
+  suggest you generate more support tickets.</p>
+  <p>Prediction answers <em>what will happen if things continue</em>. Causation answers <em>what
+  happens if we intervene</em>. Different question, different method, different data requirements.</p>
+</div>
+
+<header class="sec" id="s2">
+  <span class="sn">Section 02</span>
+  <h2>Data &amp; sampling</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Concept</th><th>What to know</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Population vs sample</strong></td><td>You almost never have the population. Every statistic is an estimate with uncertainty — and every claim inherits the sample's biases.</td></tr>
+    <tr><td><strong>Sampling bias</strong></td><td>Systematic mis-representation. <strong>More data does not fix it</strong> — a bigger biased sample is more confidently wrong. This is the distinction that matters: <em>noise</em> shrinks with n; <em>bias</em> does not.</td></tr>
+    <tr><td><strong>Selection bias</strong></td><td>The groups you compare were formed by a process that also affects the outcome. Anyone who <em>opted in</em> is not comparable to anyone who did not.</td></tr>
+    <tr><td><strong>Survivorship bias</strong></td><td>You only observe what remained. Analysing current customers to understand churn; studying funds that still exist; measuring availability after deactivating unsourceable SKUs.</td></tr>
+    <tr><td><strong>Measurement bias</strong></td><td>The recording process is systematically wrong — and often correlated with the thing you measure. Delivery times missing precisely for the late deliveries.</td></tr>
+    <tr><td><strong>Censoring</strong></td><td><strong>Right:</strong> the event hasn't happened yet (customer still active — don't compute lifetime only on churned ones). <strong>Left:</strong> it happened before observation began.</td></tr>
+    <tr><td><strong>Stratified sampling</strong></td><td>Sample within subgroups to guarantee representation. Use it whenever a subgroup is small and matters.</td></tr>
+    <tr><td><strong>Missingness</strong></td><td><strong>MCAR</strong> — unrelated to anything; deletion is unbiased. <strong>MAR</strong> — depends on <em>observed</em> variables; conditional imputation works. <strong>MNAR</strong> — depends on the <em>missing value itself</em>; nothing fixes it from inside the data.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The question to ask of every dataset</span>
+  <p><strong>"Who or what is missing from this, and would they have behaved differently?"</strong>
+  If yes, you have bias, not noise. Also: <em>make an <code>is_missing</code> flag and check whether
+  it correlates with your grouping variable</em> — if it does, deletion is biased and you have
+  evidence rather than a hunch.</p>
+</div>
+
+<header class="sec" id="s3">
+  <span class="sn">Section 03</span>
+  <h2>Distributions &amp; descriptive statistics</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Summaries, and what each one hides</div>
+<pre><code>CENTRE
+  mean      sensitive to outliers. on right-skewed business data
+            (revenue, duration, LTV) it describes NOBODY.
+  median    the typical case. robust. usually the honest default.
+  mode      the most common value. the only centre for categoricals.
+
+SPREAD
+  variance / std dev   in squared / original units. assumes symmetry.
+  IQR (Q3−Q1)          robust to outliers. pairs with the median.
+  MAD                  median absolute deviation. most robust.
+  range                min–max. dominated by the two weirdest rows.
+
+SHAPE
+  skew        right-skewed (long right tail) = most business data
+              → mean > median. log-transform often fixes the analysis.
+  kurtosis    fat tails = extreme events more likely than normal
+  bimodal     TWO populations mixed. Any single summary is a lie.
+              ⭐ this is why you plot before you summarise.
+
+POSITION
+  percentiles / quantiles   p50 = median · p95 = the bad case
+  z-score                   (x − mean) / sd. assumes roughly normal.
+
+⭐ NEVER report a mean without having looked at the distribution.
+   A mean of 3.7 fits "everyone at 3.7" and "half 1s, half 5s"
+   equally well, and those are opposite situations.
+
+⚠ AND: never AVERAGE A RATE across groups. Sum the numerators and
+  the denominators, then divide. AVG(margin_pct) weights a tiny
+  category equally with a huge one and can be many points wrong.</code></pre>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Distribution</th><th style="width:30%">Shows up as</th><th>Why you care</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Normal</strong></td><td>Measurement error, sums of many small effects</td><td>The basis of most classical tests. Business quantities are usually <em>not</em> normal.</td></tr>
+    <tr><td><strong>Log-normal</strong></td><td>Revenue, session duration, income, LTV</td><td>Right-skewed. Analyse on a log scale and it becomes normal-ish — often the whole fix.</td></tr>
+    <tr><td><strong>Poisson</strong></td><td>Counts per interval — arrivals, defects, clicks</td><td>Variance equals the mean. If your counts are more variable than that, you have <em>overdispersion</em> and need a negative binomial.</td></tr>
+    <tr><td><strong>Binomial</strong></td><td>k successes in n trials</td><td>The distribution behind every conversion rate.</td></tr>
+    <tr><td><strong>Exponential / Weibull</strong></td><td>Time until an event</td><td>Survival analysis — time to churn, time to failure.</td></tr>
+    <tr><td><strong>Power law</strong></td><td>Customer value, city sizes, word frequency</td><td>No meaningful "typical" value. The top few dominate the total; means are close to useless.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">Central limit theorem — what it actually says</span>
+  <p>The distribution of the <strong>sample mean</strong> approaches normal as n grows,
+  <em>regardless of the underlying distribution's shape</em>. That is why you can build confidence
+  intervals around a mean from skewed data.</p>
+  <p><strong>What it does not say:</strong> that your data becomes normal. It does not. And with very
+  heavy tails, convergence needs a much larger n than the "n &gt; 30" rule of thumb implies.</p>
+</div>
+
+<header class="sec" id="s4">
+  <span class="sn">Section 04</span>
+  <h2>Probability essentials</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The pieces that actually come up</div>
+<pre><code>CONDITIONAL      P(A|B) = P(A and B) / P(B)
+INDEPENDENCE     P(A and B) = P(A)·P(B)  ⟺  P(A|B) = P(A)
+
+BAYES            P(A|B) = P(B|A) · P(A) / P(B)
+                          ↑          ↑
+                     likelihood    PRIOR ← the part people drop
+
+EXPECTED VALUE   E[X] = Σ x · P(x)
+                 → the basis of every cost-sensitive threshold
+
+⭐ THE BASE-RATE TRAP — work it once, remember it forever
+   5% of employees leave. Model: 90% sensitivity, 90% specificity.
+   Per 1,000 people:
+
+                    ACTUALLY LEAVES   ACTUALLY STAYS   TOTAL
+     flagged             45                95           140
+     not flagged          5               855           860
+                    ───────────       ───────────
+                         50               950         1,000
+
+     PRECISION = 45 / 140 = 32%
+
+   A "90% accurate" model flags 140 people and 95 of them are fine.
+   Nothing is wrong with the model. THE EVENT IS RARE, so the 10%
+   error on the huge negative class swamps the 90% success on the
+   tiny positive one.
+
+   ⇒ When the base rate is low, MOST ALERTS ARE FALSE. Structurally.
+     Report PRECISION, not accuracy. Tell the stakeholder the
+     precision BEFORE they act on the list.</code></pre>
+</div>
+
+<header class="sec" id="s5">
+  <span class="sn">Section 05</span>
+  <h2>Inference</h2>
+  <p class="lede">Hypothesis tests, p-values and intervals — including the two definitions almost
+  everyone gets wrong.</p>
+</header>
+
+<div class="bad">
+  <span class="tag">The two definitions to get exactly right</span>
+  <p><strong>A p-value is</strong> the probability of observing data at least as extreme as yours,
+  <em>assuming the null hypothesis is true</em>.</p>
+  <p><strong>A p-value is NOT</strong> the probability that the null is true, nor the probability your
+  result is a fluke, nor a measure of effect size. A p of 0.03 does not mean "97% chance this is
+  real".</p>
+  <p><strong>A 95% confidence interval means</strong> that if you repeated the procedure many times,
+  95% of the intervals constructed this way would contain the true value. It is a statement about the
+  <em>procedure</em>, not a 95% probability that this particular interval contains the truth.</p>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Concept</th><th>What to know</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Null hypothesis</strong></td><td>The boring explanation — no difference, no effect. You never "accept" it; you fail to reject it.</td></tr>
+    <tr><td><strong>Type I error (α)</strong></td><td>False positive — you claim an effect that isn't there. Conventionally 5%.</td></tr>
+    <tr><td><strong>Type II error (β)</strong></td><td>False negative — you miss a real effect. <strong>Power = 1 − β</strong>, conventionally 80%.</td></tr>
+    <tr><td><strong>Power</strong></td><td>The chance of detecting an effect that is really there. An underpowered test that finds nothing tells you <em>nothing</em> — absence of evidence, not evidence of absence.</td></tr>
+    <tr><td><strong>Effect size</strong></td><td>How big the difference is (Cohen's d, lift, absolute difference). <strong>Report this always.</strong> Significance says "probably real"; effect size says "worth caring about".</td></tr>
+    <tr><td><strong>Multiple comparisons</strong></td><td>Test 20 things at α = 0.05 and you expect one false positive by chance. Correct with <strong>Bonferroni</strong> (divide α by the number of tests — strict) or <strong>Benjamini-Hochberg FDR</strong> (controls the false-discovery rate — usually the better choice for exploratory work).</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Which test — the practical map</div>
+<pre><code>COMPARING MEANS
+  2 groups, independent      t-test (Welch's, which doesn't assume
+                             equal variance — use it by default)
+  2 groups, paired           paired t-test
+  3+ groups                  ANOVA, then a post-hoc with correction
+  non-normal / small n /     Mann-Whitney U (2 groups)
+  ordinal                    Kruskal-Wallis (3+)
+
+COMPARING PROPORTIONS
+  2 rates                    two-proportion z-test
+  contingency table          chi-square (needs expected counts ≥ 5)
+  small counts               Fisher's exact test
+
+RELATIONSHIP
+  two continuous             Pearson (linear), Spearman (monotonic,
+                             rank-based — robust to outliers)
+  categorical                chi-square
+
+⭐ SIGNIFICANCE vs MATERIALITY vs STABILITY
+  significance  only meaningful on a SAMPLE. A p-value on a full
+                census (every order last year) is a category error —
+                there is no sampling error to test.
+  materiality   with enough data, trivial effects become significant.
+                A 0.02pp difference over 10M sessions is significant
+                and worthless.
+  stability     does it persist across periods? Usually more
+                convincing than either. Six consecutive months needs
+                no test; a one-month spike needs one and still won't
+                convince anyone.</code></pre>
+</div>
+
+<header class="sec" id="s6">
+  <span class="sn">Section 06</span>
+  <h2>Experiments (A/B tests)</h2>
+  <p class="lede">Randomisation is the only thing that cleanly answers a causal question — which is
+  why the design happens <em>before</em> launch, not after.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">The design checklist — all of it before you ship</div>
+<pre><code>1  HYPOTHESIS      one, specific, falsifiable, written down
+2  PRIMARY METRIC  ONE. decided in advance. everything else is
+                   secondary and cannot be promoted later.
+3  GUARDRAILS      what must NOT get worse (latency, margin, refunds,
+                   unsubscribes). a win on the primary that breaks a
+                   guardrail is not a win.
+4  RANDOMISATION   at what unit? user > session, or the same person
+                   sees both variants and contaminates the result.
+                   ⚠ if users interact (marketplace, social) you have
+                     INTERFERENCE — randomise by cluster/region.
+5  SAMPLE SIZE     computed BEFORE launch, from:
+                     · the minimum effect worth detecting (MDE)
+                     · baseline rate and its variance
+                     · α (0.05) and power (0.80)
+                   → smaller effects need quadratically more traffic.
+                     halve the MDE, quadruple the sample.
+6  DURATION        at least one full business cycle — usually a week,
+                   to cover weekday/weekend. Fixed in advance.
+7  STOPPING RULE   fixed. see peeking below.
+8  ANALYSIS PLAN   which test, which segments, written down first.
+
+RUNNING IT
+  A/A TEST FIRST   run the same variant against itself. if you find a
+                   "significant" difference, your assignment or your
+                   pipeline is broken. Catches most instrumentation bugs.
+  SRM CHECK        sample ratio mismatch — expected 50/50, got 52/48?
+                   Something is wrong with assignment. STOP. Do not
+                   analyse. This is the single best experiment health check.
+  NOVELTY EFFECT   returning users react to change itself. the first
+                   days can reverse later.</code></pre>
+</div>
+
+<div class="bad">
+  <span class="tag">Peeking — the error that manufactures results</span>
+  <p>Checking significance repeatedly and stopping the moment p &lt; 0.05 inflates your false-positive
+  rate <strong>far above 5%</strong> — with enough looks, a null test will cross the threshold almost
+  surely at some point, purely by random walk.</p>
+  <p><strong>The fix:</strong> fix the sample size and duration in advance and analyse once. If you
+  genuinely need to monitor continuously, use a method built for it — sequential testing or
+  always-valid confidence sequences — not repeated fixed-horizon tests.</p>
+</div>
+
+<div class="warn">
+  <span class="tag">When you cannot randomise</span>
+  <p>Often you cannot: the change is legally required, it affects everyone, it is a one-off launch, or
+  randomising is unethical. Say so plainly, use a <a href="#s7">quasi-experimental</a> method, and
+  state the assumption it rests on. <strong>What you must not do is run a before/after comparison and
+  present it as causal</strong> — that attributes to your change everything else that happened in the
+  same period, including seasonality.</p>
+</div>
+
+<header class="sec" id="s7">
+  <span class="sn">Section 07</span>
+  <h2>Causal inference</h2>
+  <p class="lede">What to reach for when an experiment is impossible.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Method</th><th style="width:30%">Idea</th><th>The assumption it lives or dies on</th></tr></thead>
+  <tbody>
+    <tr><td><strong>RCT</strong></td><td>Randomise, compare.</td><td>Proper randomisation and no interference. The gold standard because it needs no untestable assumption about confounders.</td></tr>
+    <tr><td><strong>Difference-in-differences</strong></td><td>Compare the change in treated vs the change in an untreated control over the same period.</td><td><strong>Parallel trends</strong> — without treatment, both groups would have moved the same way. Check it on pre-period data; if the lines weren't parallel before, the method is void.</td></tr>
+    <tr><td><strong>Regression discontinuity</strong></td><td>Compare units just above and just below an arbitrary cut-off (a score, an age, a spend threshold).</td><td>Units can't precisely manipulate which side they land on. Strong when it holds, and it only tells you about the effect <em>near the cut-off</em>.</td></tr>
+    <tr><td><strong>Instrumental variables</strong></td><td>Find something that affects treatment but affects the outcome <em>only</em> through treatment.</td><td>The exclusion restriction — untestable, and usually the weakest link. Good instruments are rare and mostly come from natural quirks.</td></tr>
+    <tr><td><strong>Propensity matching</strong></td><td>Match treated units to similar untreated ones on observed covariates.</td><td><strong>No unobserved confounders</strong> — a very strong assumption. It balances what you measured and can do nothing about what you didn't.</td></tr>
+    <tr><td><strong>Synthetic control</strong></td><td>Build a weighted combination of untreated units that reproduces the treated unit's pre-period.</td><td>Good pre-period fit and no spillover. Useful for one treated unit — a country, a store, a market.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Confounding, and the three structures to recognise</div>
+<pre><code>CONFOUNDER — a common cause of both. CONTROL FOR IT.
+      Z
+     ↙ ↘
+    X → Y        ice cream → drowning, confounded by temperature
+
+MEDIATOR — on the causal path. Controlling for it REMOVES the
+effect you were trying to measure.
+    X → M → Y    training → skill → performance
+                 control for skill and training looks useless
+
+COLLIDER — a common EFFECT of both. Controlling for it CREATES
+a spurious association where none existed.
+    X → C ← Y    ⚠ THE SUBTLE ONE. Conditioning on a collider
+                   (e.g. analysing only hired candidates, only
+                   hospitalised patients, only successful projects)
+                   manufactures correlations out of nothing.
+
+⭐ SO "CONTROL FOR EVERYTHING" IS WRONG. Which variables to adjust
+   for depends on the causal structure, not on what improves fit.
+   Draw the DAG before choosing the controls.
+
+REGRESSION TO THE MEAN — select on an extreme, measure change on
+that same value, and you GUARANTEE an apparent effect. "We fixed
+our 20 worst stores and 15 improved" — most would have anyway.
+Fix: a control group, or compare to the group's own long-run mean.</code></pre>
+</div>
+
+<header class="sec" id="s8">
+  <span class="sn">Section 08</span>
+  <h2>Feature engineering</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Technique</th><th style="width:32%">For</th><th>Watch out</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Scaling</strong><br><span class="small">standardise / min-max</span></td><td>Distance- and gradient-based models: k-NN, SVM, neural nets, k-means, regularised regression</td><td><strong>Trees don't need it.</strong> Fit the scaler on <em>train only</em> and apply to test — fitting on all data is leakage.</td></tr>
+    <tr><td><strong>One-hot encoding</strong></td><td>Low-cardinality categoricals</td><td>Explodes dimensionality on high-cardinality columns.</td></tr>
+    <tr><td><strong>Target encoding</strong></td><td>High-cardinality categoricals</td><td><span class="no">A leakage machine</span> unless computed inside cross-validation folds with smoothing. The most common way people leak without noticing.</td></tr>
+    <tr><td><strong>Binning</strong></td><td>Non-linear effects in linear models; robustness to outliers</td><td>Throws away information. Choose cut points from domain knowledge, not from the target.</td></tr>
+    <tr><td><strong>Log / Box-Cox</strong></td><td>Right-skewed features and targets</td><td>Undefined at zero — use <code>log1p</code>. Remember to invert for interpretation.</td></tr>
+    <tr><td><strong>Interactions &amp; ratios</strong></td><td>Effects that only exist in combination</td><td>Trees find interactions themselves; linear models need them handed over. Ratios often beat raw pairs.</td></tr>
+    <tr><td><strong>Lag &amp; rolling windows</strong></td><td>Time-dependent behaviour</td><td>Must be computed <strong>strictly backwards</strong> in time. A centred rolling mean sees the future.</td></tr>
+    <tr><td><strong>Aggregations</strong></td><td>Entity-level summaries from event data — count, mean, recency</td><td>Must respect the observation cut-off. Aggregating over the whole history for a mid-history prediction is leakage.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The rule that beats most feature engineering</span>
+  <p><strong>Domain knowledge beats cleverness.</strong> One feature an operator suggests — "was this
+  ordered after the cut-off time?", "is this their first order since a complaint?" — usually
+  outperforms fifty automatically generated polynomial terms. Ask the people who do the work.</p>
+  <p>And the practical corollary: build a <strong>baseline with the five obvious features</strong>
+  first. It tells you how much headroom exists, and it is often 80% of the final model.</p>
+</div>
+
+<header class="sec" id="s9">
+  <span class="sn">Section 09 · read this twice</span>
+  <h2>Leakage</h2>
+  <p class="lede">Information from outside the training context sneaking in. Produces excellent
+  offline scores and a model that fails in production — and it is the single most common serious
+  error in applied machine learning.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Type</th><th style="width:34%">What it looks like</th><th>Catch it by</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Target leakage</strong></td>
+      <td>A feature that is a consequence of the target, or recorded after it.
+      <code>cancellation_reason</code> in a cancellation model.
+      <code>days_since_last_login</code> where inactivity <em>defines</em> churn.</td>
+      <td>For every feature ask: <strong>"would this value be available, with this value, at prediction
+      time?"</strong> That one question catches most of it.</td>
+    </tr>
+    <tr>
+      <td><strong>Train-test contamination</strong></td>
+      <td>Scaling, imputing, encoding or selecting features using the full dataset before splitting.</td>
+      <td>Fit every transformer <strong>inside</strong> the CV fold. Use a pipeline object so it is
+      structurally impossible to do otherwise.</td>
+    </tr>
+    <tr>
+      <td><strong>Temporal leakage</strong></td>
+      <td>Random splits on time-ordered data, so the model trains on the future to predict the past.</td>
+      <td>Always split by time for anything temporal. Never <code>shuffle=True</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Group leakage</strong></td>
+      <td>The same entity in train <em>and</em> test — several orders from one customer, several
+      images of one patient. The model memorises the entity.</td>
+      <td><code>GroupKFold</code> on the entity id. Ask "what is the unit that must not span the
+      split?"</td>
+    </tr>
+    <tr>
+      <td><strong>Duplicate rows</strong></td>
+      <td>Exact or near-duplicates landing on both sides of the split.</td>
+      <td>Deduplicate before splitting.</td>
+    </tr>
+    <tr>
+      <td><strong>Leaky target encoding</strong></td>
+      <td>Encoding a category by its mean target, computed over all rows including the row itself.</td>
+      <td>Compute inside folds, with smoothing and out-of-fold estimates.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The diagnostic</span>
+  <p><strong>A suspiciously good score is a leakage alarm, not a success.</strong> AUC 0.99 on a real
+  business problem almost always means leakage. So does one feature dominating importance, or offline
+  performance that collapses in production.</p>
+  <p>When you see it, do not celebrate — go and look for the leak. The instinct to distrust your own
+  good result is the single most valuable habit in modelling.</p>
+</div>
+
+<header class="sec" id="s10">
+  <span class="sn">Section 10</span>
+  <h2>Model families — when to use what</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Family</th><th style="width:30%">Good at</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Linear / logistic regression</strong></td><td>Interpretability, small data, a baseline, when coefficients must be explainable to a regulator</td><td>Assumes a linear relationship (in the log-odds for logistic). Needs feature engineering to capture interactions.</td></tr>
+    <tr><td><strong>Regularised linear</strong><br><span class="small">Ridge / Lasso / Elastic Net</span></td><td>Many correlated features; automatic feature selection with Lasso</td><td><strong>L2 (Ridge)</strong> shrinks coefficients; <strong>L1 (Lasso)</strong> drives some to exactly zero. Needs scaling.</td></tr>
+    <tr><td><strong>Decision tree</strong></td><td>Explaining a rule to a human; capturing interactions natively</td><td>Overfits badly alone; unstable — small data changes give a different tree.</td></tr>
+    <tr><td><strong>Random forest</strong></td><td>A strong, low-effort baseline. Robust, hard to overfit, few knobs.</td><td>Larger and slower than boosting for the same accuracy; less tunable at the top end.</td></tr>
+    <tr><td><strong>Gradient boosting</strong><br><span class="small">XGBoost, LightGBM, CatBoost</span></td><td><span class="ok">The default winner on tabular data.</span> Handles mixed types, missing values, non-linearity.</td><td>More tuning; can overfit with too many rounds — use early stopping on a validation set.</td></tr>
+    <tr><td><strong>k-NN</strong></td><td>Small data, simple similarity problems</td><td>Slow at prediction; needs scaling; fails in high dimensions.</td></tr>
+    <tr><td><strong>SVM</strong></td><td>Small-to-medium data, high dimensions, clear margins</td><td>Poor scaling to large n; probability outputs need calibration.</td></tr>
+    <tr><td><strong>Neural networks</strong></td><td>Images, audio, text, very large data, complex structure</td><td><span class="no">Usually the wrong tool for tabular data</span> — boosting beats it more often than not, with a fraction of the effort.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The order to try things</span>
+  <p><strong>1 · A non-model baseline</strong> — the current rule, the majority class, last period's
+  value. <strong>2 · Logistic or linear regression</strong> — fast, interpretable, tells you if the
+  signal exists at all. <strong>3 · Gradient boosting</strong> — where you will probably end up on
+  tabular data. <strong>4 · Anything else</strong> — only with a reason.</p>
+  <p>Most projects that fail did not fail because step 3 wasn't tuned enough. They failed at framing,
+  leakage, or because step 1 was never established and nobody knew whether the model helped.</p>
+</div>
+
+<header class="sec" id="sdl">
+  <span class="sn">Section 11</span>
+  <h2>Deep learning basics</h2>
+  <p class="lede">Enough to reason about it, choose when to use it, and understand what an LLM is
+  underneath.</p>
+</header>
+
+<div class="sheet">
+  <div class="cap">What a neural network is</div>
+<pre><code>A stack of layers. Each layer does two things:
+
+   1  a weighted sum:      z = Wx + b       ← the learnable part
+   2  a NON-LINEARITY:     a = f(z)         ← what makes it powerful
+
+  input ──►[ layer ]──►[ layer ]──►[ layer ]──► output
+            W₁,b₁        W₂,b₂        W₃,b₃
+
+⭐ WITHOUT THE NON-LINEARITY the whole stack collapses to a single
+  linear function, no matter how many layers. The activation is not
+  a detail — it IS the reason depth buys you anything.
+
+WHAT "LEARNING" MEANS
+  find the W and b that minimise a LOSS on the training data.
+  Nothing more mysterious than that.</code></pre>
+</div>
+
+<div class="sheet">
+  <div class="cap">The training loop — every deep model, without exception</div>
+<pre><code>   repeat for each BATCH, for each EPOCH:
+
+   1  FORWARD PASS      push the batch through → predictions
+   2  LOSS              compare predictions to labels → one number
+   3  BACKPROPAGATION   the chain rule, computing how much each
+                        weight contributed to the loss (the gradient)
+   4  OPTIMISER STEP    GRADIENT DESCENT: nudge every weight against
+                        its gradient, scaled by the LEARNING RATE.
+                        ("stochastic" gradient descent = doing this on
+                         a random batch rather than the whole set)
+   5  repeat
+
+  BATCH      how many examples per update. bigger = more stable
+             gradients, more memory, fewer updates per epoch.
+  EPOCH      one full pass over the training set.
+  LEARNING   ⭐ THE MOST IMPORTANT HYPERPARAMETER BY FAR.
+   RATE      too high → loss oscillates or explodes to NaN
+             too low  → trains forever, or stalls in a bad place
+             → almost always use a SCHEDULE (warmup, then decay)
+
+⭐ IF A NETWORK ISN'T LEARNING, SUSPECT THE LEARNING RATE FIRST.
+  It is the single most common cause, before architecture, before
+  data, before anything else.</code></pre>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Component</th><th style="width:30%">Common choices</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Activation</strong></td>
+      <td><code>ReLU</code>, GELU, <code>tanh</code>, <code>sigmoid</code></td>
+      <td>ReLU/GELU are the default in hidden layers — cheap and they avoid the vanishing-gradient
+      problem that killed deep sigmoid networks. Sigmoid and tanh saturate, so gradients die.</td>
+    </tr>
+    <tr>
+      <td><strong>Output layer</strong></td>
+      <td>none (regression), <code>sigmoid</code> (binary), <code>softmax</code> (multi-class)</td>
+      <td>Softmax makes outputs sum to 1 so they read as probabilities — <em>read</em> as, which is not
+      the same as being calibrated.</td>
+    </tr>
+    <tr>
+      <td><strong>Loss</strong></td>
+      <td>MSE / MAE (regression), cross-entropy (classification)</td>
+      <td>Cross-entropy punishes confident wrong answers hard, which is what you want. Match the loss
+      to the output layer.</td>
+    </tr>
+    <tr>
+      <td><strong>Optimiser</strong></td>
+      <td><strong>Adam / AdamW</strong>, SGD + momentum</td>
+      <td>AdamW is the sane default. SGD with momentum can generalise slightly better with careful
+      tuning — rarely worth the effort outside research.</td>
+    </tr>
+    <tr>
+      <td><strong>Regularisation</strong></td>
+      <td>Dropout, weight decay, early stopping, batch/layer norm, augmentation</td>
+      <td><strong>Early stopping</strong> is the cheapest and most effective. Normalisation layers
+      stabilise training as much as they regularise.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Architecture</th><th style="width:26%">Built for</th><th>Key idea</th></tr></thead>
+  <tbody>
+    <tr><td><strong>MLP</strong><br><span class="small">feed-forward</span></td><td>Generic tabular / vector input</td><td>Fully connected layers. <span class="no">Usually loses to gradient boosting on tabular data</span> — see below.</td></tr>
+    <tr><td><strong>CNN</strong></td><td>Images, spectrograms, anything with spatial locality</td><td>Convolutions share weights across positions, so a feature detector learned in one place works everywhere. Far fewer parameters than an MLP on the same input.</td></tr>
+    <tr><td><strong>RNN / LSTM / GRU</strong></td><td>Sequences — historically text and time series</td><td>A hidden state carried along the sequence. Processes strictly in order, so it cannot parallelise, and it struggles with long dependencies. <strong>Largely superseded by transformers.</strong></td></tr>
+    <tr><td><strong>Transformer</strong></td><td>Text, and increasingly everything else</td><td><strong>Self-attention</strong>: every position attends to every other, weighted by learned relevance. Parallelisable across the sequence, and handles long-range dependencies. <span class="ok">This is what an LLM is.</span> Cost grows quadratically with sequence length — which is why context windows were historically small.</td></tr>
+    <tr><td><strong>Embedding layer</strong></td><td>Turning discrete tokens or categories into vectors</td><td>A learned lookup table. The first layer of every language model, and a good way to handle very high-cardinality categoricals in any network.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">Transfer learning — the only practical path for most teams</span>
+  <p><strong>Almost nobody trains a deep model from scratch.</strong> You take a model pre-trained on
+  an enormous corpus and adapt it:</p>
+  <p><strong>Feature extraction</strong> — freeze the pre-trained body, train a small head on your
+  labels. Works with hundreds of examples. <strong>Fine-tuning</strong> — unfreeze some or all layers
+  and continue training at a low learning rate. Needs more data and more care.
+  <strong>Parameter-efficient (LoRA/adapters)</strong> — train a small number of injected parameters
+  and leave the base frozen; the standard approach for large models.</p>
+  <p>The practical consequence: <em>"we don't have enough data for deep learning"</em> is usually
+  false. You do not need enough data to learn vision or language from nothing — only enough to adapt a
+  model that already has.</p>
+</div>
+
+<div class="warn">
+  <span class="tag">When deep learning is the wrong tool — which is often</span>
+  <p><strong>On tabular data, gradient boosting usually wins.</strong> Not by a little, and not only on
+  small data. Boosting handles mixed types, missing values and non-linearity natively, trains in
+  minutes on a laptop, needs almost no tuning to be good, and gives you feature importances. A neural
+  network on the same table typically needs more preprocessing, more tuning, more compute, and arrives
+  at similar or worse performance.</p>
+  <p><strong>Reach for deep learning when the input has structure a network can exploit</strong> —
+  spatial (images), sequential (text, audio), or relational (graphs) — or when you can start from a
+  pre-trained model. For a CSV of 40 numeric and categorical columns, use boosting.</p>
+</div>
+
+<div class="sheet">
+  <div class="cap">Failure modes, and what each one looks like</div>
+<pre><code>LOSS IS NaN                 learning rate too high · exploding
+                            gradients · a divide-by-zero or log(0) in
+                            a custom loss · unnormalised inputs
+                            → lower the LR, clip gradients, check inputs
+
+LOSS DOESN'T MOVE           learning rate too low · dead ReLUs · labels
+                            not aligned with inputs · bug in the loss
+                            → ⭐ FIRST TEST: can it OVERFIT 10 EXAMPLES?
+                              If it can't drive loss to ~0 on a tiny
+                              batch, you have a bug, not a data problem.
+
+TRAIN LOSS ↓, VAL LOSS ↑    overfitting → more data, augmentation,
+                            dropout, weight decay, early stopping,
+                            smaller model
+
+BOTH PLATEAU HIGH           underfitting → bigger model, train longer,
+                            better features, higher LR
+
+GREAT OFFLINE, BAD LIVE     ⭐ suspect LEAKAGE (section 09) or
+                            train/serve skew before anything else
+
+VANISHING GRADIENTS         very deep nets with saturating activations
+                            → ReLU/GELU, residual connections,
+                              normalisation layers
+
+REPRODUCIBILITY             GPU non-determinism means runs differ even
+                            with a fixed seed. Report mean ± spread
+                            over several seeds, not one number.</code></pre>
+</div>
+
+<header class="sec" id="s11">
+  <span class="sn">Section 12</span>
+  <h2>Bias, variance and regularisation</h2>
+</header>
+
+<div class="ascii">   THE TRADE-OFF
+
+   error
+     │╲                                    ╱
+     │ ╲            total error          ╱
+     │  ╲__                            ╱
+     │     ╲──__                    ╱  ← variance
+     │          ╲──__          __╱      (overfitting)
+     │  bias ↘       ╲──__ __╱
+     │  (underfitting)     ╳
+     └──────────────────────────────────────► model complexity
+                          ↑
+                    the sweet spot
+
+   HIGH BIAS (underfit)          HIGH VARIANCE (overfit)
+   train error  high             train error  very low
+   test error   high, ≈ train    test error   much worse than train
+   fix: more complexity,         fix: more data, regularisation,
+        better features,              fewer features, simpler model,
+        fewer constraints             early stopping, ensembling
+
+   ⭐ THE DIAGNOSTIC IS THE GAP between train and test error, not
+     the level of either one.</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Lever</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td><strong>L1 (Lasso)</strong></td><td>Penalises absolute coefficient size. Drives some coefficients to <strong>exactly zero</strong> — so it selects features. Good when you believe few features matter.</td></tr>
+    <tr><td><strong>L2 (Ridge)</strong></td><td>Penalises squared size. Shrinks all coefficients toward zero without eliminating them. Good with many correlated features.</td></tr>
+    <tr><td><strong>Elastic net</strong></td><td>Both. The pragmatic default when you are unsure.</td></tr>
+    <tr><td><strong>Early stopping</strong></td><td>Stop boosting rounds when validation error stops improving. The main regularisation in gradient boosting.</td></tr>
+    <tr><td><strong>Tree constraints</strong></td><td>Max depth, min samples per leaf, subsampling rows and columns. Each limits how specifically a tree can memorise.</td></tr>
+    <tr><td><strong>Dropout / weight decay</strong></td><td>The neural-network equivalents.</td></tr>
+    <tr><td><strong>More data</strong></td><td>The only lever that reduces variance <em>without</em> increasing bias. Usually the best answer when it is available.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="sec" id="s12">
+  <span class="sn">Section 13</span>
+  <h2>Validation</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Splits — and the ones people get wrong</div>
+<pre><code>TRAIN / VALIDATION / TEST
+  train       fit the model
+  validation  tune hyperparameters, select features, pick a threshold
+  test        touched ONCE, at the end, to report an honest number
+
+⚠ IF YOU TUNE AGAINST THE TEST SET, IT IS NO LONGER A TEST SET.
+  Every peek leaks a little. The number you report becomes optimistic
+  and you will not know by how much.
+
+K-FOLD CV            split into k parts, train k times, average.
+                     better use of small data, gives a variance
+                     estimate as well as a mean.
+STRATIFIED K-FOLD    preserves class balance in each fold.
+                     ⭐ the default for classification.
+GROUP K-FOLD         keeps all rows of one entity in one fold.
+                     ⭐ required whenever rows share an entity.
+TIME-SERIES SPLIT    train on the past, test on the future, rolling
+                     forward. ⭐ NEVER shuffle temporal data.
+
+   ┌──train──┐ test
+   ├────train────┐ test
+   ├──────train──────┐ test        ← expanding window
+
+NESTED CV            an inner loop for tuning, an outer loop for
+                     evaluation. The honest way to report performance
+                     when you also tuned. Expensive; worth it when the
+                     number will be quoted.
+
+⭐ CHOOSE THE SPLIT THAT MATCHES HOW THE MODEL WILL BE USED.
+  If it will predict next month from this month, validate that way.
+  A random split on temporal data reports a score you will never see
+  again.</code></pre>
+</div>
+
+<header class="sec" id="s13">
+  <span class="sn">Section 14</span>
+  <h2>Classification metrics</h2>
+</header>
+
+<div class="ascii">   THE CONFUSION MATRIX — everything derives from these four cells
+
+                        PREDICTED
+                     positive   negative
+              ┌──────────────┬──────────────┐
+      actual  │      TP      │      FN      │  ← the ones you missed
+    positive  │  (caught)    │  (missed)    │
+              ├──────────────┼──────────────┤
+      actual  │      FP      │      TN      │
+    negative  │ (false alarm)│  (correct)   │
+              └──────────────┴──────────────┘
+
+   PRECISION = TP / (TP + FP)      of those I FLAGGED, how many were right?
+                                   ← the cost of acting on false alarms
+   RECALL    = TP / (TP + FN)      of those that EXIST, how many did I catch?
+   (sensitivity, TPR)              ← the cost of misses
+   SPECIFICITY = TN / (TN + FP)    of the negatives, how many did I clear?
+   F1        = 2·P·R / (P + R)     harmonic mean — punishes imbalance
+                                   between the two. Fβ weights recall
+                                   (β>1) or precision (β<1).
+   ACCURACY  = (TP+TN) / all       ⚠ MEANINGLESS ON IMBALANCED DATA
+
+   ⭐ PRECISION AND RECALL TRADE OFF VIA THE THRESHOLD. Lower the
+     threshold → catch more (recall up), more false alarms (precision
+     down). There is no "best" — the COST RATIO decides.</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Metric</th><th style="width:30%">Use when</th><th>Caveat</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Accuracy</strong></td><td>Balanced classes and symmetric costs — which is rare</td><td><span class="no">The accuracy paradox:</span> 95% of employees stay, so "nobody leaves" is 95% accurate and useless. Never report it alone on imbalanced data.</td></tr>
+    <tr><td><strong>Precision</strong></td><td>False alarms are expensive — spam filters, fraud blocks, anything that interrupts a person</td><td>Trivially 100% if you flag only the single most confident case.</td></tr>
+    <tr><td><strong>Recall</strong></td><td>Misses are expensive — disease screening, safety, recall lists</td><td>Trivially 100% if you flag everything.</td></tr>
+    <tr><td><strong>F1</strong></td><td>You need one number and both errors matter</td><td>Hides which side is failing. Report precision and recall too.</td></tr>
+    <tr><td><strong>ROC-AUC</strong></td><td>Ranking quality across all thresholds; comparing models</td><td><span class="no">Optimistic on heavy imbalance</span> — the huge negative class makes FPR look small. Also: it measures ranking, not calibration or the operating point you'll actually use.</td></tr>
+    <tr><td><strong>PR-AUC</strong></td><td><span class="ok">The right default for rare positives</span></td><td>Baseline is the positive rate, not 0.5 — so 0.4 can be excellent or terrible depending on prevalence. Always state the base rate.</td></tr>
+    <tr><td><strong>Log loss / Brier</strong></td><td>When you need the <em>probability</em> to be right, not just the ranking</td><td>The metrics for calibration.</td></tr>
+    <tr><td><strong>Cohen's kappa / MCC</strong></td><td>Balanced single number on imbalanced data</td><td>MCC is the most robust single summary of a confusion matrix; harder to explain to stakeholders.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">Calibration — the thing nobody checks</span>
+  <p>A model is <strong>calibrated</strong> if, among cases it scores 0.7, about 70% are actually
+  positive. Ranking metrics (AUC) say nothing about this — a model can rank perfectly and have wildly
+  wrong probabilities.</p>
+  <p><strong>It matters whenever the probability is used as a number:</strong> expected-value
+  decisions, pricing, prioritising by risk × cost. Check with a <strong>reliability diagram</strong>
+  (predicted vs observed frequency, binned); fix with <strong>Platt scaling</strong> or
+  <strong>isotonic regression</strong> on a held-out set. Boosted trees are often poorly calibrated out
+  of the box.</p>
+</div>
+
+<header class="sec" id="s14">
+  <span class="sn">Section 15</span>
+  <h2>Regression &amp; ranking metrics</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Metric</th><th style="width:32%">Meaning</th><th>When it misleads</th></tr></thead>
+  <tbody>
+    <tr><td><strong>MAE</strong></td><td>Mean absolute error — average miss, in the target's units</td><td>Treats all errors linearly. Robust to outliers, and easy to explain: "we're off by €40 on average."</td></tr>
+    <tr><td><strong>RMSE</strong></td><td>Root mean squared error — penalises large errors more</td><td>Dominated by a few big misses. Use it when large errors are disproportionately costly; otherwise it just reports your outliers.</td></tr>
+    <tr><td><strong>MAPE</strong></td><td>Mean absolute <em>percentage</em> error</td><td><span class="no">Undefined at zero and explodes near it.</span> Also asymmetric — it punishes over-prediction more than under-prediction. Popular with business, dangerous with low-volume series.</td></tr>
+    <tr><td><strong>sMAPE / WAPE</strong></td><td>Symmetric / weighted alternatives</td><td>WAPE (total absolute error ÷ total actual) is usually the honest choice for demand forecasting.</td></tr>
+    <tr><td><strong>R²</strong></td><td>Share of variance explained</td><td>Always increases when you add features — use adjusted R². Can be negative. Says nothing about whether predictions are useful in absolute terms.</td></tr>
+    <tr><td><strong>Quantile loss</strong></td><td>For predicting an interval or a specific percentile</td><td>The right metric when the business needs "the value we'll beat 90% of the time", not the mean.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">Ranking &amp; recommendation</div>
+<pre><code>PRECISION@K   of the top k recommended, how many were relevant?
+RECALL@K      of all relevant items, how many made the top k?
+MAP           mean average precision — rewards putting relevant items
+              higher, across all queries
+NDCG          normalised discounted cumulative gain — like MAP but
+              handles GRADED relevance (very relevant > somewhat) and
+              discounts by position. The standard for search.
+MRR           mean reciprocal rank — how far down was the FIRST
+              relevant result? Right when there is one correct answer.
+HIT RATE      did anything relevant appear at all?
+
+⭐ POSITION MATTERS. That is the whole point of ranking metrics:
+  being right at rank 1 is worth much more than being right at rank
+  20, and accuracy-style metrics cannot express that.
+
+⚠ OFFLINE RANKING METRICS ARE MEASURED ON LOGGED DATA, WHICH YOUR
+  OLD SYSTEM SELECTED. That is a feedback loop: you never see whether
+  the items you never showed would have been clicked. Offline gains
+  routinely fail to reproduce online — which is why recommendation
+  teams A/B test everything.</code></pre>
+</div>
+
+<header class="sec" id="s15">
+  <span class="sn">Section 16</span>
+  <h2>Imbalanced data</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Approach</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Do nothing</strong></td><td><span class="ok">Try this first.</span> Modern boosting handles moderate imbalance well. Change the <em>metric</em> and the <em>threshold</em>, not the data.</td></tr>
+    <tr><td><strong>Class weights</strong></td><td>Tell the loss function that a positive error costs more. Cheap, principled, no data invented. Usually the right first move.</td></tr>
+    <tr><td><strong>Threshold tuning</strong></td><td>The default 0.5 is arbitrary. Choose the threshold from the <strong>cost ratio</strong> on a validation set. Often the single biggest improvement available, and it requires no retraining.</td></tr>
+    <tr><td><strong>Undersampling</strong></td><td>Drop majority examples. Fast, and throws away real information.</td></tr>
+    <tr><td><strong>Oversampling / SMOTE</strong></td><td>Duplicate or synthesise minority examples. <span class="no">Apply inside the CV fold only</span> — resampling before splitting puts synthetic copies of test rows into training, which is leakage and produces spectacular fake scores.</td></tr>
+    <tr><td><strong>Anomaly detection framing</strong></td><td>At extreme imbalance (&lt; 0.1%), stop treating it as classification. Model "normal" and flag deviations.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The reframing that usually solves it</span>
+  <p>Imbalance is rarely a data problem — it is a <strong>metric and threshold</strong> problem. Report
+  precision, recall and PR-AUC instead of accuracy; pick the threshold from the cost of each error
+  type; and give the stakeholder the precision <em>before</em> they act on the list. Resampling is the
+  last resort, not the first move.</p>
+</div>
+
+<header class="sec" id="s16">
+  <span class="sn">Section 17</span>
+  <h2>Interpretation</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Method</th><th style="width:28%">Tells you</th><th>Caveat</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Coefficients</strong><br><span class="small">linear / logistic</span></td><td>Direction and size of each effect, holding others constant</td><td>Only comparable if features are scaled. Logistic coefficients are in log-odds — exponentiate for odds ratios.</td></tr>
+    <tr><td><strong>Impurity importance</strong><br><span class="small">tree default</span></td><td>How much each feature reduced impurity</td><td><span class="no">Biased toward high-cardinality and continuous features.</span> Fast and not to be trusted alone.</td></tr>
+    <tr><td><strong>Permutation importance</strong></td><td>How much performance drops when you shuffle a feature</td><td>Model-agnostic and honest — but <strong>splits importance arbitrarily between correlated features</strong>, so a genuinely important variable can look unimportant if a twin exists.</td></tr>
+    <tr><td><strong>SHAP</strong></td><td>Per-prediction contributions that sum to the prediction — the only common method that explains an <em>individual</em> case</td><td>Expensive on large data. Still <em>associational</em>: a SHAP value is not a causal effect, however much the plot invites that reading.</td></tr>
+    <tr><td><strong>Partial dependence / ICE</strong></td><td>The shape of a feature's effect across its range</td><td>PDP averages over the data and can hide heterogeneity; ICE plots the individual curves and reveals it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The sentence to keep saying</span>
+  <p><strong>Feature importance is not causal effect.</strong> "Tenure is the top driver of attrition"
+  means tenure <em>predicts</em> attrition — not that changing someone's tenure changes their
+  probability of leaving. Stakeholders will make that leap automatically and act on it; saying the
+  sentence out loud is part of the job.</p>
+</div>
+
+<header class="sec" id="s17">
+  <span class="sn">Section 18</span>
+  <h2>Time series</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The structure, and the rules that follow from it</div>
+<pre><code>DECOMPOSITION      series = trend + seasonality + residual
+                   (or multiplicative: trend × seasonality × residual —
+                    use it when the seasonal swing GROWS with the level)
+
+STATIONARITY       constant mean, variance and autocorrelation over
+                   time. Most classical methods require it.
+                   → achieve it by differencing, log-transforming,
+                     or removing trend/seasonality.
+
+AUTOCORRELATION    a value correlates with its own past. This is why
+                   ordinary CV is invalid — the observations are NOT
+                   independent.
+  ACF / PACF       the diagnostic plots for choosing lag orders.
+
+⭐ THE FOUR RULES YOU CANNOT BREAK
+  1 NEVER shuffle. Split by time, always.
+  2 NEVER use future information in a feature. Rolling windows must
+    look strictly backwards; a centred window sees ahead.
+  3 ALWAYS beat the naive baseline before claiming anything:
+      naive        ŷ(t) = y(t−1)
+      seasonal naive ŷ(t) = y(t−season)   ← surprisingly hard to beat
+      drift        naive plus average trend
+  4 BACKTEST with a rolling origin, not a single split. One split
+    tells you about one moment; the business runs every month.
+
+METHODS
+  ETS / Holt-Winters   trend + seasonality, fast, strong baseline
+  ARIMA / SARIMA       classical, interpretable, needs stationarity
+  Prophet              handles holidays and multiple seasonalities,
+                       tolerant of missing data, easy to run
+  Gradient boosting    with lag/rolling/calendar features — usually
+                       wins on many related series
+  Deep (LSTM/TFT)      only with lots of data and lots of series
+
+⚠ INTERMITTENT DEMAND (many zeros) breaks most of the above and
+  MAPE entirely. Use Croston's method or a count model, and WAPE.</code></pre>
+</div>
+
+<header class="sec" id="s18">
+  <span class="sn">Section 19</span>
+  <h2>Unsupervised</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Method</th><th style="width:30%">For</th><th>Watch out</th></tr></thead>
+  <tbody>
+    <tr><td><strong>k-means</strong></td><td>Fast general-purpose clustering</td><td>You must choose k; assumes round, similar-sized clusters; needs scaling; sensitive to initialisation.</td></tr>
+    <tr><td><strong>Hierarchical</strong></td><td>When you want a dendrogram and no fixed k</td><td>Doesn't scale to large n.</td></tr>
+    <tr><td><strong>DBSCAN / HDBSCAN</strong></td><td>Arbitrary shapes; identifies noise points explicitly</td><td>Struggles with varying densities; parameters are unintuitive.</td></tr>
+    <tr><td><strong>Gaussian mixture</strong></td><td>Soft assignment — probability of belonging to each cluster</td><td>Assumes gaussian components.</td></tr>
+    <tr><td><strong>PCA</strong></td><td>Dimensionality reduction, decorrelation, visualisation</td><td>Linear only. Components are combinations, so interpretability is lost. Scale first.</td></tr>
+    <tr><td><strong>UMAP / t-SNE</strong></td><td>Visualising high-dimensional structure</td><td><span class="no">For looking, not for measuring.</span> Distances between clusters in the plot are not meaningful, and the layout changes with the random seed. Never cluster on t-SNE output.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">Evaluating clusters — there is no test set</span>
+  <p><strong>Internal:</strong> silhouette score, Davies-Bouldin, the elbow method. They measure
+  geometry, not usefulness. <strong>External:</strong> if you have some labels, adjusted Rand index.
+  <strong>The one that matters:</strong> can a domain expert name each cluster and act differently on
+  it? A statistically excellent segmentation nobody can describe is not a segmentation — it is a
+  colouring.</p>
+</div>
+
+<header class="sec" id="s19">
+  <span class="sn">Section 20</span>
+  <h2>Production &amp; drift</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Concept</th><th>What to know</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Training/serving skew</strong></td><td>Features computed differently offline and online. <span class="no">The most common production failure.</span> Fix by sharing the transformation code, or a feature store.</td></tr>
+    <tr><td><strong>Covariate shift</strong></td><td>The input distribution changed; the relationship didn't. New market, new traffic source.</td></tr>
+    <tr><td><strong>Label shift</strong></td><td>The class balance changed — fraud rate doubled.</td></tr>
+    <tr><td><strong>Concept drift</strong></td><td><strong>The relationship itself changed</strong> — the same inputs now imply a different outcome. The hardest, and only detectable once labels arrive.</td></tr>
+    <tr><td><strong>Feedback loops</strong></td><td>The model's own actions change the data it is retrained on. You stop showing items nobody clicks, so they never get clicks, so they stay unshown. Needs deliberate exploration to break.</td></tr>
+    <tr><td><strong>Shadow deployment</strong></td><td>Run the new model alongside the old without acting on it; compare. The safest way to ship a model.</td></tr>
+    <tr><td><strong>Champion / challenger</strong></td><td>Serve a small share of traffic to the new model. Real feedback, bounded risk.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">What to monitor — in this priority order</div>
+<pre><code>1  IS IT RUNNING?      request volume, error rate, latency
+                       (the failure people forget: it stopped and
+                        nothing said so)
+2  INPUT DISTRIBUTIONS  per-feature mean/percentiles/null rate vs
+                        training. drifts here precede everything else
+                        and are visible IMMEDIATELY.
+3  PREDICTION DISTRIB.  score histogram over time. a sudden shift
+                        without an input shift means the pipeline
+                        changed.
+4  BUSINESS METRIC      the thing you were actually hired to move.
+                        ⭐ the only one that ultimately matters.
+5  MODEL PERFORMANCE    ⚠ requires LABELS, which arrive with a delay —
+                        sometimes months. Plan for the gap: that is
+                        why 2 and 3 exist.
+
+RETRAINING
+  scheduled   simple, predictable, often wasteful
+  triggered   on drift or performance decay; needs the monitoring above
+  ⚠ always validate a retrained model against the current one before
+    promoting. "Newer" is not "better", and an automated retrain that
+    ships unchecked is how a bad data day becomes a bad model.</code></pre>
+</div>
+
+<header class="sec" id="s20">
+  <span class="sn">Section 21</span>
+  <h2>Fairness &amp; ethics</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Concept</th><th>What to know</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Proxy discrimination</strong></td><td>Excluding a protected attribute does not make a model fair. Postcode proxies for ethnicity; device type for wealth; name for national origin. <strong>"We didn't use race" is not a defence.</strong></td></tr>
+    <tr><td><strong>Demographic parity</strong></td><td>Equal positive rates across groups.</td></tr>
+    <tr><td><strong>Equal opportunity</strong></td><td>Equal <em>recall</em> across groups — among those who qualify, equal chance of being selected.</td></tr>
+    <tr><td><strong>Equalised odds</strong></td><td>Equal TPR <em>and</em> FPR across groups.</td></tr>
+    <tr><td><strong>Calibration within groups</strong></td><td>A score of 0.7 means 70% in every group.</td></tr>
+    <tr><td><strong>The impossibility result</strong></td><td><span class="no">These definitions are mathematically incompatible</span> when base rates differ across groups — you cannot satisfy them all. <strong>So fairness is a choice you must make explicitly and document</strong>, not a box that gets ticked.</td></tr>
+    <tr><td><strong>Feedback amplification</strong></td><td>A biased model changes who gets opportunities, which changes the next training set. Bias compounds unless something breaks the loop.</td></tr>
+    <tr><td><strong>Minimum cell size</strong></td><td>Never report a statistic for a group small enough to identify individuals. And beware <em>differencing</em> — two suppressed-safe aggregates can reveal a person by subtraction.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The professional obligation</span>
+  <p><strong>Technical access is not authorisation.</strong> The query running is not the same as being
+  permitted to run it. Health, ethnicity, religion, sexuality and biometrics sit under stricter rules
+  almost everywhere — and <em>inferring</em> a protected characteristic creates it as data, whether or
+  not it was collected.</p>
+  <p>The sentence worth having ready: <em>"I can do that technically, but I don't think I should
+  without checking — it infers a protected characteristic, and I'd want the DPO's view first."</em></p>
+</div>
+
+<header class="sec" id="s21">
+  <span class="sn">Section 22</span>
+  <h2>Mistakes to avoid</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:30%">Mistake</th><th>Why it costs you</th></tr></thead>
+  <tbody>
+    <tr><td><strong>No baseline</strong></td><td>You cannot say whether the model helps. A 0.82 AUC means nothing until you know the simple rule scores 0.79.</td></tr>
+    <tr><td><strong>Optimising a metric nobody chose</strong></td><td>Maximising F1 when the business cares about precision at a fixed alert volume.</td></tr>
+    <tr><td><strong>Reporting accuracy on imbalanced data</strong></td><td>95% accurate, predicts nothing. The classic.</td></tr>
+    <tr><td><strong>Random split on temporal data</strong></td><td>Trains on the future. The score is unreproducible in production.</td></tr>
+    <tr><td><strong>Fitting transformers before splitting</strong></td><td>Leakage. Scores are optimistic by an unknown amount.</td></tr>
+    <tr><td><strong>Tuning on the test set</strong></td><td>It stops being a test set at the first peek.</td></tr>
+    <tr><td><strong>Trusting a suspiciously good score</strong></td><td>AUC 0.99 on a business problem is a leak until proven otherwise.</td></tr>
+    <tr><td><strong>Treating feature importance as causal</strong></td><td>Stakeholders act on it. You are responsible for the framing you allowed.</td></tr>
+    <tr><td><strong>Ignoring calibration</strong></td><td>Any expected-value decision built on uncalibrated probabilities is wrong even when the ranking is right.</td></tr>
+    <tr><td><strong>Reporting a point estimate</strong></td><td>No interval, no variance across folds — so nobody knows whether the difference between two models is real.</td></tr>
+    <tr><td><strong>Not shipping</strong></td><td>A model in a notebook has produced zero value. The gap between 0.84 and 0.86 matters far less than deployment, monitoring and someone acting on the output.</td></tr>
+    <tr><td><strong>Skipping the "when not to model" question</strong></td><td>The best outcome of many projects is a rule, a dashboard, or fixing the data collection.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="sec" id="s22">
+  <span class="sn">Section 23</span>
+  <h2>Glossary</h2>
+</header>
+
+<div class="tw">
+<table>
+  <tbody>
+    <tr><td style="width:24%"><strong>Supervised / unsupervised</strong></td><td>With labels / without.</td></tr>
+    <tr><td><strong>Feature / target</strong></td><td>Input variable / the thing predicted.</td></tr>
+    <tr><td><strong>Grain</strong></td><td>What one row means. Decides what is answerable, and what one prediction refers to.</td></tr>
+    <tr><td><strong>Hyperparameter</strong></td><td>A setting you choose (tree depth, learning rate), as opposed to a parameter the model learns.</td></tr>
+    <tr><td><strong>Overfitting</strong></td><td>Learning the training data's noise. Low train error, high test error.</td></tr>
+    <tr><td><strong>Regularisation</strong></td><td>Any constraint that trades a little bias for less variance.</td></tr>
+    <tr><td><strong>Ensemble</strong></td><td>Combining models. <em>Bagging</em> (parallel, reduces variance — random forest); <em>boosting</em> (sequential, reduces bias — XGBoost); <em>stacking</em> (a model over model outputs).</td></tr>
+    <tr><td><strong>Leakage</strong></td><td>Information in training that won't exist at prediction time.</td></tr>
+    <tr><td><strong>Base rate</strong></td><td>How common the positive class is. Determines whether precision can ever be high.</td></tr>
+    <tr><td><strong>Threshold</strong></td><td>The cut-off converting a score into a decision. Choose it from costs, not from 0.5.</td></tr>
+    <tr><td><strong>Calibration</strong></td><td>Whether predicted probabilities match observed frequencies.</td></tr>
+    <tr><td><strong>Stationarity</strong></td><td>Statistical properties constant over time. Required by most classical time-series methods.</td></tr>
+    <tr><td><strong>Confounder</strong></td><td>A common cause of both treatment and outcome. Control for it.</td></tr>
+    <tr><td><strong>Collider</strong></td><td>A common <em>effect</em> of both. Controlling for it <em>creates</em> spurious association.</td></tr>
+    <tr><td><strong>Power</strong></td><td>Probability of detecting a real effect. Low power makes a null result uninformative.</td></tr>
+    <tr><td><strong>MDE</strong></td><td>Minimum detectable effect — the smallest difference your test can find. Drives sample size.</td></tr>
+    <tr><td><strong>SRM</strong></td><td>Sample ratio mismatch — assignment didn't split as intended. Invalidates the experiment.</td></tr>
+    <tr><td><strong>Drift</strong></td><td>The world changing out from under the model. Covariate / label / concept.</td></tr>
+    <tr><td><strong>Feature store</strong></td><td>Shared, versioned feature definitions used by both training and serving — the structural fix for training/serving skew.</td></tr>
+    <tr><td><strong>Model card</strong></td><td>Documentation of intended use, training data, performance by segment, and limitations. Increasingly expected.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr class="rule">
+
+<div class="disclaimer">
+  <p><strong>Scope.</strong> This is a concepts reference, deliberately without library APIs — the
+  ideas outlive the packages. It is file 2 of 4, alongside the AI-engineering cheat sheet, the guide,
+  and the interview preparation.</p>
+  <p><strong>Depth elsewhere in this repository.</strong> For the analyst-side treatment of many of
+  these ideas — bias catalogue, statistical reasoning, metric design, dirty data —
+  <code>docs/data-analyst-bootcamp.html</code>. For senior practice notes,
+  <code>docs/senior-data-science-best-practices/</code>. For a full project lifecycle,
+  <code>docs/datascience-project/</code>. The base-rate worked example here is checked arithmetic:
+  45 true positives against 95 false positives gives 32% precision from a model that is 90% accurate
+  on both classes.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark() {
+    var best = 0, y = window.scrollY + 140;
+    for (var i = 0; i < targets.length; i++) if (targets[i] && targets[i].offsetTop <= y) best = i;
+    for (var j = 0; j < links.length; j++) links[j].classList.toggle('on', j === best);
+  }
+  var q = false;
+  window.addEventListener('scroll', function () {
+    if (q) return; q = true;
+    requestAnimationFrame(function () { q = false; mark(); });
+  }, { passive: true });
+  mark();
+})();
+</script>

@@ -1,0 +1,1506 @@
+<title>CS Foundations and the Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #3B3FA0;
+  --accent-soft: #E6E7F6;
+  --accent-deep: #25276B;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #3B3FA0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #9295E0;
+    --accent-soft: #15161F;
+    --accent-deep: #B4B6EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #9295E0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #9295E0;
+  --accent-soft: #15161F;
+  --accent-deep: #B4B6EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #9295E0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume IV</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · Complexity</div>
+  <a href="#a1"><span class="n">01</span>Big-O, demystified</a>
+  <a href="#a2"><span class="n">02</span>Space complexity</a>
+  <a href="#a3"><span class="n">03</span>Talking about it</a>
+
+  <div class="rail-group">II · Data structures</div>
+  <a href="#b1"><span class="n">04</span>Arrays &amp; lists</a>
+  <a href="#b2"><span class="n">05</span>Hash maps</a>
+  <a href="#b3"><span class="n">06</span>Stacks &amp; queues</a>
+  <a href="#b4"><span class="n">07</span>Trees</a>
+  <a href="#b5"><span class="n">08</span>Heaps</a>
+  <a href="#b6"><span class="n">09</span>Graphs</a>
+  <a href="#b7"><span class="n">10</span>Choosing one</a>
+
+  <div class="rail-group">III · Algorithms</div>
+  <a href="#c1"><span class="n">11</span>Searching</a>
+  <a href="#c2"><span class="n">12</span>Sorting</a>
+  <a href="#c3"><span class="n">13</span>The patterns</a>
+  <a href="#c4"><span class="n">14</span>Recursion</a>
+  <a href="#c5"><span class="n">15</span>In daily work</a>
+
+  <div class="rail-group">IV · The internet</div>
+  <a href="#d1"><span class="n">16</span>One request, fully</a>
+  <a href="#d2"><span class="n">17</span>DNS</a>
+  <a href="#d3"><span class="n">18</span>TCP &amp; TLS</a>
+  <a href="#d4"><span class="n">19</span>HTTP versions</a>
+  <a href="#d5"><span class="n">20</span>How a page renders</a>
+  <a href="#d6"><span class="n">21</span>CORS, properly</a>
+
+  <div class="rail-group">V · The database</div>
+  <a href="#e1"><span class="n">22</span>Reading a query plan</a>
+  <a href="#e2"><span class="n">23</span>Indexes deeply</a>
+  <a href="#e3"><span class="n">24</span>Window functions</a>
+  <a href="#e4"><span class="n">25</span>CTEs</a>
+  <a href="#e5"><span class="n">26</span>Normalisation</a>
+  <a href="#e6"><span class="n">27</span>Transactions &amp; isolation</a>
+  <a href="#e7"><span class="n">28</span>Scaling &amp; NoSQL</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume IV of VIII</p>
+  <h1>CS foundations and the stack. <span class="thin">The gap that makes engineers sound junior.</span></h1>
+  <p class="lede">Complexity you can reason about out loud, the six data structures that cover nearly
+  everything, the algorithm patterns worth recognising, the full journey of an HTTP request from DNS
+  to pixels, and the database layer at the depth where performance problems are actually solved.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volume I; some SQL</span>
+    <span><b>Covers</b> · KB files 10, 41–43, 45</span>
+    <span><b>Named in the KB as</b> · the #1 gap</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<a class="vol" href="06-skillup-architecture.html"><span class="vn">Volume II</span><b>Architecture &amp; design</b></a>
+<a class="vol" href="07-skillup-craft.html"><span class="vn">Volume III</span><b>Engineering craft</b></a>
+<div class="vol here"><span class="vn">Volume IV · here</span><b>CS foundations &amp; the stack</b></div>
+<a class="vol" href="09-skillup-ship-and-run.html"><span class="vn">Volume V</span><b>Ship it &amp; run it</b></a>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<a class="vol" href="11-skillup-data-ai.html"><span class="vn">Volume VII</span><b>Data, AI &amp; emerging tech</b></a>
+<a class="vol" href="12-skillup-thinking-capstone.html"><span class="vn">Volume VIII</span><b>Thinking, career &amp; capstone</b></a>
+</div>
+
+<div class="good">
+  <span class="tag">Why this volume exists, stated plainly</span>
+  <p>You can build working software without any of this. What you cannot do without it is
+  <strong>explain why something is slow, predict what will break at scale, or discuss a design with
+  people who have this vocabulary</strong> — and that is what "sounds junior" actually means.</p>
+  <p>The framing here is deliberately practical. Not puzzles: <strong>the version of this knowledge
+  that changes a decision at work.</strong></p>
+</div>
+
+<header class="part" id="complexity">
+  <span class="pn">Part I</span>
+  <h2>Complexity</h2>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Foundations 01</span>
+  <h2>Big-O, demystified</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One question: as the input grows, how does the work grow?</div>
+<pre><code>⭐ THAT IS THE WHOLE IDEA. Not "how fast is it" — how does it
+  SCALE. Constants and hardware are deliberately ignored,
+  because they do not change the shape.
+
+  O(1)        constant     a hash lookup, array index
+  O(log n)    logarithmic  binary search, a B-tree index probe
+  O(n)        linear       one pass over a list
+  O(n log n)  linearithmic ⭐ a good sort. The practical floor
+                           for comparison sorting.
+  O(n²)       quadratic    nested loops over the same data
+  O(2ⁿ)       exponential  ⚠ unusable beyond tiny inputs
+
+WHAT THE DIFFERENCE ACTUALLY MEANS — n = 1,000,000
+
+  O(1)         1 operation
+  O(log n)     20
+  O(n)         1,000,000
+  O(n log n)   20,000,000
+  O(n²)        1,000,000,000,000   ⚠ this is the cliff
+
+⭐ THE ONLY DISTINCTION THAT MATTERS MOST DAYS: IS IT NESTED?
+  A loop inside a loop over the same collection is O(n²), and
+  that is the difference between "fine" and "the page times
+  out" as data grows. Everything else is nuance.
+
+THE RULES FOR READING IT
+  · drop constants: O(2n) is O(n). Two passes still scale
+    linearly.
+  · drop lower terms: O(n² + n) is O(n²).
+  · nesting multiplies; sequence adds.
+  · ⭐ WATCH FOR HIDDEN LOOPS: `.includes()` inside a `.map()`
+    is a nested loop wearing a method call. So is a database
+    query inside a loop — the N+1, which is O(n) round trips
+    and is what actually hurts.
+
+⚠ AND THE HONEST CAVEAT: BIG-O IGNORES CONSTANTS, AND CONSTANTS
+  ARE WHY YOUR CODE IS SLOW. An O(n) algorithm with a network
+  call per item is far worse than an O(n²) one over an in-memory
+  array of 100 items. ⭐ MEASURE; USE BIG-O TO PREDICT WHAT WILL
+  BREAK LATER.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Foundations 02</span>
+  <h2>Space complexity</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The one people forget, and it causes the worse outage</div>
+<pre><code>SAME QUESTION, ABOUT MEMORY: how does memory grow with input?
+
+  O(1) space   a few variables, whatever n is
+  O(n) space   a copy of the input, a lookup map
+  O(n²) space  a matrix
+
+⭐ THE CLASSIC TRADE, AND IT IS THE MOST USEFUL ONE TO KNOW:
+  SPEND MEMORY TO BUY TIME.
+    · a hash map turns an O(n) scan into an O(1) lookup, at
+      O(n) space
+    · an index turns a table scan into a tree probe, at the
+      cost of storage and slower writes
+    · a cache turns a computation into a lookup, at the cost of
+      memory and staleness
+  ⇒ these are the same decision at three altitudes, and
+    recognising that is worth more than either concept alone.
+
+⚠ WHY SPACE FAILS WORSE THAN TIME
+  slow code is annoying. ⭐ OUT-OF-MEMORY KILLS THE PROCESS —
+  every in-flight request dies, not just the expensive one. And
+  it usually happens at the worst moment, because that is when
+  volume is highest.
+
+THE PRACTICAL VERSIONS IN THIS STACK
+  · loading every row to count them, instead of COUNT in SQL
+  · building an array of all records to sum it, instead of
+    aggregating in the database
+  · a Map used as a cache with no eviction and no bound
+  · reading an entire file into memory rather than streaming
+  ⭐ ALL FOUR ARE O(n) SPACE WHERE O(1) WAS AVAILABLE, and all
+    four are invisible until the data grows.</code></pre>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Foundations 03</span>
+  <h2>Discussing it without sounding like a puzzle site</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">Sounds junior</th><th>Sounds senior</th></tr></thead>
+  <tbody>
+    <tr><td>"I'd use a hash map because it's O(1)."</td><td>"I'd build a lookup keyed by employee id first, so the join in the loop becomes a constant-time read instead of a scan per row."</td></tr>
+    <tr><td>"This is O(n²), that's bad."</td><td>"It's nested over the same list — fine at 200 employees, and it becomes the bottleneck around a few thousand. Worth fixing now if we expect growth, otherwise noting."</td></tr>
+    <tr><td>"We should optimise this."</td><td>"The p95 is 4 seconds against a 500 ms target, and the trace says 90% is in one query. That's where I'd start."</td></tr>
+    <tr><td>Reciting sorting algorithms</td><td>"The library sort is fine — the cost here isn't sorting, it's that we fetch every row to sort in memory instead of ordering in the query."</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The pattern in the right column</span>
+  <p>Every senior version <strong>connects the concept to a decision, and to a number.</strong> The
+  vocabulary is used to explain a choice rather than to demonstrate that it is known — which is,
+  generally, the difference the whole handbook is about.</p>
+</div>
+
+<header class="part" id="ds">
+  <span class="pn">Part II</span>
+  <h2>Data structures</h2>
+  <p class="lede">Six of them cover almost everything you will ever need. What matters is which
+  operations each makes cheap.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Foundations 04</span>
+  <h2>Arrays and lists</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The default, and what it is bad at</div>
+<pre><code>ARRAY (JavaScript array, Python list) — contiguous, indexed
+  read by index        O(1)   ⭐ the superpower
+  append at the end    O(1)   amortised
+  insert/remove front  O(n)   ⚠ everything shifts
+  search by value      O(n)
+  ⇒ ⭐ USE IT UNLESS YOU HAVE A REASON NOT TO. Contiguous memory
+    is also cache-friendly, which makes it faster in practice
+    than the theory suggests.
+
+  ⚠ THE HIDDEN COST PEOPLE MISS: `array.includes(x)` inside a
+    loop over the same array is O(n²). It looks like one method
+    call. This is the single most common accidental quadratic in
+    application code.
+
+LINKED LIST — nodes pointing to nodes
+  insert/remove at a known position   O(1)
+  read by index                       O(n)   ⚠ must walk
+  ⇒ ⭐ YOU WILL ALMOST NEVER CHOOSE ONE. Worth knowing because
+    it explains queues, and because "O(1) insertion" sounds
+    attractive until you notice you must first find the
+    position, which is O(n).
+
+WHERE THIS MATTERS IN REAL CODE
+  · building a result set: append, don't insert at the front
+  · deduplicating: ⭐ a Set, not `includes` in a loop —
+    O(n) instead of O(n²), and it is a one-line change
+  · "does this list contain x" repeatedly: build a Set once</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Foundations 05</span>
+  <h2>Hash maps</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The most useful structure in application code</div>
+<pre><code>A HASH MAP (object, Map, dict) gives you O(1) lookup by key.
+  insert · lookup · delete   all O(1) average
+  ⚠ O(n) worst case, when many keys collide — theoretically
+    interesting, practically irrelevant with a decent hash.
+  ⚠ NO ORDER GUARANTEE by design (though JS objects and modern
+    Python dicts preserve insertion order — do not rely on it
+    across languages).
+
+⭐ THE PATTERN THAT SOLVES MOST PERFORMANCE PROBLEMS IN
+  APPLICATION CODE: BUILD A LOOKUP, THEN JOIN IN MEMORY.
+
+    ⚠ for each employee: find their team in the teams array
+      ⇒ O(n × m)
+
+    ✅ build Map(teamId → team) once      O(m)
+       then each lookup is O(1)            ⇒ O(n + m)
+
+  this is exactly how you fix an N+1 after fetching both sets
+  in two queries — and it is the same idea as a database index.
+
+WHEN A SET INSTEAD
+  a Set is a hash map with no values. Use it for membership
+  ("have I seen this id?") and deduplication. ⭐ SEEING A `Set`
+  IN A DIFF IS USUALLY A SIGN SOMEONE AVOIDED AN O(n²).
+
+⚠ THE GOTCHA IN JAVASCRIPT: OBJECT KEYS ARE STRINGS.
+  `obj[1]` and `obj["1"]` are the same key, and an object key
+  cannot be an object. `Map` allows any key type and preserves
+  it — which is why `Map` is the right default for anything
+  non-trivial.</code></pre>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Foundations 06</span>
+  <h2>Stacks and queues</h2>
+</header>
+
+<div class="ascii">   STACK — last in, first out (LIFO)
+     push and pop at the same end. Both O(1).
+
+     ⭐ WHERE YOU ALREADY MEET IT
+       · THE CALL STACK — which is why deep recursion overflows,
+         and why a stack trace is called that
+       · undo history
+       · depth-first traversal
+       · matching brackets, parsing nested structures
+
+   QUEUE — first in, first out (FIFO)
+     enqueue at one end, dequeue at the other. Both O(1) with
+     the right implementation.
+     ⚠ `array.shift()` IS O(n) — it shifts every element. A
+       "queue" built on shift in a hot loop is a quadratic
+       algorithm hiding in plain sight.
+
+     ⭐ WHERE YOU ALREADY MEET IT
+       · a job queue — the whole of Volume II's async work
+       · breadth-first traversal
+       · rate limiting and buffering
+       · the event loop itself
+
+   PRIORITY QUEUE — highest priority out first, not oldest
+     ⇒ "process the highest-risk employees first", scheduling,
+       and the internals of shortest-path algorithms.
+     implemented with a heap — reflex 08.
+
+   ⭐ WHY KNOWING THESE THREE PAYS OFF: they are the vocabulary
+     of asynchronous systems. "Back-pressure on the queue",
+     "the stack unwinds", "a priority queue for the retry
+     schedule" — these describe designs, and without the words
+     you cannot participate in the design conversation.</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Foundations 07</span>
+  <h2>Trees</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Hierarchies, and the structure inside your database</div>
+<pre><code>A TREE is nodes with children and no cycles. Depth d, and
+operations are usually O(d) — which is O(log n) if the tree is
+BALANCED and O(n) if it has degenerated into a list.
+⭐ "BALANCED" IS THE WHOLE GAME. An unbalanced binary tree is a
+  linked list with extra steps.
+
+THE ONES THAT MATTER TO YOU
+
+  BINARY SEARCH TREE — left is smaller, right is larger
+    lookup, insert, delete: O(log n) when balanced
+    ⇒ the idea behind sorted-order lookup.
+
+  B-TREE / B+TREE — ⭐ WHAT YOUR DATABASE INDEX ACTUALLY IS
+    wide, shallow, and designed so each level is one disk page
+    read. A billion rows is ~4 levels deep.
+    ⇒ THIS IS WHY AN INDEXED LOOKUP IS FAST AND A SCAN IS NOT,
+      and why index order matters (reflex 23). Knowing this one
+      structure changes how you read a query plan.
+
+  TRIE — a tree of characters
+    ⇒ prefix search, autocomplete. "All employees whose name
+      starts with 'Ch'" is a prefix query, which is also why a
+      B-tree index can serve `LIKE 'Ch%'` and cannot serve
+      `LIKE '%ch%'`.
+
+  HEAP — reflex 08.
+
+TREES IN YOUR DATA MODEL
+  an org chart, a category hierarchy, a comment thread.
+  ⚠ AND THE PRACTICAL PROBLEM: SQL is bad at arbitrary-depth
+    trees. `manager_id` self-references are easy to store and
+    awkward to query — "everyone under this manager, at any
+    depth" needs a RECURSIVE CTE (reflex 25), or a different
+    model such as a materialised path.
+  ⭐ THIS IS A REAL DESIGN DECISION IN AN HR APPLICATION, and it
+    is the kind of thing worth deciding deliberately rather
+    than discovering.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Foundations 08</span>
+  <h2>Heaps</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One job, done extremely well</div>
+<pre><code>A HEAP keeps the smallest (or largest) element instantly
+available, without keeping everything sorted.
+  peek the min/max     O(1)
+  insert               O(log n)
+  remove the min/max   O(log n)
+  ⚠ finding an arbitrary element   O(n) — it is not a search
+    structure
+
+⭐ THE PATTERN WORTH KNOWING: "TOP K OF N".
+  you need the 10 highest-risk employees out of 50,000.
+    ⚠ sort everything and take 10   → O(n log n)
+    ✅ keep a heap of size 10        → O(n log k)
+  ⇒ with k = 10 and n = 50,000 that is a large difference, and
+    more importantly it is O(k) SPACE rather than O(n) — you
+    never hold all 50,000 in memory.
+
+  ⇒ AND THE DATABASE EQUIVALENT, WHICH IS THE ONE YOU WILL
+    ACTUALLY USE: `ORDER BY risk DESC LIMIT 10` with an index on
+    risk. The database does exactly this. ⭐ THE POINT OF
+    KNOWING THE STRUCTURE IS RECOGNISING THAT FETCHING 50,000
+    ROWS TO SORT IN NODE IS THE WRONG SHAPE OF SOLUTION.
+
+WHERE ELSE
+  · scheduling the next job by due time
+  · a retry queue ordered by next-attempt time
+  · inside Dijkstra's shortest-path algorithm</code></pre>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Foundations 09</span>
+  <h2>Graphs</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Anything with relationships that are not a hierarchy</div>
+<pre><code>NODES AND EDGES. Directed or undirected; weighted or not.
+⭐ YOU ALREADY HAVE GRAPHS: the org chart with dotted-line
+  reporting, "employees who worked on projects together",
+  service dependencies, module import graphs, a CI pipeline's
+  stages.
+
+TWO TRAVERSALS, AND THE DIFFERENCE MATTERS
+  BFS — breadth first, uses a QUEUE
+    explores level by level. ⭐ FINDS THE SHORTEST PATH in an
+    unweighted graph. "Degrees of separation", "who is within
+    two reporting levels".
+  DFS — depth first, uses a STACK (or recursion)
+    goes deep first. ⭐ RIGHT FOR CYCLE DETECTION, topological
+    sort, and exploring every path.
+
+THE TWO ALGORITHMS WORTH RECOGNISING BY NAME
+  TOPOLOGICAL SORT — order things so dependencies come first.
+    ⇒ ⭐ THIS IS WHAT A BUILD SYSTEM, A MIGRATION RUNNER AND A
+      CI PIPELINE ALL DO. And it FAILS IF THERE IS A CYCLE —
+      which is precisely how a circular-dependency error is
+      detected.
+  DIJKSTRA — cheapest path with weighted edges.
+    ⇒ routing, cost optimisation. Uses a priority queue.
+
+⚠ THE TRAP IN A DATABASE: a graph query in SQL is a recursive
+  CTE, and it is easy to write one that never terminates when
+  the data contains a cycle. ⭐ ALWAYS BOUND THE DEPTH. Real HR
+  data does contain reporting cycles, usually by mistake, and
+  the query is where you find out.
+
+⭐ AND THE HONEST SCOPE: you will not implement Dijkstra. You
+  will recognise "this is a graph problem, not a table problem",
+  which prevents a genuinely bad schema decision.</code></pre>
+</div>
+
+<header class="mod" id="b7">
+  <span class="mn">Foundations 10</span>
+  <h2>Choosing one</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">You need to…</th><th>Use</th></tr></thead>
+  <tbody>
+    <tr><td>Keep an ordered collection and read by position</td><td><strong>Array.</strong> The default; do not overthink it.</td></tr>
+    <tr><td>Look something up by id, repeatedly</td><td><strong>Map / dict.</strong> The single highest-value swap in slow application code.</td></tr>
+    <tr><td>Ask "have I seen this?" or deduplicate</td><td><strong>Set.</strong> Replaces the accidental O(n²).</td></tr>
+    <tr><td>Process in arrival order</td><td><strong>Queue.</strong> And do not build it on <code>shift()</code>.</td></tr>
+    <tr><td>Process most important first</td><td><strong>Priority queue</strong> — or <code>ORDER BY … LIMIT</code> in the database, which is usually the real answer.</td></tr>
+    <tr><td>Track nesting or reverse something</td><td><strong>Stack.</strong></td></tr>
+    <tr><td>Represent a hierarchy</td><td><strong>Tree</strong> — and decide deliberately how you will query it at depth.</td></tr>
+    <tr><td>Represent arbitrary relationships</td><td><strong>Graph.</strong> Recognising this early prevents a bad schema.</td></tr>
+    <tr><td>Find the top or bottom few of many</td><td><strong>Heap</strong> conceptually; an indexed <code>ORDER BY … LIMIT</code> in practice.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The honest summary of Part II</span>
+  <p><strong>In application code you will use arrays, maps and sets for 95&nbsp;% of everything</strong>
+  — and knowing when a map replaces a nested loop is worth more than every other structure on this
+  page combined.</p>
+  <p>The rest earns its place as <em>recognition</em>: seeing that a problem is a graph, a top-k, or a
+  hierarchy tells you what to reach for and, more often, tells you the database should be doing it.</p>
+</div>
+
+<header class="part" id="algo">
+  <span class="pn">Part III</span>
+  <h2>Algorithms</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Foundations 11</span>
+  <h2>Searching</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two, and the second one explains your database</div>
+<pre><code>LINEAR SEARCH — check each item. O(n).
+  no preparation needed, works on anything, and it is the right
+  answer for small collections.
+
+BINARY SEARCH — halve the search space each step. O(log n).
+  ⚠ REQUIRES SORTED DATA. That precondition is the whole cost.
+  ⭐ 1,000,000 items in 20 steps. This is why sorted order and
+    indexes matter so much.
+
+⭐ AND THE GENERALISATION THAT IS ACTUALLY USEFUL DAILY:
+  BINARY SEARCH IS A DEBUGGING TECHNIQUE.
+    · `git bisect` over commits to find where a bug entered
+    · commenting out half the code to isolate a failure
+    · halving the input to find which record breaks the import
+  ⇒ any time you can ask a yes/no question that eliminates half
+    the possibilities, you have turned a linear hunt into a
+    logarithmic one. That is the same idea as Volume III's
+    bisect-in-time, and it is the most transferable algorithm
+    on this page.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Foundations 12</span>
+  <h2>Sorting</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">You will not implement one. Here is what to know anyway.</div>
+<pre><code>THE FLOOR: comparison sorting cannot beat O(n log n). Your
+language's built-in sort achieves it and is written by people
+who cared a great deal. ⭐ USE IT.
+
+WHAT IS WORTH KNOWING
+  · MERGE SORT   O(n log n) always, and STABLE. Needs O(n)
+                 extra space.
+  · QUICKSORT    O(n log n) typical, O(n²) worst case on bad
+                 input. In-place, and usually fastest in
+                 practice.
+  · TIMSORT      what Python and JavaScript actually use — a
+                 hybrid tuned for partly-sorted real data,
+                 which most real data is.
+
+⭐ THE ONE PROPERTY THAT AFFECTS YOUR CODE: STABILITY.
+  a stable sort preserves the original order of equal elements.
+  ⇒ so you can sort by name, then sort by department, and get
+    departments containing alphabetised names. With an unstable
+    sort, the second sort scrambles the first.
+  ⚠ AND THE RELATED BUG: an unstable or ambiguous ORDER BY in
+    SQL means paginated results can repeat or skip rows between
+    pages, because the database is free to return ties in any
+    order. ⭐ ALWAYS ADD A UNIQUE TIE-BREAKER — `ORDER BY risk
+    DESC, id` — and this single line prevents a class of
+    pagination bug that is very confusing to diagnose.
+
+⭐ AND THE BIGGER POINT: SORT IN THE DATABASE, NOT IN NODE.
+  `ORDER BY … LIMIT 20` with an index reads 20 rows. Fetching
+  50,000 rows to sort and slice in application code is the same
+  answer with a thousand times the cost — and it is a common
+  pattern in ORM code.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Foundations 13</span>
+  <h2>The patterns worth recognising</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Pattern</th><th style="width:30%">Shape</th><th>Where it shows up in real work</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Two pointers</strong></td><td>Walk from both ends, or at two speeds</td><td>Merging two sorted lists — <strong>reconciling two data sources by date</strong> is exactly this.</td></tr>
+    <tr><td><strong>Sliding window</strong></td><td>A moving range over a sequence</td><td>Rolling averages, rate limiting, "attrition over the last 90 days" — the analytics workhorse.</td></tr>
+    <tr><td><strong>Prefix sums</strong></td><td>Precompute cumulative totals</td><td>Any range total answered instantly. This is what a materialised aggregate table is.</td></tr>
+    <tr><td><strong>Hash lookup</strong></td><td>Build a map, then join</td><td><span class="ok">The most useful one.</span> Turns nested loops into one pass; how you fix an N+1 in memory.</td></tr>
+    <tr><td><strong>Divide and conquer</strong></td><td>Split, solve, combine</td><td>Batch processing, parallel work, and the map-reduce shape of every data pipeline.</td></tr>
+    <tr><td><strong>Greedy</strong></td><td>Take the locally best option</td><td>Scheduling, bin-packing. <strong>Fast, and not always optimal</strong> — know which you need.</td></tr>
+    <tr><td><strong>Memoisation</strong></td><td>Cache results of repeated calls</td><td>Caching, <code>useMemo</code>, dynamic programming. The same idea at three altitudes.</td></tr>
+    <tr><td><strong>Topological sort</strong></td><td>Order by dependency</td><td>Build systems, migration runners, CI stages, and detecting a circular dependency.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Foundations 14</span>
+  <h2>Recursion</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Power, and the two ways it goes wrong</div>
+<pre><code>A FUNCTION THAT CALLS ITSELF, with:
+  · a BASE CASE that stops it
+  · a step that moves toward the base case
+⚠ MISS EITHER AND YOU GET A STACK OVERFLOW.
+
+WHERE IT IS GENUINELY THE RIGHT TOOL
+  · walking a tree of unknown depth — an org chart, a folder
+    structure, a nested comment thread
+  · parsing nested structures — JSON, expressions
+  · divide and conquer
+
+⚠ THE TWO FAILURES
+  ① NO BASE CASE, OR DATA WITH A CYCLE.
+    ⭐ REAL ORG DATA CONTAINS REPORTING CYCLES, usually by
+      mistake. A recursive walk over it never terminates. ⇒
+      TRACK VISITED NODES AND BOUND THE DEPTH — always, not
+      only when you suspect a problem.
+  ② REDUNDANT WORK.
+    naive recursion can recompute the same subproblem
+    exponentially many times. ⇒ memoise, and it collapses to
+    linear. That is all dynamic programming is.
+
+⭐ THE PRACTICAL PREFERENCE: FOR DEEP OR UNBOUNDED STRUCTURES,
+  AN EXPLICIT STACK BEATS RECURSION. Same algorithm, and the
+  depth limit becomes your memory rather than the runtime's
+  call stack — which in JavaScript is only a few thousand
+  frames deep and gives you no useful error when it runs out.</code></pre>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Foundations 15</span>
+  <h2>Where this shows up in daily work</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The nested loop in a list render</h4><p>For each row, searching another array. Build a Map once. The most common accidental quadratic in frontend code.</p></div>
+  <div class="card"><h4>The unbounded fetch</h4><p>Loading everything to count, sum or take the top ten. Aggregate and limit in the database — O(1) memory instead of O(n).</p></div>
+  <div class="card"><h4>The recursive org walk</h4><p>Works in dev, hangs on real data with a reporting cycle. Track visited, bound the depth.</p></div>
+  <div class="card"><h4>The unstable pagination</h4><p><code>ORDER BY</code> on a non-unique column, so rows repeat or vanish between pages. Add a unique tie-breaker.</p></div>
+  <div class="card"><h4>The retry storm</h4><p>A queue drained without bounded concurrency. This is back-pressure, and it is a queue problem with a queue solution.</p></div>
+  <div class="card"><h4>The import that dies at 400k</h4><p>Whole file in memory. Stream it, batch the writes. O(n) space where O(1) was available.</p></div>
+</div>
+
+<header class="part" id="net">
+  <span class="pn">Part IV</span>
+  <h2>How the internet works</h2>
+  <p class="lede">One request, from typing a URL to pixels on screen. Every layer here is somewhere a
+  bug can hide, and most engineers have never traced it once.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Foundations 16</span>
+  <h2>One request, fully</h2>
+</header>
+
+<div class="ascii">   you type https://app.example.com/employees
+
+   ①  URL PARSED            scheme · host · port · path · query
+   ②  DNS RESOLUTION        host → IP address       (reflex 17)
+   ③  TCP CONNECTION        three-way handshake     (reflex 18)
+   ④  TLS HANDSHAKE         certificate, keys       (reflex 18)
+   ⑤  HTTP REQUEST SENT     method, path, headers, body
+   ⑥  SERVER ROUTES IT      load balancer → app → your handler
+   ⑦  APP DOES ITS WORK     guards → validation → service → DB
+   ⑧  RESPONSE RETURNS      status, headers, body
+   ⑨  BROWSER PARSES HTML   builds the DOM          (reflex 20)
+   ⑩  SUB-RESOURCES FETCHED CSS, JS, fonts, images — ⭐ each one
+                            potentially repeating ②–⑧
+   ⑪  RENDER                style → layout → paint → composite
+   ⑫  JS HYDRATES           the page becomes interactive
+
+   ⭐ WHY TRACING THIS ONCE IS WORTH IT: every "the site is slow"
+     and every "it works for me" lives at one of these twelve
+     steps, and naming the step is most of the diagnosis.
+
+     · slow at ② → DNS or a cold cache
+     · slow at ③④ → connection setup, geography, no keep-alive
+     · slow at ⑦ → your code. ⭐ THE ONLY STEP MOST ENGINEERS
+       LOOK AT, and often not where the time is.
+     · slow at ⑩ → too many resources, or too large
+     · slow at ⑪⑫ → bundle size, or main-thread work
+     · ⚠ AND THE ONE THAT CONFUSES EVERYONE: a failure between
+       ⑤ and ⑧ that the browser hides from your JavaScript is
+       CORS (reflex 21) — the request succeeded and you are not
+       allowed to read the answer.</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Foundations 17</span>
+  <h2>DNS</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Names to addresses, with caching at every level</div>
+<pre><code>THE LOOKUP CHAIN
+  browser cache → OS cache → your router → your ISP's resolver
+  → root servers → the .com servers → the domain's own
+  nameservers
+  ⇒ any level may answer from cache, which is why the first
+    request to a new host is slower than the rest.
+
+THE RECORD TYPES WORTH KNOWING
+  A       name → IPv4 address
+  AAAA    name → IPv6
+  CNAME   name → another name  ⚠ cannot exist at the apex of a
+          domain, which is why `example.com` and
+          `www.example.com` are configured differently
+  MX      mail
+  TXT     verification, SPF/DKIM — ⭐ where "prove you own this
+          domain" lives
+
+⭐ TTL IS THE ONLY DNS CONCEPT THAT WILL AFFECT YOUR DAY.
+  it says how long resolvers may cache an answer. So a DNS
+  change is NOT instant — it propagates over the TTL, and
+  during that window some users reach the old address and some
+  the new one.
+  ⇒ ⚠ BEFORE A PLANNED CUTOVER, LOWER THE TTL FIRST — a day or
+    two in advance. Otherwise your rollback also takes hours to
+    take effect, which is the worst possible time to discover
+    this.
+
+⭐ AND THE DEBUGGING VALUE: "is it DNS?" is a real first
+  question. A service that is unreachable by name and reachable
+  by IP has a DNS problem, and you have just eliminated your
+  entire application from the investigation.</code></pre>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Foundations 18</span>
+  <h2>TCP and TLS</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Why the first request to a host is expensive</div>
+<pre><code>TCP — a reliable ordered stream over an unreliable network
+  THE THREE-WAY HANDSHAKE: SYN → SYN-ACK → ACK.
+  ⭐ ONE FULL ROUND TRIP BEFORE ANY DATA MOVES. Across a
+    continent that is ~80 ms of nothing happening.
+  it then guarantees delivery and order by retransmitting lost
+  packets — ⚠ which is why a lossy network shows up as latency
+  rather than as errors.
+
+TLS — encryption and identity on top
+  another 1–2 round trips (1 with TLS 1.3): agree a cipher,
+  present the CERTIFICATE, derive session keys.
+  ⭐ WHAT THE CERTIFICATE ACTUALLY PROVES: that a certificate
+    authority vouches this host is who it claims. It says
+    nothing about the site being trustworthy — a phishing site
+    with valid HTTPS is completely normal.
+
+⇒ SO A COLD CONNECTION COSTS: DNS + TCP + TLS ≈ 3–4 round trips
+  BEFORE your request is even sent. ⭐ THIS IS WHY CONNECTION
+  REUSE (keep-alive) AND CONNECTION POOLS MATTER SO MUCH — and
+  why a service that opens a new connection per request is slow
+  for reasons that never appear in your application profile.
+
+⚠ THE CERTIFICATE FAILURES YOU WILL MEET
+  · EXPIRED — and it takes the whole site down, at 3 a.m., on a
+    holiday. ⭐ MONITOR EXPIRY DATES; this is an entirely
+    preventable outage that keeps happening.
+  · wrong hostname; a missing intermediate certificate that
+    works in a browser and fails in curl or a server-side
+    client
+  · ⚠ and the anti-pattern: disabling verification to make an
+    error go away. That removes the only protection TLS
+    provides, and it ships.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Foundations 19</span>
+  <h2>HTTP versions</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Version</th><th style="width:34%">Changed</th><th>Why you care</th></tr></thead>
+  <tbody>
+    <tr><td><strong>HTTP/1.1</strong></td><td>Text protocol, one request at a time per connection</td><td><strong>Head-of-line blocking</strong> — browsers opened ~6 connections per host to work around it, which is where "bundle your assets" and "domain sharding" came from.</td></tr>
+    <tr><td><strong>HTTP/2</strong></td><td>Binary, multiplexed — many requests in parallel on one connection; header compression; server push</td><td><strong>Makes many small files viable</strong>, so aggressive bundling matters less than it did. Still TCP, so packet loss stalls all streams.</td></tr>
+    <tr><td><strong>HTTP/3</strong></td><td>Runs on QUIC over UDP; TLS built in</td><td>Removes TCP's head-of-line blocking and cuts handshake round trips. <strong>Noticeably better on mobile and lossy networks.</strong></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">The practical takeaway</span>
+  <p>You do not configure this — your host or CDN does. What matters is knowing that <strong>advice
+  written for HTTP/1.1 is often now wrong</strong>: concatenating everything into one giant bundle
+  was a workaround for a limit that no longer exists, and it costs you cache granularity.</p>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Foundations 20</span>
+  <h2>How a page renders</h2>
+</header>
+
+<div class="ascii">   HTML ──parse──► DOM ─┐
+                        ├──► RENDER TREE ──► LAYOUT ──► PAINT
+   CSS  ──parse──► CSSOM ┘                                │
+                                                          ▼
+                                                     COMPOSITE
+
+   ⭐ THE FACTS THAT EXPLAIN FRONTEND PERFORMANCE
+
+     ① CSS IN THE HEAD IS RENDER-BLOCKING. Nothing paints until
+       it is parsed — deliberately, to avoid a flash of
+       unstyled content.
+
+     ② A CLASSIC SCRIPT TAG IS PARSER-BLOCKING. The HTML parser
+       stops. ⇒ `defer` (run after parsing, in order) or
+       `async` (run whenever) exists for this reason.
+
+     ③ LAYOUT IS EXPENSIVE, AND SOME PROPERTIES FORCE IT.
+       changing width, height, top or margin triggers layout for
+       a subtree. ⭐ CHANGING `transform` OR `opacity` DOES NOT —
+       they are composited. THIS IS WHY SMOOTH ANIMATIONS USE
+       TRANSFORM AND NOT `left`.
+
+     ④ READING A LAYOUT PROPERTY MID-CHANGE FORCES A SYNCHRONOUS
+       RECALCULATION. A loop that writes a style then reads
+       `offsetHeight` is layout thrashing — the single worst
+       frontend performance pattern, and it looks innocent.
+
+     ⑤ FONTS CAUSE A VISIBLE JUMP unless you plan for it —
+       `font-display: swap` and a real fallback stack.
+
+   ⭐ AND THE ONE THAT EXPLAINS THE ERROR YOU WILL ACTUALLY SEE:
+     HYDRATION. The server sent HTML; the browser then runs the
+     same components and expects to produce identical markup. A
+     mismatch — `new Date()`, `Math.random()`, `localStorage`,
+     a timezone difference — is what produces "text content did
+     not match server-rendered HTML". ⇒ THE FIX IS TO MAKE THE
+     FIRST RENDER IDENTICAL ON BOTH SIDES, not to suppress the
+     warning.</div>
+
+<header class="mod" id="d6">
+  <span class="mn">Foundations 21</span>
+  <h2>CORS, properly understood</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The most misunderstood error in web development</div>
+<pre><code>⭐ WHAT IT IS: A BROWSER RULE, NOT A SERVER ERROR.
+  by default, JavaScript on origin A may not READ a response
+  from origin B. The request is usually SENT and ANSWERED — the
+  browser refuses to hand the answer to your code.
+
+  ⇒ SO THE SERVER LOG SHOWS A CLEAN 200 AND THE CONSOLE SHOWS A
+    FAILURE. That contradiction is the whole confusion, and
+    recognising it saves hours.
+
+AN ORIGIN IS scheme + host + PORT.
+  ⚠ localhost:3001 and localhost:3010 ARE DIFFERENT ORIGINS.
+    Which is exactly why this project meets CORS in development.
+
+THE PREFLIGHT — the part people miss
+  for anything beyond a simple request (a custom header such as
+  Authorization, or a JSON content type), the browser first
+  sends an OPTIONS request asking what is allowed.
+  ⇒ ⭐ SO YOUR SERVER MUST HANDLE OPTIONS. A route that only
+    handles POST will fail CORS with a confusing error, and the
+    POST never appears in your logs at all.
+
+  the response must say: allowed origin · allowed methods ·
+  allowed headers · and, for cookies, allow-credentials.
+  ⚠ AND YOU CANNOT COMBINE `Allow-Origin: *` WITH CREDENTIALS.
+    The browser rejects it. With cookies you must name the exact
+    origin.
+
+⭐ WHERE THE FIX GOES: ALWAYS ON THE SERVER. Naming the allowed
+  origins.
+  ⚠ NOT by disabling browser security, not with a browser
+    extension, and ⚠ NOT with `origin: '*'` shipped to
+    production — a development shortcut that keeps reaching
+    production and quietly permits any site to call your API
+    with a user's browser.
+
+⭐ AND THE BOUNDARY OF THE CONCEPT: CORS PROTECTS THE USER, NOT
+  YOUR SERVER. A script, a curl command or another backend
+  ignores it entirely. It is not access control — your auth
+  checks are. Confusing the two is how people conclude an
+  endpoint is "protected" because a browser could not read it.</code></pre>
+</div>
+
+<header class="part" id="db">
+  <span class="pn">Part V</span>
+  <h2>The database layer</h2>
+  <p class="lede">Where most real performance problems live, and where the ORM stops helping you.</p>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Foundations 22</span>
+  <h2>Reading a query plan</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The single most valuable database skill</div>
+<pre><code>`EXPLAIN ANALYZE &lt;query&gt;` shows what the database ACTUALLY DID —
+not what you assume it did. ⭐ EVERY DATABASE PERFORMANCE
+CONVERSATION SHOULD START HERE, and most start with a guess
+instead.
+
+WHAT TO LOOK FOR, IN ORDER
+
+  ① SEQ SCAN ON A LARGE TABLE
+    it read every row. Fine on 500 rows, fatal on 5,000,000.
+    ⇒ a missing index, or a query the index cannot serve.
+
+  ② ROWS ESTIMATED vs ROWS ACTUAL
+    ⭐ THE MOST INFORMATIVE LINE IN THE PLAN. If the planner
+      expected 10 rows and got 400,000, it chose a strategy for
+      the wrong problem — and everything above that node is
+      consequently wrong. ⇒ usually stale statistics, or a
+      correlation the planner cannot see.
+
+  ③ THE JOIN STRATEGY
+    NESTED LOOP  good for few rows; ⚠ catastrophic for many
+    HASH JOIN    good for large unsorted sets, needs memory
+    MERGE JOIN   good when both sides are already sorted
+    ⇒ you rarely override this. You use it to understand WHY it
+      was slow.
+
+  ④ SORT — and whether it spilled to disk
+    "external merge Disk: 52MB" means the sort exceeded working
+    memory. ⇒ add an index that provides the order, or reduce
+    the rows first.
+
+  ⑤ FILTER APPLIED AFTER A SCAN, and how many rows it removed
+    reading a million rows to keep four is an index that does
+    not exist yet.
+
+⭐ THE MENTAL MODEL: PLANS ARE TREES, READ FROM THE INSIDE OUT.
+  the deepest nodes run first; each parent consumes its
+  children's rows. And ⭐ THE EXPENSIVE NODE IS USUALLY ONE
+  NODE — find it and you have found the work.</code></pre>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Foundations 23</span>
+  <h2>Indexes, deeply</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What an index is, and the rules that follow from it</div>
+<pre><code>AN INDEX IS A SORTED STRUCTURE (a B-tree, reflex 07) mapping
+column values to row locations. So a lookup becomes a tree
+probe — a handful of page reads instead of a full scan.
+
+⭐ THE RULES THAT FOLLOW, AND THEY ALL FOLLOW FROM "SORTED"
+
+  ① COMPOSITE INDEX ORDER MATTERS — LEFT TO RIGHT.
+    an index on (team_id, hired_at) serves:
+      WHERE team_id = 5                       ✅
+      WHERE team_id = 5 AND hired_at &gt; '…'    ✅
+      WHERE hired_at &gt; '…'                    ⚠ NOT SERVED
+    ⇒ think of a phone book sorted by surname then first name:
+      you cannot use it to find everyone called "Alice".
+    ⭐ THIS IS THE MOST USEFUL INDEXING FACT THERE IS, and it is
+      the reason "we have an index on that column" is not
+      always the same as "the index helps".
+
+  ② A FUNCTION ON THE COLUMN DEFEATS THE INDEX.
+    WHERE LOWER(email) = '…'  ⚠ cannot use an index on email.
+    ⇒ index the expression instead, or store it normalised.
+
+  ③ LEADING WILDCARDS CANNOT BE SERVED.
+    LIKE 'Ch%'   ✅ a prefix — it is a range in sorted order
+    LIKE '%ch%'  ⚠ full scan. ⇒ that is what a text-search
+                 index is for.
+
+  ④ AN INDEX HELPS ORDER BY TOO.
+    `ORDER BY hired_at LIMIT 20` with a matching index reads 20
+    rows instead of sorting the table.
+
+  ⑤ COVERING INDEX — if the index contains every column the
+    query needs, the table is never touched at all.
+
+⚠ WHAT INDEXES COST
+  · every write must update every index on that table
+  · storage
+  · ⭐ AND UNUSED INDEXES ARE PURE COST. Check which are
+    actually used before adding a sixth.
+
+⭐ THE RULE OF THUMB: INDEX WHAT YOU FILTER, JOIN AND ORDER BY.
+  Foreign keys almost always deserve one — ⚠ and Postgres does
+  NOT create one automatically for a foreign key, which
+  surprises people and is a common cause of slow joins.</code></pre>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Foundations 24</span>
+  <h2>Window functions</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Aggregate without collapsing rows — the feature that replaces application loops</div>
+<pre><code>THE PROBLEM THEY SOLVE: GROUP BY collapses rows. Sometimes you
+want each row PLUS something computed across its group.
+
+  "each employee, with their department's average salary"
+  "each employee's rank within their team by risk"
+  "the change from the previous month, per row"
+
+⭐ ALL THREE ARE ONE QUERY WITH A WINDOW FUNCTION, AND ALL THREE
+  ARE OTHERWISE A LOOP IN APPLICATION CODE — usually an N+1.
+
+THE SHAPE
+  &lt;function&gt;() OVER (PARTITION BY &lt;group&gt; ORDER BY &lt;sort&gt;)
+                     └─ which rows ─┘   └─ in what order ─┘
+
+THE ONES THAT EARN THEIR KEEP
+  ROW_NUMBER()   1,2,3 — no ties. ⭐ THE STANDARD WAY TO PICK
+                 "the latest row per group": number them and
+                 keep number 1. This replaces a very common
+                 and very slow correlated subquery.
+  RANK()         ties share a rank and leave gaps
+  DENSE_RANK()   ties share, no gaps
+  LAG() / LEAD() the previous or next row's value ⇒ ⭐ month-
+                 over-month change without a self-join
+  SUM() OVER     running totals
+  AVG() OVER     the group average, on every row
+
+⚠ WHAT TO WATCH
+  · ⭐ THEY RUN AFTER WHERE. You cannot filter on a window
+    result in the same WHERE clause — wrap it in a CTE or
+    subquery and filter outside. This catches everyone once.
+  · they need an ORDER BY to be deterministic; without one,
+    ties resolve arbitrarily
+  · a window over a large unindexed set is a sort, and the plan
+    will tell you if it spilled to disk</code></pre>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Foundations 25</span>
+  <h2>CTEs, including recursive ones</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Naming the steps of a query</div>
+<pre><code>WITH active AS (
+  SELECT * FROM employees WHERE left_at IS NULL
+), scored AS (
+  SELECT e.*, r.risk FROM active e JOIN risks r ON …
+)
+SELECT * FROM scored WHERE risk &gt; 0.7;
+
+⭐ WHY THEY MATTER: READABILITY. A nested-subquery query is
+  written inside-out and read inside-out. A CTE chain is a
+  pipeline with named steps, and reviewable one step at a time.
+
+⚠ THE PERFORMANCE NOTE PEOPLE GET WRONG: in older Postgres a
+  CTE was an OPTIMISATION FENCE — always materialised, so it
+  could be slower than the equivalent subquery. Modern versions
+  inline them when it is safe. ⭐ SO CHECK THE PLAN RATHER THAN
+  RELYING ON EITHER PIECE OF FOLKLORE.
+
+RECURSIVE CTEs — ⭐ THE TOOL FOR HIERARCHIES
+  WITH RECURSIVE chain AS (
+    SELECT id, manager_id, 1 AS depth
+      FROM employees WHERE id = 42        -- the anchor
+    UNION ALL
+    SELECT e.id, e.manager_id, c.depth + 1
+      FROM employees e JOIN chain c ON e.manager_id = c.id
+     WHERE c.depth &lt; 10                   -- ⭐ THE BOUND
+  )
+  SELECT * FROM chain;
+
+  ⇒ "everyone under this manager, at any depth" — the org-chart
+    query, and the reason reflex 07 said SQL and trees need
+    thought.
+  ⚠ THE DEPTH BOUND IS NOT OPTIONAL. Real reporting data
+    contains cycles, and without a bound the query runs until
+    something dies.</code></pre>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Foundations 26</span>
+  <h2>Normalisation, and when to stop</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Form</th><th style="width:32%">Rule</th><th>In practice</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1NF</strong></td><td>Atomic values; no lists in a column</td><td>A comma-separated <code>skills</code> column is unqueryable and unjoinable. This one is not optional.</td></tr>
+    <tr><td><strong>2NF</strong></td><td>No partial dependency on a composite key</td><td>Rarely a live issue with surrogate integer keys.</td></tr>
+    <tr><td><strong>3NF</strong></td><td>No column depends on another non-key column</td><td><span class="ok">The practical target.</span> Storing <code>department_name</code> on the employee row alongside <code>department_id</code> is the violation you will actually meet.</td></tr>
+    <tr><td><strong>Denormalised</strong></td><td>Deliberately duplicated</td><td>For read performance, or to <strong>freeze a historical fact</strong> — which is a different and better reason.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The denormalisation that is always right</span>
+  <p><strong>Store the value that was true at the time, when the historical record must not
+  change.</strong> An invoice keeps the price as charged; a report keeps the department as it was.</p>
+  <p>That is not a performance shortcut — it is <em>correct modelling</em>. Joining to the current
+  department means last quarter's report silently rewrites itself after a reorganisation, which is a
+  data-integrity failure that looks like a reporting bug. The question from the onboarding handbook
+  applies: <strong>do we need to know what was true then?</strong></p>
+</div>
+
+<header class="mod" id="e6">
+  <span class="mn">Foundations 27</span>
+  <h2>Transactions and isolation</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">ACID, then the levels — and what each one still permits</div>
+<pre><code>ATOMIC      all or nothing
+CONSISTENT  constraints hold before and after
+ISOLATED    concurrent transactions do not corrupt each other
+DURABLE     committed means survived a crash
+
+⭐ THE ONLY ISOLATION FACTS THAT AFFECT YOUR CODE:
+
+  READ COMMITTED — Postgres's default
+    you never read uncommitted data. ⚠ BUT two reads in the same
+    transaction can return different values, because someone
+    else committed in between.
+    ⇒ SO THIS IS UNSAFE:
+        read balance → decide → write balance
+      two transactions both read 100, both subtract 80, both
+      write 20. One withdrawal has vanished. ⭐ A TRANSACTION
+      ALONE DOES NOT PREVENT THIS.
+
+  REPEATABLE READ
+    the same read returns the same value throughout. Prevents
+    the above, at the cost of possible serialisation failures
+    you must retry.
+
+  SERIALIZABLE
+    as if transactions ran one at a time. Safest, slowest, and
+    ⚠ it will abort transactions that conflict — so your code
+    MUST handle a retry.
+
+⭐ THE PRACTICAL ANSWERS TO READ-MODIFY-WRITE, IN ORDER
+  ① LET THE DATABASE DO THE ARITHMETIC:
+    `UPDATE accounts SET balance = balance - 80 WHERE …`
+    ⇒ atomic, no read, no race. THE BEST ANSWER, and the one
+      people skip because the ORM encourages fetch-then-save.
+  ② A UNIQUE CONSTRAINT, so the duplicate is impossible rather
+    than unlikely.
+  ③ OPTIMISTIC LOCKING — a version column, and the update
+    fails if the version changed.
+  ④ `SELECT … FOR UPDATE` — pessimistic lock. Works, and it
+    serialises access, so hold it briefly.
+
+⚠ AND THE RULE FOR EVERY TRANSACTION: KEEP IT SHORT, AND NEVER
+  MAKE A NETWORK CALL INSIDE ONE. A transaction held open while
+  waiting on the AI service holds locks and a pooled connection
+  for seconds — and that is how one slow dependency becomes a
+  database-wide outage.</code></pre>
+</div>
+
+<header class="mod" id="e7">
+  <span class="mn">Foundations 28</span>
+  <h2>Scaling, and NoSQL in one page</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The order to try things, and what the alternatives actually offer</div>
+<pre><code>THE SCALING LADDER — ⭐ IN THIS ORDER, NOT THE REVERSE
+  1  FIX THE QUERY. Read the plan.
+  2  ADD THE INDEX.
+  3  REMOVE THE ROUND TRIPS (the N+1).
+  4  CACHE the hot reads, accepting staleness.
+  5  A BIGGER MACHINE. ⭐ Boring, immediate, and it takes you
+     further than most people assume.
+  6  READ REPLICAS for read-heavy load ⚠ accepting replication
+     lag, and needing read-your-writes for the user's own
+     changes.
+  7  PARTITION a huge table by time or tenant.
+  8  SHARD. ⚠ Enormous complexity: cross-shard queries, hot
+     shards, rebalancing, no easy transactions. ⭐ ALMOST NEVER
+     THE ANSWER, and proposing it before step 1 is a tell.
+
+CONNECTION POOLING — the one that bites in serverless
+  each connection costs the database memory. ⚠ Postgres handles
+  hundreds, not thousands.
+  ⭐ SO A SERVERLESS OR AUTOSCALED APP CAN EXHAUST CONNECTIONS
+    WHILE BARELY USING CPU — every instance opens its own pool.
+    ⇒ this is exactly why a pooler (PgBouncer, or Neon's
+      built-in pooling) exists, and why the connection string
+      matters.
+
+NOSQL, HONESTLY — what each family trades away
+  DOCUMENT (Mongo)   flexible schema, denormalised documents.
+                     ⚠ you now own consistency and shape, and
+                     "schemaless" means the schema lives in
+                     your code, unenforced.
+  KEY-VALUE (Redis)  ⭐ genuinely useful alongside Postgres:
+                     caching, sessions, rate limit counters,
+                     queues. Not a system of record.
+  WIDE-COLUMN        enormous write throughput, query patterns
+                     fixed at design time.
+  GRAPH              relationship traversal as a first-class
+                     operation. For genuine graph workloads.
+
+⭐ THE JUDGEMENT: A RELATIONAL DATABASE WITH GOOD INDEXES AND
+  JSONB COLUMNS FOR THE GENUINELY UNSTRUCTURED PARTS COVERS THE
+  LARGE MAJORITY OF APPLICATIONS — including this one. Adopt
+  another store when you can name the specific limit you hit,
+  not because of the category.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume IV · foundations vocabulary</div>
+  <dl>
+    <dt>O(n log n)</dt><dd>The practical floor for comparison sorting. Your built-in sort achieves it.</dd>
+    <dt>amortised</dt><dd>Average cost per operation over many, even if one is occasionally expensive.</dd>
+    <dt>accidental quadratic</dt><dd>A nested loop hidden in a method call — <code>includes</code> inside <code>map</code>.</dd>
+    <dt>B-tree</dt><dd>The wide, shallow tree your database index actually is.</dd>
+    <dt>stable sort</dt><dd>Preserves the original order of equal elements. Lets you sort twice meaningfully.</dd>
+    <dt>tie-breaker</dt><dd>A unique column added to <code>ORDER BY</code> so pagination cannot repeat or skip rows.</dd>
+    <dt>topological sort</dt><dd>Ordering by dependency. What build systems and migration runners do.</dd>
+    <dt>memoisation</dt><dd>Caching a function's results. Turns exponential recursion linear.</dd>
+    <dt>back-pressure</dt><dd>Limiting intake so a consumer is not overwhelmed. Bounded concurrency.</dd>
+    <dt>TTL</dt><dd>How long a cached answer may be reused. Why DNS changes are not instant.</dd>
+    <dt>keep-alive</dt><dd>Reusing a connection, avoiding 3–4 round trips of setup per request.</dd>
+    <dt>head-of-line blocking</dt><dd>One stalled item delaying everything behind it.</dd>
+    <dt>preflight</dt><dd>The <code>OPTIONS</code> request a browser sends before a non-simple cross-origin call.</dd>
+    <dt>origin</dt><dd>Scheme + host + <strong>port</strong>. Different ports are different origins.</dd>
+    <dt>layout thrashing</dt><dd>Writing a style then reading a layout property in a loop, forcing repeated recalculation.</dd>
+    <dt>seq scan</dt><dd>Reading every row. Fine when small, fatal when not.</dd>
+    <dt>estimated vs actual rows</dt><dd>The most informative line in a query plan. A large gap means a wrong strategy.</dd>
+    <dt>covering index</dt><dd>An index containing every column a query needs, so the table is never read.</dd>
+    <dt>window function</dt><dd>Aggregating across a group without collapsing rows. Runs after <code>WHERE</code>.</dd>
+    <dt>recursive CTE</dt><dd>The SQL tool for hierarchies. Always bound the depth.</dd>
+    <dt>read committed</dt><dd>Postgres's default isolation. Still permits lost updates in read-modify-write.</dd>
+    <dt>optimistic locking</dt><dd>A version column; the write fails if someone else changed the row.</dd>
+    <dt>connection pooler</dt><dd>Shares a small number of database connections among many app instances.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume V · Ship it &amp; run it</h4><p>Containers, CI/CD, cloud fundamentals, monitoring and IaC — where this knowledge meets operations.</p></div>
+  <div class="card"><h4>Volume II · Architecture &amp; design</h4><p>The system-design process and distributed-systems concepts that Part V's scaling ladder feeds into.</p></div>
+  <div class="card"><h4>Volume III · Engineering craft</h4><p>The performance and debugging sections — this volume supplies the mechanisms those chapters point at.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 10, 41, 42, 43 and 45 — the originals include worked implementations and exercises.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On the framing.</strong> Deliberately not interview-puzzle material. Every section is
+  pointed at a decision you make at work: which structure removes a nested loop, why an index does
+  not help, which isolation level permits a lost update, and where a request's time actually goes.
+  Database specifics reflect PostgreSQL, which is what this project runs.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

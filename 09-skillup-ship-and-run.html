@@ -1,0 +1,1448 @@
+<title>Ship It and Run It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #25608F;
+  --accent-soft: #E2EDF6;
+  --accent-deep: #173F5F;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #25608F;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #7FB3DC;
+    --accent-soft: #101A22;
+    --accent-deep: #A6CCEC;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #7FB3DC;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #7FB3DC;
+  --accent-soft: #101A22;
+  --accent-deep: #A6CCEC;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #7FB3DC;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume V</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · Version control</div>
+  <a href="#a1"><span class="n">01</span>The model underneath</a>
+  <a href="#a2"><span class="n">02</span>Branching</a>
+  <a href="#a3"><span class="n">03</span>Merge vs rebase</a>
+  <a href="#a4"><span class="n">04</span>Conflicts</a>
+  <a href="#a5"><span class="n">05</span>The rescue commands</a>
+  <a href="#a6"><span class="n">06</span>Commits &amp; hooks</a>
+
+  <div class="rail-group">II · Containers</div>
+  <a href="#b1"><span class="n">07</span>Why they exist</a>
+  <a href="#b2"><span class="n">08</span>Images &amp; layers</a>
+  <a href="#b3"><span class="n">09</span>Writing a Dockerfile</a>
+  <a href="#b4"><span class="n">10</span>Compose</a>
+  <a href="#b5"><span class="n">11</span>Volumes &amp; networking</a>
+  <a href="#b6"><span class="n">12</span>When not to</a>
+
+  <div class="rail-group">III · CI/CD</div>
+  <a href="#c1"><span class="n">13</span>The mental model</a>
+  <a href="#c2"><span class="n">14</span>Pipeline stages</a>
+  <a href="#c3"><span class="n">15</span>Making it fast</a>
+  <a href="#c4"><span class="n">16</span>Deployment strategies</a>
+  <a href="#c5"><span class="n">17</span>Environments</a>
+  <a href="#c6"><span class="n">18</span>Pitfalls</a>
+
+  <div class="rail-group">IV · Cloud</div>
+  <a href="#d1"><span class="n">19</span>What you rent</a>
+  <a href="#d2"><span class="n">20</span>The core services</a>
+  <a href="#d3"><span class="n">21</span>Serverless</a>
+  <a href="#d4"><span class="n">22</span>Cost awareness</a>
+  <a href="#d5"><span class="n">23</span>Cloud security basics</a>
+
+  <div class="rail-group">V · Running it</div>
+  <a href="#e1"><span class="n">24</span>The three pillars</a>
+  <a href="#e2"><span class="n">25</span>Metrics worth having</a>
+  <a href="#e3"><span class="n">26</span>Alerting</a>
+  <a href="#e4"><span class="n">27</span>Health checks</a>
+  <a href="#e5"><span class="n">28</span>Infrastructure as code</a>
+  <a href="#e6"><span class="n">29</span>Runbooks</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume V of VIII</p>
+  <h1>Ship it and run it. <span class="thin">The skills that make you self-sufficient.</span></h1>
+  <p class="lede">Git as a model rather than a set of memorised commands. Containers, and why they
+  removed a whole class of problem. Pipelines that actually catch things. What you are renting when
+  you rent a cloud. And the operational minimum that turns an outage from a mystery into a
+  timeline.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volumes I–III</span>
+    <span><b>Covers</b> · KB files 29–34</span>
+    <span><b>Then</b> · Volume VI for cloud depth</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<a class="vol" href="06-skillup-architecture.html"><span class="vn">Volume II</span><b>Architecture &amp; design</b></a>
+<a class="vol" href="07-skillup-craft.html"><span class="vn">Volume III</span><b>Engineering craft</b></a>
+<a class="vol" href="08-skillup-cs-foundations.html"><span class="vn">Volume IV</span><b>CS foundations &amp; the stack</b></a>
+<div class="vol here"><span class="vn">Volume V · here</span><b>Ship it &amp; run it</b></div>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<a class="vol" href="11-skillup-data-ai.html"><span class="vn">Volume VII</span><b>Data, AI &amp; emerging tech</b></a>
+<a class="vol" href="12-skillup-thinking-capstone.html"><span class="vn">Volume VIII</span><b>Thinking, career &amp; capstone</b></a>
+</div>
+
+<header class="part" id="git">
+  <span class="pn">Part I</span>
+  <h2>Version control</h2>
+  <p class="lede">Most Git confusion comes from memorising commands without the model. Learn the model
+  and the commands become obvious.</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Ops 01</span>
+  <h2>The model underneath</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Four ideas, and everything else follows</div>
+<pre><code>①  A COMMIT IS A SNAPSHOT, NOT A DIFF.
+   it records the whole tree, plus a pointer to its parent.
+   ⇒ diffs are COMPUTED between snapshots when you ask for one.
+   ⭐ THIS EXPLAINS WHY BRANCHING IS CHEAP: a branch is not a
+     copy of anything.
+
+②  A BRANCH IS A MOVEABLE POINTER TO ONE COMMIT.
+   that is the entire implementation — a file containing a
+   commit id. ⇒ creating one is instant, deleting one deletes
+   nothing but a label, and "where did my work go?" is almost
+   always "which pointer am I looking at?"
+
+③  HEAD IS WHERE YOU ARE.
+   usually pointing at a branch, which points at a commit.
+   ⚠ "detached HEAD" simply means HEAD points straight at a
+     commit with no branch — your commits there have no label,
+     which is why they seem to vanish.
+
+④  THERE ARE THREE PLACES A CHANGE CAN LIVE.
+     working directory  → your edits
+     staging area       → what the next commit will contain
+     repository         → committed history
+   ⭐ THE STAGING AREA IS THE PART PEOPLE SKIP, and it is what
+     lets you commit half of your changes deliberately — which
+     is how you produce a reviewable commit instead of a dump.
+
+⭐ THE CONSEQUENCE THAT MATTERS MOST: COMMITTED WORK IS VERY
+  HARD TO LOSE. Almost every "I destroyed my work" is
+  recoverable if it was committed — see reflex 05. Uncommitted
+  work is genuinely fragile.
+  ⇒ SO COMMIT EARLY AND OFTEN, especially before anything
+    large, generated, or experimental.</code></pre>
+</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Ops 02</span>
+  <h2>Branching strategies</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Strategy</th><th style="width:30%">How</th><th>Suits</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Trunk-based</strong></td><td>Short-lived branches off main, merged within a day or two, features hidden behind flags</td><td><span class="ok">Most teams, most of the time.</span> Minimises merge pain because branches never diverge far.</td></tr>
+    <tr><td><strong>GitHub flow</strong></td><td>A branch per change, PR, review, merge, deploy</td><td>Trunk-based with a review gate. What this project's workflow resembles.</td></tr>
+    <tr><td><strong>Git flow</strong></td><td>develop, release branches, hotfix branches, main</td><td>Software with <em>versioned releases</em> and multiple supported versions. <span class="no">Overhead for a continuously deployed web app.</span></td></tr>
+    <tr><td><strong>Release branches</strong></td><td>A branch per version, fixes cherry-picked back</td><td>When you must support customers on old versions.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The principle behind the choice</span>
+  <p><strong>The longer a branch lives, the more it costs to merge</strong> — and the cost is not
+  linear. A branch open for three weeks accumulates conflicts, and worse, it accumulates
+  <em>semantic</em> divergence that no tool detects: your code and main both work, and together they
+  do not.</p>
+  <p>So the useful instinct is not "which strategy" but <strong>"how do I get this merged this
+  week?"</strong> — usually by splitting the work, or hiding an incomplete feature behind a flag
+  rather than behind a branch.</p>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Ops 03</span>
+  <h2>Merge versus rebase</h2>
+</header>
+
+<div class="ascii">   MERGE — creates a commit with two parents
+
+     main     A───B───────M
+                   ╲     ╱
+     feature        C───D
+
+     ✅ preserves exactly what happened, and it is SAFE on
+        shared branches because it changes no existing commit.
+     ⚠ history becomes a braid; many small merge commits add
+        noise.
+
+   REBASE — replays your commits on top of the new base
+
+     main     A───B───C'───D'
+                   (C and D are NEW commits, rewritten)
+
+     ✅ linear, readable history — `git log` reads as a story.
+     ⚠ ⭐ IT REWRITES HISTORY. The commits have new ids.
+        ⇒ NEVER REBASE A BRANCH SOMEONE ELSE HAS PULLED. Their
+          history and yours have diverged in a way that
+          produces genuinely confusing conflicts, and fixing it
+          requires someone to discard work.
+
+   ⭐ THE RULE THAT COVERS EVERY CASE
+     REBASE YOUR OWN UNPUSHED WORK · MERGE ANYTHING SHARED.
+     ⇒ "rebase before you push, merge after."
+
+   SQUASH MERGE — the common team default, and a good one
+     the whole branch becomes one commit on main.
+     ✅ main reads as one clean change per feature, and reverting
+        a feature is one revert.
+     ⚠ the individual commits are gone, so a granular bisect
+        inside that feature is no longer possible.
+
+   ⭐ WHAT MATTERS MORE THAN THE CHOICE: THAT THE TEAM MAKES ONE
+     AND CONFIGURES IT. Half the team rebasing and half merging
+     produces a history nobody can read and conflicts nobody
+     expects.</div>
+
+<header class="mod" id="a4">
+  <span class="mn">Ops 04</span>
+  <h2>Conflicts</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What a conflict is, and the one people do not notice</div>
+<pre><code>A CONFLICT IS GIT SAYING "TWO PEOPLE CHANGED THE SAME LINES AND
+I WILL NOT GUESS." It is not an error and not a failure — it is
+a request for a decision.
+
+RESOLVING ONE
+  1  ⭐ UNDERSTAND BOTH SIDES BEFORE EDITING. Read what each
+     change was trying to achieve. `git log --merge` shows the
+     commits involved.
+  2  the answer is often BOTH changes, not one of them. Picking
+     a side because it is quicker silently discards someone's
+     work.
+  3  after resolving, ⭐ RUN THE TESTS. A syntactically clean
+     resolution can be semantically wrong.
+
+⭐ THE CONFLICT GIT CANNOT DETECT — AND IT IS THE DANGEROUS ONE:
+  A SEMANTIC CONFLICT. You renamed a function; a colleague added
+  a new call to the old name in a different file. No textual
+  overlap, so no conflict — and it merges cleanly and breaks.
+  ⇒ THIS IS WHY CI MUST RUN ON THE MERGE RESULT, not only on
+    your branch. A green branch plus a green main does not
+    imply a green merge.
+
+REDUCING THEM STRUCTURALLY
+  · short-lived branches (reflex 02)
+  · pull from main frequently, so you resolve small conflicts
+    early rather than one enormous one at the end
+  · ⭐ AGREE ON FORMATTING AND AUTOMATE IT — a formatter
+    eliminates the entire category of whitespace conflict
+  · small, focused files: a 2,000-line file everyone edits is a
+    conflict generator, and that is a design smell as much as a
+    Git one
+
+⚠ AND ONE SPECIFIC TO THIS PROJECT SHAPE: lock files
+  (package-lock.json) conflict constantly and must NOT be
+  hand-edited. Take one side, then re-run the install to
+  regenerate it.</code></pre>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">Ops 05</span>
+  <h2>The rescue commands</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Worth knowing before you need them</div>
+<pre><code>⭐ git reflog — THE UNDO BUTTON FOR EVERYTHING
+  a log of everywhere HEAD has been, including states no branch
+  points at any more. Bad rebase, deleted branch, hard reset —
+  ⇒ find the commit id here and check it out. THIS IS THE SINGLE
+    MOST VALUABLE GIT COMMAND AND ALMOST NOBODY KNOWS IT.
+
+git stash            park uncommitted work · `stash pop` to
+                     restore. ⚠ easy to forget you have several.
+git cherry-pick &lt;c&gt;  apply one specific commit here — how a
+                     hotfix reaches a release branch.
+git revert &lt;c&gt;       ⭐ a NEW commit that undoes an old one.
+                     SAFE ON SHARED BRANCHES. This is how you
+                     undo something already deployed.
+git reset --soft     move the branch pointer, keep changes
+                     staged ⇒ how you rewrite your last commit.
+git reset --hard     ⚠ DISCARDS uncommitted work permanently.
+                     The one command that genuinely loses data.
+git bisect           ⭐ binary search over history to find the
+                     commit that introduced a bug. Turns a
+                     linear hunt through 200 commits into eight
+                     checks — Volume IV's binary search, applied.
+git blame            who last changed this line, and in which
+                     commit. ⭐ USE IT TO FIND THE *REASON* — the
+                     commit message and PR — not the person.
+
+⭐ REVERT vs RESET, and it is the distinction that matters:
+  RESET rewrites history — fine on your own unpushed work,
+  destructive on anything shared. REVERT adds history — always
+  safe. ⇒ ON A SHARED BRANCH, ALWAYS REVERT.</code></pre>
+</div>
+
+<header class="mod" id="a6">
+  <span class="mn">Ops 06</span>
+  <h2>Commits and hooks</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Write why, not what</h4><p>The diff shows what changed. Only the message can say why — and it is the note your future self reads while debugging.</p></div>
+  <div class="card"><h4>One logical change per commit</h4><p>So it can be reviewed, reverted and bisected independently. A commit mixing a refactor with a fix is neither reviewable nor revertable.</p></div>
+  <div class="card"><h4>Generated changes get their own commit</h4><p>Reviewable in isolation, revertable in one command. Mixed with hand edits it becomes archaeology.</p></div>
+  <div class="card"><h4>Hooks: fast checks only</h4><p>Format and lint on commit; tests in CI. <strong>A slow pre-commit hook gets bypassed with <code>--no-verify</code></strong>, and then it protects nothing.</p></div>
+</div>
+
+<header class="part" id="docker">
+  <span class="pn">Part II</span>
+  <h2>Containers</h2>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Ops 07</span>
+  <h2>Why they exist</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The problem they actually solved</div>
+<pre><code>"IT WORKS ON MY MACHINE" — because your machine has a different
+Node version, a different OpenSSL, a different locale, a
+different timezone, and a Python package someone installed
+globally in 2024.
+
+A CONTAINER SHIPS THE APPLICATION *AND ITS ENVIRONMENT* AS ONE
+ARTEFACT. Same image on your laptop, in CI, and in production.
+
+⭐ WHAT IT IS NOT: A VIRTUAL MACHINE.
+  a VM virtualises hardware and runs a whole guest OS —
+  gigabytes, and tens of seconds to boot.
+  a container shares the HOST KERNEL and isolates only the
+  process, its filesystem view and its network — megabytes,
+  and milliseconds to start.
+  ⇒ THIS IS WHY CONTAINERS CHANGED DEPLOYMENT: something you
+    can start in 200 ms and run 50 of on one machine enables
+    orchestration, autoscaling and per-request isolation. A VM
+    does not.
+
+⚠ AND THE CONSEQUENCE OF SHARING THE KERNEL: containers are
+  ISOLATION, NOT A SECURITY BOUNDARY as strong as a VM. A
+  kernel vulnerability crosses it. For untrusted code — running
+  someone else's submitted script — you want stronger isolation
+  than a container alone.
+
+⭐ AND THE PART PEOPLE UNDER-VALUE: A CONTAINER IS A
+  SPECIFICATION OF THE ENVIRONMENT, WRITTEN DOWN. The
+  Dockerfile documents every dependency and version that the
+  application actually needs — which is documentation that
+  cannot drift, because if it were wrong the image would not
+  work.</code></pre>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Ops 08</span>
+  <h2>Images and layers</h2>
+</header>
+
+<div class="ascii">   IMAGE = a stacked, read-only filesystem.
+   CONTAINER = a running instance of an image, plus one
+               writable layer on top.
+
+     ┌─────────────────────────┐  ← writable layer (the container)
+     ├─────────────────────────┤  ← COPY . .            (your code)
+     ├─────────────────────────┤  ← RUN npm ci          (deps)
+     ├─────────────────────────┤  ← COPY package*.json
+     └─────────────────────────┘  ← FROM node:20-alpine (base)
+
+   ⭐ EACH INSTRUCTION IS A LAYER, AND LAYERS ARE CACHED. If a
+     layer's inputs have not changed, it is reused.
+
+   ⇒ WHICH DICTATES THE ONE RULE OF DOCKERFILE WRITING:
+     ORDER FROM LEAST TO MOST FREQUENTLY CHANGING.
+
+     ⚠ COPY . .          then  RUN npm ci
+        ⇒ any source edit invalidates the copy layer, so
+          dependencies reinstall on EVERY build. Minutes, every
+          time.
+
+     ✅ COPY package*.json .
+        RUN npm ci
+        COPY . .
+        ⇒ dependencies are cached until package.json changes.
+          Seconds.
+
+   ⭐ AND THE FACT WITH SECURITY CONSEQUENCES: LAYERS ARE
+     ADDITIVE, SO DELETING A FILE IN A LATER LAYER DOES NOT
+     REMOVE IT FROM THE IMAGE. A secret copied in and then
+     removed is still there and still extractable.
+     ⇒ never copy a secret into an image at all. Use build
+       arguments carefully, or better, inject at runtime.
+
+   THE WRITABLE LAYER IS EPHEMERAL
+     ⚠ anything written inside a running container is GONE when
+       it stops. That is not a bug — it is the model, and it is
+       why persistent data needs a volume or a managed service
+       (reflex 11).</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Ops 09</span>
+  <h2>Writing a Dockerfile that is not embarrassing</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Five things, in order of impact</div>
+<pre><code>①  MULTI-STAGE BUILDS — ⭐ the biggest single win
+   build in one stage with the full toolchain; copy only the
+   output into a slim runtime stage.
+     FROM node:20 AS build
+     … install dev dependencies, compile TypeScript …
+     FROM node:20-alpine
+     COPY --from=build /app/dist ./dist
+   ⇒ the shipped image contains no compilers, no dev
+     dependencies and no source — often ten times smaller, and
+     a much smaller attack surface.
+
+②  PIN THE BASE IMAGE
+   `node:20-alpine` rather than `node:latest`.
+   ⚠ `latest` means your build is not reproducible and can
+     break overnight without any change from you.
+
+③  DON'T RUN AS ROOT
+   the default is root. Create a user and switch to it — one
+   line, and it limits what a compromised process can do.
+
+④  .dockerignore — ⭐ and this is not just tidiness
+   exclude node_modules, .git, .env, local build output.
+   ⇒ faster builds, smaller images, AND ⚠ IT IS WHAT STOPS YOU
+     ACCIDENTALLY BAKING A .env FILE INTO THE IMAGE.
+
+⑤  ONE PROCESS PER CONTAINER
+   the orchestrator restarts a failed container. If your
+   container runs three processes, it cannot tell which one
+   died, and the model breaks down.
+
+⚠ AND THE ALPINE CAVEAT WORTH KNOWING: Alpine uses musl rather
+  than glibc. Most things work; some native modules — and some
+  Python scientific packages — build slowly or misbehave. ⭐ FOR
+  A PYTHON ML SERVICE, A SLIM DEBIAN BASE IS OFTEN THE LESS
+  PAINFUL CHOICE than chasing musl build failures.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Ops 10</span>
+  <h2>Compose</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The multi-service local environment, in one file</div>
+<pre><code>ONE FILE DESCRIBING SEVERAL SERVICES, A NETWORK AND SOME
+VOLUMES — and `docker compose up` starts all of them.
+
+⭐ FOR THIS PROJECT THAT IS EXACTLY THE RIGHT TOOL: backend,
+  frontend, AI service and a local Postgres, started with one
+  command. A new joiner goes from clone to running application
+  without a page of setup instructions — which is the real
+  payoff.
+
+THE THINGS THAT MATTER
+  · SERVICES REACH EACH OTHER BY SERVICE NAME, not localhost.
+    ⚠ `http://localhost:8000` from inside a container means
+      "this container", so it fails. It is `http://ai-service:8000`.
+      ⭐ THIS IS THE #1 COMPOSE CONFUSION, and it is why an app
+      that works locally breaks the moment it is containerised.
+  · `depends_on` WAITS FOR START, NOT FOR READY. A database
+    container is "up" seconds before it accepts connections.
+    ⇒ you need a health check, or retry logic in the app —
+      which you want anyway.
+  · BIND-MOUNT SOURCE IN DEVELOPMENT for hot reload; do not in
+    production.
+  · env vars from a `.env` file, which is never committed.
+
+⚠ AND THE HONEST SCOPE: COMPOSE IS FOR DEVELOPMENT AND SMALL
+  DEPLOYMENTS. It has no rolling updates, no autoscaling and no
+  scheduling across machines. For production at scale that is
+  what an orchestrator or a managed platform does — but reaching
+  for Kubernetes to run three containers is a much more common
+  mistake than outgrowing Compose.</code></pre>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Ops 11</span>
+  <h2>Volumes and networking</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Concept</th><th>What to know</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The writable layer</strong></td><td>Ephemeral. Everything written inside a container is lost when it stops. <strong>By design.</strong></td></tr>
+    <tr><td><strong>Named volume</strong></td><td>Docker-managed persistent storage. The right choice for a local database's data directory.</td></tr>
+    <tr><td><strong>Bind mount</strong></td><td>A host directory mapped in. For source code in development — <strong>and the cause of most "permissions denied" confusion</strong>, because file ownership crosses the boundary.</td></tr>
+    <tr><td><strong>Port mapping</strong></td><td><code>3010:3010</code> is host:container. They need not match, and the container port is what the app binds to.</td></tr>
+    <tr><td><strong>Binding to localhost</strong></td><td><span class="no">The classic mistake.</span> An app bound to <code>127.0.0.1</code> inside a container is unreachable from outside it. <strong>Bind to <code>0.0.0.0</code>.</strong></td></tr>
+    <tr><td><strong>Service discovery</strong></td><td>Within a Compose network, the service name resolves. Across machines, that is the orchestrator's or the cloud's job.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b6">
+  <span class="mn">Ops 12</span>
+  <h2>When not to containerise</h2>
+</header>
+
+<div class="note">
+  <span class="tag">Honest limits</span>
+  <p><strong>A managed platform may already do this for you.</strong> If your host builds from a
+  repository and runs it, adding a Dockerfile can be work with no benefit — and one more thing to
+  keep current.</p>
+  <p><strong>Stateful data services are usually better managed.</strong> Running Postgres in a
+  container locally is excellent; running your production database in one means owning backups,
+  failover, upgrades and disk. Neon does that better than you will.</p>
+  <p><strong>And the honest one:</strong> the value is reproducibility. If your team is on one
+  platform with one runtime version and deploys to a managed service, the reproducibility problem may
+  already be solved — in which case a container is optional rather than obviously right.</p>
+</div>
+
+<header class="part" id="cicd">
+  <span class="pn">Part III</span>
+  <h2>CI/CD</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Ops 13</span>
+  <h2>The mental model</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two different things with one abbreviation</div>
+<pre><code>CONTINUOUS INTEGRATION — every change is automatically built
+and tested, on merge to a shared branch.
+  ⭐ THE POINT IS NOT AUTOMATION. It is that integration
+    problems are found in minutes rather than at the end of a
+    three-week branch, when they are entangled.
+
+CONTINUOUS DELIVERY — every passing change is automatically
+deployable. A human decides when.
+CONTINUOUS DEPLOYMENT — every passing change deploys itself.
+
+⚠ THE DIFFERENCE IS WHO PRESSES THE BUTTON, and choosing
+  requires honesty about your test suite: continuous deployment
+  is only responsible if your pipeline genuinely catches
+  regressions.
+
+⭐ THE PROPERTY THAT MAKES ALL OF IT WORK: THE PIPELINE IS THE
+  ONLY WAY CODE REACHES PRODUCTION. The moment someone can
+  deploy from their laptop, the pipeline stops being a
+  guarantee and becomes a suggestion — and the state of
+  production becomes unknowable.
+
+AND THE SECOND PROPERTY: THE SAME ARTEFACT IS PROMOTED.
+  build once, then deploy that exact image to staging and then
+  to production. ⚠ REBUILDING PER ENVIRONMENT MEANS YOU TESTED
+  SOMETHING YOU DID NOT SHIP — dependencies can resolve
+  differently between two builds minutes apart.</code></pre>
+</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Ops 14</span>
+  <h2>Pipeline stages</h2>
+</header>
+
+<div class="ascii">   ①  CHECKOUT                                          seconds
+   ②  RESTORE CACHE           dependencies, build output
+   ③  INSTALL                 ⭐ from the LOCK FILE — a
+                              reproducible install, not a fresh
+                              resolve
+   ④  FAST CHECKS  ─┐         lint · format · type-check
+   ⑤  UNIT TESTS    ├─ run in parallel where possible
+   ⑥  BUILD        ─┘
+   ⑦  INTEGRATION TESTS       against a real test database
+   ⑧  SECURITY SCAN           dependencies, secrets in the diff
+   ⑨  BUILD THE IMAGE         tag it with the commit SHA ⭐
+   ⑩  DEPLOY TO STAGING       and run smoke tests
+   ⑪  DEPLOY TO PRODUCTION    manual gate, or automatic
+   ⑫  VERIFY                  health checks, error rate,
+                              ⭐ and roll back if they fail
+
+   ⭐ ORDER BY SPEED, NOT BY IMPORTANCE. A type error should fail
+     in 40 seconds, not after an eight-minute test suite. The
+     purpose of a pipeline is fast feedback, and cheap checks
+     first is what produces it.
+
+   ⭐ TAG THE IMAGE WITH THE COMMIT SHA, NOT `latest`.
+     then "which code is in production?" has an exact answer,
+     and rolling back is deploying a previous, known tag.
+     ⚠ with `latest` you cannot answer either question, and
+       that is precisely what you need during an incident.
+
+   ⚠ AND THE STEP TEAMS SKIP: ⑫. A deploy that completes is not
+     a deploy that worked. Check the error rate for a few
+     minutes afterwards — automatically, so nobody has to
+     remember.</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Ops 15</span>
+  <h2>Making it fast, and keeping it trusted</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A slow or flaky pipeline stops being used</div>
+<pre><code>⭐ THE TARGET: UNDER TEN MINUTES TO A MERGE DECISION. Past
+  that, people context-switch, stop waiting, and start merging
+  on hope.
+
+HOW
+  · CACHE dependencies and build output, keyed on the lock file
+  · RUN INDEPENDENT JOBS IN PARALLEL — lint, types and unit
+    tests have no reason to be sequential
+  · only run what changed, in a monorepo
+  · put the slowest suite behind the merge, not in front of it,
+    if it genuinely takes too long
+
+⭐ AND THE ONE THAT MATTERS MORE THAN SPEED: FLAKY TESTS DESTROY
+  A PIPELINE'S VALUE.
+  once a suite fails randomly, the team learns to re-run it
+  instead of reading it — and at that moment the pipeline has
+  stopped catching anything, because every failure is assumed
+  to be noise.
+  ⇒ TREAT A FLAKY TEST AS A BUG WITH A DEADLINE. Quarantine it
+    if you must, but track it. ⚠ "Just hit re-run" is how a
+    real regression reaches production.
+
+  THE USUAL CAUSES: shared state between tests · reliance on
+  execution order · real timers or real clocks · unmocked
+  network · a database not reset between runs · an assertion on
+  a non-deterministic output.
+
+⭐ AND KEEP THE PIPELINE'S OWN CONFIGURATION IN THE REPOSITORY,
+  REVIEWED LIKE CODE. A pipeline edited through a web console
+  is infrastructure nobody can review, diff, or roll back.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Ops 16</span>
+  <h2>Deployment strategies</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Strategy</th><th style="width:30%">How</th><th>Trade-off</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Recreate</strong></td><td>Stop the old, start the new</td><td>Simple, and there is downtime. Fine for internal tools with a maintenance window.</td></tr>
+    <tr><td><strong>Rolling</strong></td><td>Replace instances a few at a time</td><td><span class="ok">The common default.</span> No downtime — but <strong>both versions run simultaneously</strong>, so the API and the database must be compatible with both.</td></tr>
+    <tr><td><strong>Blue-green</strong></td><td>Two full environments; switch traffic</td><td>Instant rollback by switching back. Costs double the infrastructure during the switch.</td></tr>
+    <tr><td><strong>Canary</strong></td><td>5&nbsp;% of traffic to the new version, watch, then widen</td><td><span class="ok">Best risk control</span> — real traffic finds what staging cannot. Needs traffic splitting and good metrics to be meaningful.</td></tr>
+    <tr><td><strong>Feature flags</strong></td><td>Deploy the code disabled; enable separately</td><td><strong>Separates deploy from release</strong>, which is the most useful idea here. Costs you flag cleanup, and flags left forever become permanent branching.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The constraint every strategy shares</span>
+  <p><strong>During any zero-downtime deploy, two versions of your code are running against one
+  database.</strong> So every migration must be compatible with the version that is still running.</p>
+  <p>Which forces the three-step shape for any destructive schema change: <strong>add the new column
+  → deploy code that writes both and reads the new → drop the old column in a later
+  deploy.</strong> A migration that renames or drops in one step will break the instances that have
+  not been replaced yet — and it is the most common self-inflicted deployment outage there is.</p>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Ops 17</span>
+  <h2>Environments</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What each is for, and the two rules</div>
+<pre><code>LOCAL       fast iteration. Compose, seeded data.
+CI          ephemeral, created and destroyed per run.
+STAGING     ⭐ AS CLOSE TO PRODUCTION AS YOU CAN AFFORD. Its
+            value is entirely proportional to how similar it
+            is; a staging environment with 200 rows and a
+            different config tells you almost nothing.
+PRODUCTION  the only one that matters.
+
+⭐ RULE ONE: SEPARATE CREDENTIALS PER ENVIRONMENT.
+  a shared secret means staging can read and write production
+  data — and someone will eventually run a test script against
+  the wrong one.
+
+⭐ RULE TWO: CONFIGURATION COMES FROM THE ENVIRONMENT, NOT FROM
+  A BRANCH.
+  the same artefact runs everywhere, configured by variables.
+  ⚠ a `if (env === 'production')` branch in application code is
+    a code path you never test until it is live.
+
+⚠ AND THE PRODUCTION-DATA QUESTION, WHICH IS NOT OPTIONAL HERE:
+  DO NOT COPY PRODUCTION HR DATA INTO STAGING. Salaries,
+  reviews and health information in a lower environment with
+  weaker access control is a breach waiting to be discovered.
+  ⇒ ANONYMISE OR GENERATE. And "we only copied it once for
+    testing" is exactly how these incidents are described
+    afterwards.
+
+⭐ THE UNDERRATED ONE: A PREVIEW ENVIRONMENT PER PULL REQUEST.
+  a reviewer can click the change instead of imagining it, and
+  a product decision gets made against something real. It
+  catches a class of problem no test does.</code></pre>
+</div>
+
+<header class="mod" id="c6">
+  <span class="mn">Ops 18</span>
+  <h2>Pitfalls</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Secrets in the pipeline log</h4><p>An echoed variable, a verbose flag, a printed environment. <strong>Logs are widely readable and retained.</strong> Mask them, and rotate anything that appeared.</p></div>
+  <div class="card"><h4>Tests that need the previous test</h4><p>Order dependence works locally and fails when the runner parallelises. Each test sets up its own state.</p></div>
+  <div class="card"><h4>Deploying on Friday afternoon</h4><p>Not superstition — <strong>the fix window matters as much as the deploy</strong>. Deploy when the people who can roll it back are available.</p></div>
+  <div class="card"><h4>A pipeline nobody owns</h4><p>It rots, gets bypassed, and then production and the pipeline disagree. It is code, and it needs a maintainer.</p></div>
+</div>
+
+<header class="part" id="cloud">
+  <span class="pn">Part IV</span>
+  <h2>Cloud fundamentals</h2>
+  <p class="lede">What you are actually renting, and the two things that surprise teams: the bill and
+  the permissions model.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Ops 19</span>
+  <h2>What you rent</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%">Model</th><th style="width:30%">You manage</th><th>Suits</th></tr></thead>
+  <tbody>
+    <tr><td><strong>IaaS</strong></td><td>The OS, the runtime, the app, patching, scaling</td><td>Maximum control, maximum work. A virtual machine.</td></tr>
+    <tr><td><strong>PaaS</strong></td><td>Just the app</td><td><span class="ok">Where most small teams should live.</span> Push code, it runs. Less control, far less operational burden.</td></tr>
+    <tr><td><strong>Serverless</strong></td><td>Just the function</td><td>Spiky or infrequent workloads. Scales to zero and to very high, with real constraints — reflex 21.</td></tr>
+    <tr><td><strong>SaaS</strong></td><td>Nothing</td><td>Managed Postgres, managed auth, managed queues. <strong>Buy these unless the thing is your differentiator.</strong></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The judgement that saves the most time</span>
+  <p><strong>Every layer you manage is a layer you must patch, monitor, scale and be woken up
+  by.</strong> A small team running its own database cluster has chosen to spend its scarcest
+  resource — attention — on something a provider does better and cheaper.</p>
+  <p>Which is exactly why this project uses Neon rather than a self-hosted Postgres. That is not
+  laziness; it is allocating engineering effort to the part that is actually yours.</p>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Ops 20</span>
+  <h2>The core services, by category</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Every provider has these under different names</div>
+<pre><code>COMPUTE        VMs · containers · functions
+STORAGE        object storage (files, cheap, durable) · block
+               storage (disks attached to a VM)
+DATABASE       managed relational · managed key-value · managed
+               analytical
+NETWORKING     private networks · load balancers · DNS · CDN
+IDENTITY       ⭐ who may do what — see reflex 23, and it is the
+               part that causes the most incidents
+MESSAGING      queues · pub/sub · event buses
+OBSERVABILITY  logs · metrics · traces · alerts
+SECRETS        a managed store, with rotation and audit
+
+⭐ LEARN THE CATEGORIES, NOT THE PRODUCT NAMES. Every provider
+  has an object store, a queue and a managed Postgres; the names
+  differ and the concepts do not. Knowing the categories makes
+  any provider's documentation navigable, and it is what
+  survives a change of employer.
+
+THE TWO PIECES OF VOCABULARY WORTH KNOWING PRECISELY
+  REGION            a geographic location. ⭐ CHOOSING ONE IS A
+                    LATENCY AND A COMPLIANCE DECISION — EU
+                    employee data has residency implications,
+                    which is not a detail in an HR system.
+  AVAILABILITY ZONE an isolated datacentre within a region.
+                    ⇒ spreading across zones survives one
+                      datacentre failing; spreading across
+                      regions survives more and costs latency
+                      and complexity.</code></pre>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Ops 21</span>
+  <h2>Serverless, with its real constraints</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Genuinely useful, and not free of trade-offs</div>
+<pre><code>✅ WHAT IT BUYS
+  · scales to zero — you pay nothing when idle
+  · scales up without capacity planning
+  · no servers to patch
+
+⚠ WHAT IT COSTS, AND EACH ONE IS A DESIGN CONSTRAINT
+  · COLD STARTS. An idle function must be initialised. Tens of
+    milliseconds to seconds — ⭐ AND HEAVY DEPENDENCIES MAKE IT
+    WORSE, which is why loading a large ML model per invocation
+    is the wrong shape.
+  · A TIME LIMIT. Long jobs do not fit; you need a queue and
+    chunking.
+  · STATELESSNESS. Nothing persists between invocations.
+  · ⭐ CONNECTION EXHAUSTION — THE ONE THAT BITES THIS STACK.
+    a hundred concurrent function instances each opening
+    database connections will exhaust Postgres while using
+    almost no CPU. ⇒ THIS IS WHY A CONNECTION POOLER IS
+    MANDATORY, not optional, with serverless plus Postgres.
+  · harder local reproduction and harder debugging.
+
+⭐ WHERE IT FITS WELL: webhook handlers · scheduled jobs ·
+  image processing · spiky low-volume endpoints · glue between
+  services.
+⚠ WHERE IT FITS BADLY: a long-lived WebSocket server · anything
+  needing a warm in-memory model · steady high-volume traffic,
+  where a container is cheaper and more predictable.
+
+⇒ FOR THIS PROJECT: the NestJS API and the FastAPI service are
+  better as containers — the AI service in particular, because
+  the model should be loaded once at startup rather than per
+  request.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Ops 22</span>
+  <h2>Cost awareness</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Where cloud bills actually come from</div>
+<pre><code>⭐ THE THINGS THAT SURPRISE PEOPLE, IN ORDER
+
+  ① EGRESS. Data leaving the provider costs money; data going
+    in is usually free. ⇒ a chatty integration, or serving
+    large files without a CDN, is a line item.
+  ② CROSS-ZONE AND CROSS-REGION TRAFFIC. Internal traffic is
+    not always free.
+  ③ IDLE RESOURCES. ⭐ THE BIGGEST REAL WASTE: a staging
+    environment running 24/7 for a team that works 40 hours a
+    week, an oversized instance from a load test, an unattached
+    disk, an old snapshot. All quietly billing.
+  ④ LOGS AND METRICS. Verbose logging at volume with long
+    retention is a genuine cost centre, and it grows silently.
+  ⑤ MANAGED SERVICE PREMIUMS. Worth it — but know the number.
+  ⑥ ⭐ METERED APIS. An LLM provider is per-token. A loop over
+    10,000 records has a price, and it belongs in the design
+    review rather than the invoice.
+
+THE THREE HABITS
+  · ⭐ TAG EVERYTHING BY ENVIRONMENT AND OWNER. Without tags you
+    cannot answer "what is this $400 for?", and you will be
+    asked.
+  · SET A BUDGET ALERT ON DAY ONE. Not to control spend — to
+    detect a mistake. A runaway loop or a leaked key shows up
+    as a bill before it shows up anywhere else.
+  · ESTIMATE THE MONTHLY COST AT DESIGN TIME, at 10× current
+    volume. ⭐ "IT COSTS $0.004 PER REQUEST, $240/MONTH AT
+    CURRENT VOLUME" IS REAL ENGINEERING and it is rare.
+
+⚠ AND THE ONE PEOPLE LEARN THE HARD WAY: A LEAKED CREDENTIAL
+  BECOMES A COMPUTE BILL WITHIN HOURS. Budget alerts are a
+  security control as much as a financial one.</code></pre>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Ops 23</span>
+  <h2>Cloud security basics</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The permission model is the part that causes incidents</div>
+<pre><code>⭐ LEAST PRIVILEGE, ACTUALLY APPLIED
+  every service gets the narrowest permissions that work.
+  ⚠ the anti-pattern is universal: grant broad access "to get
+    it working", intend to narrow it later, never narrow it.
+    ⇒ so a compromised component can reach everything.
+
+USE ROLES, NOT LONG-LIVED KEYS
+  a workload identity that the platform rotates beats a static
+  access key in an environment variable. ⭐ A LONG-LIVED KEY IS
+  A CREDENTIAL WAITING TO BE COMMITTED, LOGGED OR PASTED.
+
+⭐ THE FOUR MISCONFIGURATIONS THAT CAUSE REAL BREACHES — and
+  none of them are clever attacks:
+  ① A PUBLIC OBJECT STORE BUCKET. ⚠ The single most common
+    cloud data breach in existence. Default to private, and
+    verify.
+  ② A DATABASE REACHABLE FROM THE INTERNET. It should be on a
+    private network, reachable only by your services.
+  ③ OVER-PERMISSIVE CORS OR SECURITY GROUPS — `0.0.0.0/0` or
+    `origin: '*'` shipped from development.
+  ④ SECRETS IN ENVIRONMENT VARIABLES VISIBLE IN A CONSOLE, or
+    in a build log.
+
+AND THE OPERATIONAL MINIMUM
+  □ ENCRYPTION AT REST AND IN TRANSIT — usually a checkbox,
+    and it is the answer to a question auditors will ask
+  □ AUDIT LOGGING ON, and retained
+  □ BACKUPS — ⭐ AND A RESTORE THAT HAS ACTUALLY BEEN TESTED.
+    An untested backup is a hope, not a backup, and people
+    discover this at the worst possible moment.
+  □ MFA on the accounts that can change infrastructure
+
+⚠ AND THE SPECIFIC POINT FOR AN HR SYSTEM: data residency and
+  retention are not IT details. Where employee data is stored,
+  and for how long, are legal commitments — and the region you
+  pick in a console is where that commitment is implemented.</code></pre>
+</div>
+
+<header class="part" id="run">
+  <span class="pn">Part V</span>
+  <h2>Running it</h2>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Ops 24</span>
+  <h2>The three pillars</h2>
+</header>
+
+<div class="ascii">   LOGS      discrete events. "What happened, exactly?"
+             ⇒ high detail, high volume, expensive at scale.
+             Best for investigating one known problem.
+
+   METRICS   numbers over time. "Is anything wrong right now?"
+             ⇒ cheap, aggregatable, and what you alert on.
+             ⚠ cannot tell you WHY.
+
+   TRACES    one request across services. "Where did the time
+             go?"
+             ⇒ ⭐ the only pillar that answers that question in
+               a multi-service system, and the one most teams
+               skip.
+
+   ⭐ THE DIVISION OF LABOUR, WHICH IS THE USEFUL PART:
+     METRICS TELL YOU SOMETHING IS WRONG.
+     TRACES TELL YOU WHERE.
+     LOGS TELL YOU WHY.
+     ⇒ a team with only logs finds out late and greps blindly;
+       a team with only metrics knows it is broken and not
+       where.
+
+   THE MINIMUM THAT IS WORTH HAVING, AND IT IS SMALL
+     □ STRUCTURED LOGS with a correlation id on every line
+     □ FOUR METRICS PER SERVICE — reflex 25
+     □ THE CORRELATION ID PASSED BETWEEN SERVICES
+     □ ⭐ AN ALERT ON USER-VISIBLE FAILURE, not on CPU
+     □ AN UPTIME CHECK FROM OUTSIDE your infrastructure
+
+   ⭐ THE POINT ABOUT OBSERVABILITY THAT MATTERS MOST: YOU
+     CANNOT ADD IT DURING AN INCIDENT. The question "what
+     happened at 02:14?" is answerable only if the answer was
+     being recorded at 02:14. Everything on that list is
+     cheaper to add now than to wish for later.</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Ops 25</span>
+  <h2>The metrics worth having</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Metric</th><th style="width:26%">Watch for</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Request rate</strong></td><td>A sudden drop</td><td>A drop to zero usually means something upstream broke — <strong>often a better outage signal than an error count</strong>, because a fully broken service produces no errors.</td></tr>
+    <tr><td><strong>Error rate</strong></td><td>As a <em>proportion</em>, split 4xx vs 5xx</td><td>4xx is callers behaving badly; 5xx is you. Conflating them hides your own failures inside client noise.</td></tr>
+    <tr><td><strong>Latency percentiles</strong></td><td>p50, p95, p99 — never the average</td><td>The average is dominated by the many fast requests. <strong>p99 is where the pain lives</strong>, and it moves first.</td></tr>
+    <tr><td><strong>Saturation</strong></td><td>Connection pool, queue depth, memory, disk</td><td><span class="ok">The leading indicator.</span> These rise <em>before</em> latency does — this is where you get warning rather than news.</td></tr>
+    <tr><td><strong>Business metrics</strong></td><td>Reports generated, logins, predictions served</td><td><strong>The ones that catch what technical metrics miss.</strong> Everything green while report generation quietly went to zero is a real and common failure.</td></tr>
+    <tr><td><strong>Dependency health</strong></td><td>Latency and error rate of the AI service and the database, as seen <em>by you</em></td><td>Distinguishes "we are broken" from "they are broken" in the first minute.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Ops 26</span>
+  <h2>Alerting</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The hardest part, and it is a discipline problem</div>
+<pre><code>⭐ THE ONE RULE: ALERT ON SYMPTOMS THE USER FEELS, NOT ON
+  CAUSES.
+  ✅ "the error rate exceeded 2% for five minutes"
+  ✅ "the p95 exceeded two seconds"
+  ✅ "no reports have been generated in an hour"
+  ⚠ "CPU is above 80%" ⇒ so what? If nobody noticed, it is not
+    an incident. High CPU with fine latency is a machine doing
+    its job.
+
+⭐ AND THE FAILURE MODE THAT MAKES MONITORING WORTHLESS: ALERT
+  FATIGUE.
+  an alert that fires and is ignored is worse than no alert,
+  because it trains everyone to ignore the channel — and then
+  the real one arrives and is also ignored.
+  ⇒ EVERY ALERT MUST BE ACTIONABLE AND URGENT. If the answer is
+    "we'll look at it tomorrow", it is a dashboard item or a
+    ticket, not an alert.
+
+THE THREE PROPERTIES OF AN ALERT WORTH KEEPING
+  · it says WHAT IS AFFECTED FROM THE USER'S POINT OF VIEW
+  · it links to the DASHBOARD and the RUNBOOK (reflex 29)
+  · it has a THRESHOLD AND A DURATION, so a two-second blip
+    does not page anyone
+
+⭐ AND THE HYGIENE THAT KEEPS IT HONEST: REVIEW YOUR ALERTS
+  PERIODICALLY. Delete the ones that never fire, and fix the
+  ones that fire constantly. An alert list nobody has pruned in
+  a year is a list nobody reads.
+
+⚠ ONE MORE: MONITOR FROM OUTSIDE YOUR OWN INFRASTRUCTURE. If
+  monitoring runs inside the thing that is down, it cannot tell
+  you. An external uptime check is a few minutes to set up and
+  it is the one that catches total failure.</code></pre>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Ops 27</span>
+  <h2>Health checks</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Two different questions, and conflating them causes outages</div>
+<pre><code>LIVENESS   "is this process alive?" ⇒ if not, RESTART it.
+READINESS  "can this process serve traffic right now?" ⇒ if
+           not, STOP SENDING IT TRAFFIC — but do not restart.
+
+⭐ WHY THE DISTINCTION MATTERS, CONCRETELY: at startup your app
+  is alive but not ready (still connecting to the database). If
+  your only check is liveness, the load balancer sends traffic
+  immediately and those requests fail. If readiness is wired to
+  liveness, a temporarily unready app gets restarted in a loop
+  and never becomes ready at all.
+
+WHAT A CHECK SHOULD ACTUALLY VERIFY
+  ⚠ AN ENDPOINT THAT RETURNS 200 UNCONDITIONALLY IS WORSE THAN
+    NO CHECK. It hides the failure from the load balancer, which
+    keeps routing to a broken instance forever.
+  ⇒ readiness should verify what the service genuinely needs:
+    can it reach the database? is the model loaded?
+
+⚠ BUT DO NOT CASCADE. A health check that fails because a
+  NON-ESSENTIAL dependency is down takes your service out of
+  rotation for no reason — ⭐ and if every service checks every
+  dependency, one small outage removes everything from
+  rotation simultaneously. Check what you need to serve, not
+  everything you can reach.
+
+⭐ FOR THIS PROJECT, CONCRETELY: the backend's readiness should
+  check the database (it cannot serve without it) and NOT the
+  AI service (report generation fails, everything else works).
+  That single distinction is the difference between a degraded
+  feature and a total outage.</code></pre>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Ops 28</span>
+  <h2>Infrastructure as code</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Because a console click is a fact that exists on nobody's machine</div>
+<pre><code>THE PROBLEM WITH MANUAL SETUP
+  · nobody knows what the current configuration IS
+  · nobody can recreate it — ⭐ INCLUDING AFTER AN OUTAGE
+  · staging and production drift apart silently
+  · a change cannot be reviewed, diffed, or rolled back
+  · the knowledge lives with one person
+
+⭐ IaC MAKES INFRASTRUCTURE A REVIEWABLE, VERSIONED ARTEFACT.
+  the repository becomes the answer to "what is deployed?", and
+  a change to infrastructure goes through the same review as a
+  change to code.
+
+THE CONCEPTS THAT TRANSFER ACROSS TOOLS
+  DECLARATIVE       you describe the desired end state; the
+                    tool works out the steps. ⇒ running it
+                    twice changes nothing the second time.
+  STATE             ⭐ the tool's record of what it created and
+                    manages. Treat it as precious: it is shared,
+                    it must be locked during changes, and it can
+                    contain secrets.
+  PLAN THEN APPLY   ⭐ ALWAYS READ THE PLAN. It is the diff, and
+                    it is where you notice that a change
+                    replaces a database rather than modifying
+                    it.
+  MODULES           reusable parameterised pieces, so staging
+                    and production are the same definition with
+                    different variables.
+  DRIFT             ⚠ someone changed something by hand and the
+                    real world no longer matches the code. ⭐ THE
+                    RULE THAT PREVENTS IT: ONCE IT IS IN CODE,
+                    NOBODY TOUCHES THE CONSOLE.
+
+⭐ AND THE PRAGMATIC ENTRY POINT: YOU DO NOT NEED TERRAFORM TO
+  START. A committed Compose file, a documented list of managed
+  services with their settings, and scripted database
+  migrations already give you most of the benefit. IaC is a
+  direction, and partial adoption is genuinely useful.</code></pre>
+</div>
+
+<header class="mod" id="e6">
+  <span class="mn">Ops 29</span>
+  <h2>Runbooks</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Written calmly, for someone who is not calm</div>
+<pre><code>A RUNBOOK IS THE PROCEDURE FOR ONE KNOWN SITUATION, written
+before it happens and linked from the alert.
+
+  TITLE      "Database migration failed during deploy"
+  SYMPTOMS   what you will see, and where
+  IMPACT     who is affected and how badly
+  FIRST STEP ⭐ THE MITIGATION, NOT THE DIAGNOSIS. "Roll back
+             to the previous image tag."
+  THEN       the diagnostic steps, in order
+  ESCALATE   who to wake, and when
+  AFTER      what to record, and what to verify
+
+⭐ WHY THIS FORMAT: AT 3 A.M. NOBODY IMPROVISES WELL, INCLUDING
+  THE PERSON WHO BUILT THE SYSTEM. A runbook converts a
+  stressful judgement call into a checklist, and it lets someone
+  who is not the author handle it — which is the actual point.
+
+WHICH ONES TO WRITE
+  ⭐ WRITE THE RUNBOOK AFTER THE FIRST TIME IT HAPPENS. Post-
+    mortems are the natural source: every incident that could
+    recur deserves one, written while the details are fresh.
+  the usual first four for a stack like this:
+    · a failed deploy or migration
+    · the database is unreachable or out of connections
+    · a dependency (the AI service, the LLM provider) is down
+    · certificates or credentials expired
+
+⚠ AND KEEP THEM WITH THE CODE, NOT IN A WIKI NOBODY OPENS. A
+  runbook that is wrong is worse than none — it sends a tired
+  person down a path that no longer exists. ⭐ SO REVIEW THEM
+  WHEN THE SYSTEM CHANGES, and delete the ones for systems you
+  no longer run.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume V · operations vocabulary</div>
+  <dl>
+    <dt>reflog</dt><dd>Git's log of everywhere HEAD has been. The undo button for almost everything.</dd>
+    <dt>rebase</dt><dd>Replaying commits onto a new base. Rewrites history — never on shared branches.</dd>
+    <dt>revert</dt><dd>A new commit that undoes an old one. Always safe on shared branches.</dd>
+    <dt>semantic conflict</dt><dd>Two changes that merge cleanly and break together. Why CI must test the merge result.</dd>
+    <dt>bisect</dt><dd>Binary search over history to find the commit that introduced a bug.</dd>
+    <dt>layer cache</dt><dd>Docker reusing unchanged build steps. Why instruction order decides build time.</dd>
+    <dt>multi-stage build</dt><dd>Building in one image and shipping only the output. Smaller image, smaller attack surface.</dd>
+    <dt>ephemeral filesystem</dt><dd>A container's writes are lost on stop. By design.</dd>
+    <dt>0.0.0.0</dt><dd>What a containerised app must bind to. Binding to localhost makes it unreachable.</dd>
+    <dt>artefact promotion</dt><dd>Building once and deploying that same image to each environment.</dd>
+    <dt>flaky test</dt><dd>Intermittent failure. Destroys trust in the pipeline faster than anything else.</dd>
+    <dt>rolling deploy</dt><dd>Replacing instances gradually — so two versions run at once against one database.</dd>
+    <dt>canary</dt><dd>Sending a small share of real traffic to a new version and watching.</dd>
+    <dt>feature flag</dt><dd>Separating deploy from release. Needs cleanup discipline.</dd>
+    <dt>expand-migrate-contract</dt><dd>The three-deploy shape for a destructive schema change.</dd>
+    <dt>cold start</dt><dd>The initialisation delay of an idle serverless function.</dd>
+    <dt>egress</dt><dd>Data leaving the provider. Usually the surprising line on a cloud bill.</dd>
+    <dt>least privilege</dt><dd>The narrowest permissions that work. Widened "temporarily" and never narrowed.</dd>
+    <dt>liveness vs readiness</dt><dd>"Restart me" versus "don't send me traffic". Conflating them causes restart loops.</dd>
+    <dt>saturation</dt><dd>How full a resource is. The leading indicator — it rises before latency.</dd>
+    <dt>alert fatigue</dt><dd>Alerts that fire and are ignored, training everyone to ignore the channel.</dd>
+    <dt>drift</dt><dd>Real infrastructure no longer matching its code, because someone used the console.</dd>
+    <dt>runbook</dt><dd>The procedure for one known failure, mitigation first, linked from the alert.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume VI · Cloud mastery</h4><p>The two tracks — cloud developer and cloud ML — at the depth this volume only introduces.</p></div>
+  <div class="card"><h4>Volume VII · Data, AI &amp; emerging tech</h4><p>MLOps, data engineering, agents in production, and the privacy techniques that matter for people data.</p></div>
+  <div class="card"><h4>Volume III · Engineering craft</h4><p>The incident and debugging sections that this volume's observability feeds.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 29–34, with the full command references and worked configurations in the originals.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On tool specifics.</strong> Deliberately concept-first: layer caching rather than a
+  Dockerfile reference, pipeline stages rather than one CI provider's YAML, service categories rather
+  than product names. The tools change every couple of years; build order, deployment compatibility
+  and alert discipline do not.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

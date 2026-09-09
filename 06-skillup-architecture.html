@@ -1,0 +1,1304 @@
+<title>Architecture and Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F2F4F7;
+  --ground-2: #FAFBFC;
+  --panel:    #E9ECF1;
+  --panel-2:  #DFE3EA;
+
+  --ink:   #141821;
+  --ink-2: #39404E;
+  --ink-3: #6B7382;
+
+  --rule:   #CFD5DE;
+  --rule-2: #E1E5EC;
+
+  --accent:      #9C6412;
+  --accent-soft: #F6EBD8;
+  --accent-deep: #6B4309;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #9C6412;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #0E1116;
+    --ground-2: #141821;
+    --panel:    #1A1F29;
+    --panel-2:  #222834;
+
+    --ink:   #E6E9EF;
+    --ink-2: #BCC2CD;
+    --ink-3: #838B98;
+
+    --rule:   #2C323D;
+    --rule-2: #222834;
+
+    --accent:      #DDA74E;
+    --accent-soft: #241A0C;
+    --accent-deep: #EFC280;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #DDA74E;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #0E1116;
+  --ground-2: #141821;
+  --panel:    #1A1F29;
+  --panel-2:  #222834;
+
+  --ink:   #E6E9EF;
+  --ink-2: #BCC2CD;
+  --ink-3: #838B98;
+
+  --rule:   #2C323D;
+  --rule-2: #222834;
+
+  --accent:      #DDA74E;
+  --accent-soft: #241A0C;
+  --accent-deep: #EFC280;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #DDA74E;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + volume band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 9px 11px 10px; background: var(--ground-2); font-size: 14.8px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 15.4px; display: block; line-height: 1.25; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(140px, 200px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Skill Upgrading · Handbook</p>
+  <p class="rail-sub">After onboarding · 8 volumes</p>
+  <span class="rail-vol">Volume II</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · System design</div>
+  <a href="#a1"><span class="n">01</span>The process</a>
+  <a href="#a2"><span class="n">02</span>The building blocks</a>
+  <a href="#a3"><span class="n">03</span>The trade-offs</a>
+  <a href="#a4"><span class="n">04</span>Designing for scale</a>
+  <a href="#a5"><span class="n">05</span>Drawing it</a>
+
+  <div class="rail-group">II · Patterns</div>
+  <a href="#b1"><span class="n">06</span>What they are</a>
+  <a href="#b2"><span class="n">07</span>The ones worth knowing</a>
+  <a href="#b3"><span class="n">08</span>In our frameworks</a>
+  <a href="#b4"><span class="n">09</span>Anti-patterns</a>
+  <a href="#b5"><span class="n">10</span>When not to</a>
+
+  <div class="rail-group">III · Paradigms</div>
+  <a href="#c1"><span class="n">11</span>Layered</a>
+  <a href="#c2"><span class="n">12</span>Clean &amp; hexagonal</a>
+  <a href="#c3"><span class="n">13</span>Domain-driven design</a>
+  <a href="#c4"><span class="n">14</span>Event sourcing &amp; CQRS</a>
+  <a href="#c5"><span class="n">15</span>ADRs</a>
+
+  <div class="rail-group">IV · API design</div>
+  <a href="#d1"><span class="n">16</span>Beyond REST basics</a>
+  <a href="#d2"><span class="n">17</span>Pagination</a>
+  <a href="#d3"><span class="n">18</span>Versioning</a>
+  <a href="#d4"><span class="n">19</span>Rate limiting</a>
+  <a href="#d5"><span class="n">20</span>GraphQL &amp; gRPC</a>
+  <a href="#d6"><span class="n">21</span>APIs that last</a>
+
+  <div class="rail-group">V · Distributed systems</div>
+  <a href="#e1"><span class="n">22</span>What changes</a>
+  <a href="#e2"><span class="n">23</span>CAP &amp; consistency</a>
+  <a href="#e3"><span class="n">24</span>Queues &amp; events</a>
+  <a href="#e4"><span class="n">25</span>Resilience patterns</a>
+  <a href="#e5"><span class="n">26</span>Tracing</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#t1"><span class="n">—</span>Term bank</a>
+  <a href="#t2"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Skill upgrading handbook · Volume II of VIII</p>
+  <h1>Architecture and design. <span class="thin">The decisions a model can discuss and cannot own.</span></h1>
+  <p class="lede">System design as a repeatable process rather than a talent. The handful of patterns
+  that actually earn their names. Four architecture paradigms and what each is really buying. API
+  design that survives its own callers. And the specific ways a system stops being predictable the
+  moment it spans two machines.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · Volume I</span>
+    <span><b>Covers</b> · KB files 07–09, 11, 44</span>
+    <span><b>Pairs with</b> · Volume IV for the data layer</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="05-skillup-working-with-ai.html"><span class="vn">Volume I</span><b>Working with AI</b></a>
+<div class="vol here"><span class="vn">Volume II · here</span><b>Architecture &amp; design</b></div>
+<a class="vol" href="07-skillup-craft.html"><span class="vn">Volume III</span><b>Engineering craft</b></a>
+<a class="vol" href="08-skillup-cs-foundations.html"><span class="vn">Volume IV</span><b>CS foundations &amp; the stack</b></a>
+<a class="vol" href="09-skillup-ship-and-run.html"><span class="vn">Volume V</span><b>Ship it &amp; run it</b></a>
+<a class="vol" href="10-skillup-cloud.html"><span class="vn">Volume VI</span><b>Cloud mastery</b></a>
+<a class="vol" href="11-skillup-data-ai.html"><span class="vn">Volume VII</span><b>Data, AI &amp; emerging tech</b></a>
+<a class="vol" href="12-skillup-thinking-capstone.html"><span class="vn">Volume VIII</span><b>Thinking, career &amp; capstone</b></a>
+</div>
+
+<header class="part" id="sysdesign">
+  <span class="pn">Part I</span>
+  <h2>System design</h2>
+  <p class="lede">Not a talent you either have or don't. A process with an order, and the order is
+  most of the skill.</p>
+</header>
+
+<header class="mod" id="a1">
+  <span class="mn">Design 01</span>
+  <h2>The process</h2>
+</header>
+
+<div class="ascii">   ①  REQUIREMENTS — and write them where everyone can see them
+        FUNCTIONAL      what must it do? three to five things.
+        NON-FUNCTIONAL  how many users · how fast · how fresh ·
+                        how available · how private
+        ⭐ AND EXPLICITLY: WHAT IS OUT OF SCOPE. Cutting scope in
+          the first five minutes is the most senior move
+          available, and the one most often skipped.
+
+   ②  ESTIMATE — before you draw anything
+        users → requests per second → data per day → data per
+        year. Round violently and say you are rounding.
+        ⭐ THE NUMBER CHOOSES THE DESIGN. Fifty requests a second
+          is one boring database. Getting this backwards — design
+          first, justify later — is how teams build distributed
+          systems for problems that fit on a laptop.
+
+   ③  THE BOX DIAGRAM — start small, add under pressure
+        client → api → store, plus only what is needed.
+        ⚠ eleven boxes in minute four, none of which you can
+          justify, reads as inexperience rather than ambition.
+
+   ④  THE DATA MODEL — ⭐ the highest-signal part
+        the entities, the relationships, and the ACCESS PATTERNS.
+        "we read this a thousand times per write" changes the
+        design more than any box on the diagram.
+
+   ⑤  THE MAIN FLOW — walk ONE request end to end, in words
+        what is written, what is read, what is cached, what is
+        queued, and what the user sees at each moment.
+
+   ⑥  FAILURE — ⭐ where seniority is most visible
+        what happens when each box is down or slow? which parts
+        must be correct and which may be stale? what does the
+        user experience during a partial outage?
+        ⚠ this is also where people run out of time. Protect it.
+
+   ⑦  SCALE THE BOTTLENECK — the one thing that breaks first
+        not everything. Scaling everything is not a design, it
+        is a list of technologies.
+
+   ⑧  TRADE-OFFS AND WHAT'S NEXT
+        what you would build first, what you deliberately left
+        out, what breaks at 10× and what you would do then.
+
+   ⭐ THE STRUCTURE IS THE SCORE — in an interview and in a design
+     review. Two engineers with identical knowledge produce
+     different outcomes because one followed this order and one
+     free-associated.</div>
+
+<header class="mod" id="a2">
+  <span class="mn">Design 02</span>
+  <h2>The building blocks</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Block</th><th style="width:30%">Solves</th><th>Costs</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Load balancer</strong></td><td>Spreads traffic; removes a single point of failure at the app tier</td><td>Sticky sessions become a problem; health checks must be honest, or it routes to a broken instance forever.</td></tr>
+    <tr><td><strong>Cache</strong></td><td>Read speed and load reduction</td><td><strong>Staleness and invalidation</strong> — a correctness problem you have chosen to take on. Ask first: how wrong may this be, and for how long?</td></tr>
+    <tr><td><strong>Read replica</strong></td><td>Read capacity</td><td><strong>Replication lag.</strong> Write then immediately read, and the user does not see their own change. The classic ghost bug.</td></tr>
+    <tr><td><strong>Queue</strong></td><td>Absorbs spikes, decouples, enables retries</td><td>The work is now asynchronous: no immediate answer, no guaranteed order, possible double delivery, and you must design the dead-letter path and the progress UI.</td></tr>
+    <tr><td><strong>Object storage</strong></td><td>Large files, cheaply, forever</td><td>Not a filesystem. And a URL is a credential — see Volume VII on access.</td></tr>
+    <tr><td><strong>CDN</strong></td><td>Latency for cacheable content</td><td>Invalidation, and it does nothing for personalised or authenticated responses.</td></tr>
+    <tr><td><strong>Search index</strong></td><td>Text queries a database does badly</td><td>A second copy of your data to keep in step. Always eventually consistent with the source.</td></tr>
+    <tr><td><strong>Worker pool</strong></td><td>Long jobs outside the request cycle</td><td>Now you own scheduling, retries, idempotency, visibility and cost.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The sentence that scores</span>
+  <p>"I'd add a cache here — reads outnumber writes heavily and this data may be a minute stale. What
+  it costs me is a stale window after an edit, so I'd invalidate on write and accept the rare
+  race."</p>
+  <p><strong>Lever · reason · cost · mitigation.</strong> Four clauses. Naming the cost is what turns
+  a default into a decision, and it is the single most reliable marker of experience in a design
+  conversation.</p>
+</div>
+
+<header class="mod" id="a3">
+  <span class="mn">Design 03</span>
+  <h2>The trade-offs</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Five axes, and neither end is "correct"</div>
+<pre><code>CONSISTENCY  ←→  AVAILABILITY
+  must every reader see the latest write, or may some see a
+  slightly old value in exchange for staying up?
+  ⇒ money and permissions: consistency. A dashboard count:
+    availability. ⭐ ASK PER FEATURE, not per system.
+
+LATENCY  ←→  THROUGHPUT
+  batching raises throughput and raises latency. Small requests
+  do the reverse. You cannot maximise both.
+
+SPACE  ←→  TIME
+  indexes, caches, precomputed aggregates and denormalised
+  copies all spend storage to buy speed.
+
+SIMPLICITY  ←→  FLEXIBILITY
+  ⭐ THE MOST OFTEN MISJUDGED. Every abstraction added "for
+    future flexibility" is complexity paid today for an option
+    that usually expires unused. Pay it when the second real
+    case arrives, not the first imagined one.
+
+BUILD  ←→  BUY
+  building costs engineering time forever, not once. Buying
+  costs money and control. ⚠ and the honest question is not
+  cost — it is whether this thing is your differentiator.
+
+⭐ THE META-POINT: A DESIGN IS A SET OF CHOSEN COSTS. When
+  someone asks "is this a good architecture?", the answerable
+  version is "good for what?" — and the design document should
+  say which trade-offs it took and why, because the next person
+  will otherwise re-litigate them from scratch.</code></pre>
+</div>
+
+<header class="mod" id="a4">
+  <span class="mn">Design 04</span>
+  <h2>Designing for scale</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:24%">Saturates first</th><th style="width:28%">Symptom</th><th>What helps</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Database connections</strong></td><td>Everything slows at once, even trivial endpoints</td><td>Pooling, shorter transactions, moving long work out of the request. <strong>Adding app servers makes it worse</strong> — the counter-intuitive one worth knowing.</td></tr>
+    <tr><td><strong>One query</strong></td><td>One endpoint slow, rest fine</td><td>An index or a rewrite. Cheapest fix available; look here first.</td></tr>
+    <tr><td><strong>Round trips</strong></td><td>Slowness proportional to items on screen</td><td>Fetch in one query, or in parallel. The N+1 pattern.</td></tr>
+    <tr><td><strong>App CPU</strong></td><td>Degrades smoothly with traffic</td><td>Add instances. The easy case, and genuinely rare in business software.</td></tr>
+    <tr><td><strong>A downstream service</strong></td><td>Your latency tracks theirs exactly</td><td>Timeouts, circuit breaker, cache, or degrade without it. <strong>You cannot fix their speed; you can stop it becoming your outage.</strong></td></tr>
+    <tr><td><strong>Lock contention</strong></td><td>Fine, then collapses past a threshold; worse with more workers</td><td>Shorter transactions, finer locks, remove the shared row.</td></tr>
+    <tr><td><strong>Queue depth</strong></td><td>Nothing is slow — things are just late, and getting later</td><td>More consumers or less work per item. Arrival rate exceeds service rate; waiting never fixes it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">Vertical before horizontal, always</span>
+  <p><strong>A bigger machine is one afternoon. A distributed system is a permanent tax</strong> — on
+  debugging, on transactions, on deployment, on every new engineer. Modern hardware is enormous: a
+  single well-indexed Postgres handles workloads most teams never approach.</p>
+  <p>So the honest sequence is: fix the query, add the index, cache the hot read, get a bigger box,
+  add a read replica — and only then consider splitting anything. Sharding proposed before estimating
+  is a tell.</p>
+</div>
+
+<header class="mod" id="a5">
+  <span class="mn">Design 05</span>
+  <h2>Drawing and communicating it</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A diagram is an argument, not decoration</div>
+<pre><code>THE THREE ZOOM LEVELS, AND ONE DIAGRAM PER LEVEL
+  CONTEXT     your system as one box, with the users and the
+              external systems around it. For non-technical
+              stakeholders.
+  CONTAINERS  ⭐ THE MOST USEFUL ONE. The deployable pieces —
+              frontend, backend, AI service, database — and the
+              protocols between them. This is the diagram your
+              team actually needs, and the one Volume II of the
+              onboarding handbook draws.
+  COMPONENTS  inside one container. Only for the part under
+              discussion.
+
+⚠ THE MISTAKE: ONE DIAGRAM AT ALL THREE LEVELS. It becomes
+  unreadable and is never updated, so it becomes wrong, and then
+  it actively misleads.
+
+WHAT MAKES A DIAGRAM USEFUL
+  · LABEL THE ARROWS with the protocol AND the direction —
+    "HTTP/JSON, sync" versus "event, async" is the most
+    information-dense thing on the page
+  · mark what is SYNCHRONOUS: ⭐ every sync arrow is a
+    dependency that can make you slow or down
+  · mark TRUST BOUNDARIES — where data crosses from a system you
+    control to one you do not
+  · include the things that fail: the queue, the third party,
+    the cache
+  ⚠ omit: every class, every table, and anything that will be
+    stale next week
+
+⭐ AND THE HABIT THAT MATTERS MOST: WRITE THE DECISION DOWN
+  ALONGSIDE IT. A diagram shows what you built; only prose can
+  say why, and what you rejected. That is reflex 15.</code></pre>
+</div>
+
+<header class="part" id="patterns">
+  <span class="pn">Part II</span>
+  <h2>Design patterns</h2>
+  <p class="lede">Named solutions to recurring problems. Useful as vocabulary; dangerous as a
+  shopping list.</p>
+</header>
+
+<header class="mod" id="b1">
+  <span class="mn">Patterns 06</span>
+  <h2>What they are, and are not</h2>
+</header>
+
+<div class="good">
+  <span class="tag">The honest framing</span>
+  <p>A pattern is <strong>a name for a shape that keeps appearing</strong>. Its value is almost
+  entirely communication: "that's a strategy, not a switch statement" replaces ten minutes of
+  explanation.</p>
+  <p><strong>What patterns are not:</strong> a checklist of things a good codebase contains, or a
+  quality signal. Recognising a pattern that already exists in your code is a senior skill. Reaching
+  for one before the problem has appeared twice is the classic mid-level failure — and generated code
+  is unusually prone to it.</p>
+</div>
+
+<header class="mod" id="b2">
+  <span class="mn">Patterns 07</span>
+  <h2>The ones worth knowing</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">Pattern</th><th style="width:32%">The problem it solves</th><th>Recognise it by</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Factory</strong></td><td>Choosing which implementation to create, without callers knowing the options</td><td>A function that returns one of several types based on input. In this stack: picking a notification channel.</td></tr>
+    <tr><td><strong>Singleton</strong></td><td>Exactly one instance of an expensive shared thing</td><td>A connection pool, a loaded model. <strong>Your framework already does this</strong> — NestJS providers are singletons, which is why you never call <code>new PrismaClient()</code>.</td></tr>
+    <tr><td><strong>Strategy</strong></td><td>Several interchangeable algorithms chosen at runtime</td><td>Swappable scoring rules, pricing rules, export formats. Replaces a growing switch statement.</td></tr>
+    <tr><td><strong>Adapter</strong></td><td>Making a third party fit your interface</td><td><span class="ok">The most valuable one in practice.</span> Wrap the LLM provider, the storage client, the payment gateway — then swapping vendors touches one file.</td></tr>
+    <tr><td><strong>Decorator</strong></td><td>Adding behaviour without changing the thing</td><td>Logging, caching, retries around a call. Literally the <code>@decorator</code> syntax in NestJS.</td></tr>
+    <tr><td><strong>Observer</strong></td><td>Many things reacting to one event</td><td>Event emitters, WebSocket broadcasts, React state subscriptions.</td></tr>
+    <tr><td><strong>Repository</strong></td><td>Isolating data access behind an interface</td><td>A service that owns all queries for one entity. <strong>Partly redundant with an ORM</strong> — Prisma is already this layer, so a repository over it is often ceremony.</td></tr>
+    <tr><td><strong>Facade</strong></td><td>One simple entry point over a complicated subsystem</td><td>A service method that orchestrates four others so callers need not know the sequence.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="b3">
+  <span class="mn">Patterns 08</span>
+  <h2>Already in your frameworks</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">You are using these whether or not you name them</div>
+<pre><code>NESTJS
+  dependency injection   inversion of control, wholesale
+  providers              singleton
+  guards, interceptors,  decorator + chain of responsibility —
+    pipes, filters       ⭐ the request lifecycle IS a pipeline
+                         of decorators, which is why the order
+                         is fixed and knowable
+  modules                facade over a feature
+
+REACT
+  components             composition over inheritance
+  props                  dependency injection, by another name
+  context                ⭐ provider pattern
+  custom hooks           strategy / template method — the real
+                         reuse mechanism
+  children               decorator
+
+PRISMA
+  the generated client   repository + active record hybrid
+  migrations             command, logged and replayable
+
+⭐ WHY THIS SECTION EXISTS: patterns feel abstract until you see
+  that your daily work is made of them. Once you can name what
+  NestJS is doing, the framework stops being magic and starts
+  being a set of decisions you could have made — which is
+  exactly the shift from using a framework to understanding one.</code></pre>
+</div>
+
+<header class="mod" id="b4">
+  <span class="mn">Patterns 09</span>
+  <h2>Anti-patterns</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>God object</h4><p>One class or service that does everything. The symptom: every change touches it, and two people always conflict there.</p></div>
+  <div class="card"><h4>Anaemic domain</h4><p>Data classes with no behaviour, and all logic in one "manager". Common with ORMs, and it scatters the rules that belong together.</p></div>
+  <div class="card"><h4>Premature abstraction</h4><p>An interface with one implementation, a factory for one type, config nobody sets. <strong>Duplication is cheaper than the wrong abstraction</strong> — wait for the third case.</p></div>
+  <div class="card"><h4>Shotgun surgery</h4><p>One conceptual change requires edits in fifteen files. The real measure of coupling, and the health metric worth watching.</p></div>
+  <div class="card"><h4>Magic strings and numbers</h4><p><code>status === 'APPROVED_2'</code>. A literal union or an enum makes the typo a compile error instead of a silent permission failure.</p></div>
+  <div class="card"><h4>Stringly typed</h4><p>Passing ids, dates and money as bare strings. Distinct types make the wrong argument order unrepresentable.</p></div>
+</div>
+
+<header class="mod" id="b5">
+  <span class="mn">Patterns 10</span>
+  <h2>When not to use one</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three tests before adding a pattern</div>
+<pre><code>①  HAS THE PROBLEM ACTUALLY HAPPENED — TWICE?
+   ⭐ once is a case. Twice is a pattern. Zero times is a
+     prediction, and predictions about future flexibility have
+     a poor record.
+
+②  DOES IT MAKE THE CODE EASIER TO READ FOR SOMEONE NEW?
+   if a reader must now open four files to follow one request,
+   the pattern has cost more than it bought. ⚠ INDIRECTION IS A
+   REAL COST paid by every future reader.
+
+③  COULD A PLAIN FUNCTION DO THIS?
+   very often, yes. A named function is a pattern with no
+   ceremony, and it is the right answer more often than any
+   named pattern.
+
+⭐ THE JUDGEMENT, PLAINLY: PATTERNS ARE FOR MANAGING VARIATION
+  THAT EXISTS. Where nothing varies, a pattern is decoration
+  with a maintenance cost — and a codebase full of decorative
+  patterns is harder to change than one written plainly, which
+  is the exact opposite of the intent.</code></pre>
+</div>
+
+<header class="part" id="paradigms">
+  <span class="pn">Part III</span>
+  <h2>Architecture paradigms</h2>
+  <p class="lede">Whole-application shapes. Each buys one specific thing — and the skill is knowing
+  what, and whether you need it.</p>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Paradigms 11</span>
+  <h2>Layered</h2>
+</header>
+
+<div class="ascii">   controller  ← HTTP only
+       ▼
+   service     ← business rules
+       ▼
+   repository  ← data access
+       ▼
+   database
+
+   ⭐ WHAT IT BUYS: predictability. Everyone knows where anything
+     goes, and a new feature is a copy of an existing shape
+     rather than a design decision. This is what NestJS imposes,
+     and it is the correct default for most applications.
+
+   THE ONE RULE THAT MAKES IT WORK
+     ⭐ DEPENDENCIES POINT DOWNWARD ONLY. A service never knows
+       about HTTP; a repository never knows about business rules.
+       ⇒ the test from the onboarding handbook: could this
+         service method be called from a cron job with no request
+         in sight? If not, HTTP has leaked downward.
+
+   ⚠ WHERE IT STRAINS
+     · business logic drifts into controllers (thin controllers
+       is a discipline, not a guarantee)
+     · a "service" that is really four features becomes a god
+       object
+     · with an ORM, the repository layer is often redundant
+       ceremony over Prisma
+
+   ⭐ AND THE HONEST NOTE THAT FRAMES THE REST OF THIS PART:
+     LAYERED IS ENOUGH FOR THE LARGE MAJORITY OF APPLICATIONS.
+     Everything below is a response to a specific pain. If you do
+     not have the pain, the paradigm is cost without benefit.</div>
+
+<header class="mod" id="c2">
+  <span class="mn">Paradigms 12</span>
+  <h2>Clean and hexagonal</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Same core idea, two names</div>
+<pre><code>THE IDEA: INVERT THE DEPENDENCY ON INFRASTRUCTURE.
+
+  layered:      business logic → database
+  clean/hex:    business logic ← database
+                (the database implements an interface the
+                 business logic defines)
+
+              ┌─────────────────────────┐
+   HTTP ──────┤  adapter                │
+   CLI  ──────┤   ↕                     │
+              │  DOMAIN (pure rules)    │
+              │   ↕                     │
+   Postgres ──┤  adapter                │
+   S3       ──┤                         │
+              └─────────────────────────┘
+  "ports and adapters": the domain declares PORTS; infrastructure
+  provides ADAPTERS.
+
+⭐ WHAT IT BUYS
+  · the rules are testable with no database, no HTTP, no
+    framework — genuinely fast, genuinely isolated tests
+  · infrastructure becomes swappable: a different store, a
+    different provider, touches one adapter
+  · the domain does not age with the framework
+
+⚠ WHAT IT COSTS — and this is why it is not the default
+  · MORE FILES AND MORE INDIRECTION for the same feature
+  · mapping between domain objects and database rows, by hand,
+    forever — which duplicates what your ORM already does
+  · a team that half-adopts it produces the worst of both: the
+    ceremony without the isolation
+
+⭐ THE HONEST TEST: DO YOU HAVE COMPLEX RULES THAT ARE PAINFUL
+  TO TEST BECAUSE OF INFRASTRUCTURE? If yes, this pays for
+  itself quickly. If your services are mostly validate-and-save,
+  it is pure overhead — and CRUD dressed as hexagonal
+  architecture is a common and expensive mistake.</code></pre>
+</div>
+
+<header class="mod" id="c3">
+  <span class="mn">Paradigms 13</span>
+  <h2>Domain-driven design</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The parts that are useful without adopting the whole thing</div>
+<pre><code>⭐ UBIQUITOUS LANGUAGE — the highest-value idea in DDD, and it
+  is free.
+  the code uses the words the business uses. If HR says
+  "regretted attrition", the field is not `left_flag`.
+  ⇒ this eliminates an entire class of bug: the translation
+    error between what a stakeholder asked for and what was
+    built. Adopt this even if you adopt nothing else.
+
+BOUNDED CONTEXT — the second most useful
+  the same word means different things in different parts of the
+  business. An "employee" to payroll (a cost, a tax code) is not
+  an "employee" to recruiting (a candidate who converted).
+  ⭐ FORCING ONE MODEL ACROSS BOTH PRODUCES A TABLE WITH FORTY
+    NULLABLE COLUMNS AND NO CLEAR OWNER. Two contexts, each with
+    its own model, is the answer — and it is also the only
+    defensible basis for splitting services.
+
+ENTITY vs VALUE OBJECT
+  ENTITY        has identity that persists through change — an
+                employee is the same employee after a rename
+  VALUE OBJECT  defined entirely by its values — money, a date
+                range, an address. Interchangeable if equal.
+  ⇒ practical payoff: value objects can validate themselves, so
+    an invalid date range becomes unrepresentable.
+
+AGGREGATE
+  a cluster of objects changed together, with one root as the
+  only entry point. ⭐ THE AGGREGATE IS THE TRANSACTION BOUNDARY
+  — which is the genuinely useful part: it tells you what must
+  be consistent at once and what may be eventually consistent.
+
+⚠ WHAT TO SKIP UNLESS THE DOMAIN IS GENUINELY COMPLEX: the full
+  apparatus — repositories per aggregate, domain events for
+  everything, a separate application layer. DDD earns its
+  ceremony on complicated business rules, not on CRUD.</code></pre>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Paradigms 14</span>
+  <h2>Event sourcing and CQRS</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%"></th><th style="width:36%">Event sourcing</th><th>CQRS</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The idea</strong></td><td>Store the <em>events</em>, not the current state. Current state is derived by replaying them.</td><td>Separate the write model from the read model. Different shapes, possibly different stores.</td></tr>
+    <tr><td><strong>Buys you</strong></td><td>A complete audit trail by construction · time travel ("what was true then?") · the ability to answer questions you had not thought of yet</td><td>Reads and writes scale and are modelled independently. Complex reporting stops distorting the write schema.</td></tr>
+    <tr><td><strong>Costs you</strong></td><td><span class="no">A great deal.</span> Every query needs a projection · events are immutable so a mistake is permanent · schema evolution of old events · no simple "just look at the table"</td><td>Eventual consistency between the two models — the user writes and does not immediately see it. Plus two models to keep in step.</td></tr>
+    <tr><td><strong>Worth it when</strong></td><td>The <em>history</em> is the product: finance, audit, compliance, anything where "how did we get here" is a required question.</td><td>Read and write loads are genuinely different in shape and volume — reporting versus transactions.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="warn">
+  <span class="tag">The realistic middle</span>
+  <p>You almost certainly want <strong>an append-only audit log alongside normal tables</strong>, not
+  event sourcing. That gives you the history and the "what was true then" answer, while keeping the
+  ability to read current state with one obvious query.</p>
+  <p>Similarly: a read replica, a materialised view or a reporting table gives you most of CQRS's
+  benefit without maintaining two models. <strong>Take the property you need, not the paradigm's
+  name.</strong></p>
+</div>
+
+<header class="mod" id="c5">
+  <span class="mn">Paradigms 15</span>
+  <h2>Architecture decision records</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">One page per decision, written when you make it</div>
+<pre><code>TITLE     ADR-014: Use Prisma rather than raw SQL for the API
+STATUS    accepted | superseded by ADR-031 | deprecated
+CONTEXT   what was true when we decided — the constraints, the
+          team, the deadline, what we knew and did not know
+DECISION  what we chose, in one paragraph
+ALTERNATIVES  what else we considered, and why not
+CONSEQUENCES  ⭐ THE MOST VALUABLE SECTION: what this makes
+          easy, what it makes hard, and what we accept
+
+⭐ WHY THIS IS WORTH THE FIFTEEN MINUTES
+  the code shows WHAT you built. Only this shows WHY, and
+  crucially WHAT YOU REJECTED. Without it, every new engineer
+  re-litigates settled decisions from scratch — and sometimes
+  reverses one for a reason that was already considered and
+  rejected.
+
+⭐ AND THE PART PEOPLE MISS: A SUPERSEDED ADR IS NOT DELETED.
+  It is marked superseded and linked to its replacement. The
+  record of a decision you later reversed is often the most
+  useful document in the repository, because it explains why the
+  obvious approach did not work.
+
+WHEN TO WRITE ONE
+  · you chose between real alternatives
+  · you accepted a known cost deliberately
+  · someone will ask "why is it like this?" in six months
+  ⚠ NOT for every commit. An ADR for a naming choice devalues
+    the format.</code></pre>
+</div>
+
+<header class="part" id="api">
+  <span class="pn">Part IV</span>
+  <h2>API design</h2>
+  <p class="lede">An API is a promise you must keep after you have forgotten making it — and after
+  the people relying on it have forgotten too.</p>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">API 16</span>
+  <h2>Beyond REST basics</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The questions the basics don't cover</div>
+<pre><code>①  IS IT SAFE TO CALL TWICE?
+   ⭐ THE MOST IMPORTANT API QUESTION. Reads are naturally safe;
+     creates are not. Anything that moves money, sends a
+     message or triggers a job needs a CALLER-SUPPLIED
+     IDEMPOTENCY KEY, so the second attempt returns the first
+     result rather than doing it again.
+   ⚠ NETWORKS RETRY WHETHER OR NOT YOU DESIGNED FOR IT. Users
+     double-click, phones re-send, proxies repeat. This is not
+     a hypothetical.
+
+②  WHAT DOES PARTIAL SUCCESS LOOK LIKE?
+   a bulk endpoint that updates 40 of 50 records must be able to
+   SAY SO. Returning 200 with no detail, or 500 after committing
+   40, are both lies.
+   ⇒ return per-item results, or make it all-or-nothing. Choose,
+     and document which.
+
+③  WHAT CAN NEVER CHANGE?
+   removing a field · renaming one · narrowing a type · making
+   an optional field required → all BREAKING.
+   adding an optional field → not breaking.
+   ⭐ KNOW WHICH CATEGORY YOU ARE IN BEFORE SHIPPING. It decides
+     whether this is a deploy or a migration with notice.
+
+④  WHOSE DATA CAN THIS REACH?
+   every endpoint taking an id must answer: what if the id
+   belongs to someone else? In code, on every path.
+
+⑤  HOW LONG CAN IT TAKE?
+   anything unbounded — a report, an import, a model call over
+   many records — does not belong in a request. Accept it,
+   return a handle, do the work elsewhere.
+
+⑥  WHAT DOES AN ERROR LOOK LIKE?
+   a stable machine-readable code, a human message, and which
+   field was wrong. ⚠ errors are part of the interface; changing
+   an error code breaks callers as surely as removing a field.</code></pre>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">API 17</span>
+  <h2>Pagination</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Strategy</th><th style="width:34%">How</th><th>Trade-off</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Offset / limit</strong></td><td><code>?page=3&amp;size=20</code></td><td>Simple, jumpable, and <span class="no">wrong under writes</span> — an insert shifts everything, so page 2 repeats or skips rows. Also gets slower the deeper you go: the database must count past every skipped row.</td></tr>
+    <tr><td><strong>Cursor / keyset</strong></td><td><code>?after=&lt;opaque&gt;</code></td><td><span class="ok">Stable and fast at any depth.</span> No page numbers and no jumping to page 47. The right default for feeds and large lists.</td></tr>
+    <tr><td><strong>Page tokens</strong></td><td>An opaque token encoding position and filters</td><td>Cursor's benefits, and you can change the internals later without breaking callers. Slightly more work.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The decision you cannot defer</span>
+  <p><strong>The response shape is a contract.</strong> An endpoint that returns a bare array cannot
+  later gain a <code>{ data, nextCursor, total }</code> wrapper without breaking every caller.</p>
+  <p>So <strong>paginate from the first commit, even when there are nine rows.</strong> Return the
+  envelope on day one. Retrofitting pagination is one of the most common breaking changes teams are
+  forced into, and it is entirely avoidable.</p>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">API 18</span>
+  <h2>Versioning</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Three approaches, and the one that matters more than the choice</div>
+<pre><code>URL PATH        /v1/employees · /v2/employees
+                ⭐ obvious, cacheable, greppable, trivially
+                  testable in a browser. THE PRACTICAL DEFAULT.
+HEADER          Accept: application/vnd.api.v2+json
+                cleaner URLs, and invisible — easy to get wrong
+                and hard to debug from a browser.
+QUERY PARAM     ?version=2
+                easy, and easy to forget. Weakest option.
+
+⭐ AND THE THING THAT MATTERS MORE THAN WHICH: HAVING A
+  DEPRECATION POLICY AT ALL.
+  · announce · a date · a Deprecation or Sunset header on
+    responses · monitoring of who is still calling the old
+    version · then remove it
+  ⚠ WITHOUT REMOVAL YOU HAVE NOT VERSIONED — you have
+    accumulated. Three live versions means every bug fixed three
+    times, and it is how an API becomes unmaintainable.
+
+⭐ THE BETTER STRATEGY: DON'T VERSION. ADD.
+  most changes can be additive — a new optional field, a new
+  endpoint alongside the old. ⇒ RESERVE A VERSION BUMP FOR A
+  GENUINELY BREAKING CHANGE, and you may never need v2.
+
+FOR AN INTERNAL API — the honest note
+  when the frontend and backend deploy together, versioning is
+  often ceremony. What you need instead is the DISCIPLINE OF
+  KNOWING which changes are breaking — and a plan for the window
+  where old clients are still running during a rollout.</code></pre>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">API 19</span>
+  <h2>Rate limiting</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">Protecting the service from its callers, including yourself</div>
+<pre><code>WHY: one buggy client, one retry storm, or one enthusiastic
+integration can consume the capacity of every other caller. Rate
+limiting is how a shared service stays fair.
+
+THE ALGORITHMS, briefly
+  FIXED WINDOW    "100 per minute". Simple. ⚠ allows a burst of
+                  200 across a window boundary.
+  SLIDING WINDOW  smoother, more bookkeeping.
+  TOKEN BUCKET    ⭐ the usual right answer: a steady refill
+                  rate plus a burst allowance, which matches how
+                  real clients behave.
+
+WHAT TO RETURN — and this is the part people get wrong
+  429 Too Many Requests
+  + Retry-After: 30
+  + the limit, the remaining count and the reset time in headers
+  ⭐ A LIMIT WITHOUT A Retry-After TEACHES CLIENTS TO HAMMER.
+    You have created the retry storm you were defending against.
+
+WHAT TO LIMIT ON
+  per API key or user, not per IP where possible — ⚠ an office
+  behind one NAT shares an IP, so IP limits punish a whole
+  company for one user.
+  and limit EXPENSIVE endpoints separately: a report generation
+  or an LLM call is not equivalent to a health check.
+
+⭐ THE ONE PEOPLE FORGET: LIMIT YOUR OWN OUTBOUND CALLS TOO.
+  your backend calling an LLM provider or the AI service needs a
+  concurrency cap, or a queue drain becomes a self-inflicted
+  denial of service — and, with a metered provider, an
+  unexpected invoice.</code></pre>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">API 20</span>
+  <h2>GraphQL and gRPC, in context</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:16%"></th><th style="width:28%">Buys you</th><th>Costs you</th></tr></thead>
+  <tbody>
+    <tr><td><strong>REST</strong></td><td>Universally understood, cacheable by default, debuggable in a browser, no tooling required</td><td>Over-fetching and under-fetching; several round trips for one screen.</td></tr>
+    <tr><td><strong>GraphQL</strong></td><td>The client asks for exactly the fields it needs, in one request. Excellent for many varied clients.</td><td><strong>N+1 by default</strong> unless you add batching · caching is now your problem, not HTTP's · a query can be arbitrarily expensive, so you need depth and complexity limits · authorisation must be enforced per field, not per endpoint.</td></tr>
+    <tr><td><strong>gRPC</strong></td><td>Fast binary protocol, generated clients, streaming, a strict schema</td><td>Not readable by a browser without a proxy; harder to debug; a build step. <span class="ok">Right for service-to-service</span>, wrong for a public API.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <span class="tag">For this project</span>
+  <p>REST between the frontend and NestJS, REST between NestJS and FastAPI. That is correct: one
+  frontend, a small number of endpoints, and a team that benefits far more from browser-debuggable
+  requests than from field-level query flexibility.</p>
+  <p>The senior version of this knowledge is not "GraphQL is better". It is being able to say
+  <strong>which specific pain would justify the switch</strong> — many heterogeneous clients
+  over-fetching badly — and noting that we do not have it.</p>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">API 21</span>
+  <h2>APIs that last</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Model nouns, not procedures</h4><p>When you find yourself inventing verbs, you have missed a noun. "Cancel an order" is often better as a <em>cancellation</em> that gets created — then it has a time, an author and a reason.</p></div>
+  <div class="card"><h4>Return what you created</h4><p>A create should return the object, or where to find it. Otherwise every caller immediately does a second request, and you have designed an N+1 into your contract.</p></div>
+  <div class="card"><h4>Be conservative in what you send</h4><p>Every field you return is a field someone will depend on. A response that dumps the whole record makes every future change breaking — and leaks fields the caller should not see.</p></div>
+  <div class="card"><h4>Generate the documentation</h4><p>From the code, so it cannot drift. Swagger from DTOs, OpenAPI from Pydantic — one definition, three jobs.</p></div>
+  <div class="card"><h4>Make errors part of the design</h4><p>Codes clients can branch on, stable across versions. "500: something went wrong" turns every integration into a support conversation.</p></div>
+  <div class="card"><h4>Think about the second caller</h4><p>The first caller is your own frontend, and you can change both together. The second one you cannot. Design as if it already exists.</p></div>
+</div>
+
+<header class="part" id="dist">
+  <span class="pn">Part V</span>
+  <h2>Distributed systems</h2>
+  <p class="lede">What changes the moment your system spans two machines — which, with three services
+  and a hosted database, yours already does.</p>
+</header>
+
+<header class="mod" id="e1">
+  <span class="mn">Distributed 22</span>
+  <h2>What actually changes</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">A function call and a network call are not the same thing</div>
+<pre><code>A FUNCTION CALL             A NETWORK CALL
+  succeeds or throws          succeeds · fails · ⭐ OR NEITHER
+  instant                     milliseconds to seconds
+  ordered                     may arrive out of order
+  exactly once                may arrive twice, or never
+  same clock                  ⚠ different clocks
+  same transaction            no shared transaction
+
+⭐ THE THIRD OUTCOME IS THE WHOLE SUBJECT. "Neither" — you sent
+  a request and never learned what happened. Did it fail before
+  the work, or succeed and lose the response?
+  ⇒ YOU CANNOT TELL. And that is why:
+    · every write across a boundary needs to be IDEMPOTENT, so
+      the retry is safe
+    · every call needs a TIMEOUT, or you wait forever
+    · "it timed out" NEVER MEANS "it didn't happen"
+
+⚠ THE FALLACIES THAT CAUSE REAL OUTAGES — each one is an
+  assumption people make without noticing:
+  the network is reliable · latency is zero · bandwidth is
+  infinite · the network is secure · topology doesn't change ·
+  there is one administrator · transport cost is zero
+
+⭐ AND THE CONCRETE VERSION FOR THIS PROJECT: when the backend
+  posts to the AI service and the request times out, you do not
+  know whether the prediction ran. If that call had side effects
+  — a charge, a written row, a sent email — a naive retry
+  duplicates them. THAT is why idempotency keeps appearing in
+  this handbook.</code></pre>
+</div>
+
+<header class="mod" id="e2">
+  <span class="mn">Distributed 23</span>
+  <h2>CAP and consistency models</h2>
+</header>
+
+<div class="ascii">   CAP, STATED CAREFULLY
+     when the network PARTITIONS — some nodes cannot reach
+     others — you must choose:
+       CONSISTENCY   refuse to answer rather than answer wrongly
+       AVAILABILITY  answer, possibly with stale data
+
+     ⚠ THE COMMON MISSTATEMENT: "pick two of three." Partitions
+       are not optional — they happen to you. So the real choice
+       is C or A, and only DURING a partition.
+
+   ⭐ THE MORE USEFUL FRAME: PICK PER OPERATION, NOT PER SYSTEM.
+     · a permission check       → consistency. Refuse.
+     · an account balance       → consistency.
+     · a dashboard count        → availability. Stale is fine.
+     · a "last seen" timestamp  → availability, obviously.
+     the same application wants both, and mature systems mix
+     them deliberately.
+
+   THE CONSISTENCY MODELS YOU WILL MEET
+     STRONG            every read sees the latest write.
+                       Simple to reason about, costs latency and
+                       availability.
+     EVENTUAL          reads converge, given time. ⚠ "given
+                       time" is doing a lot of work in that
+                       sentence.
+     READ-YOUR-WRITES  ⭐ THE ONE THAT MATTERS MOST IN PRACTICE:
+                       a user always sees their OWN changes,
+                       even if others see them later.
+                       ⇒ this is what fixes the read-replica
+                         ghost bug: route a user's reads to the
+                         primary for a moment after they write.
+     MONOTONIC READS   you never see time go backwards.
+
+   ⭐ THE DESIGN RULE: DECIDE WHAT THE USER MUST SEE IMMEDIATELY,
+     and make only that strongly consistent. Everything else can
+     be eventual, and saying which is which is the design.</div>
+
+<header class="mod" id="e3">
+  <span class="mn">Distributed 24</span>
+  <h2>Queues and events</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">What a queue buys, and the four things it makes you own</div>
+<pre><code>WHY: decouple a slow or unreliable step from the request. The
+user gets an answer immediately; the work happens after.
+
+⭐ WHAT YOU NOW OWN, ALL FOUR:
+  ① AT-LEAST-ONCE DELIVERY. Messages can arrive twice.
+    ⇒ CONSUMERS MUST BE IDEMPOTENT. "Exactly once" is
+      effectively a marketing term; at-least-once plus
+      idempotency is the real pattern.
+  ② NO GLOBAL ORDERING. Two messages may be processed out of
+    order, or concurrently. If order matters, you need a
+    partition key — and then you have limited your parallelism.
+  ③ FAILURE HANDLING. A message that always fails must not
+    retry forever. ⭐ A DEAD-LETTER QUEUE IS NOT OPTIONAL, and
+    neither is someone actually looking at it.
+  ④ VISIBILITY. The user asked for something and got "accepted".
+    They need a way to know it finished — a status, a
+    notification, a WebSocket event.
+
+EVENT-DRIVEN ARCHITECTURE — the same idea as a design style
+  services publish facts ("employee.created"); others react.
+  ✅ buys loose coupling and easy extension: adding a consumer
+     requires no change to the producer.
+  ⚠ costs: no single place shows the whole flow, debugging spans
+     services, and ⭐ NOBODY KNOWS WHO IS LISTENING — so
+     changing an event's shape breaks consumers you have
+     forgotten exist.
+
+⭐ COMMANDS vs EVENTS — a distinction worth keeping
+  COMMAND  "do this" — one intended handler, may be rejected
+  EVENT    "this happened" — a fact, any number of listeners,
+           cannot be rejected
+  ⇒ mixing them produces systems where a published "event" is
+    secretly required to be handled, and a missing consumer is
+    a silent bug.</code></pre>
+</div>
+
+<header class="mod" id="e4">
+  <span class="mn">Distributed 25</span>
+  <h2>Resilience patterns</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Pattern</th><th style="width:32%">Stops</th><th>Detail that matters</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Timeout</strong></td><td>Waiting forever on a hung dependency</td><td><span class="ok">The single most important one.</span> No timeout means one slow service exhausts your threads and takes you down with it. Set one on <em>every</em> outbound call.</td></tr>
+    <tr><td><strong>Retry with backoff</strong></td><td>Losing a request to a transient blip</td><td><strong>Exponential, capped, with jitter.</strong> Without jitter, every client retries in sync and you have built a thundering herd. And only retry <em>idempotent</em> operations.</td></tr>
+    <tr><td><strong>Circuit breaker</strong></td><td>Hammering a service that is already down</td><td>After N failures, fail fast for a while, then try one probe. <strong>Gives the failing service room to recover</strong> instead of holding it under.</td></tr>
+    <tr><td><strong>Bulkhead</strong></td><td>One slow dependency consuming all capacity</td><td>Separate connection pools or thread pools per dependency, so the AI service being slow cannot starve ordinary requests.</td></tr>
+    <tr><td><strong>Graceful degradation</strong></td><td>An optional component blanking a required page</td><td>Render without it and say what is missing. <strong>A design decision to make now</strong>, not during the provider's next outage.</td></tr>
+    <tr><td><strong>Health checks</strong></td><td>Traffic routed to broken instances</td><td>Must be honest — a check that returns 200 while the database is unreachable is worse than none, because it hides the failure from the load balancer.</td></tr>
+    <tr><td><strong>Idempotency</strong></td><td>Retries causing duplicates</td><td>Underpins every row above. Without it, retrying is unsafe and none of the others can be used freely.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="e5">
+  <span class="mn">Distributed 26</span>
+  <h2>Tracing across services</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The one operational thing to add before you need it</div>
+<pre><code>THE PROBLEM: a request is slow. Three services and a database
+were involved. Each log file says its own part took no time.
+
+⭐ THE FIX, AND IT IS SMALL: A CORRELATION ID.
+  generate one at the edge, pass it in a header to every
+  downstream call, and log it with every line.
+
+    frontend  →  X-Request-Id: 9f2c…
+    NestJS    →  logs with 9f2c…, forwards the header
+    FastAPI   →  logs with 9f2c…
+    ⇒ now ONE grep reconstructs the entire request across all
+      three services.
+
+  this is perhaps twenty lines of middleware and it is the
+  difference between debugging a distributed system and
+  guessing at one.
+
+DISTRIBUTED TRACING — the same idea, industrialised
+  each step is a SPAN with a start, a duration and a parent, so
+  you get a waterfall: which call took the time, and what ran in
+  parallel versus in sequence.
+  ⭐ THE WATERFALL ROUTINELY REVEALS THE ACTUAL BUG: three calls
+    that could have run concurrently running one after another,
+    or one unnoticed call being made forty times.
+
+⭐ AND THE POINT THAT MAKES THIS PART WORTH READING FOR A SMALL
+  TEAM: three services IS a distributed system. You already have
+  timeouts you have not set, retries that are not idempotent,
+  and failures you cannot correlate. The patterns in Part V are
+  not for hyperscale — they are the difference between an
+  incident you can explain and one you cannot.</code></pre>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="t1">
+  <span class="mn">Reference</span>
+  <h2>Term bank</h2>
+</header>
+
+<div class="terms">
+  <div class="cap">Volume II · architecture vocabulary</div>
+  <dl>
+    <dt>non-functional requirement</dt><dd>How fast, how many, how available, how private — as opposed to what it does.</dd>
+    <dt>bottleneck</dt><dd>The one resource that saturates first. Everything else is a symptom.</dd>
+    <dt>replication lag</dt><dd>The delay before a replica reflects a write. Cause of "I saved it and it's not there".</dd>
+    <dt>read-your-writes</dt><dd>A guarantee that a user always sees their own changes immediately.</dd>
+    <dt>eventual consistency</dt><dd>Reads converge given time. The "given time" is the design question.</dd>
+    <dt>idempotent</dt><dd>Safe to repeat. The precondition for every retry.</dd>
+    <dt>idempotency key</dt><dd>A caller-supplied id so a duplicate request returns the first result.</dd>
+    <dt>circuit breaker</dt><dd>Fail fast after repeated failures, so the broken service can recover.</dd>
+    <dt>bulkhead</dt><dd>Isolated resource pools so one slow dependency cannot starve the rest.</dd>
+    <dt>dead-letter queue</dt><dd>Where messages go after exhausting retries. Useless unless someone reads it.</dd>
+    <dt>thundering herd</dt><dd>Many clients retrying or expiring in sync. Prevented by jitter.</dd>
+    <dt>correlation id</dt><dd>One id logged by every service handling a request. The cheapest observability win.</dd>
+    <dt>span</dt><dd>One timed step in a trace, with a parent. Spans make the waterfall.</dd>
+    <dt>bounded context</dt><dd>A part of the business where a word has one consistent meaning.</dd>
+    <dt>ubiquitous language</dt><dd>Code using the words the business uses. The free half of DDD.</dd>
+    <dt>aggregate</dt><dd>Objects changed together behind one root. The transaction boundary.</dd>
+    <dt>value object</dt><dd>Defined entirely by its values — money, a date range. Can validate itself.</dd>
+    <dt>ports and adapters</dt><dd>The domain declares interfaces; infrastructure implements them.</dd>
+    <dt>projection</dt><dd>A read model derived from events. What event sourcing makes you build for every query.</dd>
+    <dt>ADR</dt><dd>A one-page record of a decision, its alternatives and its consequences.</dd>
+    <dt>keyset pagination</dt><dd>Paging by cursor rather than offset. Stable under writes, fast at depth.</dd>
+    <dt>breaking change</dt><dd>Removing or renaming a field, narrowing a type, or requiring an optional one.</dd>
+  </dl>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Volume III · Engineering craft</h4><p>Code review, debugging, performance, security and testing — how these designs survive contact with production.</p></div>
+  <div class="card"><h4>Volume IV · CS foundations &amp; the stack</h4><p>Data structures, complexity, how a request really travels, database optimisation and advanced SQL. The layer under this one.</p></div>
+  <div class="card"><h4>Volume V · Ship it &amp; run it</h4><p>Containers, CI/CD, monitoring and infrastructure as code — where the resilience patterns get implemented.</p></div>
+  <div class="card"><h4>The source markdown</h4><p>This volume covers KB files 07, 08, 09, 11 and 44.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On paradigm advice.</strong> Parts II and III describe what each pattern and paradigm
+  buys and costs, rather than recommending them. The recurring judgement is the same: adopt the
+  property you need, not the name — and layered plus a boring database is the right answer far more
+  often than the interesting alternative.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
