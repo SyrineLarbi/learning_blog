@@ -1,0 +1,849 @@
+<title>The Senior Full-Stack Standard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #7A2D6B;
+  --accent-soft: #F6E6F3;
+  --accent-deep: #541D48;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #7A2D6B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #DB94CC;
+    --accent-soft: #241028;
+    --accent-deep: #E9B6DE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #DB94CC;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #DB94CC;
+  --accent-soft: #241028;
+  --accent-deep: #E9B6DE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #DB94CC;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Senior Full-Stack</p>
+  <p class="rail-sub">The operating standard</p>
+  <span class="rail-vol">12 topics</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">The frame</div>
+  <a href="#shift"><span class="n">—</span>The mindset shift</a>
+
+  <div class="rail-group">I · Structure</div>
+  <a href="#t1"><span class="n">01</span>Architecture principles</a>
+  <a href="#t2"><span class="n">02</span>NestJS</a>
+  <a href="#t3"><span class="n">03</span>Next.js</a>
+  <a href="#t4"><span class="n">04</span>Prisma &amp; the database</a>
+  <a href="#t5"><span class="n">05</span>API design</a>
+
+  <div class="rail-group">II · Trust</div>
+  <a href="#t6"><span class="n">06</span>Security</a>
+  <a href="#t7"><span class="n">07</span>Testing strategy</a>
+  <a href="#t8"><span class="n">08</span>Performance</a>
+
+  <div class="rail-group">III · Operations</div>
+  <a href="#t9"><span class="n">09</span>Observability</a>
+  <a href="#t10"><span class="n">10</span>Deployment &amp; CI/CD</a>
+
+  <div class="rail-group">IV · Standards</div>
+  <a href="#t11"><span class="n">11</span>The mistakes list</a>
+  <a href="#t12"><span class="n">12</span>Code review</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#ops"><span class="n">—</span>Operating principles</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Senior practice · full-stack · 12 topics</p>
+  <h1>The senior full-stack standard. <span class="thin">What a senior knows, what a junior does instead.</span></h1>
+  <p class="lede">Twelve areas of this stack, each in the same four bands: what a senior actually
+  knows, the anti-patterns that mark a junior, the patterns worth copying, and a checklist you can run
+  before opening a pull request. Opinionated on purpose — this is a standard, not a survey.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · you already work in this stack</span>
+    <span><b>Covers</b> · all 12 source files</span>
+    <span><b>Use as</b> · a review standard</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 28 documents</b><em>The index</em></a>
+<div class="vol here"><span class="vn">Full-stack · here</span><b>The senior full-stack standard</b></div>
+<a class="vol" href="26-senior-data-science-practice.html"><span class="vn">Data science</span><b>The senior data science standard</b></a>
+<a class="vol" href="27-senior-data-science-strategy.html"><span class="vn">DS strategy</span><b>Problems before models</b></a>
+</div>
+
+<header class="mod" id="shift">
+  <span class="mn">The frame</span>
+  <h2>The mindset shift</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">A junior asks</th><th>A senior asks</th></tr></thead>
+  <tbody>
+    <tr><td>Does it work?</td><td><strong>What happens when it doesn't?</strong></td></tr>
+    <tr><td>How do I build this?</td><td>Should this be built, and is this the smallest version that helps?</td></tr>
+    <tr><td>Is the code clean?</td><td>Can the next person change it safely, without asking me?</td></tr>
+    <tr><td>Did the tests pass?</td><td><strong>Do the tests test anything that matters?</strong></td></tr>
+    <tr><td>Is it fast?</td><td>Fast for whom — the median request, or the customer with 40,000 rows?</td></tr>
+    <tr><td>Is it secure?</td><td>What does a valid request from the wrong person look like?</td></tr>
+    <tr><td>Did it deploy?</td><td>Can I tell it is healthy, and can I undo it in one step?</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The one-sentence version</span>
+  <p><strong>A senior optimises for the second year, not the first week.</strong> Almost every
+  standard in this document is a consequence of that: structure that survives new people, failures
+  that are loud rather than silent, and changes that can be reversed.</p>
+</div>
+
+<header class="part" id="structure">
+  <span class="pn">Part I</span>
+  <h2>Structure</h2>
+</header>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 01</span>
+  <h2>Architecture principles</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Dependencies point one way.</strong> Controller → service → data access, and never back. A service that knows about HTTP has stopped being reusable from a job or a script.</li>
+      <li><strong>Boundaries are where change is contained.</strong> The measure of a good boundary is how many files you must open to make one conceptual change.</li>
+      <li><strong>The data model is the most permanent decision in the system.</strong> Code churns weekly; the nouns and their relationships persist for years, and changing them is a migration under load.</li>
+      <li><strong>Every service boundary is a permanent tax</strong> — network failures, no shared transactions, distributed debugging. Pay it only for a reason you can state in one sentence.</li>
+      <li><strong>Boring is a feature.</strong> The best compliment a codebase can receive is that it is unsurprising.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Business logic in controllers, so it cannot be called from anywhere else and cannot be tested without faking a request.</li>
+      <li>Shared "utils" folders that become a dumping ground nobody owns.</li>
+      <li>Splitting into services for architectural fashion, before there is a scaling or team reason.</li>
+      <li>Abstractions with a single caller, added "for flexibility" — complexity paid today for an option that expires unused.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>One folder per feature, the same six files every time.</strong> A new feature becomes a copy of an existing pattern rather than a design decision, and nobody has to ask where anything lives.</p>
+    <p><strong>Modular monolith before microservices.</strong> Strong internal boundaries give you most of the organisational benefit with none of the network.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Could this service method be called from a cron job with no HTTP request in sight?</li>
+      <li>How many files did one conceptual change touch?</li>
+      <li>Is there a new abstraction with exactly one caller?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 02</span>
+  <h2>NestJS</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Thin controllers, fat services.</strong> The controller reads the request, calls a service, returns. Nothing else.</li>
+      <li><strong>The request lifecycle order is fixed and knowable:</strong> middleware → guards → interceptors → pipes → handler → interceptors → filters. It tells you exactly where a cross-cutting concern belongs.</li>
+      <li><strong>Guards run before pipes</strong> — so authorisation is decided before the body is validated. That is deliberate, and it means a guard cannot rely on a parsed DTO.</li>
+      <li><strong>Every throw ends in the exception filter</strong>, which is why a service can throw <code>NotFoundException</code> and never think about HTTP.</li>
+      <li><strong>Providers are singletons.</strong> Which is why you never write <code>new PrismaClient()</code> in a service — you would get twenty connection pools.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Querying Prisma directly from a controller. It works, and it puts a database call where no job, test or socket handler can reuse it.</li>
+      <li>Forgetting <code>ParseIntPipe</code> on a path parameter: it arrives as a <em>string</em>, typing it <code>: number</code> does not convert it, and the id comparison silently fails.</li>
+      <li>Repeating the same permission check in forty handlers instead of writing one guard.</li>
+      <li>Reaching for <code>@Global()</code> to avoid thinking about module imports, hiding the dependency graph.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>A custom <code>@CurrentUser()</code> decorator</strong> so controllers read the authenticated user without touching the request object.</p>
+    <p><strong>A global <code>ValidationPipe</code> with <code>whitelist: true</code></strong> — which strips unknown properties, and is a security control rather than tidiness: it removes mass assignment entirely.</p>
+    <p><strong>One exception filter</strong> so every failure in the application has the same response shape, a correlation id, and no stack trace for the caller.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Is there any business logic in a controller?</li>
+      <li>Does every path parameter that should be a number have a pipe?</li>
+      <li>Is the new endpoint's permission enforced by a guard, or by a copied <code>if</code>?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 03</span>
+  <h2>Next.js</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Server by default, <code>'use client'</code> at the leaves.</strong> The directive applies to everything a component imports, so one careless placement drags a whole subtree into the browser bundle.</li>
+      <li><strong>Rendering mode is inferred, not declared.</strong> Reading cookies or the current user makes a route dynamic automatically — which means a page can silently stay static and serve one user's data to another.</li>
+      <li><strong>A server action is a public endpoint.</strong> It is reachable by anyone who can craft the request; "it's only called from that form" is not a control.</li>
+      <li><strong>Caching defaults change between major versions.</strong> For per-user data, be explicit about no-cache rather than trusting one.</li>
+      <li><strong>A layout does not re-render on navigation within its subtree</strong> — which is what keeps a sidebar's scroll position, and is the reason the app shell belongs there.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li><code>'use client'</code> at the top of the tree, so the whole app ships to the browser.</li>
+      <li>Fetching in a <code>useEffect</code> when a server component could just <code>await</code> — reinventing loading states, races and cancellation by hand.</li>
+      <li>A secret behind <code>NEXT_PUBLIC_</code>. That value is embedded in the bundle and readable by every visitor: it is published, not hidden.</li>
+      <li>Suppressing a hydration warning instead of fixing the cause — <code>new Date()</code>, <code>Math.random()</code> or <code>localStorage</code> in a first render.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Fetch on the server, pass data down, mark only the interactive leaf as a client component.</strong> No effect, no loading flag, and the data never travels as an intermediate JSON blob.</p>
+    <p><strong><code>loading.tsx</code> and <code>error.tsx</code> per segment</strong>, scoped narrowly — one at the root means any error blanks the whole app.</p>
+    <p><strong>Filters, tabs and page number in the URL</strong>, so a view can be shared, bookmarked and reached with the back button.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Which components did <code>'use client'</code> actually pull into the bundle?</li>
+      <li>Is this authenticated route explicitly not cached?</li>
+      <li>Does every new server action check authentication and ownership in its own body?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 04</span>
+  <h2>Prisma and the database</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>The ORM hides the SQL, so an inefficient query is invisible until it is slow.</strong> Query logging goes on early, not during the incident.</li>
+      <li><strong><code>select</code> beats <code>include</code></strong> for anything user-facing: faster, and it is the mechanism that keeps a salary out of a payload.</li>
+      <li><strong><code>@unique</code> and relations become real database constraints</strong> — they hold against every writer, including a migration script and a console at 2 a.m. An application-level check protects only the paths that remembered.</li>
+      <li><strong>A destructive migration needs three deploys</strong>, not one: add the column, move reads and writes, drop the old one later. During a rolling deploy two versions of your code are running against one database.</li>
+      <li><strong>Transactions exist for the "what if it fails right here" question</strong> — and must never contain a network call, or one slow dependency holds locks and pooled connections for seconds.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li><strong>The N+1</strong>: a loop containing an <code>await</code> that hits the database. Invisible in development with four rows; 201 queries in production.</li>
+      <li>Read-modify-write for a counter or a balance, inside a transaction, believing that makes it safe. It does not — two transactions both read the old value.</li>
+      <li><code>$queryRaw</code> with an interpolated template literal, reintroducing SQL injection in the one place Prisma stopped protecting you.</li>
+      <li>Running <code>migrate reset</code> against anything real. It drops all data.</li>
+      <li>Forgetting <code>prisma generate</code> after a schema change, then debugging a "missing module" that is generated code.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Let the database do the arithmetic:</strong> <code>SET balance = balance - 80</code> is atomic, needs no read, and removes the race entirely. This is the fix people skip because the ORM encourages fetch-then-save.</p>
+    <p><strong>Index what you filter, join and order by</strong> — and note that Postgres does <em>not</em> create an index for a foreign key automatically, which is a common cause of slow joins.</p>
+    <p><strong>Store the value that was true at the time</strong> when history must not change. Joining to the current department means last quarter's report silently rewrites itself after a reorganisation.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Is there a loop with a database call inside it?</li>
+      <li>Does this migration drop or rename anything that running code still uses?</li>
+      <li>Is any raw SQL built by string concatenation?</li>
+      <li>Does this response include a field the caller should not see?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 05</span>
+  <h2>API design</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Is it safe to call twice?</strong> The most important API question. Networks retry whether or not you designed for it, users double-click, and phones re-send.</li>
+      <li><strong>The response shape is a contract.</strong> An endpoint returning a bare array cannot later gain a pagination wrapper without breaking every caller — so paginate from the first commit, even with nine rows.</li>
+      <li><strong>Which changes are breaking:</strong> removing a field, renaming one, narrowing a type, making an optional field required. Adding an optional field is not. Know which category you are in <em>before</em> shipping.</li>
+      <li><strong>Errors are part of the interface.</strong> Changing an error code breaks clients as surely as removing a field.</li>
+      <li><strong>401 means unauthenticated; 403 means known and not permitted.</strong> And for "exists but not yours", 404 is often correct — a 403 confirms the record exists, which is itself a leak.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Returning <code>200</code> with <code>{"error": "..."}</code> in the body. Every retry policy, monitor and load balancer believes the status code, so your failures are invisible to all of them.</li>
+      <li>Verbs in paths — <code>/getEmployees</code>, <code>/createReport</code>. The method is already the verb.</li>
+      <li>An unpaginated list endpoint. A future incident with a scheduled date.</li>
+      <li>Nesting four levels deep, so the URL encodes a hierarchy that will change.</li>
+      <li>A bulk endpoint that cannot express partial success — 40 of 50 updated, and the response says nothing.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>A caller-supplied idempotency key</strong> on anything that moves money, sends a message or starts a job, so the second attempt returns the first result.</p>
+    <p><strong>Cursor pagination</strong> for large or growing lists — stable under writes and fast at any depth, unlike offset.</p>
+    <p><strong>Generated documentation</strong> from the DTOs, so the contract cannot drift from the code.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>What happens if this endpoint is called twice with the same payload?</li>
+      <li>Is this change breaking for any existing caller?</li>
+      <li>Does the list endpoint return an envelope with a cursor?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="trust">
+  <span class="pn">Part II</span>
+  <h2>Trust</h2>
+</header>
+
+<header class="mod" id="t6">
+  <span class="mn">Topic 06</span>
+  <h2>Security</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>The vulnerability people actually ship is broken access control</strong> — a correctly formed request from a logged-in user carrying someone else's id, which the code happily serves.</li>
+      <li><strong>Authentication is not authorisation, and a role is not ownership.</strong> "Managers may view employees" is true; <em>this</em> manager may only view <em>their</em> team.</li>
+      <li><strong>The UI is not a security boundary.</strong> Anything the browser can do, a person can do without the browser.</li>
+      <li><strong>Per-field permissions, not per-page.</strong> One endpoint returning "the employee" returns the salary and the sickness record too, whatever the UI displays.</li>
+      <li><strong>A JWT's payload is readable</strong> — base64 is encoding, not secrecy. And it cannot be revoked, which is why expiry is short.</li>
+      <li><strong>Git history is forever.</strong> A secret committed and removed in the next commit is still published; the only remedy is rotation.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Trusting an id from the client because the UI only ever sends the right one.</li>
+      <li><code>allow_origins=["*"]</code> or a disabled certificate check, added locally to make an error go away, shipped to production.</li>
+      <li>Distinguishing "no such user" from "wrong password" — which tells an attacker which emails are registered.</li>
+      <li>Returning a stack trace or SQL fragment to the caller as a debugging convenience.</li>
+      <li>Personal data in log lines, which are readable by more people and retained longer than your database.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>One path everything traverses.</strong> A check repeated in forty handlers will be missing from the forty-first, written on a Friday. A guard, a single query helper, or a database constraint holds forever.</p>
+    <p><strong>Type the boundary:</strong> <code>Omit&lt;Employee, 'salary'&gt;</code> makes the public shape explicit rather than accidental.</p>
+    <p><strong>Log the detail, return an identifier.</strong> "Error ref 8f2c1a" lets support find everything and discloses nothing.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Every id from outside — is it checked against the caller, on <em>this</em> path?</li>
+      <li>Does anything new escape the system: a log line, an export, an email, a prompt?</li>
+      <li>Was anything weakened to make a test or a local run pass?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t7">
+  <span class="mn">Topic 07</span>
+  <h2>Testing strategy</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Integration tests are the best value per test in a web application.</strong> Most defects live in the seams — a missing permission check, a wrong join, a validation that did not fire — and a unit test of a mocked service cannot see any of them.</li>
+      <li><strong>Test behaviour, not implementation.</strong> A test that must be rewritten every time you tidy the code is a tax on improvement, and eventually the team stops improving.</li>
+      <li><strong>Coverage measures execution, not verification.</strong> A test that calls a function and asserts nothing gives 100% coverage of it.</li>
+      <li><strong>A flaky test destroys the suite's value</strong> — once failures are assumed to be noise, nothing is being caught.</li>
+      <li><strong>Mock the boundary, not your own database.</strong> Mocking Prisma tests that you called Prisma the way you thought you should.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Chasing a coverage number, producing tests for getters and mappers while the risk engine stays untested.</li>
+      <li>Tests that depend on execution order or on state left by a previous test — fine locally, broken when the runner parallelises.</li>
+      <li>Trusting generated tests for generated code: both encode the same guess and agree with each other.</li>
+      <li>Asserting on exact UI markup, so every restyle breaks the suite.</li>
+      <li>Real clocks and real timers, so a test fails at midnight or on 29 February.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>One integration test per endpoint with four assertions:</strong> the happy path works, an unauthenticated caller gets 401, a wrong-owner caller gets 403, invalid input gets 400. Those four cover what most often breaks and survive refactors.</p>
+    <p><strong>Every bug becomes a test</strong>, so the class cannot return.</p>
+    <p><strong>Freeze the clock and seed randomness</strong> in anything time- or chance-dependent.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Would these tests fail if the behaviour were wrong — or only if the code were restructured?</li>
+      <li>Is the permission boundary covered?</li>
+      <li>Did I write at least one assertion from the requirement rather than from the code?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t8">
+  <span class="mn">Topic 08</span>
+  <h2>Performance</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Measure first.</strong> Intuition about performance is unreliable — the things that feel expensive are usually cheap, and round trips that feel free are usually not.</li>
+      <li><strong>Percentiles, not averages.</strong> "Average 200 ms" with a p99 of 8 seconds means one user in a hundred has a terrible time, and the average will never say so.</li>
+      <li><strong>Round trips, not CPU,</strong> make ordinary business software slow. Fifty sequential 5 ms queries is 250 ms of pure waiting.</li>
+      <li><strong>The fastest query is the one you don't run.</strong> Removing work beats optimising it.</li>
+      <li><strong>Define the target before starting</strong>, or optimisation has no stopping condition and the code gets worse.</li>
+      <li><strong>Dev data hides everything.</strong> Four rows conceal every N+1, every missing index and every unbounded list.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Adding a cache in front of an N+1 — which hides the defect until the cache misses, and then you have two problems.</li>
+      <li>Sequential awaits for independent calls, doubling latency for no reason.</li>
+      <li>Fetching 50,000 rows to sort and take ten in application code, instead of <code>ORDER BY … LIMIT</code> with an index.</li>
+      <li><code>useMemo</code> everywhere without measuring — memoisation has its own cost.</li>
+      <li>Lifting form state high enough that every keystroke re-renders half the page.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>The order that works:</strong> fix the query → add the index → remove the round trips → then cache. Caching first buys speed and keeps the defect.</p>
+    <p><strong>Move unbounded work out of the request</strong> — a report, an import, a model call over many records. Accept, enqueue, notify.</p>
+    <p><strong>Before adding a cache, answer: how wrong may this be, and for how long?</strong> If the answer is "not at all", a cache is the wrong tool.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Did I measure, or guess?</li>
+      <li>How does this behave at realistic data volume?</li>
+      <li>Is there anything unbounded — a list, a loop, an upload — whose size I do not control?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="operations">
+  <span class="pn">Part III</span>
+  <h2>Operations</h2>
+</header>
+
+<header class="mod" id="t9">
+  <span class="mn">Topic 09</span>
+  <h2>Observability and debugging</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>You cannot add observability during an incident.</strong> "What happened at 02:14?" is answerable only if the answer was being recorded at 02:14.</li>
+      <li><strong>Metrics say something is wrong; traces say where; logs say why.</strong> A team with only logs finds out late and greps blindly.</li>
+      <li><strong>A correlation id is the cheapest win available</strong> — twenty lines of middleware, and one grep reconstructs a request across all three services.</li>
+      <li><strong>Mitigate first, diagnose second.</strong> While users are affected: roll back, disable the flag, fail over. A rollback you can explain later beats a root cause found while the site is down.</li>
+      <li><strong>Structured logs, not prose.</strong> Sentences are ungreppable at volume.</li>
+      <li><strong>An error logged at <code>info</code> is a bug you will find in six months via a customer.</strong></li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Catching everything and continuing, turning a loud failure into silent wrong data — the most expensive kind, because nobody knows to look.</li>
+      <li>Restarting the box before capturing logs, metrics and state, removing the only chance to know why.</li>
+      <li>Alerting on CPU rather than on user-visible failure, then ignoring the channel.</li>
+      <li>Debugging by changing three things at once, so the result teaches nothing.</li>
+      <li>Stopping at "it works now" without tracing cause to symptom — the bug returns under load.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Bisect in space, time and scope.</strong> Is the data already wrong when it arrives? What changed at that time? What do the affected cases have in common? The third question usually ends the investigation.</p>
+    <p><strong>Four metrics per service:</strong> request rate, error rate split 4xx/5xx, latency percentiles, and saturation — the pool, the queue depth, memory. Saturation is the leading indicator.</p>
+    <p><strong>Close the class, not the instance.</strong> After every bug ask what made it possible, and move the fix one rung up: a comment → a test → a type → a constraint.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Could I reconstruct one user's request from the logs alone, without adding anything?</li>
+      <li>Does any new catch block swallow an error?</li>
+      <li>Is there a log line containing personal data or a token?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t10">
+  <span class="mn">Topic 10</span>
+  <h2>Deployment and CI/CD</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>The pipeline is the only way code reaches production.</strong> The moment someone can deploy from a laptop, the state of production becomes unknowable.</li>
+      <li><strong>Build once, promote the same artefact.</strong> Rebuilding per environment means you tested something you did not ship.</li>
+      <li><strong>Tag images with the commit SHA, never <code>latest</code></strong> — otherwise "which code is in production?" and "what do I roll back to?" have no answer, which is exactly what you need during an incident.</li>
+      <li><strong>During any zero-downtime deploy, two versions run against one database.</strong> Every migration must be compatible with the version still running.</li>
+      <li><strong>A deploy that completes is not a deploy that worked.</strong> Check the error rate automatically for a few minutes afterwards.</li>
+      <li><strong>Deploy when the people who can roll it back are available.</strong> Not superstition — the fix window matters as much as the deploy.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>A migration that drops or renames a column in the same deploy as the code change.</li>
+      <li>Secrets echoed into a pipeline log, which is widely readable and retained.</li>
+      <li>Ordering pipeline stages by importance rather than by speed, so a type error surfaces after eight minutes of tests.</li>
+      <li>Re-running a flaky suite until it passes, which is how a real regression reaches production.</li>
+      <li>No way to disable a feature without a deploy.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Expand → migrate → contract</strong> for any destructive schema change: add the new column, move reads and writes over, drop the old one in a later deploy.</p>
+    <p><strong>Feature flags separate deploy from release</strong> — ship the code disabled, enable it when ready, disable it instantly if wrong.</p>
+    <p><strong>Cheap checks first</strong> — lint, types and unit tests in parallel before the slow suite. Target under ten minutes to a merge decision.</p>
+  </div>
+  <div class="b check"><span class="k">Before you open the PR</span>
+    <ul>
+      <li>Is this migration safe with the previous version of the code still running?</li>
+      <li>Can this change be turned off without a deploy?</li>
+      <li>Can it be undone in one step — and if not, is that stated in the description?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="standards">
+  <span class="pn">Part IV</span>
+  <h2>Standards</h2>
+</header>
+
+<header class="mod" id="t11">
+  <span class="mn">Topic 11</span>
+  <h2>The mistakes list, by area</h2>
+  <p class="lede">The consolidated version — the things that most reliably mark work as junior, grouped
+  the way the source file groups them.</p>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Architecture</h4><p>Logic in controllers · a <code>utils</code> dumping ground · services that know about HTTP · abstractions with one caller · splitting into services with no stated reason.</p></div>
+  <div class="card"><h4>TypeScript</h4><p><code>any</code> to silence an error · <code>as</code> instead of a check · <code>!</code> to dismiss a possible undefined · types duplicated instead of derived · trusting an annotation on data that arrived over a network.</p></div>
+  <div class="card"><h4>Frontend</h4><p><code>key={index}</code> on a list that reorders · mutating state instead of replacing it · deriving values into state instead of computing them · effects with no cleanup · filters kept in memory instead of the URL.</p></div>
+  <div class="card"><h4>Backend</h4><p>Missing ownership checks · no DTO or no <code>whitelist</code> · swallowed errors · unbounded list endpoints · long work inside a request.</p></div>
+  <div class="card"><h4>Database</h4><p>N+1 queries · read-modify-write races · missing indexes on foreign keys · destructive migrations in one deploy · <code>select *</code> returning fields the caller may not see.</p></div>
+  <div class="card"><h4>Security</h4><p>Trusting client-supplied ids · secrets in the repo or the bundle · stack traces returned to callers · <code>*</code> CORS in production · personal data in logs.</p></div>
+  <div class="card"><h4>Testing</h4><p>Coverage as a target · order-dependent tests · mocking your own database · asserting on markup · no test for the permission boundary.</p></div>
+  <div class="card"><h4>Performance</h4><p>Optimising without measuring · caching over a defect · sequential independent awaits · sorting in application code · testing against four rows.</p></div>
+  <div class="card"><h4>Operations</h4><p>No correlation id · alerting on CPU · <code>latest</code> tags · no rollback path · no way to turn a feature off.</p></div>
+  <div class="card"><h4>Code hygiene</h4><p>Commented-out code left in · commit messages that say "fix" · a PR mixing a refactor with a fix · names that need a comment · dead configuration nobody sets.</p></div>
+  <div class="card"><h4>Process</h4><p>Silence when an estimate slips · accepting a request at face value · changing code you do not understand · merging something you could not have written.</p></div>
+  <div class="card"><h4>The meta-rule</h4><p><strong>Almost every entry above is the same mistake: optimising for this week instead of the second year</strong> — and making a failure quiet instead of loud.</p></div>
+</div>
+
+<header class="mod" id="t12">
+  <span class="mn">Topic 12</span>
+  <h2>Code review standards</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior looks for, in order</span>
+    <ol>
+      <li><strong>Does it do the right thing?</strong> Read the description, then the code, and check they match. The most expensive defect is a correct solution to the wrong problem.</li>
+      <li><strong>Authorisation.</strong> Every id from outside, checked against the caller, on this path.</li>
+      <li><strong>The edge cases</strong> — zero, one, many, null, twice, order, race, hostile input, halfway.</li>
+      <li><strong>What else does this change?</strong> A changed default, error case or response shape — visible only in the diff, not in the new file.</li>
+      <li><strong>Migrations and anything irreversible</strong>, which deserve disproportionate attention.</li>
+      <li><strong>Complexity</strong> — a one-caller abstraction, config nobody sets, a clever line a tired person would misread.</li>
+      <li><strong>Names and clarity.</strong> Suggesting a rename is the highest value per second in review.</li>
+    </ol></div>
+  <div class="b junior"><span class="k">How reviews go wrong</span>
+    <ul>
+      <li>Spending the review on formatting and import order — attention taken from points 1–4. Automate all of it.</li>
+      <li>Unlabelled comments, so twelve nits read as a rejection.</li>
+      <li>Rhetorical questions: "why didn't you use a transaction?" reads as an accusation. Text has no tone.</li>
+      <li>Blocking on preference, which makes the reviewer a bottleneck people route around.</li>
+      <li>Rewriting the change in comments instead of talking.</li>
+      <li>Approving a large generated diff nobody has read, because it looks tidy.</li>
+    </ul></div>
+  <div class="b"><span class="k">The PR description that makes review fast</span>
+    <p><strong>What changed · why · how to test · risks · rollback</strong> — plus what you deliberately did <em>not</em> do, and what a reviewer should look at hardest. Four or five sentences that make a review twice as good and half as long.</p>
+    <p><strong>Label every comment:</strong> blocking · suggestion · question · nit · praise. And if it is not blocking, do not block on it — approve with suggestions.</p>
+    <p><strong>Say the failure, the consequence, then a suggestion.</strong> "If the AI call fails after the report row is written, we're left with a report that has no predictions. Wrap both in a transaction?"</p>
+  </div>
+  <div class="b check"><span class="k">What a senior-level PR looks like</span>
+    <ul>
+      <li>Small enough to review properly, and one logical change.</li>
+      <li>A description that answers why, and names the risk.</li>
+      <li>Tests that would fail if the behaviour were wrong.</li>
+      <li>Migrations separated and reversible, or explicitly flagged as not.</li>
+      <li>Nothing in it the author could not explain.</li>
+    </ul></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="ops">
+  <span class="mn">Reference</span>
+  <h2>The operating principles</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The whole document, compressed to twelve lines</div>
+<pre><code>①  DEPENDENCIES POINT ONE WAY. Controller → service → data.
+②  THE DATA MODEL IS THE MOST PERMANENT DECISION. Design it
+   before creating it.
+③  ENFORCE IT WHERE EVERY PATH MUST PASS. A guard, a single
+   query helper, or a database constraint — never a convention.
+④  ⭐ EVERY ID FROM OUTSIDE IS A CLAIM, NOT A FACT.
+⑤  SHAPE THE RESPONSE PER REQUESTER. `select`, not `include`.
+⑥  ASSUME EVERY WRITE WILL BE RETRIED. Make it idempotent.
+⑦  TWO VERSIONS RUN AT ONCE. Expand, migrate, contract.
+⑧  MEASURE BEFORE OPTIMISING, AND AT REALISTIC VOLUME.
+⑨  FAIL LOUDLY. A swallowed error is a silent wrong number.
+⑩  LOG A CORRELATION ID, RETURN AN IDENTIFIER.
+⑪  ⭐ CAN IT BE TURNED OFF, AND CAN IT BE UNDONE? If not, say so
+   in the description.
+⑫  CLOSE THE CLASS, NOT THE INSTANCE. Move every fix one rung
+   up: comment → test → type → constraint.</code></pre>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The onboarding handbook</h4><p>If any topic here assumed knowledge you do not have — NestJS's lifecycle, Prisma's client, React's state rules — Volumes II and III teach them.</p></div>
+  <div class="card"><h4>Skill-upgrading, Volumes II–V</h4><p>The same subjects one altitude up: architecture and distributed systems, review and debugging as disciplines, delivery and operations.</p></div>
+  <div class="card"><h4>The Senior Reflex</h4><p>How to reason through coding, design, system-design and debugging problems, with no code at all. This document is the standard; that one is the method.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/senior-fullstack-best-practices/</code> — 12 files, 2,544 lines, with fuller code examples and a PR template.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A single-page edition of the senior full-stack best-practices
+  knowledge base, keeping the source's four-band structure for every topic: what a senior knows, the
+  junior anti-patterns, the practical patterns, and a checklist. It is deliberately opinionated —
+  intended to be usable as a team review standard rather than as a neutral survey.</p>
+  <p><strong>Currency.</strong> Backend port <code>3010</code>, and the Claude API rather than Groq.
+  Framework defaults move between major versions — confirm any default against the version in your
+  <code>package.json</code>.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

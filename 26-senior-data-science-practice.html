@@ -1,0 +1,834 @@
+<title>The Senior Data Science Standard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #4E5C1C;
+  --accent-soft: #EDF0DB;
+  --accent-deep: #313A11;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #4E5C1C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #AFC456;
+    --accent-soft: #1B1E0D;
+    --accent-deep: #C9DA80;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #AFC456;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #AFC456;
+  --accent-soft: #1B1E0D;
+  --accent-deep: #C9DA80;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #AFC456;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Senior Data Science</p>
+  <p class="rail-sub">The operating standard</p>
+  <span class="rail-vol">11 topics</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">The frame</div>
+  <a href="#shift"><span class="n">—</span>The mindset shift</a>
+
+  <div class="rail-group">I · Before modelling</div>
+  <a href="#t1"><span class="n">01</span>Problem framing</a>
+  <a href="#t2"><span class="n">02</span>Data hygiene &amp; leakage</a>
+  <a href="#t3"><span class="n">03</span>Experiment design</a>
+  <a href="#t4"><span class="n">04</span>Feature discipline</a>
+
+  <div class="rail-group">II · Modelling</div>
+  <a href="#t5"><span class="n">05</span>Modelling discipline</a>
+  <a href="#t6"><span class="n">06</span>Evaluation &amp; statistics</a>
+
+  <div class="rail-group">III · Production</div>
+  <a href="#t7"><span class="n">07</span>MLOps essentials</a>
+  <a href="#t8"><span class="n">08</span>LLM &amp; RAG practice</a>
+  <a href="#t9"><span class="n">09</span>Monitoring</a>
+
+  <div class="rail-group">IV · Standards</div>
+  <a href="#t10"><span class="n">10</span>The mistakes list</a>
+  <a href="#t11"><span class="n">11</span>Communication</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#ops"><span class="n">—</span>Operating principles</a>
+  <a href="#stack"><span class="n">—</span>The default stack</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Senior practice · data science · 11 topics</p>
+  <h1>The senior data science standard. <span class="thin">The discipline, not the algorithms.</span></h1>
+  <p class="lede">Eleven areas, each in the same four bands: what a senior knows, the anti-patterns
+  that mark a junior, the practical patterns, and a checklist. Almost none of it is about choosing a
+  model — because almost none of what goes wrong in data science is a modelling problem.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · you can train a model</span>
+    <span><b>Covers</b> · all 11 source files</span>
+    <span><b>Use as</b> · a project standard</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 28 documents</b><em>The index</em></a>
+<a class="vol" href="25-senior-fullstack-practice.html"><span class="vn">Full-stack</span><b>The senior full-stack standard</b></a>
+<div class="vol here"><span class="vn">Data science · here</span><b>The senior data science standard</b></div>
+<a class="vol" href="27-senior-data-science-strategy.html"><span class="vn">DS strategy</span><b>Problems before models</b></a>
+</div>
+
+<header class="mod" id="shift">
+  <span class="mn">The frame</span>
+  <h2>The mindset shift</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">A junior optimises</th><th>A senior optimises</th></tr></thead>
+  <tbody>
+    <tr><td>The metric</td><td><strong>The decision the metric is supposed to change</strong></td></tr>
+    <tr><td>Model accuracy</td><td>Whether the number is real, and whether anyone acts on it</td></tr>
+    <tr><td>Trying more algorithms</td><td><strong>Framing, data quality and features</strong> — where the gains actually are</td></tr>
+    <tr><td>Getting a good validation score</td><td>Whether the score survives a genuinely later time period</td></tr>
+    <tr><td>Finishing the notebook</td><td>Whether it can be reproduced, deployed and monitored</td></tr>
+    <tr><td>Answering the question asked</td><td>Finding the question that should have been asked</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="bad">
+  <span class="tag">The single most useful heuristic in this document</span>
+  <p><strong>A suspiciously good result is a bug report, not a celebration.</strong> 0.99 AUC on a
+  human-behaviour problem means you have leaked something — every time. The most damaging failures in
+  data science announce themselves as success, which is exactly why they survive to production.</p>
+</div>
+
+<header class="part" id="before">
+  <span class="pn">Part I</span>
+  <h2>Before modelling</h2>
+</header>
+
+<header class="mod" id="t1">
+  <span class="mn">Topic 01</span>
+  <h2>Problem framing</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>"Predict attrition" is not a problem statement.</strong> "Give a manager a ranked list of five people to talk to this month" is — and it dictates the metric, the threshold, the interface and the definition of done.</li>
+      <li><strong>The cost of a false positive and a false negative are almost never equal</strong>, and the ratio between them <em>is</em> the threshold decision. That is a business input, not a technical one.</li>
+      <li><strong>If a rule works, use the rule.</strong> Auditable, instant, free, explainable — and often nearly as accurate. Reaching for a model first is the most common framing failure.</li>
+      <li><strong>Ask what happens to the prediction.</strong> A model whose output nobody acts on has changed nothing, whatever its metrics say.</li>
+      <li><strong>Establish the baseline before anything else.</strong> "83% accurate" is meaningless if 95% of employees stay.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Starting from the available data rather than the decision — building what the dataset allows instead of what anyone needs.</li>
+      <li>Accepting a stakeholder's proposed solution as the requirement. Half of all requests are a solution wearing a requirement's costume.</li>
+      <li>No baseline, so there is nothing to compare against and no way to claim value.</li>
+      <li>Choosing accuracy on an imbalanced problem, which rewards predicting the majority class.</li>
+      <li>Solving the interesting problem when the actual bottleneck was that nobody can find last year's reviews.</li>
+    </ul></div>
+  <div class="b"><span class="k">The kickoff checklist</span>
+    <ul>
+      <li>What decision changes, and who makes it?</li>
+      <li>What happens today, without this?</li>
+      <li>Which error costs more, and roughly by how much?</li>
+      <li>What is the baseline, and what would "good enough to act on" be?</li>
+      <li>Would a rule or a report solve 80% of this?</li>
+      <li>What does the person see, and what do they do next?</li>
+    </ul></div>
+  <div class="b check"><span class="k">Before you write any code</span>
+    <p>You can state the problem, the decision, the baseline, the metric and the cost asymmetry in
+    five sentences — and someone who is not an engineer has agreed with them.</p>
+  </div>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Topic 02 · the one that ends projects</span>
+  <h2>Data hygiene and leakage</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Leakage is information in training that will not exist at prediction time.</strong> It produces excellent validation scores and a model that fails in production — and because the symptom is <em>success</em>, nobody investigates.</li>
+      <li><strong>The test:</strong> would this value have existed, with this value, at the moment I need the prediction? Applied to every feature, explicitly.</li>
+      <li><strong>Split first, transform second.</strong> A scaler, an imputation median or an encoder fitted on all the data has leaked the test set into training.</li>
+      <li><strong>Time-ordered data is never split randomly</strong> — that is predicting the past from the future.</li>
+      <li><strong>Missingness has a mechanism.</strong> If the unhappiest employees skip the survey, imputing their satisfaction biases the result, and the fact that it is missing is itself information.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li><strong>The classic in HR data:</strong> <code>exit_interview_completed</code>, <code>handover_uploaded</code>, <code>access_revoked_date</code> as features. Perfect predictors, all known only <em>after</em> the decision.</li>
+      <li>Group leakage — the same employee in train and test, so the model memorises the person.</li>
+      <li>An aggregate feature ("team attrition rate") computed over the whole period, including the outcome of the row you are predicting.</li>
+      <li>Target encoding computed outside the training folds.</li>
+      <li>Filling missing values with the mean and never recording that they were missing.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>A pipeline object</strong> that holds preprocessing and model together, fitted as one thing and applied as one thing. It makes contamination structurally difficult rather than merely discouraged.</p>
+    <p><strong>A <code>was_missing</code> flag for every imputed column.</strong> An imputed value that looks measured is worse than a null, because nobody downstream can tell — and the flag is often predictive in its own right.</p>
+    <p><strong>Validate on a genuinely later time period</strong> before trusting anything.</p>
+  </div>
+  <div class="b check"><span class="k">Before you trust a score</span>
+    <ul>
+      <li>Did I split before fitting any transformation?</li>
+      <li>For each feature: known at prediction time?</li>
+      <li>Does one feature dominate importance absurdly? That is usually leakage, not a discovery.</li>
+      <li>Are duplicates removed <em>before</em> splitting?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Topic 03</span>
+  <h2>Experiment design</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Significant, material and stable are three different questions</strong> that people collapse into one. With enough data almost everything is significant; only some of it is worth acting on, and less of it is still there next month.</li>
+      <li><strong>Decide what you will test before looking.</strong> Testing twenty things guarantees roughly one false positive at the conventional threshold.</li>
+      <li><strong>Effect size is the number a decision can use.</strong> "Significant at p&nbsp;&lt;&nbsp;0.01" is not actionable; "three percentage points, about eleven people, roughly £40,000 of replacement cost" is.</li>
+      <li><strong>Regression to the mean manufactures fake wins.</strong> Target the worst-performing teams, intervene, measure again — they improve, and so would they have without you.</li>
+      <li><strong>A holdout group matters even when it feels unnecessary</strong>, because without one you cannot claim the effect and someone will ask you to.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Slicing until something looks dramatic, in cells of nine people.</li>
+      <li>Stopping a test as soon as it reaches significance — which biases the result upward.</li>
+      <li>Reporting a p-value as the probability the effect is real, which it is not.</li>
+      <li>Claiming causation from observational data because the correlation is strong.</li>
+      <li>No control group, then attributing an improvement to the intervention.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Write the analysis plan first</strong> — the metric, the split, the duration, the stopping rule, the subgroups you will look at. Then run it.</p>
+    <p><strong>Always name the four alternatives to causation:</strong> reverse direction, a confounder, selection in the data, chance. Being able to rule them out — or admit you cannot — is the whole of causal honesty.</p>
+    <p><strong>Report the range, not the point.</strong> "0.81 ± 0.02" is a result; "0.81" alone may be luck.</p>
+  </div>
+  <div class="b check"><span class="k">Before you report a finding</span>
+    <ul>
+      <li>How big is the sample in the smallest cell I am quoting?</li>
+      <li>Did I decide this comparison before or after seeing the data?</li>
+      <li>Have I stated the effect size in units the business uses?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Topic 04</span>
+  <h2>Feature engineering discipline</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Better features beat a better model, almost always.</strong> Swapping random forest for gradient boosting might buy a point; a feature that encodes something the model could not otherwise see can buy ten.</li>
+      <li><strong>Ratios and differences carry more than raw values.</strong> Salary relative to the department median encodes "underpaid for peers"; salary alone does not.</li>
+      <li><strong>Trees do not need scaling; distance-based methods and networks do.</strong> Which is why you will not see scaling in an XGBoost pipeline, and its absence is not an oversight.</li>
+      <li><strong>Fewer features is often better</strong> — drop near-constants, drop one of any highly correlated pair, drop anything you cannot explain.</li>
+      <li><strong>In this domain, some features are excluded deliberately:</strong> protected attributes <em>and their proxies</em> — postcode, school, working pattern, career gaps.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Generating hundreds of automated features nobody can interpret, then being unable to explain a prediction.</li>
+      <li>Encoding categories as 1..50, inventing an ordering the model will happily use.</li>
+      <li>One-hot encoding a 400-value column and wondering why training slowed down.</li>
+      <li>Computing a feature differently in the notebook and in the serving code — training/serving skew, which degrades production quality for no visible reason.</li>
+      <li>Binning a variable, throwing away information, because a chart looked nicer.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Write the feature logic once, in one module, and call it from both training and serving.</strong> That is 95% of what a feature store buys, for none of the cost.</p>
+    <p><strong>Aggregate features exclude the row itself</strong>, or you have leaked the target.</p>
+    <p><strong>Domain knowledge is the highest-yield source of features</strong> — one conversation with an HR business partner about why people actually leave beats a week of automated generation.</p>
+  </div>
+  <div class="b check"><span class="k">Before you add a feature</span>
+    <ul>
+      <li>Known at prediction time?</li>
+      <li>Can I explain what it means to a stakeholder?</li>
+      <li>Is it computed identically in training and serving?</li>
+      <li>Is it a proxy for something I deliberately excluded?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="modelling">
+  <span class="pn">Part II</span>
+  <h2>Modelling</h2>
+</header>
+
+<header class="mod" id="t5">
+  <span class="mn">Topic 05</span>
+  <h2>Modelling discipline</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Start with logistic regression.</strong> It is the baseline and sometimes the answer — fast, calibrated, and its coefficients can be explained to a person whose job is affected.</li>
+      <li><strong>On tabular data, gradient boosting wins.</strong> Not deep learning. It trains in seconds, tells you which features mattered, and beats neural networks on this shape of problem consistently.</li>
+      <li><strong>Bagging cuts variance; boosting cuts bias.</strong> Being able to say which one you need, and why, is the difference between choosing and guessing.</li>
+      <li><strong>The train–test gap is the diagnosis.</strong> Both low means underfitting; train high and test much lower means overfitting; test <em>higher</em> than train is suspicious and usually a leak.</li>
+      <li><strong>Interpretability can be the correct engineering choice</strong> even at slightly lower accuracy, when the decision affects someone's employment.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Reaching for deep learning on a few thousand tabular rows — slower, worse, and less explainable.</li>
+      <li>Tuning hyperparameters against the test set, then reporting that score as if it were held out.</li>
+      <li>Two hundred tuning trials selected on one validation split, which finds the configuration that suits that split.</li>
+      <li>Stacking five models for half a point of AUC that nobody can maintain or explain.</li>
+      <li>No early stopping on a boosted model, so it overfits quietly.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Baseline → logistic regression → gradient boosting → stop.</strong> The gap between the second and third tells you whether extra complexity buys anything at all.</p>
+    <p><strong>Cross-validation for the spread, not just the mean.</strong> 0.81 ± 0.15 means your single number was luck.</p>
+    <p><strong>Keep a test set the tuning never touched</strong>, and treat the tuned score as optimistic until it agrees.</p>
+  </div>
+  <div class="b check"><span class="k">Before you call a model done</span>
+    <ul>
+      <li>Does it beat the baseline, and by how much in business terms?</li>
+      <li>How many times have I looked at the test set?</li>
+      <li>Can I explain a single prediction to the person it concerns?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t6">
+  <span class="mn">Topic 06</span>
+  <h2>Evaluation and statistics</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Never accuracy on imbalanced data.</strong> Predict "stays" for everyone and score 95% while being useless.</li>
+      <li><strong>PR-AUC, not ROC-AUC, when the positive class is rare</strong> — ROC looks flatteringly high because true negatives are abundant.</li>
+      <li><strong>The precision/recall trade is a business decision, not a technical one.</strong> Which error costs more sets the threshold, and leaving it at 0.5 is not neutral — it is an unexamined choice.</li>
+      <li><strong>Calibration matters whenever a human reads the number.</strong> If the model says 0.7, do 70% of those people actually leave?</li>
+      <li><strong>The base-rate trap:</strong> a model catching 90% of leavers and wrongly flagging 10% of stayers, on a 5% base rate, is right about 32% of the people it flags. Nothing is wrong with it — the rare event does that.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Reporting F1 alone, which hides which side you are failing on.</li>
+      <li>Quoting R² without context, or being pleased when it rises after adding features.</li>
+      <li>Comparing models on different splits, or on a metric that was not agreed in advance.</li>
+      <li>Presenting a probability as a certainty — "will leave" rather than "worth a conversation".</li>
+      <li>Evaluating only in aggregate, so a model that works well for one group and badly for another looks fine.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Always report against the baseline</strong>, in one table, on one split, with the metric named in advance.</p>
+    <p><strong>Evaluate per subgroup, always.</strong> An overall 0.72 can be 0.75 for one group and 0.51 for another, and the single number will never tell you.</p>
+    <p><strong>Translate the metric into consequences:</strong> "of the ten people it flags, about three would have left" is a sentence a manager can act on.</p>
+  </div>
+  <div class="b check"><span class="k">Before you present a number</span>
+    <ul>
+      <li>Is this metric right for the base rate?</li>
+      <li>What is it compared against?</li>
+      <li>Have I checked it per subgroup?</li>
+      <li>If a human sees the probability, is it calibrated?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="production">
+  <span class="pn">Part III</span>
+  <h2>Production</h2>
+</header>
+
+<header class="mod" id="t7">
+  <span class="mn">Topic 07</span>
+  <h2>MLOps essentials</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>An ML system can fail without failing.</strong> Nothing errors, latency is fine, the dashboard is green — and the predictions have become worthless because the world moved. No ordinary monitoring catches that.</li>
+      <li><strong>Behaviour comes from code <em>and</em> data</strong>, so it can break with nobody changing anything.</li>
+      <li><strong>Reproducibility requires the data version</strong>, not just the commit. Without a snapshot identifier, "why did the metrics change?" is unanswerable.</li>
+      <li><strong>Save the pipeline, not the model</strong> — the preprocessing is part of the model — along with library versions, feature order and the metrics it achieved.</li>
+      <li><strong>Rolling back a model must be as fast as rolling back code.</strong></li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>A model artefact with no record of which code, data or parameters produced it.</li>
+      <li>Preprocessing reimplemented in the serving code, so it drifts from training.</li>
+      <li>No gate on registration, so a run that completed replaces a better model.</li>
+      <li>Retraining on a schedule without validating the input data first — a broken upstream load silently produces a model trained on garbage, and every step reports success.</li>
+      <li>A notebook as the deployment artefact.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Three separate pipelines:</strong> code CI, training (with an automatic gate — do not register a model that does not beat the incumbent on the held-out set), and deployment. Training and deploying are different decisions with different risk.</p>
+    <p><strong>Validate the data before training:</strong> schema unchanged, row count in range, no column suddenly 90% null, distributions roughly where they were.</p>
+    <p><strong>Shadow mode</strong> — the new model predicts, its output is logged and unused. Real traffic, zero risk, and the most under-used deployment option there is.</p>
+  </div>
+  <div class="b check"><span class="k">Before a model serves anyone</span>
+    <ul>
+      <li>Can I reproduce this exact model from recorded inputs?</li>
+      <li>Is the preprocessing the same object in training and serving?</li>
+      <li>Which version is live, and what do I roll back to?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t8">
+  <span class="mn">Topic 08</span>
+  <h2>LLM and RAG practice</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>The deterministic system computes; the model narrates.</strong> Calculate the number where it is reproducible and auditable, and let the model write the sentence around it — then the worst hallucination is a clumsy sentence rather than a wrong figure.</li>
+      <li><strong>Hallucination is structural.</strong> The model produces plausible continuations with no truth flag and no reliable "I don't know". You cannot prompt it away; you engineer around it.</li>
+      <li><strong>Most bad output is missing context, not bad wording.</strong> The right context is the biggest lever by a wide margin; rewording is the smallest.</li>
+      <li><strong>A schema is a hallucination control</strong> — an enum of seven values cannot become an eighth. It removes a failure mode rather than reducing it.</li>
+      <li><strong>When RAG is wrong there are four possible causes</strong> — coverage, recall, precision, faithfulness — and you must be able to tell them apart. Without that split, teams tune chunk size for weeks when the document was never ingested.</li>
+      <li><strong>Prompt injection is defended by the trust boundary</strong>, in code, never by an instruction in the prompt.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Asking the model to do arithmetic, or to produce a number that will be read as fact.</li>
+      <li>Free-text output where a schema was possible, so nothing downstream can be validated.</li>
+      <li>Building RAG before checking whether the corpus fits in a cached prompt.</li>
+      <li>Chunks with no document title or section heading — "…must be approved by HR" is useless without knowing which policy.</li>
+      <li>Fine-tuning to add facts. Facts in weights are uncitable, stale on change and unverifiable.</li>
+      <li>No eval set, so nobody dares touch the prompt and a superstition stays frozen in production.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Twenty graded examples in a file, run on every prompt, model or retrieval change.</strong> A day's work, and it is the difference between engineering and vibes.</p>
+    <p><strong>Assert the citations:</strong> if the model cites chunk ids, check each was actually in the context. A dozen lines that convert an invisible failure into a caught one.</p>
+    <p><strong>Read the fully rendered prompt</strong> when output is bad — the actual bytes, every variable interpolated. A surprising share of prompt bugs are visible immediately.</p>
+  </div>
+  <div class="b check"><span class="k">Before an AI feature ships</span>
+    <ul>
+      <li>Does any number in the output come from the model rather than from a computation?</li>
+      <li>Is the output shape constrained?</li>
+      <li>Is there an eval set, and does it run automatically?</li>
+      <li>Could a hostile document in the context cause an action the user could not perform themselves?</li>
+    </ul></div>
+</div>
+
+<header class="mod" id="t9">
+  <span class="mn">Topic 09</span>
+  <h2>Monitoring in production</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Four layers, and most teams monitor only the first:</strong> the service, the inputs, the outputs, and the outcomes.</li>
+      <li><strong>Data drift is detectable immediately and without labels</strong> — which makes it the most valuable monitor you can add. A reorganisation changes every department code and the model degrades silently.</li>
+      <li><strong>Concept drift is only visible once outcomes arrive</strong>, which for attrition is months later. So accuracy is always measured in arrears, and input drift is your only early warning.</li>
+      <li><strong>Prediction distribution shifts are a cheap alarm:</strong> suddenly 40% high-risk where it was 8% means something upstream changed.</li>
+      <li><strong>A model that changes behaviour poisons its own training data.</strong> Managers act on flags, so future data reflects the interventions — and the model appears to get worse precisely when it is working.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Monitoring only latency and error rate, so a silently wrong model looks perfectly healthy.</li>
+      <li>Retraining automatically on data shaped by the model's own predictions, with no holdout that was not acted on.</li>
+      <li>No alert on the prediction distribution, so a broken feature pipeline shows up in a quarterly review.</li>
+      <li>No owner and no review date — launched, celebrated, unowned, quietly wrong six months later.</li>
+    </ul></div>
+  <div class="b"><span class="k">The patterns</span>
+    <p><strong>Log every prediction with its model version and its inputs</strong>, so "why did this score change?" is answerable — and someone will ask.</p>
+    <p><strong>Keep a holdout that is never acted upon</strong>, or record which predictions were acted on, so you can still measure the model rather than your own interventions.</p>
+    <p><strong>An owner and a review date for every deployed model.</strong> A model nobody owns is a liability with a good reputation.</p>
+  </div>
+  <div class="b check"><span class="k">Before you call it live</span>
+    <ul>
+      <li>Would I notice input drift within a week?</li>
+      <li>Can I answer "which model produced this prediction"?</li>
+      <li>Who owns this, and when is it next reviewed?</li>
+    </ul></div>
+</div>
+
+<header class="part" id="standards">
+  <span class="pn">Part IV</span>
+  <h2>Standards</h2>
+</header>
+
+<header class="mod" id="t10">
+  <span class="mn">Topic 10</span>
+  <h2>The mistakes list, by area</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Problem framing</h4><p>Starting from the data · no baseline · accepting the proposed solution · no cost asymmetry · building a model where a rule works.</p></div>
+  <div class="card"><h4>Data hygiene &amp; leakage</h4><p>Post-outcome features · fitting transforms before splitting · random splits on time data · group leakage · imputing without a flag.</p></div>
+  <div class="card"><h4>Modelling</h4><p>Deep learning on small tabular data · tuning on the test set · no early stopping · ensembles nobody can maintain.</p></div>
+  <div class="card"><h4>Evaluation</h4><p>Accuracy on imbalanced data · ROC-AUC on a rare class · F1 alone · no subgroup breakdown · threshold left at 0.5.</p></div>
+  <div class="card"><h4>Code quality</h4><p>Logic only in notebooks · cells run out of order · no functions · hardcoded paths · outputs committed with real data in them.</p></div>
+  <div class="card"><h4>MLOps</h4><p>No data version · preprocessing duplicated in serving · no registration gate · no rollback · a notebook as the artefact.</p></div>
+  <div class="card"><h4>LLM / RAG</h4><p>Model-produced numbers · free text where a schema fits · RAG before checking the context window · chunks without titles · no eval set.</p></div>
+  <div class="card"><h4>Ethics &amp; fairness</h4><p>Proxies left in · no subgroup evaluation · no explanation · no human override · aggregates below a safe cell size.</p></div>
+  <div class="card"><h4>Communication</h4><p>Leading with method · quoting metrics instead of consequences · no recommendation · hiding uncertainty · no written record.</p></div>
+  <div class="card"><h4>Mindset</h4><p>Celebrating a suspiciously good score · optimising the metric instead of the decision · finishing the notebook and calling it done.</p></div>
+</div>
+
+<header class="mod" id="t11">
+  <span class="mn">Topic 11</span>
+  <h2>Communication and stakeholders</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">What a senior knows</span>
+    <ul>
+      <li><strong>Answer first.</strong> The conclusion goes at the top. Engineers write chronologically — context, method, findings, conclusion — which is the order they discovered it in and the wrong order to read it in.</li>
+      <li><strong>Nobody outside the team cares about the model metric.</strong> "PR-AUC improved to 0.71" answers no business question; "of the ten people it flags, about three would have left" does.</li>
+      <li><strong>State the uncertainty yourself.</strong> It is more credible than having it found for you, and it is how you are trusted with the next decision.</li>
+      <li><strong>Give a recommendation.</strong> Presenting options with no recommendation is abdication dressed as neutrality — you have the most information in the room.</li>
+      <li><strong>The override rate is your best feedback signal.</strong> Consistently high overrides mean the model is wrong or the interface is not trusted, and nobody will say so in a survey.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Anti-patterns</span>
+    <ul>
+      <li>Presenting the journey — data cleaning, the models tried, the tuning — instead of the answer.</li>
+      <li>A confusion matrix on a slide for a non-technical audience.</li>
+      <li>False certainty to end a conversation quickly. "I don't know yet, I'll know by Wednesday" is a complete answer.</li>
+      <li>Overclaiming causation because the stakeholder wants a cause.</li>
+      <li>No written record, so the finding is re-litigated in three months.</li>
+    </ul></div>
+  <div class="b"><span class="k">The memo structure</span>
+    <p><strong>Bottom line · context · findings · risks · what I propose · what I need answered.</strong>
+    Six headings. A busy reader can act correctly after the first one, and the last one turns a report
+    into a decision.</p>
+    <p><strong>One chart, annotated.</strong> A line on the chart saying "reorganisation" where the
+    step change is explains more than any amount of styling — and it travels with the screenshot,
+    which is how the chart will actually be seen.</p>
+  </div>
+  <div class="b check"><span class="k">Before you send it</span>
+    <ul>
+      <li>Can someone read only the first paragraph and act correctly?</li>
+      <li>Is every number in the units the business uses?</li>
+      <li>Have I said what I recommend, and what I am not claiming?</li>
+    </ul></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="ops">
+  <span class="mn">Reference</span>
+  <h2>The operating principles</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The whole document, compressed to eleven lines</div>
+<pre><code>①  ⭐ FRAME THE DECISION, NOT THE PREDICTION. What changes, who
+   acts, and which error costs more.
+②  ESTABLISH THE BASELINE FIRST. A metric without one is a
+   number without a meaning.
+③  IF A RULE WORKS, USE THE RULE.
+④  SPLIT FIRST, TRANSFORM SECOND. Always.
+⑤  ⭐ FOR EVERY FEATURE: WOULD THIS HAVE BEEN KNOWN AT
+   PREDICTION TIME?
+⑥  A SUSPICIOUSLY GOOD RESULT IS A BUG REPORT.
+⑦  MATCH THE METRIC TO THE BASE RATE, AND EVALUATE PER
+   SUBGROUP.
+⑧  THE THRESHOLD IS A BUSINESS DECISION. Do not leave it at
+   the default and call that neutral.
+⑨  THE DETERMINISTIC SYSTEM COMPUTES; THE MODEL NARRATES.
+⑩  ⭐ VERSION THE DATA, NOT JUST THE CODE — or nothing is
+   reproducible.
+⑪  ANSWER FIRST, IN THEIR UNITS, WITH A RECOMMENDATION.</code></pre>
+</div>
+
+<header class="mod" id="stack">
+  <span class="mn">Reference</span>
+  <h2>The default stack</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:26%">Layer</th><th>The sensible default, and why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Language</strong></td><td>Python. The ecosystem is the reason, and it is a sufficient one.</td></tr>
+    <tr><td><strong>Data handling</strong></td><td>pandas for exploration; a columnar format (Parquet) for storage, because CSV is untyped and uncompressed.</td></tr>
+    <tr><td><strong>Tabular models</strong></td><td>scikit-learn for baselines and pipelines; XGBoost or a peer for the real model.</td></tr>
+    <tr><td><strong>Pipelines</strong></td><td>A scikit-learn <code>Pipeline</code> object — preprocessing and model as one fitted artefact. The structural defence against leakage.</td></tr>
+    <tr><td><strong>Tracking</strong></td><td>Any experiment tracker, from day one. It solves "which run produced this?" for almost no commitment.</td></tr>
+    <tr><td><strong>Serving</strong></td><td>FastAPI with the pipeline loaded once at startup — and inference in a plain <code>def</code>, not an <code>async def</code>, because it is CPU-bound.</td></tr>
+    <tr><td><strong>LLM access</strong></td><td>A provider API behind an adapter, so switching is one file. Plus an eval set, which is not optional.</td></tr>
+    <tr><td><strong>Batch over real-time</strong></td><td>Wherever the prediction is not needed at the moment of the request. Cheaper, simpler, easier to audit.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>Problems Before Models</h4><p>The companion strategy document — how to translate a business sentence into a problem type, plan a project, and eight domain playbooks including HR and supply chain.</p></div>
+  <div class="card"><h4>Skill-upgrading, Volume VII</h4><p>MLOps, data engineering, AI product thinking and responsible AI at more length, including the fairness-metric incompatibility result.</p></div>
+  <div class="card"><h4>The data science set</h4><p>Foundations, guide, cheat sheet and interview — if a topic here assumed something you have not met.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/senior-data-science-best-practices/</code> — 11 files, 2,219 lines, with fuller code and templates.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A single-page edition of the senior data science best-practices
+  knowledge base, keeping the source's four-band structure per topic. Deliberately opinionated, and
+  weighted toward the failures that actually end projects — framing, leakage and evaluation — rather
+  than toward algorithm selection.</p>
+  <p><strong>Currency.</strong> The LLM provider for this project is the Claude API. Library
+  behaviour changes between versions; confirm any default against your <code>requirements.txt</code>.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>

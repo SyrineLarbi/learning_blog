@@ -1,0 +1,1081 @@
+<title>Problems Before Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #7B2D26;
+  --accent-soft: #F8E7E4;
+  --accent-deep: #551A15;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #7B2D26;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #DFA096;
+    --accent-soft: #26120F;
+    --accent-deep: #EEBDB6;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #DFA096;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #DFA096;
+  --accent-soft: #26120F;
+  --accent-deep: #EEBDB6;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #DFA096;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 16.5px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Problems Before Models</p>
+  <p class="rail-sub">Senior DS strategy</p>
+  <span class="rail-vol">14 topics</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+
+  <div class="rail-group">I · The framework</div>
+  <a href="#t1"><span class="n">01</span>How a senior thinks</a>
+  <a href="#t2"><span class="n">02</span>Translation</a>
+  <a href="#t3"><span class="n">03</span>The problem taxonomy</a>
+  <a href="#t4"><span class="n">04</span>Planning</a>
+  <a href="#t5"><span class="n">05</span>Choosing the approach</a>
+  <a href="#t6"><span class="n">06</span>System design</a>
+  <a href="#t7"><span class="n">07</span>Measuring success</a>
+  <a href="#t8"><span class="n">08</span>When not to use ML</a>
+
+  <div class="rail-group">II · Domain playbooks</div>
+  <a href="#d1"><span class="n">09</span>How to read these</a>
+  <a href="#d2"><span class="n">10</span>Sales &amp; revenue</a>
+  <a href="#d3"><span class="n">11</span>E-commerce &amp; retail</a>
+  <a href="#d4"><span class="n">12</span>Marketing &amp; growth</a>
+  <a href="#d5"><span class="n">13</span>Science &amp; chemistry</a>
+  <a href="#d6"><span class="n">14</span>Finance &amp; risk</a>
+  <a href="#d7"><span class="n">15</span>Supply chain &amp; ops</a>
+  <a href="#d8"><span class="n">16</span>Healthcare</a>
+  <a href="#d9"><span class="n">17</span>HR &amp; people analytics</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#master"><span class="n">—</span>What kind of problem is this?</a>
+  <a href="#next"><span class="n">—</span>What next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Senior practice · data science strategy · 14 topics</p>
+  <h1>Problems before models. <span class="thin">Translation is the whole job.</span></h1>
+  <p class="lede">A business says a sentence. Your job is to turn it into a problem type, an approach,
+  a target and a system — and sometimes into a decision not to build anything. Part I is that method.
+  Part II is eight domain playbooks, because the method is generic and the vocabulary is not.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · you can build models</span>
+    <span><b>Covers</b> · all 14 source files</span>
+    <span><b>Part II</b> · 8 domains, same 8 questions each</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All 28 documents</b><em>The index</em></a>
+<a class="vol" href="25-senior-fullstack-practice.html"><span class="vn">Full-stack</span><b>The senior full-stack standard</b></a>
+<a class="vol" href="26-senior-data-science-practice.html"><span class="vn">Data science</span><b>The senior data science standard</b></a>
+<div class="vol here"><span class="vn">DS strategy · here</span><b>Problems before models</b></div>
+</div>
+
+<header class="part" id="framework">
+  <span class="pn">Part I</span>
+  <h2>The framework</h2>
+  <p class="lede">How a senior gets from a vague request to a defensible plan — and the five questions
+  they ask before touching data.</p>
+</header>
+
+<header class="mod" id="t1">
+  <span class="mn">Strategy 01</span>
+  <h2>How a senior thinks</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:44%">The beginner's mental model</th><th>Why it is incomplete</th></tr></thead>
+  <tbody>
+    <tr><td>"Data science is building models that predict things."</td><td>Most of the value is in <strong>deciding what to predict</strong>, and a large share of good outcomes involve no model at all.</td></tr>
+    <tr><td>"Better accuracy is better work."</td><td>Accuracy that changes no decision is worth nothing. A worse model that is acted on beats a better one that is not.</td></tr>
+    <tr><td>"The stakeholder tells me the problem."</td><td>They tell you a <em>symptom</em>, usually phrased as a solution. Translating it is the skill.</td></tr>
+    <tr><td>"Done means the model works."</td><td>Done means the decision improved, and someone can still tell in six months.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="sheet">
+  <div class="cap">The five questions before touching data</div>
+<pre><code>①  WHAT DECISION CHANGES, AND WHO MAKES IT?
+   ⭐ if you cannot name the person and the moment, there is no
+     project yet — there is an interest.
+
+②  WHAT HAPPENS TODAY, WITHOUT THIS?
+   the current workaround is the baseline AND the specification.
+   It is usually more honest than the request.
+
+③  WHICH ERROR COSTS MORE, AND ROUGHLY BY HOW MUCH?
+   this sets the metric and the threshold. It is a business
+   input, and asking for it is not a technicality.
+
+④  WHAT WOULD "GOOD ENOUGH TO ACT ON" LOOK LIKE?
+   ⭐ A TARGET AGREED BEFORE YOU START IS THE ONLY DEFENCE
+     AGAINST ENDLESS ITERATION. Without it, every result invites
+     "can you make it better?"
+
+⑤  WHAT IS THE SIMPLEST THING THAT COULD WORK?
+   a rule, a report, a filtered view. If it solves 80%, the
+   model needs to justify the other 20% plus its permanent
+   maintenance cost.
+
+⭐ AND THE MENTAL MODELS A SENIOR REASONS WITH
+  · THE COMPLEXITY LADDER — rules → statistics → classical ML →
+    deep learning → LLM. Climb only when the rung below fails,
+    and be able to say why it failed.
+  · BASE RATES — a rare event makes even a good model mostly
+    false-positive, and that must be in the framing.
+  · COST ASYMMETRY — the threshold is a business decision.
+  · FEEDBACK LOOPS — acting on predictions changes the data you
+    will later train on.
+  · ⭐ VALUE = ACCURACY × ADOPTION × FREQUENCY. A brilliant model
+    used once a quarter by one person is worth less than a crude
+    one used daily by eleven.</code></pre>
+</div>
+
+<header class="mod" id="t2">
+  <span class="mn">Strategy 02</span>
+  <h2>Translation — the whole job</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">The discovery interview, and worked translations</div>
+<pre><code>WHAT TO ASK, IN ORDER
+  ①  "Walk me through what you do today."       ⭐ start here
+  ②  "What decision do you make with it?"
+  ③  "What does it cost you when it goes wrong — in either
+      direction?"
+  ④  "How often does this happen?"
+  ⑤  "What would you do differently if you knew X?"
+  ⑥  "Who else is affected?"     ⭐ in HR, the employee — and
+      they are usually not in the room
+  ⑦  "What have you already tried?"
+
+⭐ QUESTION ⑤ IS THE ONE THAT PRODUCES THE PROJECT. If the
+  answer is "nothing, really", you have found out early that
+  there is no decision to improve.
+
+WORKED TRANSLATIONS — sentence to problem
+
+  "We're losing too many good people."
+  ⇒ SYMPTOM. Decision: who does a manager talk to this month?
+    ⇒ RANKING problem, not classification. Top-k per manager,
+      evaluated on precision at k, with a monthly cadence.
+    ⚠ NOT "predict who will leave" — nobody acts on a list of
+      400 probabilities.
+
+  "We want to know why people leave."
+  ⇒ ⭐ A DIFFERENT PROBLEM ENTIRELY: explanation, not
+    prediction. A predictive model's feature importances are
+    not causes. This wants analysis, possibly a survey, and
+    honest language about association.
+
+  "Can you predict next quarter's headcount?"
+  ⇒ FORECASTING, with a horizon and an interval — and the
+    decision is a hiring plan, so the interval matters more
+    than the point estimate.
+
+  "Automate CV screening."
+  ⇒ ⚠ STOP. Advisory or decisive? If it filters, this is a
+    decision about employment: fairness, explainability,
+    records and an appeal path, at a completely different bar.
+
+⭐ THE TRANSLATION CHECKLIST
+  □  I can state the problem type in one phrase
+  □  I can name the decision and the decision-maker
+  □  I know the cost asymmetry
+  □  I know the cadence — real-time, daily, monthly
+  □  I know what "good enough" is
+  □  I have said out loud what I am NOT solving</code></pre>
+</div>
+
+<header class="mod" id="t3">
+  <span class="mn">Strategy 03</span>
+  <h2>The problem taxonomy</h2>
+  <p class="lede">Your core vocabulary. Naming the type correctly settles the model class, the metric
+  and the evaluation in one move.</p>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">Type</th><th style="width:28%">The question</th><th>Metric family, and the trap</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Binary classification</strong></td><td>Will this happen?</td><td>PR-AUC on a rare class; precision/recall at a chosen threshold. <strong>Trap:</strong> accuracy on imbalanced data.</td></tr>
+    <tr><td><strong>Multiclass</strong></td><td>Which of these categories?</td><td>Per-class recall, and a confusion matrix. <strong>Trap:</strong> a macro average hiding one terrible class.</td></tr>
+    <tr><td><strong>Ranking / top-k</strong></td><td>Who should I attend to first?</td><td>Precision@k, NDCG. <strong>Trap:</strong> optimising a global metric when only the top ten are ever seen.</td></tr>
+    <tr><td><strong>Regression</strong></td><td>How much?</td><td>MAE in real units; RMSE if large errors hurt more. <strong>Trap:</strong> R² quoted with no context.</td></tr>
+    <tr><td><strong>Forecasting</strong></td><td>How much, over time?</td><td>Backtested error by horizon, with intervals. <strong>Trap:</strong> random splits, and ignoring seasonality.</td></tr>
+    <tr><td><strong>Clustering / segmentation</strong></td><td>What natural groups exist?</td><td>No accuracy score. <strong>Trap:</strong> clustering always returns clusters — validation is whether a domain expert finds them meaningful.</td></tr>
+    <tr><td><strong>Anomaly detection</strong></td><td>What is unusual here?</td><td>Precision at the alert volume you can actually review. <strong>Trap:</strong> forgetting that anomalies are rare by definition, so precision will be low.</td></tr>
+    <tr><td><strong>Recommendation</strong></td><td>What should we show next?</td><td>Online metrics beat offline ones. <strong>Trap:</strong> popularity bias, and a feedback loop that narrows what anyone ever sees.</td></tr>
+    <tr><td><strong>Causal / uplift</strong></td><td>Will the intervention help <em>this</em> person?</td><td>Needs an experiment or a careful design. <strong>Trap:</strong> using a predictive model to answer it.</td></tr>
+    <tr><td><strong>Optimisation</strong></td><td>What is the best allocation?</td><td>Objective value against constraints. <strong>Trap:</strong> predicting when you should be optimising — a forecast is an input, not the decision.</td></tr>
+    <tr><td><strong>Extraction / NLP</strong></td><td>What does this text say?</td><td>Field-level accuracy; a schema. <strong>Trap:</strong> free-text output that nothing can validate.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The distinction people most often get wrong</span>
+  <p><strong>Prediction versus causation versus optimisation.</strong> "Who will leave" is prediction.
+  "Would a raise stop them" is causal. "Given a fixed retention budget, who should get one" is
+  optimisation — and it needs the causal answer, not the predictive one.</p>
+  <p>Most attrition projects are asked as prediction, are acted on as if they were causal, and would
+  be most valuable as optimisation. Naming which one you are actually doing is a senior act.</p>
+</div>
+
+<header class="mod" id="t4">
+  <span class="mn">Strategy 04</span>
+  <h2>Planning and roadmapping</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">How to start, and how to not run forever</div>
+<pre><code>⭐ START WITH THE THINNEST END-TO-END SLICE, NOT WITH THE DATA.
+  get a crude prediction in front of one real user in two weeks,
+  however embarrassing. ⇒ IT EXPOSES EVERY INTEGRATION PROBLEM,
+  every missing field and every permission question while they
+  are still cheap.
+  ⚠ THE COMMON ALTERNATIVE — three weeks of exploration, then
+    three weeks of modelling, then discovering the data you need
+    is not collected — is how projects die at week seven.
+
+THE LIFECYCLE, AS A PLANNING SKELETON
+  frame → assess the data → thin slice → baseline → iterate →
+  validate → ship → monitor → realise value
+
+TIME-BOXING, WHICH IS THE PART THAT MATTERS
+  · a SPIKE for anything unknown: "two days to find out whether
+    the exit-interview data is usable", then estimate
+  · ⭐ AN EXPLICIT DECISION POINT: "if we cannot beat the
+    baseline by X after two weeks, we stop." Agreed in advance,
+    this is a professional plan; proposed afterwards it sounds
+    like failure.
+  · milestones that are DECISIONS, not activities: "we know
+    whether this is feasible" beats "feature engineering done"
+
+THE RISK REGISTER — think like a pessimist, once, in writing
+  DATA         is it collected? complete? accessible? is the
+               label trustworthy?
+  ⭐ LABEL RISK IS THE ONE PEOPLE MISS: "regretted attrition"
+    may not be recorded consistently, and your target is only as
+    good as its definition.
+  SIGNAL       may there simply be no learnable signal? Say so
+               as a possible outcome at the start.
+  ADOPTION     will anyone act on it? ⭐ THE MOST COMMON REASON
+               A TECHNICALLY SUCCESSFUL PROJECT DELIVERS NOTHING.
+  ETHICS/LEGAL is this decision one we may make this way at all?
+  DEPENDENCY   whose pipeline, whose approval, whose calendar?
+
+ESTIMATING HONESTLY
+  ⭐ DECOMPOSE UNTIL EACH PIECE IS A DAY OR LESS, and give a
+    RANGE with the condition attached: "three to eight days;
+    eight if the HR export is undocumented." The condition tells
+    everyone what to resolve to narrow it.</code></pre>
+</div>
+
+<header class="mod" id="t5">
+  <span class="mn">Strategy 05</span>
+  <h2>Choosing the approach</h2>
+</header>
+
+<div class="ascii">   THE COMPLEXITY LADDER — climb only when the rung below fails,
+   and be able to say why it failed.
+
+   ①  A RULE                  auditable · instant · free ·
+                              explainable · often 80% as good
+   ②  DESCRIPTIVE STATISTICS  a segment, a trend, a cohort table
+   ③  CLASSICAL ML            ⭐ tabular data with labels lives
+                              here, and gradient boosting wins
+   ④  DEEP LEARNING           images, audio, sequences — where
+                              features are hierarchical
+   ⑤  AN LLM                  unstructured language, generation,
+                              extraction, fuzzy classification
+
+   ⚠ EVERY RUNG ADDS: cost, latency, maintenance, and a loss of
+     explainability. ⭐ SO THE QUESTION IS NEVER "WHAT IS THE
+     BEST MODEL" — IT IS "WHAT IS THE LOWEST RUNG THAT MEETS THE
+     TARGET".
+
+   BUILD vs BUY vs LLM — the modern fork
+     BUILD   when it is your differentiator, you have the data,
+             and you will maintain it
+     BUY     when it is a solved commodity — OCR, translation,
+             speech. ⭐ Nobody was promoted for rebuilding one.
+     LLM     when the input is language and an occasional wrong
+             answer is tolerable
+     ⚠ AND THE HONEST COST OF "BUY": data leaves your boundary,
+       which for HR data is a legal question and not a
+       preference.
+
+   CHOOSING THE WORKFLOW — how the model runs, which matters as
+   much as which model
+     BATCH        scored nightly, read from a table
+                  ⭐ USUALLY RIGHT, AND USUALLY SKIPPED. An
+                    attrition risk changes monthly at most.
+     REAL-TIME    scored per request. For predictions that
+                  depend on the request itself.
+     STREAMING    continuous. For fraud, and little else here.
+     HUMAN-IN-THE-LOOP  the model proposes, a person decides.
+                  ⭐ THE CORRECT DEFAULT FOR ANY DECISION ABOUT
+                    A PERSON.
+
+   ⭐ THE WORKED DECISION, ON THIS PROJECT'S OWN PROBLEM:
+     tabular · labelled · monthly cadence · explanation required
+     · affects people
+     ⇒ CLASSICAL ML (gradient boosting), BATCH scored, with
+       HUMAN-IN-THE-LOOP presentation and per-prediction
+       attributions. The LLM writes the narrative around a number
+       it did not compute.</div>
+
+<header class="mod" id="t6">
+  <span class="mn">Strategy 06</span>
+  <h2>System design for ML</h2>
+</header>
+
+<div class="ascii">   THE REFERENCE ARCHITECTURE — every ML system is this shape
+
+     sources ──► ingest ──► store ──► features ──► training
+                                         │            │
+                                         │            ▼
+                                         │        registry
+                                         │            │
+                                         ▼            ▼
+                                    serving ◄─── model
+                                         │
+                                         ▼
+                                    consumer (app, dashboard)
+                                         │
+                                         ▼
+                                    monitoring ──► back to
+                                                    training
+
+   ⭐ THE BIGGEST ARCHITECTURAL FORK: BATCH vs REAL-TIME.
+     it decides the storage, the feature computation, the
+     serving, the monitoring and most of the cost. ⇒ DECIDE IT
+     FIRST, and decide it from the cadence of the decision, not
+     from what sounds modern.
+
+   ⭐ THE TWO HARDEST PROBLEMS IN ML SYSTEMS, AND THEY ARE BOTH
+     ABOUT FEATURES, NOT MODELS:
+
+     ①  TRAINING/SERVING SKEW — the feature computed one way in
+        the notebook and another way in production. The model
+        performs worse in production for no visible reason, and
+        it is very hard to diagnose.
+        ⇒ ONE DEFINITION, CALLED FROM BOTH.
+
+     ②  POINT-IN-TIME CORRECTNESS — using a feature's value as
+        at the event, not as at now. Get it wrong and you have
+        leakage baked into the architecture.
+        ⇒ this is the genuinely hard thing a feature store
+          solves; if you have one model, solve it with
+          discipline instead.
+
+   DESIGNING FOR THE QUALITIES THAT MATTER HERE
+     REPRODUCIBILITY  code version + DATA version + environment
+     AUDITABILITY     ⭐ every prediction records its model
+                      version and inputs. For an HR system this
+                      is a requirement, not an aspiration.
+     REVERSIBILITY    roll back a model as fast as code
+     PRIVACY          per-field access, retention, and an
+                      erasure path that reaches training sets
+
+   ⚠ ANTI-PATTERNS: the notebook as the deployment artefact · a
+     feature pipeline that exists only in someone's head · a
+     model in production with no owner · real-time serving for a
+     monthly decision.</div>
+
+<header class="mod" id="t7">
+  <span class="mn">Strategy 07</span>
+  <h2>Measuring success and hitting targets</h2>
+</header>
+
+<div class="sheet">
+  <div class="cap">From model metric to money, and knowing when you are done</div>
+<pre><code>⭐ THE TWO-METRIC WORLD, AND CONFUSING THEM IS THE CENTRAL
+  BEGINNER ERROR:
+    THE MODEL METRIC     PR-AUC, MAE, precision@k
+    THE BUSINESS METRIC  regretted attrition, cost per hire,
+                         inventory held, revenue retained
+  ⇒ YOU OPTIMISE THE FIRST AND ARE JUDGED ON THE SECOND, and
+    the bridge between them is your job to build.
+
+THE BRIDGE — worked, on this project
+  the model flags 140 employees a month; ~32% of them would
+  have left. If a conversation retains one in four of those, and
+  replacing someone costs roughly half a salary, then:
+    45 true flags × 25% retained ≈ 11 people
+    11 × (replacement cost) = the annual value
+  ⚠ AND EVERY NUMBER IN THAT CHAIN IS AN ASSUMPTION. ⭐ SO STATE
+    THEM, and give a range rather than a point. A defensible
+    range beats a precise fiction.
+
+SETTING AN HONEST TARGET
+  · anchor on the BASELINE, not on zero
+  · express it in the decision's terms: "a manager's five
+    conversations should contain at least two genuine risks"
+  · ⭐ AGREE IT BEFORE MODELLING. Afterwards, any number can be
+    argued into being disappointing.
+
+VALIDATION — making sure the number is real
+  □  a test set the tuning never touched
+  □  ⭐ a genuinely LATER time period
+  □  per-subgroup, not only aggregate
+  □  compared against the baseline on the same split
+  □  and the sanity question: is this too good? (reflex: a
+     suspiciously good result is a bug report)
+
+KNOWING WHEN YOU ARE DONE
+  ⭐ WHEN THE AGREED TARGET IS MET AND THE NEXT INCREMENT COSTS
+    MORE THAN IT RETURNS. Not when the metric stops improving —
+    it never stops improving.
+
+CLOSING THE LOOP — the step almost nobody does
+  measure the BUSINESS metric after deployment, against a
+  comparison group. ⚠ Without a holdout you cannot claim the
+  effect, and someone will eventually ask you to.
+  ⚠ AND EXPECT THE MEASUREMENT TO GET HARDER, not easier:
+    acting on predictions changes the outcomes you are
+    measuring.</code></pre>
+</div>
+
+<header class="mod" id="t8">
+  <span class="mn">Strategy 08</span>
+  <h2>When not to use machine learning</h2>
+</header>
+
+<div class="bad">
+  <span class="tag">Say it out loud, early</span>
+  <p>The most valuable sentence a senior data scientist says is often <strong>"this should not be a
+  model"</strong> — and being right about it is what earns the trust to be asked next time.</p>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:34%">Do not use ML when…</th><th>Because</th></tr></thead>
+  <tbody>
+    <tr><td><strong>A rule works</strong></td><td>Auditable, instant, free, explainable, and maintainable by someone who is not you.</td></tr>
+    <tr><td><strong>The decision must be exactly reproducible and defensible</strong></td><td>A model is a statistical statement. Some decisions need a stated rule, especially about people.</td></tr>
+    <tr><td><strong>You have no labels, and cannot get them</strong></td><td>Supervised learning needs outcomes. Unsupervised methods answer a different question — do not pretend otherwise.</td></tr>
+    <tr><td><strong>The label is untrustworthy</strong></td><td>If "regretted attrition" is recorded inconsistently, you will faithfully model the recording process.</td></tr>
+    <tr><td><strong>The base rate is tiny and the review capacity is small</strong></td><td>Most of what you surface will be false positives, and the alert will be ignored within a month.</td></tr>
+    <tr><td><strong>Nobody will act on the output</strong></td><td>Then the accuracy is irrelevant. Fix the decision process first.</td></tr>
+    <tr><td><strong>The real problem is data access</strong></td><td>A model over data nobody can find solves the wrong bottleneck. A search tool or a clean table may be the whole answer.</td></tr>
+    <tr><td><strong>The process it would automate is broken</strong></td><td>An AI layer over a distrusted process produces faster distrust.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="part" id="domains">
+  <span class="pn">Part II</span>
+  <h2>Domain playbooks</h2>
+</header>
+
+<header class="mod" id="d1">
+  <span class="mn">Domains 09</span>
+  <h2>How to read these</h2>
+</header>
+
+<div class="good">
+  <span class="tag">Why domain knowledge is not optional</span>
+  <p>The method in Part I is generic. <strong>The vocabulary, the data, the canonical problems and the
+  pitfalls are not</strong> — and a data scientist who cannot speak a domain's language will
+  translate its sentences wrongly, however good their modelling is.</p>
+  <p>Each playbook below answers the same eight questions: how the business thinks · what data exists
+  · the canonical problems and their types · the models and workflow · the reference architecture ·
+  how success is measured · the domain-specific pitfalls · and a worked mini-case.</p>
+</div>
+
+<header class="mod" id="d2">
+  <span class="mn">Domain 10</span>
+  <h2>Sales and revenue</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>Pipeline, stages, quota, close rate, cycle length, ACV.</strong> A sales leader thinks
+    in a funnel with a forecast attached, and their fear is a quarter that misses.</p>
+    <p><strong>Data:</strong> a CRM (opportunities, stages, activities), marketing touch data, product
+    usage, and — critically — <em>who touched what and when</em>. Usually messy, self-reported, and
+    updated when convenient.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Lead scoring</strong> → ranking (top-k for a rep's day), not classification.</li>
+      <li><strong>Deal win prediction</strong> → binary classification, with the caveat below.</li>
+      <li><strong>Pipeline forecasting</strong> → forecasting with intervals; the interval is the point.</li>
+      <li><strong>Next-best-action</strong> → causal/uplift, though it is almost always attempted as prediction.</li>
+      <li><strong>Churn on existing accounts</strong> → classification plus ranking for CSM attention.</li>
+    </ul>
+    <p><strong>Approach:</strong> gradient boosting on tabular CRM features, scored nightly, surfaced
+    inside the CRM. A model that requires leaving the CRM will not be used.</p></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Self-reported stage is a leak and a lie.</strong> "Stage: verbal commit" is entered by the rep whose forecast it flatters — and it is often entered <em>after</em> the outcome is known.</li>
+      <li><strong>Activity counts measure rep diligence, not deal quality.</strong> A model built on them predicts who updates the CRM.</li>
+      <li>Survivorship: closed-lost deals are frequently deleted or left stale, so the training data over-represents wins.</li>
+      <li><strong>The feedback loop is immediate</strong> — reps work the leads the model ranks highly, which makes them close, which confirms the model.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> conversion rate on worked leads versus a holdout, cycle length, and forecast error by horizon — never by AUC alone.</p>
+    <p><strong>Mini-case.</strong> "Our reps waste time on bad leads." Translated: rank each rep's inbound queue daily, top 20. Baseline: chronological order. Gradient boosting on firmographics plus product-usage signals, excluding CRM stage entirely. Result framed as "of your top 20, historically 6 convert versus 3 in the old order" — and a holdout of 10% of reps kept on the old order to prove it.</p></div>
+</div>
+
+<header class="mod" id="d3">
+  <span class="mn">Domain 11</span>
+  <h2>E-commerce and retail</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>Conversion rate, AOV, margin, return rate, CAC, repeat rate, stock availability.</strong>
+    The tension is always growth versus margin, and availability versus holding cost.</p>
+    <p><strong>Data:</strong> clickstream (large, noisy, rich), orders, catalogue, prices and
+    promotions, returns, inventory. Clickstream is the most underused and the most seductive.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Recommendation</strong> → recommendation; online metrics beat offline ones, always.</li>
+      <li><strong>Demand forecasting per SKU</strong> → forecasting, with intermittent-demand problems for the long tail.</li>
+      <li><strong>Price and promotion optimisation</strong> → causal, then optimisation. Not prediction.</li>
+      <li><strong>Return prediction</strong> → classification; often more valuable than it sounds, because returns destroy margin.</li>
+      <li><strong>Customer lifetime value</strong> → regression, or a probabilistic model.</li>
+      <li><strong>Search relevance</strong> → ranking.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Popularity bias</strong>: a recommender trained on clicks recommends what was already shown, narrowing the catalogue over time. The feedback loop is the product.</li>
+      <li><strong>Promotions confound everything.</strong> A demand model that ignores them learns that December is magic.</li>
+      <li><strong>Offline recommendation metrics correlate weakly with revenue.</strong> Only an online test settles it.</li>
+      <li>Out-of-stock periods look like zero demand in the data, and training on them teaches the model that the product is unwanted.</li>
+      <li>The long tail: most SKUs have too little history for per-SKU models, so hierarchical or pooled approaches are the honest answer.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> revenue per session, margin per order, stockout rate and holding cost together — optimising one alone moves another the wrong way.</p>
+    <p><strong>Mini-case.</strong> "Recommend better products." Translated: raise revenue per session on the product page. Baseline: best-sellers in category — which is a strong baseline and frequently beats a first model. Ship as an A/B test, measure revenue per session, and explicitly monitor catalogue coverage so the recommender does not quietly collapse onto twenty products.</p></div>
+</div>
+
+<header class="mod" id="d4">
+  <span class="mn">Domain 12</span>
+  <h2>Marketing and growth</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>CAC, ROAS, channel mix, funnel stages, LTV:CAC, payback period.</strong> The recurring
+    question is where the next unit of budget should go.</p>
+    <p><strong>Data:</strong> ad platform exports, web analytics, email engagement, CRM. Fragmented
+    across tools, with identity resolution as the hidden hard problem.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Churn prediction and retention targeting</strong> → classification, then <em>uplift</em>, because you want people a message would change.</li>
+      <li><strong>Attribution</strong> → causal. <strong>Not</strong> a classification problem, however often it is treated as one.</li>
+      <li><strong>Budget allocation</strong> → optimisation, taking forecasts as inputs.</li>
+      <li><strong>Segmentation</strong> → clustering, validated by whether marketers can act on the segments.</li>
+      <li><strong>Send-time and content selection</strong> → ranking or bandits.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Last-click attribution is not causation</strong>, and neither is any other heuristic rule. Attribution is a genuinely hard causal problem, and rule-based models mostly reallocate credit rather than discover it.</li>
+      <li><strong>Targeting the most likely churners is the classic error.</strong> Some will churn regardless, and some would have stayed anyway — <em>uplift</em> identifies the persuadable, and it is a different model.</li>
+      <li>Selection: engagement data only contains the engaged, so a survey of active users cannot explain why people left.</li>
+      <li>Seasonality and campaign calendars confound almost every trend.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> incremental revenue against a holdout, CAC by channel, and retention lift — never by campaign open rates.</p>
+    <p><strong>Mini-case.</strong> "Reduce churn." Translated: which subscribers would stay if contacted? Baseline: contact everyone at risk. An uplift model on treatment/control history, with a permanent holdout, reported as "contacting your top decile retains 4 more per hundred than contacting at random" — a sentence with an experiment behind it.</p></div>
+</div>
+
+<header class="mod" id="d5">
+  <span class="mn">Domain 13</span>
+  <h2>Science and chemistry</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the field thinks · the data</span>
+    <p><strong>A different vocabulary entirely:</strong> assays, hits, potency, selectivity, ADMET,
+    scaffolds, chemical series. The unit of progress is an experiment, and experiments are slow and
+    expensive — which changes everything about how models are used.</p>
+    <p><strong>Data:</strong> structures (SMILES, graphs), assay results, public databases. Small,
+    heterogeneous, and with <em>enormous</em> class imbalance — actives are rare by design.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Virtual screening</strong> → ranking. The output is "which 100 of these million should we test", not a probability.</li>
+      <li><strong>Property prediction (QSAR/ADMET)</strong> → regression or classification on molecular representations.</li>
+      <li><strong>Active learning / experiment selection</strong> → <span class="ok">the highest-value pattern here</span>: the model chooses the next experiment, and each round is expensive.</li>
+      <li><strong>Generative design</strong> → generation with hard constraints, and synthesisability is the constraint people forget.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Random splits massively overstate performance.</strong> Molecules in a chemical series are near-duplicates, so a random split puts siblings in train and test. <strong>Scaffold or time-based splits are mandatory</strong>, and the score will drop a lot — that drop is the truth.</li>
+      <li><strong>Activity cliffs:</strong> a tiny structural change can abolish activity, so smooth models mislead near the boundary.</li>
+      <li>Assay data from different labs and protocols is not directly comparable, and pooling it silently adds noise you attribute to the model.</li>
+      <li><strong>Negative results are systematically missing</strong> from public data, so "inactive" often means "never tested".</li>
+      <li>Applicability domain: a model asked about a chemical space it never saw will answer confidently and wrongly.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> enrichment — how many more hits per experiment than random selection — and by experiments saved, not by AUC.</p>
+    <p><strong>Mini-case.</strong> "Help us screen faster." Translated: rank a library so the first 200 assays contain more hits. Scaffold-split validation, enrichment as the metric, and an active-learning loop where each assay round retrains. Reported as "5× enrichment over random in the first plate", which is the number a chemist can act on.</p></div>
+</div>
+
+<header class="mod" id="d6">
+  <span class="mn">Domain 14</span>
+  <h2>Finance and risk</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>Exposure, loss rate, expected loss, capital, false-positive cost, regulatory
+    capital.</strong> And a constraint most domains do not have: <strong>models may need to be
+    explainable to a regulator.</strong></p>
+    <p><strong>Data:</strong> transactions, account history, external bureau data, device and session
+    signals. High volume, strongly imbalanced, and adversarial — the distribution changes because
+    someone is trying to defeat you.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Fraud detection</strong> → classification, real-time, with an extreme base rate and a hard latency budget.</li>
+      <li><strong>Credit scoring</strong> → classification, <span class="mid">with explainability as a legal requirement.</span></li>
+      <li><strong>AML / suspicious activity</strong> → anomaly detection plus rules; alert volume is capped by review capacity.</li>
+      <li><strong>Forecasting cash or loss</strong> → forecasting with intervals.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Adversarial drift.</strong> Fraud patterns change <em>because</em> you deployed the model. A static model decays fast, and monitoring input drift is not optional.</li>
+      <li><strong>The rejected-applicant problem:</strong> you only observe outcomes for those you approved, so your training data is censored by your own past decisions. Ignoring it is the most consequential mistake in credit modelling.</li>
+      <li><strong>Alert volume is a hard constraint.</strong> A model producing 4,000 alerts for a team of six has produced nothing.</li>
+      <li>Fairness and explainability are legal, not aspirational — and proxies for protected attributes are heavily scrutinised.</li>
+      <li>Extreme imbalance makes ROC-AUC look wonderful; PR-AUC and precision at the alert budget are the honest metrics.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> losses prevented minus the cost of false positives (including customer friction), at the alert volume the team can actually review.</p>
+    <p><strong>Mini-case.</strong> "Catch more fraud." Translated: at 200 reviewable alerts a day, maximise prevented loss. Real-time scoring with a hard latency budget, a champion/challenger setup because drift is continuous, and reporting in currency prevented rather than in AUC.</p></div>
+</div>
+
+<header class="mod" id="d7">
+  <span class="mn">Domain 15</span>
+  <h2>Supply chain and operations</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>Service level, fill rate, stockouts, holding cost, lead time, OTIF, working
+    capital.</strong> Every decision is a trade between <em>having too much</em> and <em>not having
+    enough</em>, and the costs of those two are rarely equal.</p>
+    <p><strong>Data:</strong> orders, shipments, inventory positions, supplier lead times, promotions,
+    and calendars. Lead-time data is usually the weakest and the most important.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Demand forecasting</strong> → forecasting per SKU per location, with hierarchy.</li>
+      <li><strong>Inventory policy</strong> → <span class="ok">optimisation</span>, taking the forecast as an input. <strong>The forecast is not the decision.</strong></li>
+      <li><strong>Lead-time prediction</strong> → regression, and its <em>variance</em> matters more than its mean.</li>
+      <li><strong>Late-delivery risk</strong> → classification, for expediting decisions.</li>
+      <li><strong>Network and routing</strong> → optimisation.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Forecasting demand from sales.</strong> Sales are censored by availability — a stockout looks like zero demand, and training on it teaches the model nobody wants the product. <strong>This is the single most common error in the domain.</strong></li>
+      <li><strong>Optimising forecast accuracy instead of the decision.</strong> A 2% MAPE improvement that does not change any order quantity is worth nothing; safety stock depends on forecast <em>error variance</em>, not on the point estimate.</li>
+      <li><strong>Promotions and price changes</strong> dominate demand and are often missing from the model's inputs.</li>
+      <li>The long tail: most SKUs are intermittent, and standard time-series methods handle them badly.</li>
+      <li>Aggregation: forecasting at the wrong grain — weekly national when the decision is daily per warehouse — makes an accurate model useless.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> service level at a given inventory investment — the two together, never one alone. Plus forecast error by horizon at the decision grain.</p>
+    <p><strong>Mini-case.</strong> "Our forecasts are bad." Translated: reduce stockouts without raising inventory. First finding, usually: the data does not distinguish zero demand from zero availability. Fix that, forecast at the grain of the ordering decision, then feed error variance into a safety-stock calculation — and report in service level and working capital, because that is what the business is measured on.</p></div>
+</div>
+
+<header class="mod" id="d8">
+  <span class="mn">Domain 16</span>
+  <h2>Healthcare</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the field thinks · the data</span>
+    <p><strong>Sensitivity, specificity, positive predictive value, number needed to treat, clinical
+    workflow.</strong> Clinicians think in terms of harm from action <em>and</em> harm from inaction,
+    and they are trained to distrust a number without a confidence statement.</p>
+    <p><strong>Data:</strong> electronic records, labs, vitals, imaging, notes. Highly sensitive,
+    irregularly sampled, and full of clinically meaningful missingness.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Deterioration / early warning</strong> → classification with a time horizon, e.g. sepsis risk in the next six hours.</li>
+      <li><strong>Readmission risk</strong> → classification, for discharge planning.</li>
+      <li><strong>Diagnosis support from imaging</strong> → deep learning, advisory only.</li>
+      <li><strong>Resource and capacity forecasting</strong> → forecasting.</li>
+      <li><strong>Treatment effect</strong> → causal, and it needs a trial-grade design.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls</span>
+    <ul>
+      <li><strong>Missingness is informative and often leaky.</strong> A lab test was ordered <em>because</em> the clinician was already worried — so "test ordered" predicts the outcome and is unavailable in the way you need it.</li>
+      <li><strong>Alert fatigue is a patient-safety issue.</strong> A model with poor precision at the alert volume actively harms care by training clinicians to dismiss warnings.</li>
+      <li><strong>Distribution shift between sites is severe.</strong> A model trained at one hospital frequently fails at another — different populations, protocols and instruments.</li>
+      <li><strong>Label timing:</strong> a diagnosis recorded at discharge is not known when you must predict.</li>
+      <li>Regulatory status: a tool that influences clinical decisions may be a regulated medical device.</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, and a mini-case</span>
+    <p><strong>Measured by:</strong> clinical outcomes, not model metrics — and by whether the alert changes what anyone does. Calibration matters more here than almost anywhere.</p>
+    <p><strong>Mini-case.</strong> "Predict deterioration." Translated: flag patients at a volume the ward can actually respond to, with enough lead time to act. Careful point-in-time feature construction, external validation on another site, calibration checked explicitly, and presentation as a prompt with the contributing factors shown — never as a verdict.</p></div>
+</div>
+
+<header class="mod" id="d9">
+  <span class="mn">Domain 17 · this project's own domain</span>
+  <h2>HR and people analytics</h2>
+</header>
+
+<div class="sen">
+  <div class="b knows"><span class="k">How the business thinks · the data</span>
+    <p><strong>Headcount, attrition (regretted versus not), time to hire, offer acceptance, internal
+    mobility, engagement, cost per hire, tenure distribution.</strong> HR leaders think in terms of
+    capability and risk, and they are acutely aware that these decisions concern identifiable
+    people.</p>
+    <p><strong>Data:</strong> HRIS records, performance reviews, surveys, compensation, absence,
+    recruitment funnel. <strong>Small</strong> — thousands of rows, not millions — highly sensitive,
+    and with subjective labels.</p></div>
+  <div class="b"><span class="k">Canonical problems → type</span>
+    <ul>
+      <li><strong>Attrition risk</strong> → ranking for manager attention, <em>not</em> classification of individuals. <span class="ok">This project's core problem.</span></li>
+      <li><strong>Hiring funnel efficiency</strong> → analysis and forecasting; <span class="no">candidate screening is a decision about employment</span> and carries a different bar entirely.</li>
+      <li><strong>Engagement driver analysis</strong> → explanation, not prediction. It wants careful analysis and honest language about association.</li>
+      <li><strong>Internal mobility matching</strong> → recommendation, advisory.</li>
+      <li><strong>Headcount and capacity planning</strong> → forecasting.</li>
+      <li><strong>Pay equity</strong> → statistical analysis, with legal involvement from the start.</li>
+    </ul></div>
+  <div class="b junior"><span class="k">Domain pitfalls — the heaviest list in this document</span>
+    <ul>
+      <li><strong>Post-outcome features:</strong> exit interview completed, handover uploaded, access revoked. Perfect predictors, all known after the decision. The classic leak here.</li>
+      <li><strong>Small samples and thin subgroups.</strong> Slice a few thousand employees by department, level and tenure and you have cells of nine — where every dramatic percentage is noise.</li>
+      <li><strong>Subjective labels.</strong> "Performance rating" measures a manager's judgement, and manager judgement varies systematically. "Regretted attrition" may be recorded inconsistently.</li>
+      <li><strong>Proxies for protected attributes</strong> — postcode, school, working pattern, career gaps, part-time status. Removing the obvious column is <em>not</em> sufficient.</li>
+      <li><strong>Historical bias.</strong> A model that faithfully reproduces past promotion decisions is a machine for perpetuating them at scale, with an appearance of objectivity — and accuracy makes that worse, not better.</li>
+      <li><strong>Privacy and minimum cell size.</strong> "Engagement in the Lisbon team" where the team is three people identifies three people. Aggregation is not anonymisation.</li>
+      <li><strong>The feedback loop:</strong> flagged employees get attention, which changes their outcomes, which becomes training data.</li>
+      <li><strong>The base rate.</strong> At 5% attrition, a good model's flags are majority false-positive — so a flag must be framed as "worth a conversation", never as "will leave".</li>
+    </ul></div>
+  <div class="b check"><span class="k">Success, architecture, and the mini-case</span>
+    <p><strong>Measured by:</strong> regretted attrition among flagged-and-contacted employees versus a comparison group — and by the override rate, which is the best trust signal available.</p>
+    <p><strong>Reference architecture</strong> (this is HR Insight AI): HRIS → nightly batch scoring
+    with gradient boosting → risk stored per employee → surfaced to the employee's own manager only,
+    with per-prediction attributions → an LLM writes the narrative around a number it did not compute
+    → every view audited.</p>
+    <p><strong>Mini-case.</strong> "We're losing good people." Translated: give each manager five names
+    a month worth a conversation. Baseline: a rule on satisfaction and time since promotion — which is
+    a strong baseline and must be beaten explicitly. Excluded: age, gender, nationality and their
+    proxies, plus every post-outcome field. Evaluated per subgroup. Presented with the contributing
+    factors and an override button that records a reason. And a documented answer to the question
+    that governs the whole thing: <strong>would we be comfortable explaining this system, in detail,
+    to the employees it scores?</strong></p></div>
+</div>
+
+<hr class="rule">
+
+<header class="mod" id="master">
+  <span class="mn">Reference</span>
+  <h2>Master reference — what kind of problem is this?</h2>
+</header>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:32%">If the question sounds like…</th><th style="width:22%">It is</th><th>And the first thing to check</th></tr></thead>
+  <tbody>
+    <tr><td>"Will X happen?"</td><td>Classification</td><td>The base rate, and which error costs more.</td></tr>
+    <tr><td>"Who should I look at first?"</td><td><strong>Ranking</strong></td><td>How many can actually be reviewed. That number is the metric's k.</td></tr>
+    <tr><td>"How much / how many?"</td><td>Regression</td><td>The units, and whether large errors hurt disproportionately.</td></tr>
+    <tr><td>"How much, next month?"</td><td>Forecasting</td><td>The grain of the decision, and whether history is censored.</td></tr>
+    <tr><td>"What groups exist?"</td><td>Clustering</td><td>Whether a domain expert finds the groups meaningful. There is no accuracy score.</td></tr>
+    <tr><td>"What's unusual?"</td><td>Anomaly detection</td><td>The alert budget. Precision at that volume is the only metric that matters.</td></tr>
+    <tr><td>"What should we show them?"</td><td>Recommendation</td><td>Whether you can run an online test. Offline metrics mislead.</td></tr>
+    <tr><td>"Would the intervention help?"</td><td><strong>Causal / uplift</strong></td><td>Whether you have or can get an experiment. A predictive model cannot answer this.</td></tr>
+    <tr><td>"Why does X happen?"</td><td><strong>Explanation</strong></td><td>That feature importances are not causes — and say so before anyone assumes otherwise.</td></tr>
+    <tr><td>"What's the best allocation?"</td><td>Optimisation</td><td>The constraints, and that the forecast is an input rather than the answer.</td></tr>
+    <tr><td>"What does this document say?"</td><td>Extraction</td><td>Whether the output can be constrained to a schema.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>What to read next</h2>
+</header>
+
+<div class="grid2">
+  <div class="card"><h4>The Senior Data Science Standard</h4><p>The companion how-to-build document: framing, leakage, experiment design, modelling, evaluation, MLOps, LLM practice, monitoring and communication.</p></div>
+  <div class="card"><h4>Skill-upgrading, Volume VII</h4><p>MLOps, data engineering, AI product thinking and responsible AI at length — including why fairness definitions are mutually incompatible.</p></div>
+  <div class="card"><h4>The data-analyst project playbook</h4><p>A full corporate investigation worked end to end — the analyst-side counterpart to the translation method in Part I.</p></div>
+  <div class="card"><h4>The source markdown</h4><p><code>docs/senior-data-science-strategy/</code> — 14 files, 2,828 lines, with fuller worked cases per domain.</p></div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>What this is.</strong> A single-page edition of the senior data science strategy
+  knowledge base. Part I is the generic method; Part II keeps the source's fixed eight-question shape
+  per domain so the playbooks stay comparable — which is what makes them usable as a reference rather
+  than as reading.</p>
+  <p><strong>On the domain content.</strong> The pitfalls in each playbook are the ones that
+  repeatedly cause real projects to fail in that domain, not exhaustive surveys. Where a number
+  appears in a mini-case it is illustrative arithmetic, stated as assumptions rather than as
+  measurement.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
