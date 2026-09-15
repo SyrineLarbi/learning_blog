@@ -1,0 +1,2111 @@
+<title>The Data Analyst, A to Z</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon-16.png" type="image/png" sizes="16x16">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Petrona:ital,wght@0,400;0,500;0,600;1,400&family=Anonymous+Pro:wght@400;700&display=swap">
+
+<style>
+/* ===== tokens · the bare :root is the complete light palette ===== */
+:root {
+  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --body: "Petrona", Georgia, "Times New Roman", serif;
+  --mono: "Anonymous Pro", "SFMono-Regular", Consolas, monospace;
+
+  --ground:   #F4F3F2;
+  --ground-2: #FCFBFB;
+  --panel:    #EBE8E7;
+  --panel-2:  #E1DDDC;
+
+  --ink:   #191718;
+  --ink-2: #413C3E;
+  --ink-3: #746E70;
+
+  --rule:   #D7D2D3;
+  --rule-2: #E6E2E2;
+
+  --accent:      #5B3A8C;
+  --accent-soft: #EDE6F5;
+  --accent-deep: #3A2359;
+
+  --bad:      #A6342A;
+  --bad-soft: #F8E7E4;
+  --warn:      #8A6206;
+  --warn-soft: #F7EEDA;
+  --good:      #1C6B4A;
+  --good-soft: #E1F0E8;
+
+  --focus: #5B3A8C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #121011;
+    --ground-2: #191718;
+    --panel:    #211E1F;
+    --panel-2:  #2A2627;
+
+    --ink:   #ECE8E9;
+    --ink-2: #C3BDBF;
+    --ink-3: #8A8385;
+
+    --rule:   #342F30;
+    --rule-2: #2A2627;
+
+    --accent:      #B79AE0;
+    --accent-soft: #181322;
+    --accent-deep: #CFB8EE;
+
+    --bad:      #E4948A;
+    --bad-soft: #26140F;
+    --warn:      #D2A64F;
+    --warn-soft: #221A0B;
+    --good:      #6DBF98;
+    --good-soft: #101F18;
+
+    --focus: #B79AE0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:   #121011;
+  --ground-2: #191718;
+  --panel:    #211E1F;
+  --panel-2:  #2A2627;
+
+  --ink:   #ECE8E9;
+  --ink-2: #C3BDBF;
+  --ink-3: #8A8385;
+
+  --rule:   #342F30;
+  --rule-2: #2A2627;
+
+  --accent:      #B79AE0;
+  --accent-soft: #181322;
+  --accent-deep: #CFB8EE;
+
+  --bad:      #E4948A;
+  --bad-soft: #26140F;
+  --warn:      #D2A64F;
+  --warn-soft: #221A0B;
+  --good:      #6DBF98;
+  --good-soft: #101F18;
+
+  --focus: #B79AE0;
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18.8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { font-weight: 600; color: var(--ink); }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; letter-spacing: -.015em; }
+p { margin: 0 0 12px; }
+code, kbd { font-family: var(--mono); font-size: .87em; background: var(--panel); padding: 1px 4px; border-radius: 2px; }
+
+/* ===== shell ===== */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); max-width: none; margin: 0; }
+.rail {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 24px 14px 40px 20px; border-right: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 13.1px; line-height: 1.3;
+}
+.rail-title { font-family: var(--display); font-weight: 700; font-size: 15.4px; margin: 0 0 2px; }
+.rail-sub { color: var(--ink-3); font-size: 10.8px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; }
+.rail-vol { display: inline-block; font-size: 10.3px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-bottom: 16px; }
+.rail-group { color: var(--ink-3); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin: 16px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--rule-2); }
+.rail a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 6px 3px 8px; border-left: 2px solid transparent; margin-left: -2px; }
+.rail a:hover { color: var(--ink); background: var(--panel); }
+.rail a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.rail a .n { color: var(--ink-3); margin-right: 5px; }
+.rail a.on .n { color: var(--accent); }
+
+.doc { padding: 38px 56px 100px; max-width: none; }
+.doc > * { max-width: none; }
+
+@media (max-width: 940px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 18px 20px 22px; }
+  .doc { padding: 24px 20px 70px; }
+}
+
+/* ===== hero + band ===== */
+.hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 20px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.hero h1 { font-size: clamp(33px, 4.8vw, 50px); font-weight: 700; line-height: 1.05; margin: 0 0 14px; }
+.hero h1 .thin { font-weight: 500; color: var(--ink-3); }
+.lede { font-size: 19.4px; color: var(--ink-2); margin: 0 0 4px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; padding-top: 15px; border-top: 1px solid var(--rule-2); font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.hero-meta b { color: var(--ink-2); font-weight: 400; }
+
+.band { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 8px; margin: 0 0 30px; }
+.vol { border: 1px solid var(--rule); border-radius: 2px; padding: 10px 12px 11px; background: var(--ground-2); font-size: 15.4px; text-decoration: none; color: var(--ink-2); display: block; }
+.vol:hover { background: var(--panel); }
+.vol .vn { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.vol b { font-family: var(--display); font-weight: 600; font-size: 14.8px; display: block; line-height: 1.25; }
+.vol em { font-style: normal; color: var(--ink-3); font-size: 14.8px; }
+.vol.here { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); border-left: 3px solid var(--accent); }
+.vol.here .vn { color: var(--accent); }
+
+/* ===== structure ===== */
+.part { margin: 58px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink); }
+.part .pn { display: block; font-family: var(--mono); font-size: 11.4px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; }
+.part h2 { font-size: 33.1px; font-weight: 700; margin: 0 0 9px; }
+.part .lede { font-size: 18.8px; }
+
+.mod { margin: 40px 0 14px; padding-top: 15px; border-top: 1px solid var(--rule); }
+.mod .mn { display: block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.mod h2 { font-size: 24.5px; font-weight: 600; margin: 0 0 7px; }
+.mod .lede { font-size: 18.2px; margin-bottom: 0; }
+
+h3 { font-size: 19.4px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 16.5px; font-weight: 600; margin: 0 0 5px; font-family: var(--display); }
+hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+/* ===== the four-band senior block — this library's signature here ===== */
+.sen { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 22px 0; overflow: hidden; }
+.sen > .b { padding: 12px 16px 13px; border-bottom: 1px solid var(--rule-2); }
+.sen > .b:last-child { border-bottom: 0; }
+.sen > .b > .k { display: block; font-family: var(--mono); font-size: 10.3px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 7px; color: var(--ink-3); }
+.sen > .b.knows { background: var(--accent-soft); }
+.sen > .b.knows > .k { color: var(--accent); }
+.sen > .b.junior { background: var(--bad-soft); }
+.sen > .b.junior > .k { color: var(--bad); }
+.sen > .b.check { background: var(--good-soft); }
+.sen > .b.check > .k { color: var(--good); }
+.sen p, .sen li { font-size: 16.9px; }
+.sen p:last-child, .sen ul:last-child, .sen ol:last-child { margin-bottom: 0; }
+.sen ul, .sen ol { margin: 0 0 10px; padding-left: 21px; }
+.sen li { margin-bottom: 5px; }
+
+
+/* ===== graded question block — the signature component here ===== */
+.qa { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.qa > .qh { padding: 12px 16px 13px; background: var(--accent-soft); border-bottom: 1px solid var(--rule); }
+.qa > .qh > .lvl { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.qa > .qh p { font-family: var(--display); font-weight: 600; font-size: 17.7px; line-height: 1.3; margin: 0; color: var(--ink); }
+.qa > .b { padding: 11px 16px 12px; border-bottom: 1px solid var(--rule-2); }
+.qa > .b:last-child { border-bottom: 0; }
+.qa > .b > .k { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink-3); }
+.qa > .b.weak { background: var(--bad-soft); }
+.qa > .b.weak > .k { color: var(--bad); }
+.qa > .b.strong { background: var(--good-soft); }
+.qa > .b.strong > .k { color: var(--good); }
+.qa > .b.up { background: var(--panel); }
+.qa > .b.up > .k { color: var(--ink-2); }
+.qa p, .qa li { font-size: 16.9px; }
+.qa > .b p:last-child, .qa > .b ul:last-child, .qa > .b ol:last-child { margin-bottom: 0; }
+.qa ul, .qa ol { margin: 0 0 10px; padding-left: 21px; }
+.qa li { margin-bottom: 5px; }
+
+/* ===== callouts ===== */
+.note, .warn, .bad, .good, .proj {
+  border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 2px;
+  padding: 11px 14px 12px; margin: 18px 0; font-size: 17.7px; background: var(--ground-2);
+}
+.good { border-left-color: var(--good); background: var(--good-soft); }
+.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.bad  { border-left-color: var(--bad); background: var(--bad-soft); }
+.proj { border-left-color: var(--accent); background: var(--accent-soft); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10.8px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+.note .tag { color: var(--ink-3); } .good .tag { color: var(--good); }
+.warn .tag { color: var(--warn); } .bad .tag { color: var(--bad); }
+.proj .tag { color: var(--accent); }
+.note p:last-child, .warn p:last-child, .bad p:last-child, .good p:last-child, .proj p:last-child { margin-bottom: 0; }
+
+/* ===== mono sheets, code, diagrams ===== */
+.sheet { border: 1px solid var(--rule); border-radius: 2px; background: var(--ground-2); margin: 20px 0; overflow: hidden; }
+.sheet > .cap { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.sheet > .cap::before { content: ""; width: 6px; height: 6px; background: var(--accent); flex: none; }
+.sheet pre { margin: 0; }
+pre { font-family: var(--mono); font-size: 13.7px; line-height: 1.45; overflow-x: auto; padding: 13px 14px; color: var(--ink-2); }
+pre code { background: none; padding: 0; font-size: inherit; }
+.ascii { font-family: var(--mono); font-size: 13.7px; line-height: 1.42; white-space: pre; overflow-x: auto; padding: 14px; border: 1px solid var(--rule); border-radius: 2px; background: var(--panel); margin: 20px 0; color: var(--ink-2); }
+
+/* ===== tables ===== */
+.tw { overflow-x: auto; margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 16.5px; min-width: 460px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule-2); }
+th { font-family: var(--mono); font-size: 10.8px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); background: var(--panel-2); border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) td { background: var(--ground-2); }
+td code { background: var(--panel); }
+.ok { color: var(--good); font-weight: 600; }
+.no { color: var(--bad); font-weight: 600; }
+.mid { color: var(--warn); font-weight: 600; }
+
+/* ===== lists, cards, terms ===== */
+ul, ol { margin: 0 0 13px; padding-left: 21px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px; margin: 20px 0; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin: 20px 0; }
+.card { border: 1px solid var(--rule); border-radius: 2px; padding: 11px 13px 12px; background: var(--ground-2); font-size: 16.5px; }
+.card p:last-child { margin-bottom: 0; }
+.terms { margin: 20px 0; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.terms > .cap { padding: 6px 12px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font-family: var(--mono); font-size: 10.8px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.terms dl { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: minmax(150px, 215px) 1fr; gap: 7px 14px; font-size: 16.5px; }
+.terms dt { font-family: var(--mono); font-size: 13.7px; color: var(--accent); font-weight: 700; }
+.terms dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { .terms dl { grid-template-columns: 1fr; gap: 2px 0; } .terms dd { margin-bottom: 8px; } }
+.disclaimer { margin: 28px 0 0; padding: 11px 14px; border: 1px dashed var(--rule); border-radius: 2px; background: var(--panel); font-size: 15.4px; color: var(--ink-2); }
+.disclaimer p:last-child { margin-bottom: 0; }
+
+/* ===== scrollbars, themed from the same tokens ===== */
+html { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+.rail, .tw, pre, .ascii, .doc { scrollbar-color: var(--rule) var(--panel); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 11px; height: 11px; background: var(--panel); }
+::-webkit-scrollbar-track { background: var(--panel); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 7px; border: 2px solid var(--panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+::-webkit-scrollbar-corner { background: var(--panel); }
+.rail::-webkit-scrollbar, .rail::-webkit-scrollbar-track { background: var(--ground); }
+.rail::-webkit-scrollbar-thumb { border-color: var(--ground); }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Contents">
+  <p class="rail-title">Data analyst</p>
+  <p class="rail-sub">The A-to-Z course</p>
+  <span class="rail-vol">Start from zero</span>
+  <a href="#open"><span class="n">—</span>Open</a>
+  <a href="#how"><span class="n">—</span>How to read this</a>
+
+  <div class="rail-group">I · The job</div>
+  <a href="#c1"><span class="n">01</span>What the job really is</a>
+  <a href="#c2"><span class="n">02</span>The four questions</a>
+  <a href="#c3"><span class="n">03</span>Analyst, scientist, engineer</a>
+  <a href="#c4"><span class="n">04</span>Who you work for</a>
+
+  <div class="rail-group">II · What data is</div>
+  <a href="#c5"><span class="n">05</span>Rows, columns and grain</a>
+  <a href="#c6"><span class="n">06</span>Kinds of data</a>
+  <a href="#c7"><span class="n">07</span>Where data lives</a>
+  <a href="#c8"><span class="n">08</span>How it reaches you</a>
+
+  <div class="rail-group">III · The tools</div>
+  <a href="#c9"><span class="n">09</span>Spreadsheets</a>
+  <a href="#c10"><span class="n">10</span>SQL, and why it matters</a>
+  <a href="#c11"><span class="n">11</span>Python and R</a>
+  <a href="#c12"><span class="n">12</span>Dashboard tools</a>
+  <a href="#c13"><span class="n">13</span>What to learn, in order</a>
+
+  <div class="rail-group">IV · Doing the work</div>
+  <a href="#c14"><span class="n">14</span>The request arrives</a>
+  <a href="#c15"><span class="n">15</span>Turning it into a question</a>
+  <a href="#c16"><span class="n">16</span>Finding the data</a>
+  <a href="#c17"><span class="n">17</span>Looking before analysing</a>
+  <a href="#c18"><span class="n">18</span>Cleaning</a>
+  <a href="#c19"><span class="n">19</span>The five analyses</a>
+  <a href="#c20"><span class="n">20</span>Statistics you need</a>
+  <a href="#c21"><span class="n">21</span>How you fool yourself</a>
+
+  <div class="rail-group">V · Telling people</div>
+  <a href="#c22"><span class="n">22</span>Choosing a chart</a>
+  <a href="#c23"><span class="n">23</span>Report, dashboard, analysis</a>
+  <a href="#c24"><span class="n">24</span>Writing the answer</a>
+  <a href="#c25"><span class="n">25</span>Presenting and defending</a>
+
+  <div class="rail-group">VI · The business</div>
+  <a href="#c26"><span class="n">26</span>Defining a metric</a>
+  <a href="#c27"><span class="n">27</span>Reading a business</a>
+  <a href="#c28"><span class="n">28</span>Privacy and ethics</a>
+
+  <div class="rail-group">VII · The career</div>
+  <a href="#c29"><span class="n">29</span>Working with people</a>
+  <a href="#c30"><span class="n">30</span>Your first ninety days</a>
+  <a href="#c31"><span class="n">31</span>Getting hired</a>
+  <a href="#c32"><span class="n">32</span>Growing</a>
+
+  <div class="rail-group">Reference</div>
+  <a href="#plan"><span class="n">—</span>A six-month plan</a>
+  <a href="#glossary"><span class="n">—</span>Glossary</a>
+  <a href="#next"><span class="n">—</span>Where to go next</a>
+</nav>
+
+<main class="doc">
+<header class="hero" id="open">
+  <p class="eyebrow">Handbook library · document 44 · a beginner's course</p>
+  <h1>The data analyst, A to Z. <span class="thin">Everything the job asks of you, explained from nothing.</span></h1>
+  <p class="lede">This is written for someone who has never done the job and is not sure what it
+  involves. It assumes no statistics, no programming and no business background. It contains no code,
+  because the hard part of this work was never the code — it is knowing what question you are actually
+  answering, whether the data can answer it, and how to say the answer so that somebody acts on it.
+  Read it in order, like a book.</p>
+  <div class="hero-meta">
+    <span><b>Assumes</b> · nothing at all</span>
+    <span><b>Teaches</b> · the whole job, in plain language</span>
+    <span><b>Time</b> · a long weekend to read, months to absorb</span>
+  </div>
+</header>
+
+<div class="band">
+<a class="vol" href="index.html"><span class="vn">Library</span><b>All documents</b><em>The index</em></a>
+<div class="vol here"><span class="vn">Data analyst · here</span><b>The A-to-Z course</b></div>
+<a class="vol" href="16-data-analyst-bootcamp.html"><span class="vn">Next</span><b>Raw to Trusted</b><em>The deeper course</em></a>
+<a class="vol" href="15-data-analyst-project-playbook.html"><span class="vn">Then</span><b>Brief to Boardroom</b><em>A project, worked</em></a>
+</div>
+
+<header class="mod" id="how">
+  <span class="mn">Before you begin</span>
+  <h2>How to read this</h2>
+</header>
+
+<p>Most material aimed at new analysts teaches tools. It shows you how to write a formula, how to make
+a chart, how to connect to a database. That knowledge is necessary and it is also the part you can
+look up in ten seconds when you need it. What nobody looks up, because they do not know it is missing,
+is the reasoning: why the number you calculated is not the number that was asked for, why the chart
+that looks impressive tells people nothing, why your beautiful analysis was ignored.</p>
+
+<p>So this course spends its length on the reasoning and treats tools as something you will pick up
+along the way. When it does describe a tool, it explains what the tool is <em>for</em> and what it is
+bad at, so that you can choose sensibly, rather than teaching you its buttons.</p>
+
+<p>You should read it from beginning to end, once, without stopping to practise. It is arranged so
+that each part depends on the one before it: you cannot judge whether data is clean until you
+understand what grain means, and you cannot choose a chart until you know which of five questions you
+are answering. Skipping ahead will feel efficient and will leave holes.</p>
+
+<p>Then go back and do things. Reading about analysis produces the comfortable feeling of
+understanding and almost no actual skill. The chapter on a six-month plan, near the end, tells you
+what to build and in what order.</p>
+
+<div class="note">
+  <span class="tag">A word about the two companion documents</span>
+  <p>This library already holds two other data-analyst documents, and they are deliberately different
+  from this one. <strong>Raw to Trusted</strong> is a deeper technical course on data quality,
+  pipelines and statistics — read it after this one, when the vocabulary here has become comfortable.
+  <strong>From Brief to Boardroom</strong> follows a single real project through ten stages from the
+  first vague request to the final presentation. This document is the ground floor beneath both of
+  them.</p>
+</div>
+
+<header class="part" id="part1">
+  <span class="pn">Part I</span>
+  <h2>The job</h2>
+</header>
+
+<header class="mod" id="c1">
+  <span class="mn">Chapter 01</span>
+  <h2>What the job really is</h2>
+</header>
+
+<p>A data analyst turns questions that people argue about into answers they can act on. That sentence
+is doing a lot of work, so let us take it apart.</p>
+
+<p>Somewhere in an organisation, somebody is uncertain about something that matters. Perhaps sales
+have fallen and nobody agrees why. Perhaps two teams each believe they are responsible for the same
+success. Perhaps a manager wants to spend money on an advertising campaign and does not know whether
+the last one worked. These are not technical problems. They are disagreements, and they persist
+because the people arguing have opinions rather than evidence.</p>
+
+<p>Your job is to go and get the evidence. You find the relevant data, check that it is trustworthy,
+work out what it does and does not show, and come back with something clear enough that the
+disagreement ends or at least becomes a better disagreement. Sometimes the answer is a single number.
+More often it is a number plus the important caveat attached to it, because a number without its
+caveat is frequently worse than no number at all.</p>
+
+<p>Notice what is not in that description. It does not say you build models, though you might. It does
+not say you write code, though you almost certainly will. It does not say you make dashboards, though
+you will make many. Those are all means. The end is that somebody who was uncertain becomes less
+uncertain and does something differently as a result.</p>
+
+<div class="good">
+  <span class="tag">The test of whether you did your job</span>
+  <p>Not whether the analysis was correct — correctness is the minimum, not the achievement. The test
+  is whether <strong>a decision changed</strong>. An analysis that is right, beautifully presented, and
+  changes nothing has failed, and it usually failed at the very beginning, when nobody established
+  what decision it was supposed to inform.</p>
+</div>
+
+<p>A typical week contains far less analysis than you would expect. You will spend a great deal of it
+finding out where data lives, discovering that the field you needed is empty for the first eight
+months of the year, asking somebody in another team what a column means, and explaining to a
+well-meaning manager why the report they asked for would answer a different question from the one they
+are actually worried about. This is not a failure of the job or of you. It is the job. The people who
+are good at it are good at those things, not only at the analysis in the middle.</p>
+
+<p>It is worth saying plainly that this work is often invisible when it goes well. Nobody thanks you
+for the report that quietly stopped a bad idea. You will develop a taste for the private satisfaction
+of having been right about something before anyone else could see it, and you will need to, because
+the public recognition is inconsistent.</p>
+
+<header class="mod" id="c2">
+  <span class="mn">Chapter 02</span>
+  <h2>The four questions, and which ones are yours</h2>
+</header>
+
+<p>Every question anyone asks about data falls into one of four kinds, and they form a ladder. Each
+rung is harder than the one below, needs more from the data, and is worth more when you get it right.
+Knowing which rung you have been asked to stand on is the first judgement you make on any piece of
+work, and getting it wrong wastes weeks.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">The rung</th><th style="width:26%">The question it answers</th><th>What it takes, and who owns it</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Descriptive</strong></td>
+      <td>What happened?</td>
+      <td>Counting, summing, comparing across time or category. It sounds trivial and it is the majority of all analytical work ever done, because organisations are surprisingly bad at knowing what happened. <strong>Squarely yours.</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Diagnostic</strong></td>
+      <td>Why did it happen?</td>
+      <td>Breaking a change apart until you find where it came from — which region, which product, which week, which customer group. Requires patience and suspicion more than technique. <strong>Also squarely yours, and where you earn your reputation.</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Predictive</strong></td>
+      <td>What will happen?</td>
+      <td>Estimating something not yet observed. Needs history, needs the future to resemble the past, and needs honest measurement of how wrong it is. <strong>Shared with data scientists</strong>, and simple versions are genuinely yours.</td>
+    </tr>
+    <tr>
+      <td><strong>Prescriptive</strong></td>
+      <td>What should we do?</td>
+      <td>Recommending an action, which means understanding cause, cost and constraint. <strong>Rarely purely analytical</strong> — it belongs to whoever owns the decision, and you inform it.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>The trap here is that people ask for the higher rungs while the lower ones are still unbuilt. A
+director asks you to predict next quarter's churn, and it turns out the company cannot reliably say
+what last quarter's churn was, because three teams define churn differently. You cannot forecast a
+quantity nobody has agreed on. When this happens, and it will happen often, the valuable move is not
+to attempt the forecast anyway. It is to say, carefully and without condescension, that the
+descriptive question has not been settled and that settling it is both faster and more useful.</p>
+
+<p>There is also a quieter trap in the other direction, which is spending your career on the bottom
+rung. Descriptive work is safe and endlessly available, and an analyst can spend years producing
+accurate counts that nobody needed. The step from descriptive to diagnostic — from <em>sales fell
+eleven per cent</em> to <em>sales fell eleven per cent, and almost all of it is one product line in one
+region after a price change in March</em> — is the step that turns you from a reporter into an
+analyst. Make it early and make it deliberately.</p>
+
+<header class="mod" id="c3">
+  <span class="mn">Chapter 03</span>
+  <h2>Analyst, scientist, engineer, and the titles in between</h2>
+</header>
+
+<p>These titles are used inconsistently everywhere, which is confusing when you are new and trying to
+work out what to become. The honest summary is that the boundaries are blurry and depend on the
+company, but the centres of gravity are real and worth understanding.</p>
+
+<p>The <strong>data engineer</strong> builds and maintains the plumbing. They move data from the
+places it is created — the website, the sales system, the payment provider — into a place where it can
+be analysed, and they make that movement reliable, repeatable and fast. Their day is about systems,
+schedules and failures. They care whether last night's load completed. If the data does not arrive,
+nobody downstream can do anything, which makes this the least visible and most structurally important
+role of the three.</p>
+
+<p>The <strong>data analyst</strong> — you — takes that data and answers questions with it. Your day
+is about the business, the meaning of the numbers, and the people who need them. You are closer to the
+decisions and further from the infrastructure. Your most-used tool is SQL, your most-used skill is
+scepticism, and your most valuable trait is that you understand the business well enough to notice
+when a number is implausible.</p>
+
+<p>The <strong>data scientist</strong> builds things that make estimates about cases they have not
+seen: which customers will leave, which transactions are fraudulent, what a house is worth. Their day
+involves more statistics and more programming, and their output is often a model that runs repeatedly
+rather than an answer delivered once. In many companies, particularly smaller ones, the same person
+does this and the analyst work, and the title depends mostly on what the company likes to call
+itself.</p>
+
+<p>You will also meet <strong>business intelligence developers</strong>, who specialise in building
+and maintaining the reporting layer — the dashboards and the semantic models behind them — and
+<strong>analytics engineers</strong>, a newer role that sits between engineering and analysis and
+spends its time turning raw loaded data into clean, well-defined, documented tables that analysts can
+trust. If you find that you enjoy the part of analysis where you get the definitions right and build
+something others rely on, that role is worth knowing about; it has grown quickly and it pays well.</p>
+
+<div class="note">
+  <span class="tag">Which one should you aim at?</span>
+  <p>Do not decide yet. The first two years of analyst work are the common foundation for all of these
+  paths, and you will learn much more about which parts you enjoy by doing the work than by
+  considering it in the abstract. The one thing worth knowing now is that <strong>moving from analyst
+  to any of the others is normal and well-trodden</strong>, whereas starting in one of the others
+  without the analyst grounding often produces people who build technically impressive things that
+  answer the wrong question.</p>
+</div>
+
+<header class="mod" id="c4">
+  <span class="mn">Chapter 04</span>
+  <h2>Who you work for, and what they actually want</h2>
+</header>
+
+<p>You will be attached to a team, a function, or the whole company, and this shapes the work more than
+any technical choice you make. It is worth understanding the main flavours before your first job, so
+that you recognise where you have landed.</p>
+
+<p>Analysts embedded in a <strong>single function</strong> — marketing, finance, operations, sales —
+develop deep knowledge of that function's data and vocabulary. You learn what a good week looks like,
+which makes you fast at spotting when something is wrong. The risk is narrowness: after three years
+you know marketing analytics extremely well and have never seen how the company makes money end to
+end.</p>
+
+<p>Analysts in a <strong>central team</strong> serve everybody. You see more of the business, move
+between problems, and build shared things. The risk is that you are always slightly an outsider to the
+domain you are analysing, which makes it easier to produce technically correct answers to questions
+that were subtly misunderstood.</p>
+
+<p>Neither is better. What matters is knowing which one you are in, because it tells you where your
+weakness will be and therefore what to compensate for.</p>
+
+<p>Now the more important half of this chapter: what the people you serve actually want, which is
+rarely what they ask for.</p>
+
+<p>When somebody asks you for a number, they almost never want the number. They want to feel confident
+about a decision, or to be reassured that nothing is going wrong, or to win an argument they are
+already having, or to satisfy somebody above them who asked. These are legitimate needs, and if you
+deliver only the literal number you will often find it has no effect, because the underlying need was
+untouched.</p>
+
+<p>The practical consequence is that early in any request you should ask, in some polite form, what
+they are going to do with it. Not as a challenge — as genuine curiosity about the decision. The
+answers are revealing. Sometimes there is a real decision with a real deadline, and now you know what
+precision is needed and when. Sometimes the honest answer is that somebody senior asked and they do
+not know why, in which case the useful next step is to go and find out, because that person has a
+decision in mind that has not been stated. And occasionally you will learn that the decision has
+already been made and your analysis is wanted as decoration. That is worth knowing too, and it is not
+always a reason to refuse — but you should know which situation you are in.</p>
+
+<div class="warn">
+  <span class="tag">The most useful question you can learn to ask</span>
+  <p><strong>"What would you do differently depending on what I find?"</strong> If the answer is
+  specific — <em>if it's above twenty per cent we'll delay the launch</em> — you have everything you
+  need, including the precision required and the threshold that matters. If the answer is that nothing
+  would change, you have just discovered the work is optional, and you can say so gently and spend the
+  week on something that matters.</p>
+</div>
+
+<header class="part" id="part2">
+  <span class="pn">Part II</span>
+  <h2>What data actually is</h2>
+</header>
+
+<header class="mod" id="c5">
+  <span class="mn">Chapter 05</span>
+  <h2>Rows, columns, and the idea that everything depends on</h2>
+</header>
+
+<p>Almost all the data you will work with is a table: rows going down, columns going across. A column
+is a kind of fact — a date, a price, a country. A row is one thing that those facts are about. This is
+so simple that it feels beneath explanation, and yet the single most common serious error in analysis
+comes from not being precise about what one row represents.</p>
+
+<p>That question — <em>what is one row?</em> — has a name. It is called the <strong>grain</strong> of
+the table, and it is the most important concept in this entire course.</p>
+
+<p>Consider a table about sales. One row might be one individual item scanned at a till. Or one row
+might be one complete receipt, containing several items. Or one row might be one store's total for one
+day. Or one row might be one store's total for one month. These are four different tables that all
+look alike, all contain a column called something like "amount", and all describe the same underlying
+reality. If you add up the amount column you get four different answers to the question "what did we
+sell", and only one of them is the one you wanted.</p>
+
+<p>The trouble is that nothing about the table announces its grain. There is no label. You have to
+work it out, and working it out is a habit you must build deliberately, because the failure mode is
+silent: your analysis runs perfectly, produces a number, and the number is wrong in a way that will
+only be discovered when somebody with domain knowledge says <em>that seems high</em>.</p>
+
+<div class="good">
+  <span class="tag">How to establish grain in thirty seconds</span>
+  <p>Count the rows. Then count the distinct values of whatever you think identifies a row — the order
+  number, say. <strong>If the two counts match, one row is one order.</strong> If there are more rows
+  than orders, the grain is finer than you thought: each order appears several times, probably one row
+  per item, and any sum you write will multiply order-level facts by the number of items. If there are
+  fewer rows than orders, something has already been aggregated. Do this every single time you meet a
+  new table, before you write anything else.</p>
+</div>
+
+<p>The reason this matters so much is that grain governs what arithmetic is legitimate. Suppose your
+table has one row per item, and each row also carries the shipping cost of the whole order. The
+shipping cost is a fact about the order, not about the item, so it is repeated on every row belonging
+to that order. Sum that column and you will count the shipping cost once per item — an order of five
+items reports five times its real shipping cost. Your total will be wrong, it will be wrong in the
+direction of too large, and nothing in the process will warn you.</p>
+
+<p>This specific disaster, where facts at one grain get multiplied by rows at a finer grain, is
+responsible for an enormous share of incorrect numbers in the working world. It happens most often
+after joining two tables together, which is exactly when your attention is on getting the join to work
+rather than on what the result means. Whenever you combine tables, ask the grain question again
+afterwards, because joining is precisely the operation that changes it.</p>
+
+<p>Alongside grain sits a second idea: the <strong>key</strong>. A key is the column, or the
+combination of columns, that uniquely identifies a row. Order number is a key for an order table.
+Order number plus line number is a key for an item table. Knowing the key tells you the grain, tells
+you what you can safely join on, and tells you what duplicates mean when you find them. If you cannot
+name the key of a table, you do not yet understand the table.</p>
+
+<header class="mod" id="c6">
+  <span class="mn">Chapter 06</span>
+  <h2>Kinds of data, and why the kind limits the arithmetic</h2>
+</header>
+
+<p>Not all numbers are the same kind of number, and treating them as though they are produces
+confident nonsense. There are four kinds, and the distinction is about what operations are meaningful
+rather than about how the value is stored.</p>
+
+<p>Some values are just <strong>labels</strong>. Country, product category, payment method. You can
+count how many of each there are and you can compare whether two are the same, but there is no order
+to them and arithmetic is meaningless. Nobody is tempted to average a country, so this category causes
+little trouble — except when labels are stored as numbers. A column of postcodes, or of customer
+identifiers, or of survey response codes where 1 means Spain and 2 means France, will sit there
+looking like a number and inviting you to take its mean. The mean postcode is not a thing.</p>
+
+<p>Some values have an <strong>order but no consistent spacing</strong>. Satisfaction on a scale from
+one to five. Small, medium, large. Bronze, silver, gold. You know five is better than four, but you do
+not know that the gap between four and five is the same size as the gap between one and two, and
+almost certainly it is not — the difference between "very dissatisfied" and "dissatisfied" is not
+emotionally equal to the difference between "satisfied" and "very satisfied". Because the spacing is
+not equal, the average is not strictly meaningful.</p>
+
+<p>Everybody computes it anyway. An average satisfaction score of 4.2 is reported in every company in
+the world. It is not that this is forbidden; it is that you should know what you are doing when you do
+it, and you should be much more careful about small differences. If satisfaction moves from 4.2 to
+4.3, treat that as noise unless you have good reason not to. The better habit, and one that makes you
+immediately more useful than the average analyst, is to report the <strong>distribution</strong>
+alongside the mean: the proportion who answered five, the proportion who answered one or two. Two
+populations can share a mean of 3.0 while one is entirely threes and the other is half ones and half
+fives, and those are completely different situations demanding completely different responses.</p>
+
+<p>Finally there are values where the spacing <em>is</em> equal, and these behave like the numbers you
+learned about at school. Within these, one further distinction occasionally matters: whether zero
+means "none of it" or is just a point on a scale. Money, weight and counts have a real zero, so ratios
+work — sixty pounds is genuinely twice thirty pounds. Temperature in Celsius does not, which is why
+twenty degrees is not twice as warm as ten. You will rarely be caught by this, but it explains why
+some quantities can be sensibly expressed as percentage changes and others cannot.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Kind</th><th style="width:26%">Examples</th><th>What you may do with it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Labels</strong></td><td>Country, category, status</td><td>Count, group, compare for equality. Never average — including when they are stored as numbers, which is when the mistake actually happens.</td></tr>
+    <tr><td><strong>Ordered labels</strong></td><td>Satisfaction 1–5, small/medium/large, risk bands</td><td>Count, group, take the median, report the distribution. Average with care, and never read anything into small movements.</td></tr>
+    <tr><td><strong>Equal-spaced numbers</strong></td><td>Temperature, dates, standardised scores</td><td>Add, subtract, average. Differences are meaningful; ratios are not.</td></tr>
+    <tr><td><strong>Numbers with a true zero</strong></td><td>Revenue, weight, counts, durations</td><td>Everything, including ratios and percentage change. Most business quantities are here.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>One more distinction cuts across all of these and matters constantly in practice: whether a number
+can be added up across time. Revenue can — January plus February is genuinely two months of revenue.
+The number of customers you had cannot. If you had 1,000 customers in January and 1,050 in February,
+you did not have 2,050 customers; you have a stock that was measured twice, not a flow that
+accumulated. Adding a stock across time is one of those errors that produces a chart which rises
+impressively and means nothing. Ratios behave similarly: you cannot add conversion rates, and you
+cannot average them either unless every group is the same size. To combine ratios correctly, add the
+numerators, add the denominators, and divide once at the end.</p>
+
+<header class="mod" id="c7">
+  <span class="mn">Chapter 07</span>
+  <h2>Where data lives</h2>
+</header>
+
+<p>Data does not begin in a neat table waiting for you. It begins as a side effect of something
+happening — a customer placing an order, a delivery being scanned, a page being viewed — and it is
+recorded by a system whose purpose is to make that thing happen, not to make it analysable. Everything
+awkward about data analysis follows from this.</p>
+
+<p>The system that records events as they happen is usually called an <strong>operational
+database</strong>. Its design priorities are speed and correctness for one record at a time: find this
+customer, update this order, take this payment. It is arranged so that each fact is stored in exactly
+one place, which avoids contradictions but means a single meaningful question may require pulling
+together many tables. It is also, crucially, in constant use. A heavy analytical query run against it
+can slow down the actual business, which is why organisations generally do not let analysts near
+it.</p>
+
+<p>Instead the data is copied, on a schedule, into a separate place designed for analysis. This is the
+<strong>data warehouse</strong>. It is arranged for reading large amounts at once rather than writing
+single records, it deliberately repeats information to make questions simpler, and it holds history
+that the operational system may have overwritten. In most companies of any size, this is where you
+will spend your days.</p>
+
+<p>You will also hear about a <strong>data lake</strong>, which is a cheaper store holding raw files
+in whatever shape they arrived, including things that do not fit neatly into tables. The practical
+difference is that a warehouse holds data someone has already organised and a lake holds data that may
+not have been organised yet. Modern platforms increasingly blur the two, and for your purposes the
+useful distinction is simply whether somebody has already done the work of making it coherent.</p>
+
+<p>Alongside these are the places data hides. Spreadsheets on people's laptops, containing the only
+copy of the regional targets. Reports exported from systems nobody has access to any more. A tool that
+the marketing team bought themselves that does not connect to anything. Every organisation has these,
+and part of your value is knowing where they are.</p>
+
+<div class="warn">
+  <span class="tag">Why the copy is never quite the original</span>
+  <p>Because the warehouse is a copy taken on a schedule, it is always somewhat behind, and it can
+  disagree with the source system in ways that generate uncomfortable meetings. Someone runs a report
+  in the sales tool, you run a query on the warehouse, and the numbers differ. Usually the explanation
+  is timing, a definition, or a filter someone forgot to mention. <strong>Learn to ask "as of when?"
+  before you ask "why do these disagree?"</strong> — it resolves perhaps half of such arguments in one
+  sentence.</p>
+</div>
+
+<header class="mod" id="c8">
+  <span class="mn">Chapter 08</span>
+  <h2>How data reaches you, and why it is late or missing</h2>
+</header>
+
+<p>You do not need to build data pipelines, but you need to understand them, because when something
+looks wrong the cause is frequently in the pipeline rather than in the business.</p>
+
+<p>The movement has three steps. Data is <strong>extracted</strong> from the source system, then
+<strong>loaded</strong> into the warehouse, then <strong>transformed</strong> into shapes that are
+convenient to query. You will see this called ETL or ELT depending on whether the transforming happens
+before or after loading, and the modern default is to load first and transform afterwards, because
+storage became cheap. The order matters to the engineers who build it and rarely to you; what matters
+to you is that a transformation step exists, that somebody wrote the rules in it, and that those rules
+embody decisions which may not match your assumptions.</p>
+
+<p>This runs on a schedule — often nightly, sometimes hourly, occasionally continuously. Between runs,
+the warehouse is stale. If you look at today's figures at nine in the morning and the load runs at
+two, you are looking at yesterday. This produces a very common false alarm: <strong>today always looks
+terrible</strong>, because today is incomplete. An analyst who charts a metric up to the current moment
+and panics about the collapse at the right-hand edge has discovered nothing except that the day is not
+over. Exclude the incomplete period, or mark it clearly, every time.</p>
+
+<p>Loads also fail. A source system changes a field name, a file arrives malformed, a server runs out
+of space. When a load fails you may see a day with no data, which is visible and obvious, or — much
+worse — a day with partial data, which looks like a real decline. Before you investigate a sudden drop
+as a business event, check whether the underlying row count also dropped. If the number of records
+fell by a third at the same moment the metric did, you are looking at a broken pipeline, and finding
+that out in five minutes rather than five days is a genuinely valuable skill.</p>
+
+<p>Finally, data arrives late. A transaction from Saturday may not be recorded until Monday. A refund
+may attach itself to the original order's date, silently changing a number you already reported. This
+means historical figures are not necessarily frozen, and if you publish a number on Tuesday it may
+legitimately be different on Friday. The professional response is not to hide this but to be explicit
+about it: state when the data was pulled, and warn people that recent periods will move.</p>
+
+<div class="note">
+  <span class="tag">The three questions to ask about any table before trusting it</span>
+  <p><strong>How often is it refreshed, when did it last refresh successfully, and who owns it?</strong>
+  In many organisations nobody has written this down, and asking makes you look like you know what you
+  are doing, because you do. If the answer to the third question is that nobody owns it, treat every
+  number from it with suspicion and say so when you report.</p>
+</div>
+
+<header class="part" id="part3">
+  <span class="pn">Part III</span>
+  <h2>The tools</h2>
+</header>
+
+<p class="lede">This part explains what each tool is for and what it is bad at, so that you can choose
+between them and know what you are looking at when you meet one. It does not teach you to use them.
+Learning the mechanics of any of these is a matter of days once you know why you are learning it, and
+there are better places to do that than a book.</p>
+
+<header class="mod" id="c9">
+  <span class="mn">Chapter 09</span>
+  <h2>Spreadsheets, and why they refuse to die</h2>
+</header>
+
+<p>Excel and Google Sheets are the most widely used analytical tools in the world by an enormous
+margin, and new analysts often arrive believing they are something to graduate out of. That instinct
+is half right and worth examining, because you will use spreadsheets throughout your career no matter
+how sophisticated your other skills become.</p>
+
+<p>What a spreadsheet is extraordinarily good at is <strong>seeing and touching</strong> data. You can
+look at the actual values, sort them, change one, and watch what happens. For a few thousand rows,
+exploring in a spreadsheet is genuinely faster than any alternative, and for the final step of an
+analysis — laying out a small table exactly as somebody wants it — nothing beats it. It is also
+universal. The person you are sending your work to has it, knows it, and can poke at your numbers
+themselves, which matters more for adoption than any elegance you might prefer.</p>
+
+<p>What it is bad at is everything that involves repetition or scale or memory. A spreadsheet does not
+remember how you produced a number. If you filtered, copied, pasted and typed over a cell, that
+history is gone, and next month you will not be able to reproduce your own work. It does not enforce
+that a column contains what it should, so one text value in a numeric column quietly changes results.
+It becomes slow and fragile past a few hundred thousand rows. And it invites the single most dangerous
+habit in analysis, which is <strong>editing the raw data in place</strong>, destroying the original
+without a record.</p>
+
+<div class="bad">
+  <span class="tag">The spreadsheet rule that will save you</span>
+  <p><strong>Never type over data you received.</strong> Keep the original sheet untouched, and do your
+  work in another sheet that refers to it. When somebody challenges a number in three weeks — and they
+  will — you can go back to what you were actually given. Analysts who ignore this eventually find
+  themselves unable to defend their own figures, which is a far worse position than being wrong.</p>
+</div>
+
+<p>The honest summary is that spreadsheets are for exploring and presenting, and not for the repeated
+production of numbers that matter. When you find yourself doing the same spreadsheet work every month,
+that is the signal to move that work into SQL and a scheduled report.</p>
+
+<header class="mod" id="c10">
+  <span class="mn">Chapter 10</span>
+  <h2>SQL, and why it is the one you must learn</h2>
+</header>
+
+<p>SQL is a language for asking questions of data stored in tables. It has existed since the
+nineteen-seventies, it has survived every wave of technology since, and it remains the single most
+requested skill in data analyst job advertisements. If you learn one technical thing, learn this.</p>
+
+<p>The reason it endures is that it is <strong>declarative</strong>. You do not describe how to get
+the answer — you describe what you want, and the database works out how to produce it. You say, in
+effect, "give me total revenue by country for last quarter, only for completed orders". You do not say
+how to scan the disk or in what order to combine things. This makes it dramatically easier to learn
+than a programming language, because you are expressing a question rather than a procedure.</p>
+
+<p>Conceptually there are only a handful of operations, and everything else is a combination of them.
+You <strong>choose which rows</strong> you want by stating a condition. You <strong>choose which
+columns</strong>. You <strong>group rows together</strong> and compute a summary for each group — a
+total, a count, an average. You <strong>join</strong> two tables together by matching a column in one
+against a column in the other. You <strong>sort</strong>, and you <strong>limit</strong> to the first
+so many rows. That is genuinely the core of it. The rest of SQL is refinements, conveniences and edge
+cases.</p>
+
+<p>Two of those operations deserve particular attention because they are where the errors live.</p>
+
+<p><strong>Joining</strong> is the operation that combines tables, and it is where grain gets
+destroyed. If you join a table of orders to a table of items, you get one row per item, and every
+order-level fact is now repeated. If you join to a table that unexpectedly contains two rows where you
+assumed one — a customer with two addresses on file, say — your row count silently doubles for that
+customer and every total is inflated. The discipline is to check the row count before and after every
+join. If it changed and you did not expect it to change, stop and find out why. This one habit
+prevents more wrong numbers than any other.</p>
+
+<p><strong>Grouping</strong> is where the question gets answered, and the thing to understand is that
+your choice of grouping columns defines the grain of your result. Group by country and you get one row
+per country. Group by country and month and you get one row per combination. Beginners often produce a
+grouped result and then, without noticing, treat it as though it were still at the original grain.</p>
+
+<div class="note">
+  <span class="tag">The one subtlety worth knowing before you start</span>
+  <p>When you filter rows in SQL, there are two different moments at which you can do it: before the
+  grouping happens, or after. Filtering before means "only consider these rows" — only completed
+  orders, say. Filtering after means "only show me groups whose summary looks like this" — only
+  countries with more than a thousand orders. These are genuinely different questions and they use
+  different keywords. Getting them confused produces answers that are wrong in a way that looks
+  plausible, which is the worst kind.</p>
+</div>
+
+<p>A second subtlety that catches everyone: <strong>missing values do not behave like other
+values</strong>. In SQL, an absent value is not zero and not an empty string — it is a special marker
+meaning "unknown", and comparisons involving it return neither true nor false. A filter that asks for
+rows where status is not "cancelled" will silently exclude rows where status is unknown, because
+unknown is not known to be different from "cancelled". This surprises everybody once. Learn it early
+and check whether your filters are quietly dropping rows.</p>
+
+<p>How long does it take? You can write useful queries after a week and be genuinely competent in two
+or three months of regular use. It is one of the highest returns on learning time available in any
+profession.</p>
+
+<header class="mod" id="c11">
+  <span class="mn">Chapter 11</span>
+  <h2>Python and R, and whether you need them</h2>
+</header>
+
+<p>These are full programming languages used heavily in data work. Python has become the default in
+most commercial settings; R remains strong in academia, research and statistics-heavy teams. Both do
+the same job for our purposes, and the choice between them matters far less than whether you need
+either.</p>
+
+<p>The honest answer for a beginning analyst is that you do not need them yet, and that a great many
+successful analysts use them lightly or not at all. SQL plus a dashboard tool plus a spreadsheet
+covers the substantial majority of analytical work in the substantial majority of companies. If you
+are learning in order to get hired, put your hours into SQL first and do not let the fashionable status
+of Python distract you.</p>
+
+<p>Having said that, there are four situations where a programming language stops being optional, and
+recognising them tells you when to invest.</p>
+
+<p>The first is <strong>repetition</strong>. When you produce the same analysis every week by hand,
+you have a process that should be written down as instructions a machine follows. The second is
+<strong>anything the database cannot do</strong> — statistical tests, curve fitting, text processing
+beyond simple matching. The third is <strong>combining sources that do not live in the same
+database</strong>, such as joining a warehouse table to a file somebody emailed you. The fourth is
+<strong>reproducibility</strong>: a script is a record of exactly what you did, which a spreadsheet
+never is, and when the stakes are high that record is what lets you defend the result.</p>
+
+<p>If and when you do learn one, learn the data-handling part first — reading files, filtering,
+grouping, joining, which will feel like SQL in a different costume — and leave the rest of the
+language until you need it. Do not begin with a general programming course; begin with the subset that
+does what you already know how to do in SQL, because the concepts transfer and the familiarity carries
+you past the discouraging early weeks.</p>
+
+<header class="mod" id="c12">
+  <span class="mn">Chapter 12</span>
+  <h2>Dashboard tools</h2>
+</header>
+
+<p>Power BI, Tableau, Looker, Qlik and their relatives all do essentially the same thing: they connect
+to data, let you build charts by dragging rather than coding, assemble those charts into pages, and
+share the result with people who will never write a query. In most companies, this is how your work
+reaches its audience.</p>
+
+<p>Which one you learn matters much less than the fact that you learn one, because the concepts
+transfer almost completely. Power BI dominates organisations already committed to Microsoft, which is
+a great many of them, and is therefore the safest single bet if you are choosing blind. Tableau has a
+reputation for producing the best-looking results and a strong following in specialist analytics
+teams. Looker is more common in technology companies and takes a notably different approach, where
+metric definitions are written once in a central layer and everything else refers to them — which,
+whatever you think of the tool, is the correct instinct.</p>
+
+<p>The important thing to understand about all of them is a trap rather than a feature. These tools
+make it easy to do transformation work inside the dashboard: to write a calculation that fixes a data
+problem, to filter out records that should not be there, to reshape something awkward. Every time you
+do that, you bury a piece of business logic where nobody can find it. Six months later, two dashboards
+disagree, and the reason is that each contains a slightly different private version of the same
+calculation.</p>
+
+<div class="warn">
+  <span class="tag">The rule that keeps dashboards trustworthy</span>
+  <p><strong>Do the thinking upstream and let the dashboard only display.</strong> Calculations,
+  definitions and filters belong in the database or in a shared, documented layer that every dashboard
+  draws from. The dashboard's job is to show, arrange and filter — not to decide what a number means.
+  Organisations that get this wrong end up with dozens of dashboards nobody trusts, and the eventual
+  cleanup is painful.</p>
+</div>
+
+<header class="mod" id="c13">
+  <span class="mn">Chapter 13</span>
+  <h2>What to learn, in what order</h2>
+</header>
+
+<p>Given limited time, here is the order that gets you employable fastest, with the reasoning attached
+so you can adapt it rather than follow it blindly.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:12%">Order</th><th style="width:24%">What</th><th>Why here</th></tr></thead>
+  <tbody>
+    <tr><td><strong>First</strong></td><td>Spreadsheets, properly</td><td>Not the basics you probably have, but pivot tables, lookups and cleaning a messy export. It is quick, it is immediately useful, and it teaches you to look at data closely — a habit that transfers to everything else.</td></tr>
+    <tr><td><strong>Second</strong></td><td><strong>SQL</strong></td><td>The single highest-value skill, the most requested in job adverts, and the foundation of everything after. Give this more time than you think it needs and keep using it until joins and grouping feel obvious rather than effortful.</td></tr>
+    <tr><td><strong>Third</strong></td><td>One dashboard tool</td><td>Because your analysis has to reach people, and because almost every job description names one. Build three or four real dashboards rather than watching tutorials about features.</td></tr>
+    <tr><td><strong>Fourth</strong></td><td>Statistics, the useful parts</td><td>Distributions, variation, correlation and confusion about causation. Chapter 20 is the whole of what you need to begin, and you do not need mathematics to understand it.</td></tr>
+    <tr><td><strong>Fifth</strong></td><td>Python, lightly</td><td>Only the data-handling parts, and only once the four above are comfortable. It broadens what you can do; it does not get you hired on its own.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Running alongside all of it, and more important than any item on the list, is <strong>learning the
+business you are analysing</strong>. An analyst with moderate SQL who understands how the company
+makes money will outperform a technically brilliant one who does not, every time, because the first
+one notices when a number is impossible and the second one reports it.</p>
+
+<header class="part" id="part4">
+  <span class="pn">Part IV</span>
+  <h2>Doing the work</h2>
+</header>
+
+<header class="mod" id="c14">
+  <span class="mn">Chapter 14</span>
+  <h2>The request arrives, and what is wrong with it</h2>
+</header>
+
+<p>Work reaches you as a sentence in a message, and that sentence is almost never a question you can
+answer. It will be something like <em>can you pull the sales numbers for me</em>, or <em>we need to
+understand what is happening with churn</em>, or <em>the board wants to see our customer growth</em>.
+Each of these sounds clear and none of them is.</p>
+
+<p>The first is missing almost everything. Which sales — orders placed, or orders delivered, or money
+received? Over what period? Broken down how? Including cancellations and refunds, or excluding them?
+Internal transfers count or not? Any of these choices changes the answer, sometimes by a lot, and if
+you guess you will guess differently from the person asking.</p>
+
+<p>The second is not a question at all, it is a worry. Somebody has noticed something or been told
+something, and they want reassurance or explanation. Answering it literally — producing a churn figure
+— may entirely fail to address what is bothering them.</p>
+
+<p>The third has a hidden constraint: it will be presented to an audience whose expectations you do
+not know, alongside other numbers you have not seen, and it must be consistent with whatever was shown
+last quarter. If you produce a technically superior figure that contradicts last quarter's, you have
+created a problem rather than solved one.</p>
+
+<p>The instinct, when a request arrives, is to start working. Resist it for fifteen minutes. Those
+fifteen minutes of clarification routinely save days, and they are the clearest marker separating
+analysts who are trusted from analysts who are merely busy.</p>
+
+<div class="good">
+  <span class="tag">What to establish before you touch any data</span>
+  <p>What <strong>decision</strong> this feeds and by when. What exactly is being counted, in the
+  asker's own words. What time period, and compared against what. Which records are excluded. How
+  precise the answer needs to be — because "roughly, by Thursday" and "exactly, whenever" are different
+  jobs. And what they expect to see, which is worth asking because if your result contradicts their
+  expectation you want to know that before you present it, not during.</p>
+</div>
+
+<p>Asking these things can feel like obstruction when you are new and want to appear helpful. It is
+the opposite. The clarifying conversation is where you demonstrate that you understand the problem,
+and most people are relieved rather than irritated by it. Phrase it as thinking aloud about how to
+help rather than as a checklist, and it lands as competence.</p>
+
+<header class="mod" id="c15">
+  <span class="mn">Chapter 15</span>
+  <h2>Turning a request into a question you can answer</h2>
+</header>
+
+<p>An answerable question has four parts, and if any one of them is missing the question is not yet
+ready. It names <strong>a measure</strong> — what is being counted. It names <strong>a
+population</strong> — which records are in scope. It names <strong>a period</strong>. And it names
+<strong>a comparison</strong>, because a number without something to compare it against carries almost
+no information.</p>
+
+<p>That last part is the one beginners omit, and it is the one that makes an answer useful. If I tell
+you that revenue last month was four hundred thousand, you know nothing. Is that good? You cannot say
+until you know what it was the month before, or the same month last year, or what was forecast. The
+comparison is where meaning lives, and choosing it well is a real analytical decision rather than a
+formality.</p>
+
+<p>Take the vague request "we need to understand what is happening with churn" and watch it become
+answerable. After conversation, it might turn into: <em>among customers on the monthly plan who had
+been with us at least ninety days, what proportion cancelled in each month of the last two years, and
+does the recent level differ from the same months in previous years?</em> That is long and it is
+unglamorous and it can actually be answered. Every clause in it represents a decision that would
+otherwise have been made by accident.</p>
+
+<p>Write this sentence down and send it back to the person who asked, before you do the work. Say
+something like: <em>just so I'm building the right thing, here's how I've understood it.</em> They will
+correct you, sometimes substantially, and each correction at this stage costs a minute instead of a
+day. It also creates a shared record, which protects everybody when the conclusion is uncomfortable
+later.</p>
+
+<div class="note">
+  <span class="tag">On scope, and the answer that is genuinely helpful</span>
+  <p>Requests expand. Someone asks for one number, then wants it split by region, then by region and
+  month, then with last year alongside. Each addition seems small. The professional move is not to
+  refuse and not to absorb it silently, but to make the trade visible: <em>I can add the regional split
+  for Thursday, which would push the segment analysis to next week — which would you rather have
+  first?</em> This is not defensiveness. It is the sentence that lets someone else make a decision that
+  is genuinely theirs to make.</p>
+</div>
+
+<header class="mod" id="c16">
+  <span class="mn">Chapter 16</span>
+  <h2>Finding the data, and the questions to ask about it</h2>
+</header>
+
+<p>Now you need the data, and in a new organisation this is often the hardest part of the whole job.
+There is rarely a map. Knowledge about where things live and what they mean sits in people's heads,
+and your task is as much social as technical.</p>
+
+<p>Start by asking someone who already answers similar questions what they use. This sounds obvious
+and new analysts skip it constantly, preferring to explore alone because asking feels like admitting
+ignorance. Ten minutes with a colleague who knows will save you two days, and people generally enjoy
+being asked about work they understand well.</p>
+
+<p>When you find a candidate table, there are things to establish before you trust it. What is the
+grain — what does one row represent? Where does it come from, and does it come from the system of
+record or from a copy of a copy? How often is it updated and when did it last update successfully?
+Does it contain everything, or only what somebody decided to include — a table of orders that quietly
+excludes cancelled ones will produce a figure that never reconciles with finance, and nothing in the
+table will tell you. And what do the columns actually mean, particularly any that look like flags or
+codes.</p>
+
+<p>That last one deserves emphasis. Column names lie. A column called <em>active</em> might mean
+currently subscribed, or ever subscribed, or not deleted, or something set by a process that stopped
+running in 2023. A column called <em>date</em> might be when the order was placed, paid, shipped or
+entered into the system, and choosing the wrong one shifts your entire result by days or weeks. Never
+assume a column means what its name suggests. Look at the values, look at the extremes, and if it
+matters, find a human who knows.</p>
+
+<div class="warn">
+  <span class="tag">The reconciliation habit</span>
+  <p>Whenever possible, check your number against a number somebody else already publishes — the
+  finance report, the sales team's own tracker, the figure on last quarter's slide. You are not trying
+  to match exactly; you are trying to find out whether you are in the same universe. <strong>If your
+  revenue figure is eight per cent below finance's, find out why before you present anything.</strong>
+  The explanation is always instructive, and discovering it in the meeting instead is an experience you
+  only need once.</p>
+</div>
+
+<header class="mod" id="c17">
+  <span class="mn">Chapter 17</span>
+  <h2>Looking at the data before you analyse it</h2>
+</header>
+
+<p>There is a step between getting data and analysing it that almost everybody skips, and skipping it
+is the direct cause of most embarrassing errors. The step is simply to look at the data and find out
+what it is like.</p>
+
+<p>Begin with size and shape. How many rows, how many columns, what period does it cover. Then, for
+each column that matters, find out how often it is empty, how many distinct values it has, and what
+its smallest and largest values are. This takes minutes and it surfaces an astonishing amount.</p>
+
+<p>The emptiness check tells you whether a column is usable at all. A field that is missing in seventy
+per cent of rows cannot support a conclusion, and it is better to discover that now than after you
+have built an analysis on it. It also tells you something about the business: if a field is complete
+for recent months and empty before March, something changed in March, and that change may matter more
+than your original question.</p>
+
+<p>The distinct-values check catches a family of problems at once. A column that should hold five
+statuses and holds forty-three has a data entry problem. A column that should be unique and is not
+means duplicates. A country column containing both "UK" and "United Kingdom" and "GB" means your
+grouping will split one country into three, quietly.</p>
+
+<p>The minimum and maximum check is the fastest way to find nonsense. Dates in 1900 or 2099. Negative
+quantities. An age of 214. A price of zero on a product that is never free. These extreme values are
+often not real data at all but placeholders that somebody's system uses to mean "unknown", and if you
+average a column containing them your average is meaningless.</p>
+
+<div class="bad">
+  <span class="tag">Missing values in disguise</span>
+  <p>The dangerous absences are the ones that do not look absent. A genuinely empty cell is easy to
+  spot and handle. But systems frequently record "we do not know" as a real value: <strong>zero, the
+  text "N/A" or "unknown", a single hyphen, minus one, 999, or a date like 1900-01-01 or
+  1970-01-01</strong>. These flow straight into calculations. A zero in a price column drags an average
+  down and looks like a cheap sale; a 1970 date creates a customer who has apparently been with you for
+  fifty-six years. Scan the extremes of every important column specifically hunting for these, because
+  no automatic check will find them for you.</p>
+</div>
+
+<p>Finally, look at the shape of the distribution of any number you will summarise, even roughly. Is
+it clustered around a middle value, or is it heavily skewed with a long tail of large values? This
+single observation determines whether the average is a sensible summary or a misleading one, which is
+the subject of Chapter 20.</p>
+
+<header class="mod" id="c18">
+  <span class="mn">Chapter 18</span>
+  <h2>Cleaning, and the discipline that makes it safe</h2>
+</header>
+
+<p>Having found the problems, you fix them. Before any technique, there is one rule that matters more
+than all the techniques combined.</p>
+
+<div class="good">
+  <span class="tag">Never clean in place</span>
+  <p>Keep the original untouched and produce a cleaned version alongside it. Every fix should be
+  something you could undo, explain, or run again next month. <strong>A cleaning decision you cannot
+  reverse is a decision you cannot revisit</strong>, and you will need to revisit them — because in two
+  weeks somebody will ask why a figure looks odd, and the answer will be in a choice you made while
+  cleaning and have since forgotten.</p>
+</div>
+
+<p>Alongside that, keep a written record of what you did and how much it affected. Not elaborate: a
+few lines saying that you removed 312 rows with no customer identifier, standardised 1,847 country
+values into 14 countries, and treated 96 prices of zero as missing rather than as free. This record is
+what turns "I cleaned the data" into something a colleague can evaluate, and it is what makes your
+numbers defensible.</p>
+
+<p>Now the situations themselves.</p>
+
+<p><strong>Missing values.</strong> The first question is not how to fill them but why they are
+missing, because the reason determines what you may do. If values are missing for reasons unrelated to
+what you are studying — a system glitch, a random dropout — then ignoring those rows is fairly safe. If
+they are missing for a reason connected to the answer, ignoring them introduces bias. Income is a
+classic case: people with very high and very low incomes decline to state it more often than everyone
+else, so the incomes you do have are not a fair sample of all incomes, and any average you compute is
+wrong in a direction you cannot see. Deciding between these cases requires thinking about the
+mechanism, not looking at the data.</p>
+
+<p>Once you have decided, your options are to exclude those rows, to fill in an estimate, or to leave
+them as missing and report how many there were. Filling in is tempting and is the one to be most
+careful with, because a filled value looks exactly like a measured one. If you fill anything, keep a
+marker recording which values were invented, and never let an invented number travel onward without
+that marker attached.</p>
+
+<p><strong>Duplicates.</strong> First establish whether they are genuine duplicates or a
+misunderstanding of grain — the same order appearing twice because it has two items is not a duplicate.
+Real duplicates come from systems that recorded something twice, or from a person who is in your
+database under two slightly different names. Exact duplicates are easy. Near duplicates, where a
+customer appears as "Smith, John" and "John Smith" with the same address, are genuinely hard and you
+will need rules: which record survives, and on what basis — the most recent, the most complete, the one
+from the more trusted source. Write the rule down, because you will be asked.</p>
+
+<p><strong>Inconsistency.</strong> The same thing recorded different ways. Capitalisation, extra
+spaces, abbreviations, date formats, currencies, units. The fix is to decide a standard form and
+convert everything to it, and the order matters: standardise first, then check validity, because
+checking first will reject things that were fine but written differently.</p>
+
+<p><strong>Outliers.</strong> A value far from the others. The critical point is that an outlier is
+not automatically an error. It may be a data entry mistake, or it may be your single largest customer,
+and those demand opposite treatment. Removing outliers by default is one of the most common ways
+analysts quietly delete their own findings. Investigate first. If it is an error, fix or exclude it and
+say so. If it is real, keep it — and consider whether reporting the median alongside the mean tells the
+story better.</p>
+
+<p><strong>Rows that do not belong.</strong> Test records, internal orders, the account the
+development team uses, refunds at a grain you did not expect. These are business-knowledge problems
+rather than technical ones, and you find them by asking people rather than by inspecting columns.</p>
+
+<div class="note">
+  <span class="tag">When the dirt is the finding</span>
+  <p>Sometimes the data quality problem is more important than the question you were asked.
+  If a field started being empty in March, or a status code appears that nobody recognises, or the same
+  customer exists eleven times, you have found something the organisation needs to know.
+  <strong>Report it.</strong> Analysts who surface these things become the people others check with
+  before making claims, which is a very good position to occupy.</p>
+</div>
+
+<header class="mod" id="c19">
+  <span class="mn">Chapter 19</span>
+  <h2>The five things any analysis is doing</h2>
+</header>
+
+<p>However complicated an analysis looks, it is doing one or more of five things. Knowing which one
+you are doing tells you how to structure the work and, later, which chart to use — because the chart
+follows from the question rather than from taste.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:18%">The shape</th><th style="width:28%">The question</th><th>What to watch for</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Comparison</strong></td>
+      <td>Is this bigger than that? Which category leads?</td>
+      <td>Comparing raw totals when the groups are different sizes. A region with twice the customers will have more complaints; the meaningful figure is complaints per customer.</td>
+    </tr>
+    <tr>
+      <td><strong>Change over time</strong></td>
+      <td>Is it rising, falling, or moving as it always does?</td>
+      <td>Incomplete final periods, seasonality mistaken for trend, and too short a window. Three points is not a trend.</td>
+    </tr>
+    <tr>
+      <td><strong>Distribution</strong></td>
+      <td>What is the spread? Are we mostly alike or wildly different?</td>
+      <td>Being satisfied with the average and never looking at the shape. This is the most under-used of the five and frequently the most revealing.</td>
+    </tr>
+    <tr>
+      <td><strong>Composition</strong></td>
+      <td>What is the whole made of, and is the mix changing?</td>
+      <td>Confusing a change in the mix with a change in the total, and reading too much into small slices.</td>
+    </tr>
+    <tr>
+      <td><strong>Relationship</strong></td>
+      <td>Do these two things move together?</td>
+      <td>Concluding that one causes the other. See Chapter 20, which exists largely for this.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Most real analyses combine two or three. A question about falling sales usually becomes change over
+time to establish that it is real, then comparison to find where it is concentrated, then perhaps
+distribution to see whether it is everybody slightly or a few customers enormously. That sequence —
+<strong>establish, then locate, then characterise</strong> — is the backbone of diagnostic work, and it
+is worth internalising as a default approach.</p>
+
+<p>The locating step has a technique behind it worth naming. When a total has moved and you want to
+know why, split it by one dimension at a time and look at where the movement is concentrated. Split by
+region: is the fall everywhere, or one region? Split by product, by customer type, by channel, by week.
+You are hunting for the split that shows one group behaving differently from the rest, because that
+group is your answer. Most diagnostic questions resolve after three or four such splits, and the
+discipline is to keep splitting rather than to stop at the first plausible story.</p>
+
+<header class="mod" id="c20">
+  <span class="mn">Chapter 20</span>
+  <h2>The statistics you actually need</h2>
+</header>
+
+<p>You need less statistics than you fear and different statistics than a course would teach you. Here
+is the working set, explained without mathematics.</p>
+
+<p><strong>The average is often the wrong summary.</strong> The mean adds everything up and divides by
+the count, which works well when values cluster around a middle and badly when they do not. Business
+data very often does not: a few customers spend enormously more than the rest, so the mean sits above
+what almost anybody actually spends. The median — the middle value, with half above and half below —
+ignores how extreme the extremes are and usually describes typical experience better. When the mean and
+median differ substantially, that difference is itself information: it tells you the distribution is
+lopsided, and you should look at the shape rather than summarising it at all.</p>
+
+<p><strong>Percentiles describe a distribution properly.</strong> The ninetieth percentile is the value
+that ninety per cent of cases fall below. Talking about the tenth, fiftieth and ninetieth percentiles
+of delivery time tells a manager far more than the average delivery time, because it describes the good
+case, the typical case and the bad case. When somebody asks how long something takes, answering with
+percentiles rather than an average marks you out immediately.</p>
+
+<p><strong>Variation is normal and most movement means nothing.</strong> This is the single most
+valuable idea in the chapter. Every measured quantity bounces around from period to period for
+countless small reasons, and that bouncing is not a signal. Sales were up four per cent this week and
+down three per cent last week, and neither fact requires an explanation. The important skill is to know
+roughly how much a metric normally moves, so you can tell whether today's movement is inside that
+normal range or genuinely outside it. Without that sense you will spend your career manufacturing
+explanations for noise — and worse, other people will act on them.</p>
+
+<p>A practical way to build the sense: look at the last year of weekly values and notice the size of
+the typical week-to-week change. If it is usually within five per cent either way, then a six per cent
+move is unremarkable and a twenty per cent move is worth investigating. This is not rigorous, and it is
+enormously better than reacting to every wiggle.</p>
+
+<p><strong>Correlation is not causation, and the reason matters.</strong> Everybody can recite this and
+very few people apply it, because the causal story is so much more satisfying than the honest one. When
+two things move together there are four possibilities: the first causes the second, the second causes
+the first, something else causes both, or it is coincidence. Ice cream sales and drowning deaths rise
+together because both rise in summer. Customers who use a particular feature stay longer — but perhaps
+engaged customers were always going to stay and also happen to try more features, in which case pushing
+everybody towards the feature will achieve nothing.</p>
+
+<p>That third possibility, where a hidden common cause creates the appearance of a relationship, is the
+one that catches working analysts most often. The habit that protects you is to ask, every time: what
+else could produce this pattern? Usually something can.</p>
+
+<p><strong>Rare things are rarer than they feel.</strong> Suppose one customer in a hundred will
+cancel next month, and you have a way of spotting them that is right eighty per cent of the time. Out
+of ten thousand customers, a hundred will actually cancel and you will correctly flag eighty of them.
+But you will also wrongly flag about twenty per cent of the nine thousand nine hundred who are staying
+— roughly two thousand people. So your flagged list contains about two thousand and eighty names of
+whom eighty are genuine: <strong>fewer than four per cent of the people you flagged will actually
+cancel.</strong> The method is not broken; the thing being looked for is simply rare. Whenever anybody
+proposes to identify something uncommon, work this arithmetic through before promising anything.</p>
+
+<p><strong>Small samples lie.</strong> A conversion rate of fifty per cent sounds decisive until you
+learn it came from four visitors. Always report the denominator next to any rate, always be suspicious
+of impressive percentages from small groups, and be aware that the most extreme results in any ranking
+tend to come from the smallest groups simply because small groups vary more.</p>
+
+<p>Finally, <strong>statistical significance is not importance</strong>. With enough data, a difference
+so small that nobody would ever act on it will be statistically detectable. The question that matters
+is whether the difference is large enough to change a decision, and that is a business judgement rather
+than a calculation.</p>
+
+<header class="mod" id="c21">
+  <span class="mn">Chapter 21</span>
+  <h2>How you will fool yourself</h2>
+</header>
+
+<p>The errors that damage analysts are not arithmetic errors. They are errors of reasoning, they feel
+like insight while you are making them, and they are consistent enough to be listed.</p>
+
+<p><strong>You will look for what you expect to find.</strong> Having formed a view early, you will
+notice supporting evidence and explain away the rest, without any dishonest intention. The protection
+is to write down what you expect before you look, and to deliberately spend time asking what would have
+to be true for the opposite conclusion to hold.</p>
+
+<p><strong>You will slice until something appears.</strong> Cut the data enough ways and some subgroup
+will show a striking pattern by chance alone. If you examine twenty segments, one will look remarkable
+even if nothing is happening. A finding discovered by slicing should be treated as a hypothesis, and
+the honest test is whether it holds in a different period or a different population.</p>
+
+<p><strong>You will build a story from the survivors.</strong> Analysing customers who stayed tells you
+nothing about why others left; analysing successful campaigns while ignoring abandoned ones produces a
+recipe for success that is mostly a recipe for being remembered. Always ask what is missing from the
+data you were given, and who decided what to include.</p>
+
+<p><strong>You will anchor on the first number.</strong> Whatever figure you compute first becomes the
+reference against which everything else feels right or wrong, including when the first one was
+mistaken. When a later result contradicts an earlier one, resist the instinct to assume the later is
+wrong.</p>
+
+<p><strong>You will be convinced by a good story.</strong> A coherent narrative feels more true than a
+messy one, and reality is frequently messy. If your explanation is elegant, check it harder rather than
+less.</p>
+
+<p><strong>You will find what somebody wanted you to find.</strong> This is the uncomfortable one.
+Knowing which answer the person who asked would prefer makes you check that answer less carefully. The
+protection is structural: decide your method and your exclusions before you see the result, and hold to
+them.</p>
+
+<div class="warn">
+  <span class="tag">And the one that has destroyed careers</span>
+  <p><strong>Simpson's paradox</strong>: a pattern that is present in every group can reverse when the
+  groups are combined, and vice versa. A treatment can be better for men and better for women and worse
+  overall, if the groups differ in size and baseline. This is not a trick; it is a genuine mathematical
+  possibility that occurs in real data. The practical defence is simple and should become automatic:
+  <strong>before reporting an aggregate, look at it broken down by the two or three most obvious
+  groupings, and check the direction is the same.</strong> If it is not, the aggregate is misleading and
+  the breakdown is the story.</p>
+</div>
+
+<header class="part" id="part5">
+  <span class="pn">Part V</span>
+  <h2>Telling people</h2>
+</header>
+
+<p class="lede">An analysis that nobody understands has not been done. This part is about the half of
+the job that new analysts consistently undervalue and that senior analysts spend most of their time
+on.</p>
+
+<header class="mod" id="c22">
+  <span class="mn">Chapter 22</span>
+  <h2>Choosing a chart</h2>
+</header>
+
+<p>Chart choice feels like a matter of taste and is not. A chart works by turning numbers into
+something your eye can judge — a position, a length, an angle, an area, a colour — and human eyes are
+far better at some of those than others. We judge <strong>position</strong> most accurately, then
+<strong>length</strong>, then angle and area, and we are poor at comparing colour intensity. That
+ranking is the whole reason a bar chart beats a pie chart, and it is not an aesthetic preference.</p>
+
+<p>So the question is never "what chart looks good", it is "which of the five analytical shapes am I
+showing", and the answer follows.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:20%">If you are showing</th><th style="width:26%">Use</th><th>And avoid</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Comparison across categories</strong></td>
+      <td>A bar chart, sorted by value rather than alphabetically, with horizontal bars when the labels are long</td>
+      <td>Pie charts, 3D anything, and leaving categories in arbitrary order — sorting is free and does half the interpretive work for the reader</td>
+    </tr>
+    <tr>
+      <td><strong>Change over time</strong></td>
+      <td>A line chart, with time running left to right and enough history to show what normal looks like</td>
+      <td>Bars for continuous time, and starting at the point where your story begins rather than where the data does</td>
+    </tr>
+    <tr>
+      <td><strong>Distribution</strong></td>
+      <td>A histogram, or a box plot when comparing several groups</td>
+      <td>Reporting only the average, which is what almost everyone does instead</td>
+    </tr>
+    <tr>
+      <td><strong>Composition</strong></td>
+      <td>A stacked bar, or a bar chart of the parts; for changing mix over time, a stacked area or a set of small repeated charts</td>
+      <td>Pie charts with more than about four slices, and nested rings, which are unreadable</td>
+    </tr>
+    <tr>
+      <td><strong>Relationship between two numbers</strong></td>
+      <td>A scatter plot</td>
+      <td>Adding a trend line and then speaking as though it proved causation</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Beyond choosing the form, a handful of rules prevent most of the damage.</p>
+
+<p><strong>Start bar charts at zero.</strong> A bar communicates through its length, so cutting the
+axis makes a two per cent difference look like a doubling. This is the most common way honest people
+produce misleading charts. Line charts are different — they show change, and a zero baseline can
+flatten a genuinely meaningful movement — but if you truncate a line axis, say so clearly.</p>
+
+<p><strong>Avoid two different vertical axes on one chart.</strong> Putting revenue on the left and
+complaints on the right lets you place the two lines in any relationship you like simply by choosing
+the scales, and readers will see a relationship that you effectively invented. If two quantities must
+be compared, use two charts stacked with a shared time axis.</p>
+
+<p><strong>Use colour to mean something.</strong> Colour should encode a variable or highlight the one
+thing you want noticed. Colouring every bar differently for decoration adds no information and costs
+attention. And remember that a substantial minority of people cannot reliably distinguish red from
+green, so never let red-versus-green be the only difference between two things that matter.</p>
+
+<p><strong>Remove what does not inform.</strong> Gridlines heavy enough to compete with the data,
+borders, backgrounds, shadows, decorative images. Every one of these is something the reader's eye must
+sort through before reaching the numbers.</p>
+
+<div class="good">
+  <span class="tag">The most under-used tool in the whole of data presentation</span>
+  <p><strong>Annotate the chart.</strong> Write on it. Put an arrow on the point where the change
+  happened and a few words saying what happened. Make the title a sentence stating the finding —
+  <em>"Complaints doubled after the March pricing change"</em> — rather than a label like <em>"Complaints
+  by month"</em>. A chart with a conclusion written on it survives being forwarded to people you will
+  never speak to, and most of your charts will be forwarded to people you will never speak to.</p>
+</div>
+
+<header class="mod" id="c23">
+  <span class="mn">Chapter 23</span>
+  <h2>Report, dashboard, analysis, alert</h2>
+</header>
+
+<p>These four words are used interchangeably and mean quite different things. Confusing them is why so
+many organisations have dozens of dashboards nobody opens.</p>
+
+<p>A <strong>report</strong> is a fixed set of numbers produced on a schedule so that people know where
+things stand. Its purpose is routine awareness. It should be boring and consistent; novelty in a report
+is a defect.</p>
+
+<p>A <strong>dashboard</strong> is a live view that somebody checks to monitor an ongoing situation and
+to notice when something needs attention. It answers questions the reader already knows they have. It
+must be fast to read, which means it should hold few numbers, not many.</p>
+
+<p>An <strong>analysis</strong> is a one-off investigation answering a specific question, with a
+beginning, an argument and a conclusion. It is written, it is read once, and then it is done. Most of
+the genuinely valuable work an analyst does takes this form, and it is the form most often mistakenly
+turned into a dashboard.</p>
+
+<p>An <strong>alert</strong> tells somebody that something has happened which requires action. It
+should be rare. An alert that fires routinely is ignored within two weeks, and thereafter it is worse
+than nothing because everybody believes they are being watched over when they are not.</p>
+
+<div class="warn">
+  <span class="tag">The mistake this distinction exists to prevent</span>
+  <p>Somebody asks a one-off question. You answer it, and then — being helpful — you build a dashboard
+  so they can "check it whenever they like". They check it twice. It then sits there for three years,
+  gradually breaking as the underlying tables change, until somebody finds it and makes a decision on a
+  number that stopped being correct in 2024. <strong>A question that was asked once deserves an
+  answer, not an artefact.</strong> Build the dashboard when there is a genuine ongoing need, and when
+  somebody has agreed to own it.</p>
+</div>
+
+<p>When you do build a dashboard, the useful design discipline is to think in three layers of
+attention. Within five seconds a reader should see whether things are broadly fine. Within thirty
+seconds they should see where the problem is. Within five minutes they should be able to explore the
+detail. Most dashboards fail at the first layer because they present forty numbers of equal visual
+weight, none of which says whether today is good or bad.</p>
+
+<p>And every dashboard needs three pieces of furniture that are almost always missing: <strong>when the
+data was last refreshed</strong>, <strong>who owns it</strong>, and <strong>what the metrics mean</strong>
+— even if that last one is only a link. Without the refresh time, people will make decisions on stale
+figures without knowing it.</p>
+
+<header class="mod" id="c24">
+  <span class="mn">Chapter 24</span>
+  <h2>Writing the answer</h2>
+</header>
+
+<p>Most analysis is delivered in writing, and the structure that works is the opposite of the one that
+feels natural. Your instinct, having done a lot of work, is to walk the reader through it: here is the
+question, here is the data, here is what I did, here is what I found. That order is how you experienced
+it, and it is the wrong order for the reader, because the person reading has thirty seconds and wants
+the conclusion.</p>
+
+<p><strong>Put the answer first.</strong> One or two sentences stating what you found and what it
+means. Then the evidence supporting it. Then the caveats. Then the detail, for the small number of
+people who will read that far. This is uncomfortable the first few times because it feels like giving
+away the ending and skipping the work that justifies it, but a reader who has the conclusion reads your
+evidence with a frame to fit it into, and a reader who does not is just accumulating unlabelled
+facts.</p>
+
+<p>Be specific rather than vague. <em>"Sales declined"</em> is nearly useless. <em>"Sales fell eleven
+per cent in the third quarter, and almost all of that is one product line in the northern region after
+the March price change"</em> is something a person can act on. Where you can, express the finding in
+units the reader thinks in — money, customers, days — rather than percentages or statistical
+quantities. <em>"About four hundred customers a month"</em> lands where <em>"a 3.2 per cent monthly
+churn rate"</em> does not.</p>
+
+<p>State your uncertainty plainly and without either hedging everything into mush or pretending to
+more confidence than you have. <em>"This excludes the two weeks in April when the tracking was broken,
+which may understate the effect slightly"</em> is a good sentence. It is honest, it is specific, and it
+protects you. Analysts often fear that admitting limitations undermines their work; in practice the
+opposite happens, because the people reading know data is imperfect and they trust someone who
+demonstrates that they know it too.</p>
+
+<div class="note">
+  <span class="tag">The structure that fits almost every written analysis</span>
+  <p>The <strong>headline</strong>, one sentence. <strong>What we found</strong>, three or four
+  sentences with the numbers in them. <strong>Why we think so</strong>, the evidence, with a chart or
+  two. <strong>What we are not sure about</strong>, honestly. <strong>What we suggest</strong>, if a
+  recommendation was asked for. And then the detail and method, for the reader who wants it. If someone
+  reads only the first paragraph, they should still have the answer.</p>
+</div>
+
+<header class="mod" id="c25">
+  <span class="mn">Chapter 25</span>
+  <h2>Presenting, and defending what you found</h2>
+</header>
+
+<p>Presenting is the same discipline as writing, with the addition that people interrupt. Lead with
+the conclusion, keep slides sparse, and put one idea on each. Say the finding out loud rather than
+reading the chart aloud; the chart is evidence for the sentence you are saying, not a substitute for
+it.</p>
+
+<p>The part worth preparing for is the challenge. When your number is unwelcome, it will be
+questioned, and the questions come in recognisable forms.</p>
+
+<p>Somebody says <strong>"that doesn't match what I have"</strong>. This is the most common and the
+most productive, and the response is not to defend your figure but to find the difference. Almost
+always it is a definition, a date range, a filter, or the moment the data was pulled. Ask what their
+figure is and where it comes from, then reconcile. You will frequently discover that both numbers are
+correct and they answer different questions, which is a genuinely valuable finding for the organisation
+and makes you look considerably better than being right would have.</p>
+
+<p>Somebody says <strong>"I don't believe it"</strong> without specifics. What is usually meant is that
+the result contradicts their experience, and their experience is data you do not have. Ask what they
+would have expected and why. Sometimes you learn about a segment you did not know existed, or a change
+in process that explains everything. Sometimes their intuition is simply out of date. Either way,
+treating the objection as information rather than as an attack is both more accurate and more
+effective.</p>
+
+<p>Somebody asks <strong>"did you account for..."</strong>. If you did, say how, briefly. If you did
+not, say so plainly and say whether you think it would change the conclusion. Never bluff. A single
+discovered bluff costs more credibility than a dozen admitted gaps, and in a field where your only
+asset is being believed, that is not a trade worth making.</p>
+
+<p>And somebody will say <strong>"so what should we do?"</strong>. This is the question you should have
+prepared for, and it is reasonable even if you were not asked for a recommendation. You do not have to
+make the decision — it is usually not yours — but you should be able to say what the finding implies
+and what you would want to know next.</p>
+
+<div class="good">
+  <span class="tag">The sentence that ends most hostile meetings</span>
+  <p><strong>"That's a fair question — let me check and come back to you."</strong> Say it, write it
+  down, and come back. There is no shame in it, it is far better than an answer you invent under
+  pressure, and the person who reliably follows up becomes the person everyone believes. Credibility in
+  this job is built almost entirely out of small kept promises.</p>
+</div>
+
+<header class="part" id="part6">
+  <span class="pn">Part VI</span>
+  <h2>Understanding the business</h2>
+</header>
+
+<header class="mod" id="c26">
+  <span class="mn">Chapter 26</span>
+  <h2>Defining a metric, which is harder than measuring it</h2>
+</header>
+
+<p>A great deal of analytical conflict comes from a single cause: two people using the same word for
+different quantities. Finance says the company has 40,000 customers, marketing says 52,000, and both
+are honest. One counts accounts with an active paid subscription at month end; the other counts anyone
+who has logged in during the last ninety days. Neither is wrong, and until somebody writes down which
+definition is meant, the meeting cannot make progress.</p>
+
+<p>Defining a metric properly means answering a specific set of questions, and every one of them
+changes the number.</p>
+
+<p><strong>What exactly is counted</strong> — the numerator. Customers, orders, sessions, what? Then
+<strong>out of what</strong>, if it is a rate — the denominator, which is where most arguments hide.
+Conversion rate means conversions divided by <em>something</em>, and whether that something is
+visitors, sessions, or people who reached a particular page produces three different rates. Then
+<strong>over what period</strong>, and whether a case is assigned to the day the thing started or the
+day it finished. Then <strong>who is included and excluded</strong> — internal accounts, test records,
+one enormous client who distorts everything, cancelled orders, refunds. Then <strong>which
+timezone</strong>, which sounds pedantic and shifts a meaningful number of events between days for any
+international business. And finally <strong>at what grain</strong> the metric exists: per customer, per
+account, per household — because a family sharing one subscription is one paying customer and four
+users.</p>
+
+<div class="good">
+  <span class="tag">The single most valuable artefact a junior analyst can produce</span>
+  <p>A written definition of the five or ten numbers your team argues about most, agreed by the people
+  who use them, stored where everyone can find it. It requires no technical skill. It resolves recurring
+  arguments permanently. <strong>It is frequently the thing that gets a new analyst noticed</strong>,
+  because everyone knows the problem exists and nobody has wanted to do the unglamorous work of fixing
+  it.</p>
+</div>
+
+<p>Two further ideas are worth holding. The first is that metrics get gamed: <strong>the moment a
+measure becomes a target, people optimise the measure rather than the thing it was standing for</strong>.
+Measure support agents on tickets closed and tickets get closed quickly rather than well. This is not
+cynicism about people, it is a predictable response to incentives, and the defence is to pair any
+target with a guardrail metric that would deteriorate if the target were being gamed — tickets closed
+alongside reopened tickets, speed alongside satisfaction.</p>
+
+<p>The second is the distinction between metrics that tell you what already happened and metrics that
+hint at what is coming. Revenue is a result; it is reliable and it is too late to act on. Trial
+sign-ups or support ticket volume move earlier, are noisier, and give you time. A good set of measures
+contains both, and an organisation watching only results is always responding to news rather than
+anticipating it.</p>
+
+<p>And be alert to measures that are satisfying to report and connected to nothing: total registered
+users ever, page views, social media followers. They go up reliably, which is what makes them
+attractive, and they rarely inform a decision. The test is whether the number could go up while the
+business got worse. If it could, it is decoration.</p>
+
+<header class="mod" id="c27">
+  <span class="mn">Chapter 27</span>
+  <h2>Reading a business</h2>
+</header>
+
+<p>You cannot analyse a company you do not understand, and a surprising number of analysts never learn
+how their employer makes money. This chapter is the minimum, and learning it will do more for your
+effectiveness than any additional technical skill.</p>
+
+<p>Money comes in as <strong>revenue</strong>. From it you subtract the direct cost of providing what
+was sold — materials, delivery, payment processing, the cloud bill attributable to serving a customer —
+and what remains is <strong>gross profit</strong>. From that you subtract the costs of running the
+company at all — salaries, offices, marketing, software — and what remains is <strong>operating
+profit</strong>. That is the whole shape, and nearly every business question is about moving one of
+those lines.</p>
+
+<p>The distinction that matters most for analysis is between costs that scale with sales and costs
+that do not. Selling twice as much doubles the delivery cost and does not double the rent. This is why
+growth improves profitability for some businesses and destroys it for others, and why the question "is
+this customer profitable?" depends entirely on which costs you attribute to them.</p>
+
+<p>Then there is the economics of a single customer, which is where most commercial analysis actually
+lives. It costs something to acquire a customer — total marketing and sales spend divided by customers
+gained. That customer generates some profit per month, and stays for some length of time, and the
+profit over that whole relationship is their lifetime value. The business works if lifetime value
+comfortably exceeds acquisition cost, and the speed at which the acquisition cost is repaid — the
+payback period — determines how fast the company can afford to grow.</p>
+
+<p>Understanding this tells you why certain questions are asked so insistently. Everyone cares about
+churn because a small change in how long customers stay has a large effect on lifetime value. Everyone
+cares about acquisition cost because it sets the ceiling on marketing. When you know the model, you
+stop receiving disconnected requests and start seeing which lever each one is about.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:22%">Function</th><th style="width:30%">What they are judged on</th><th>What they will ask you for</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Marketing</strong></td><td>Cost of acquiring customers, and the quality of what they acquire</td><td>Which channels work, what a customer costs, whether a campaign did anything</td></tr>
+    <tr><td><strong>Sales</strong></td><td>Revenue against target, and pipeline health</td><td>Where deals stall, which segments convert, whether the forecast is credible</td></tr>
+    <tr><td><strong>Product</strong></td><td>Usage, adoption, retention</td><td>Who uses what, where people give up, whether a release changed behaviour</td></tr>
+    <tr><td><strong>Operations</strong></td><td>Cost, speed, reliability</td><td>Where time is lost, what drives cost, where failures cluster</td></tr>
+    <tr><td><strong>Finance</strong></td><td>Accuracy, margin, forecast</td><td>Reconciliation, margin by segment, why the number moved</td></tr>
+    <tr><td><strong>People</strong></td><td>Retention, hiring, engagement</td><td>Who leaves and when, how long hiring takes, whether pay is consistent</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Two patterns of analysis recur across all of these and are worth knowing by name. A
+<strong>cohort</strong> groups people by when they started and follows each group over time, which
+separates "customers are behaving differently now" from "we simply have newer customers". A
+<strong>funnel</strong> follows people through a sequence of steps and shows where they drop out. Most
+questions about retention are cohort questions; most questions about conversion are funnel
+questions.</p>
+
+<p>Finally, learn what a normal year looks like in your business before you interpret any movement.
+Retail peaks before Christmas. Software usage collapses in August and at weekends. A business with
+monthly billing has a spike on the first of the month. Comparing this March with last March is usually
+more meaningful than comparing March with February, and an analyst who reports a seasonal pattern as a
+trend loses credibility quickly.</p>
+
+<header class="mod" id="c28">
+  <span class="mn">Chapter 28</span>
+  <h2>Privacy, ethics, and the harm you can do</h2>
+</header>
+
+<p>You will have access to information about real people, and much of the harm analysts cause is done
+without any intention, by people who were being helpful.</p>
+
+<p>The first principle is <strong>access what you need for the work in front of you</strong>. Curiosity
+about a colleague's salary or a friend's order history is a serious matter in most organisations and a
+firing offence in many, regardless of whether you acted on what you saw. Most systems log queries.</p>
+
+<p>The second is that <strong>aggregation is not anonymisation</strong>. Reporting a figure for a group
+of three people does not hide those people; anyone who knows the group can work backwards, and if two
+of them know their own values they can derive the third's exactly. The convention is to suppress any
+cell below a minimum size — five or ten depending on sensitivity — and to remember that combining
+several harmless breakdowns can identify someone even when each on its own does not. Department plus
+job level plus start year plus gender will frequently identify exactly one person.</p>
+
+<p>The third concerns proxies. You may be careful to exclude protected characteristics — race, gender,
+religion, health — from an analysis, and still reproduce discrimination through variables that stand in
+for them. Postcode carries ethnicity and income. Career gaps carry parenthood. A model or a rule built
+on these is not neutral simply because the sensitive field was left out. Whenever your work will affect
+how people are treated, ask whether any input is a proxy for something you would not be allowed to use
+directly.</p>
+
+<p>The fourth is that people have rights over data about them, in most jurisdictions legally. They may
+be entitled to know what you hold, to have it corrected, to have it deleted, and to object to
+automated decisions. Your organisation should have someone whose job this is; find out who, early,
+before you need them.</p>
+
+<div class="warn">
+  <span class="tag">The question to ask before publishing anything about people</span>
+  <p><strong>"If the people in this dataset read this report, would any of them be identifiable, and
+  would any of them be harmed?"</strong> It takes five seconds and catches nearly everything: the
+  small-group breakdown, the free-text comment quoted verbatim, the chart where one dot is obviously
+  the regional manager. The requirement to be useful does not override the requirement not to harm
+  people, and when they genuinely conflict, that is a decision to escalate rather than to make
+  alone.</p>
+</div>
+
+<header class="part" id="part7">
+  <span class="pn">Part VII</span>
+  <h2>The career</h2>
+</header>
+
+<header class="mod" id="c29">
+  <span class="mn">Chapter 29</span>
+  <h2>Working with people</h2>
+</header>
+
+<p>The technical part of this job is learnable by most people in a year. The part that determines
+whether you are effective is how you work with the people who ask for things, and it is barely taught
+at all.</p>
+
+<p>Start from the recognition that <strong>you are not the expert in their domain</strong>. The person
+asking has usually spent years in it, and when their intuition disagrees with your number, the base
+rate favours a problem with your number. Not always — sometimes their intuition is a memory of how
+things were three years ago — but approach the disagreement as an investigation rather than a contest
+and you will be right more often and resented less.</p>
+
+<p>Manage expectations before they form. Give a realistic estimate, including the time for finding and
+cleaning data, and remember that the cleaning is usually the majority. If something slips, say so
+early; nobody minds a delay they knew about on Monday and everybody minds one they discover on Friday.
+Under-promising and delivering early is a strategy that keeps working indefinitely.</p>
+
+<p>Learn to say no, which for an analyst almost never means refusing. It means making the trade-off
+visible and letting the other person choose: <em>I can do this by Thursday if the other piece waits
+until next week — which would you prefer?</em> That sentence protects your work without positioning you
+as an obstacle, and it moves the prioritisation decision to the person who is actually entitled to make
+it.</p>
+
+<p>Write things down. Confirm what was agreed in a short message after any conversation about scope.
+This is not bureaucracy or defensiveness; it is how you and the other person discover that you
+understood the request differently, which happens more often than anyone expects.</p>
+
+<p>And be genuinely generous with what you know. Show people how to answer their own simple questions.
+Explain what a number means rather than just producing it. Analysts sometimes fear this makes them
+replaceable; in practice it makes them trusted, and trusted analysts get the interesting work, because
+people bring them the ambiguous problems rather than the well-specified ones.</p>
+
+<header class="mod" id="c30">
+  <span class="mn">Chapter 30</span>
+  <h2>Your first ninety days</h2>
+</header>
+
+<p>The instinct in a new job is to produce something impressive quickly. The better strategy is to
+spend the first stretch understanding, because an impressive analysis built on a misunderstood table is
+worse than no analysis, and you only get one chance at a first impression of your judgement.</p>
+
+<p>In the <strong>first fortnight</strong>, learn how the company makes money — the sequence from
+somebody hearing about you to money arriving. Find out which reports people actually look at and open
+them. Meet the people who will ask you for things and ask what frustrates them about the data today,
+which is the single most informative question you can ask in a new job. Find out where the data lives
+and who owns each part.</p>
+
+<p>In the <strong>first month</strong>, reproduce a number somebody else already publishes. Pick a
+figure from an existing report and derive it yourself from the raw tables. You will fail the first
+time, and the failure is the point: everything you learn about exclusions, definitions, timing and
+quirks while reconciling is knowledge you would otherwise have acquired slowly and painfully over a
+year. When your figure finally matches, you understand that part of the business properly.</p>
+
+<p>In the <strong>first three months</strong>, deliver something small and genuinely useful. Not a
+grand project — something that removes a recurring irritation. The report somebody assembles by hand
+every Monday. The definition nobody has written down. The dashboard that has been broken for months and
+that everybody works around. These build trust far faster than ambition does, and trust is what buys
+you the larger work later.</p>
+
+<div class="note">
+  <span class="tag">What not to do in the first three months</span>
+  <p>Do not propose rebuilding anything. You will see things that are plainly wrong — duplicated logic,
+  bizarre definitions, a metric computed differently in three places — and you will be right that they
+  are wrong. You will not yet know <em>why</em> they are that way, and there is usually a reason: a
+  regulatory requirement, a system limitation, an argument that was settled before you arrived. Write
+  your observations down privately, wait, and raise them when you understand the history. The
+  observations will still be valid and you will be taken far more seriously.</p>
+</div>
+
+<header class="mod" id="c31">
+  <span class="mn">Chapter 31</span>
+  <h2>Getting hired</h2>
+</header>
+
+<p>Employers hiring junior analysts are trying to establish three things: can you get data out of a
+database, can you reason sensibly about what it means, and can you explain a result to somebody who is
+not technical. Everything in a hiring process is aimed at one of those.</p>
+
+<p>The portfolio is what gets you the interview, and the common mistake is to build projects on clean
+famous datasets that thousands of other applicants have also used. Those demonstrate that you can
+follow a tutorial. What demonstrates capability is a project with a <strong>real question, messy data,
+a defensible method and a clear conclusion</strong> — ideally on a subject you know something about,
+because domain knowledge shows in the quality of the questions you thought to ask.</p>
+
+<p>Three or four finished, well-explained projects beat a dozen notebooks. Each should be presented
+the way you would present at work: the question first, the answer second, the method and caveats after.
+Write the limitations section — say what your analysis cannot support. Almost nobody does this, and to
+a hiring manager it is the clearest available signal that you understand your own work rather than
+having produced it.</p>
+
+<p>In technical screening, expect SQL. Expect to be asked to join tables, aggregate, filter and handle
+a case with missing values. Practise until the mechanics are automatic, because you want your attention
+free for the thinking. When you are given a take-home task, spend a meaningful part of your effort on
+the write-up rather than all of it on the analysis; a modest analysis explained well outperforms a
+sophisticated one presented as a wall of output.</p>
+
+<p>In conversation, expect to be asked how you would approach a vague business question. This is the
+question that separates candidates, and the mistake is to start proposing techniques. Start by
+clarifying: what decision is this for, what would we do differently depending on the answer, what data
+would we need, what would make it unreliable. Interviewers are listening for whether you think about
+the problem before the method, because that is the thing they cannot teach you.</p>
+
+<div class="good">
+  <span class="tag">The answer that makes an interviewer sit up</span>
+  <p>Being asked about a project that went wrong, and having a real one. What you misunderstood, how
+  you found out, what you changed afterwards. <strong>The "how you found out" part is the one people
+  skip and the one being listened for</strong>, because it reveals whether you have a method for
+  catching your own mistakes — which is the single most valuable property in an analyst, and the hardest
+  to teach.</p>
+</div>
+
+<header class="mod" id="c32">
+  <span class="mn">Chapter 32</span>
+  <h2>Growing</h2>
+</header>
+
+<p>The path from junior to senior is not mainly about learning more tools, which is what most people
+assume and why many plateau. It is about the size and ambiguity of the problem you can be handed.</p>
+
+<p>A <strong>junior analyst</strong> is given a well-specified task and completes it correctly. The
+skill being developed is accuracy and the habit of checking your own work.</p>
+
+<p>A <strong>mid-level analyst</strong> is given a vague problem and turns it into a well-specified
+task themselves. They know which questions to ask before starting, they anticipate the objections, and
+they notice when the request does not match the underlying worry. Most of the growth between junior and
+mid-level is in the conversation before the work, not in the work.</p>
+
+<p>A <strong>senior analyst</strong> is given a business area and decides what should be looked at.
+They spot the question nobody asked, they know when an analysis is not worth doing, and they build
+things — definitions, datasets, standards — that make everyone else's work better. They are also
+usually the person who says, quietly and at the right moment, that the proposed plan rests on a number
+that does not mean what everyone thinks it means.</p>
+
+<p>Practical things that accelerate this. <strong>Learn one business domain properly</strong>, deeply
+enough to have opinions — this is the highest-return investment available and almost nobody makes it
+deliberately. <strong>Finish things and follow up</strong> on whether they were used, which teaches you
+more about what makes analysis effective than any amount of technique. <strong>Read your own old
+work</strong> after six months and notice what you would now do differently. And <strong>get your
+reasoning criticised</strong> by someone more experienced, not just your SQL — ask them where your
+argument is weak rather than whether your query is right.</p>
+
+<p>The two directions people move from here are toward depth — data science, analytics engineering,
+specialising in a domain — or toward breadth, leading an analytics team, or out of analysis entirely
+into the business, which is more common than you might think and a genuinely good outcome. Analysts who
+move into product, operations or finance roles bring a way of thinking about evidence that those
+functions usually lack. You do not need to choose now, and the choice will look obvious when it
+arrives.</p>
+
+<header class="mod" id="plan">
+  <span class="mn">Reference</span>
+  <h2>A six-month plan, if you are starting from nothing</h2>
+</header>
+
+<p>Reading this document will not make you an analyst. Doing the following will get you close enough
+to be employable, assuming somewhere between eight and twelve hours a week. It is deliberately
+unglamorous.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th style="width:14%">Month</th><th style="width:30%">Learn</th><th>Build, because only building counts</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>One</strong></td>
+      <td>Spreadsheets beyond the basics: pivot tables, lookups, cleaning a messy export, and charting</td>
+      <td>Take a genuinely messy public dataset — government or city data is reliably messy — and produce a clean version with a written record of every decision you made. The record is the deliverable.</td>
+    </tr>
+    <tr>
+      <td><strong>Two and three</strong></td>
+      <td><strong>SQL</strong>, properly. Filtering, grouping, joining, and the difference between filtering before and after grouping</td>
+      <td>Answer twenty real questions against a public database. For each one, write the question as a proper sentence first, in the four-part form from Chapter 15. That habit is worth more than the queries.</td>
+    </tr>
+    <tr>
+      <td><strong>Four</strong></td>
+      <td>One dashboard tool, and the chart-choice reasoning in Chapter 22</td>
+      <td>Build two dashboards. Then show them to somebody who knows nothing about the subject and watch where they get confused, without explaining. Fix what confused them.</td>
+    </tr>
+    <tr>
+      <td><strong>Five</strong></td>
+      <td>The statistics in Chapter 20 and the self-deceptions in Chapter 21</td>
+      <td>Your first full project: a real question, messy data, a defensible method, a written conclusion with a limitations section. This is the portfolio piece.</td>
+    </tr>
+    <tr>
+      <td><strong>Six</strong></td>
+      <td>Business literacy — read your target industry's numbers until they mean something</td>
+      <td>Two more projects in different shapes: one diagnostic, one comparative. Then write all three up as though presenting to a manager, and apply.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="good">
+  <span class="tag">The one habit that matters more than the plan</span>
+  <p>After every piece of work, write four sentences: <strong>what the question was, what you did, what
+  you found, and what you tried that did not work.</strong> That last one is what turns your projects
+  into interview answers that sound like experience rather than like a tutorial — and it only exists if
+  you write it down while it is fresh.</p>
+</div>
+
+<header class="mod" id="glossary">
+  <span class="mn">Reference</span>
+  <h2>Glossary</h2>
+</header>
+
+<p>Every term this course introduced, in plain language, so that you can come back to any of them
+without rereading the chapter.</p>
+
+<div class="terms">
+  <dl>
+    <dt>Aggregate</dt><dd>To combine many rows into a summary — a total, a count, an average. Aggregating changes the grain, and forgetting that is a common source of error.</dd>
+    <dt>Cohort</dt><dd>A group defined by when they started, followed over time. Cohorts separate "behaviour changed" from "we simply have newer customers".</dd>
+    <dt>Composition</dt><dd>One of the five analytical shapes: what a whole is made of, and whether the mix is changing.</dd>
+    <dt>Correlation</dt><dd>Two things moving together. It permits four explanations, only one of which is that the first causes the second.</dd>
+    <dt>Data lake</dt><dd>A cheap store of raw files in whatever shape they arrived, including data that does not fit neatly into tables.</dd>
+    <dt>Data warehouse</dt><dd>A copy of the organisation's data, arranged for analysis rather than for running the business. Where you will spend most of your time.</dd>
+    <dt>Denominator</dt><dd>The "out of what" in any rate. Where most metric disagreements are actually hiding.</dd>
+    <dt>Descriptive, diagnostic, predictive, prescriptive</dt><dd>The four rungs of question: what happened, why, what will happen, what should we do. The first two are squarely the analyst's.</dd>
+    <dt>Distribution</dt><dd>The shape of how values spread out. Looking at it rather than only at the average is one of the fastest ways to become more useful.</dd>
+    <dt>ETL and ELT</dt><dd>Extract, transform, load — the movement of data from source systems into the warehouse, in either order. Matters to you because its rules and its schedule explain many anomalies.</dd>
+    <dt>Funnel</dt><dd>A sequence of steps people pass through, used to find where they drop out.</dd>
+    <dt>Grain</dt><dd><strong>What one row represents.</strong> The most important idea in this course. Establish it before doing anything else with a table.</dd>
+    <dt>Join</dt><dd>Combining two tables by matching a column in each. The operation most likely to change your grain without telling you — check the row count before and after, every time.</dd>
+    <dt>Key</dt><dd>The column or combination of columns that uniquely identifies a row. If you cannot name a table's key, you do not yet understand the table.</dd>
+    <dt>Lagging and leading indicator</dt><dd>A measure that reports what already happened, versus one that hints at what is coming. A healthy set of metrics contains both.</dd>
+    <dt>Lifetime value</dt><dd>The total profit expected from a customer over the whole relationship. Compared against acquisition cost, it tells you whether the business model works.</dd>
+    <dt>Mean and median</dt><dd>The arithmetic average, and the middle value. When they differ substantially, the distribution is lopsided and the median usually describes typical experience better.</dd>
+    <dt>Metric definition</dt><dd>The written statement of exactly what a number counts, out of what, over what period, with whom excluded, in which timezone. Writing these down is one of the highest-value things a junior analyst can do.</dd>
+    <dt>Operational database</dt><dd>The system that records events as they happen, designed for running the business rather than for analysing it. Usually off-limits to analysts for good reason.</dd>
+    <dt>Outlier</dt><dd>A value far from the others. It may be an error or it may be your largest customer, and removing them by default deletes findings.</dd>
+    <dt>Percentile</dt><dd>The value below which a given share of cases fall. Describing something with the tenth, fiftieth and ninetieth percentiles tells a far better story than an average.</dd>
+    <dt>Proxy variable</dt><dd>A field that stands in for a sensitive characteristic you deliberately excluded — postcode for ethnicity, career gaps for parenthood. Excluding the sensitive field does not make the analysis neutral.</dd>
+    <dt>Reconciliation</dt><dd>Checking your number against one somebody else already publishes. The fastest way to discover that you have misunderstood something.</dd>
+    <dt>Seasonality</dt><dd>The pattern a business repeats every year, week or month. Mistaking it for a trend is a reliable way to lose credibility.</dd>
+    <dt>Simpson's paradox</dt><dd>When a pattern present in every subgroup reverses once the subgroups are combined. Guard against it by checking aggregates against their obvious breakdowns.</dd>
+    <dt>SQL</dt><dd>The language for asking questions of data in tables. The single most valuable technical skill for this job.</dd>
+    <dt>Stock and flow</dt><dd>A quantity measured at a moment, versus one that accumulates over a period. Flows can be added across time; stocks cannot.</dd>
+    <dt>Vanity metric</dt><dd>A number that reliably rises and informs no decision. The test: could it go up while the business got worse?</dd>
+  </dl>
+</div>
+
+<header class="mod" id="next">
+  <span class="mn">Reference</span>
+  <h2>Where to go next</h2>
+</header>
+
+<p>If this document did its job, several things in it felt slightly too brief — the statistics, the
+data quality material, the question of how a real project unfolds from start to finish. That was
+deliberate. This course exists to give you the whole shape of the job in one reading, and the two
+companion documents in this library go deeper exactly where it was brief.</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Raw to Trusted — the deeper course</h4>
+    <p>The technical layer beneath Parts II and IV: how to know data is dirty and the full catalogue of
+    disguises missing values wear, cleaning technique by dirt type, dimensional modelling, pipelines in
+    detail, the statistics at greater depth, and a long catalogue of the ways analysts fool themselves.
+    Read it when the vocabulary here is comfortable.</p>
+  </div>
+  <div class="card">
+    <h4>From Brief to Boardroom — a project, worked</h4>
+    <p>One real project followed through ten stages, from the vague first request to defending the
+    conclusion in the room. Where this document explains the ideas, that one shows them happening in
+    sequence with the awkwardness left in.</p>
+  </div>
+  <div class="card">
+    <h4>The rest of the library</h4>
+    <p>The index lists everything, including the data-science and AI-engineering tracks if you find
+    yourself drawn toward prediction, and the interview material if you are preparing to apply.</p>
+  </div>
+  <div class="card">
+    <h4>And then, practice</h4>
+    <p>Nothing here substitutes for having answered a real question badly and found out why. Go back to
+    the six-month plan, pick the first thing, and do it.</p>
+  </div>
+</div>
+
+<div class="disclaimer">
+  <p><strong>On what will age.</strong> Tool names will change — the dashboard products in Chapter 12
+  are not the ones that will dominate in a decade, and something will eventually challenge SQL,
+  although it has outlasted every previous challenger. What will not age is the reasoning: that a number
+  means nothing without its definition, that the grain determines what arithmetic is legitimate, that
+  most movement is noise, that correlation permits four explanations, and that an analysis nobody
+  understood has not been done.</p>
+</div>
+</main>
+</div>
+
+<script>
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var map = {}, targets = [];
+  links.forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var el = document.getElementById(h.slice(1));
+    if (el) { map[el.id] = a; targets.push(el); }
+  });
+  var current = null;
+  function mark(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.remove('on'); });
+    if (map[id]) map[id].classList.add('on');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    var vis = entries.filter(function (e) { return e.isIntersecting; });
+    if (vis.length) {
+      vis.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      mark(vis[0].target.id);
+    }
+  }, { rootMargin: '-8% 0px -72% 0px', threshold: 0 });
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
